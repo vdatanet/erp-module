@@ -40,8 +40,9 @@ namespace erp.Module.DatabaseUpdate
 #if !RELEASE
             if (TenantName == null)
             {
-                _ = CreateTenant("company1.com", "erp_company1");
-                _ = CreateTenant("company2.com", "erp_company2");
+                _ = CreateTenant("demo", "erp_demo");
+                _ = CreateTenant("vdata", "erp_vdata");
+                _ = CreateTenant("miravent", "erp_miravent");
                 ObjectSpace.CommitChanges();
             }
 #endif
@@ -102,7 +103,7 @@ namespace erp.Module.DatabaseUpdate
             {
                 tenant = ObjectSpace.CreateObject<Tenant>();
                 tenant.Name = tenantName;
-                tenant.ConnectionString = $"XpoProvider=MySql;server=localhost;user=root;password=password;database={databaseName}";
+                tenant.ConnectionString = $"XpoProvider=MySql;server=erp.vdata.net;user={databaseName};password=G@n@$3l3ctiv@;database={databaseName}";
             }
             return tenant;
         }
