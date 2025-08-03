@@ -79,7 +79,7 @@
             //
             // peImage
             //
-            this.peImage.EditValue = ((object)(resources.GetObject("peImage.EditValue")));
+            this.peImage.EditValue = ((object)(resources.GetObject($"peImage.EditValue")));
             this.peImage.Location = new System.Drawing.Point(12, 12);
             this.peImage.Name = "peImage";
             this.peImage.Properties.AllowFocused = false;
@@ -93,7 +93,7 @@
             //
             // peLogo
             //
-            this.peLogo.EditValue = ((object)(resources.GetObject("peLogo.EditValue")));
+            this.peLogo.EditValue = ((object)(resources.GetObject($"peLogo.EditValue")));
             this.peLogo.Location = new System.Drawing.Point(400, 328);
             this.peLogo.Name = "peLogo";
             this.peLogo.Properties.AllowFocused = false;
