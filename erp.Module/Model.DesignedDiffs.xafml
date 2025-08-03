@@ -1,11 +1,25 @@
-﻿<?xml version="1.0" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Application Title="erp">
   <BOModel>
     <Class Name="DevExpress.Persistent.BaseImpl.PermissionPolicy.PermissionPolicyUser" Caption="Base User" />
   </BOModel>
+  <NavigationItems StartupNavigationItem="">
+    <Items>
+      <Item Id="Default">
+        <Items>
+          <Item Id="CompanyInfo_ListView" ViewId="CompanyInfo_DetailView" />
+        </Items>
+      </Item>
+    </Items>
+  </NavigationItems>
   <Options>
     <LayoutManagerOptions RequiredFieldMark="*" />
   </Options>
+  <SchemaModules>
+    <SchemaModule Name="CloneObjectModule" Version="25.1.3.0" IsNewNode="True" />
+    <SchemaModule Name="SchedulerModuleBase" Version="25.1.3.0" IsNewNode="True" />
+    <SchemaModule Name="SystemModule" Version="25.1.3.0" IsNewNode="True" />
+  </SchemaModules>
   <Views>
     <ListView Id="ApplicationUser_ListView" Caption="Users" />
   </Views>
