@@ -1,4 +1,5 @@
 using DevExpress.ExpressApp.WebApi.Services;
+using DevExpress.Xpo;
 using erp.Blazor.Server.DTOs.Common.Response;
 using erp.Module.BusinessObjects.Common;
 using Microsoft.AspNetCore.Authorization;
@@ -14,11 +15,17 @@ public class CountryController(IDataService dataService) : ControllerBase
 {
     [HttpGet("GetCountries")]
     [SwaggerOperation("Returns all Countries")]
-    public List<ListItem> GetCountries()
+    public async Task<ActionResult<List<ListItem>>> GetCountries()
     {
         var objectSpace = dataService.GetObjectSpace(typeof(Country));
         
-        var result = objectSpace.GetObjects<Country>()
+        var countriesQuery = from c in objectSpace.GetObjectsQuery<Country>()
+            orderby c.Name
+            select c;
+        
+        var countries = await countriesQuery.ToListAsync();
+        
+        var result = countries
             .Select(country => new ListItem 
             {
                 Oid = country.Oid.ToString(),
@@ -27,6 +34,6 @@ public class CountryController(IDataService dataService) : ControllerBase
             })
             .ToList();
         
-        return result;
+        return Ok(result);
     }
 }
