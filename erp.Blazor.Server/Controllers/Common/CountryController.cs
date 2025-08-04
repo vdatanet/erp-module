@@ -18,22 +18,16 @@ public class CountryController(IDataService dataService) : ControllerBase
     public async Task<ActionResult<List<ListItem>>> GetCountries()
     {
         var objectSpace = dataService.GetObjectSpace(typeof(Country));
-        
-        var countriesQuery = from c in objectSpace.GetObjectsQuery<Country>()
-            orderby c.Name
-            select c;
-        
-        var countries = await countriesQuery.ToListAsync();
-        
-        var result = countries
-            .Select(country => new ListItem 
+
+        var result = await objectSpace.GetObjectsQuery<Country>()
+            .Select(country => new ListItem
             {
                 Oid = country.Oid.ToString(),
                 Name = country.Name,
                 Description = null
             })
-            .ToList();
-        
+            .ToListAsync();
+
         return Ok(result);
     }
 }
