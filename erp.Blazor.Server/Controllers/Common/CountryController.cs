@@ -2,7 +2,6 @@
 using DevExpress.ExpressApp.WebApi.Services;
 using DevExpress.Xpo;
 using erp.Blazor.Server.DTOs.Common.Response;
-using erp.Blazor.Server.Helpers;
 using erp.Module.BusinessObjects.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,11 +24,9 @@ public class CountryController(IDataService dataService) : ControllerBase
         var objectSpace = dataService.GetObjectSpace(typeof(Country));
 
         var query = objectSpace.GetObjectsQuery<Country>();
+
+        if (!string.IsNullOrWhiteSpace(search)) query = query.Where(c => c.Name.Contains(search));
         
-        query = query.ApplySearchFilter(search,
-            c => c.Name
-        );
-         
         var result = await query
             .OrderBy(c => c.Name)
             .Skip((page - 1) * pageSize)
@@ -44,5 +41,6 @@ public class CountryController(IDataService dataService) : ControllerBase
 
         return Ok(result);
     }
+    
     
 }
