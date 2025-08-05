@@ -1,4 +1,3 @@
-#nullable enable
 using DevExpress.ExpressApp.WebApi.Services;
 using DevExpress.Xpo;
 using erp.Blazor.Server.DTOs.Common.Response;
@@ -14,20 +13,13 @@ namespace erp.Blazor.Server.Controllers.Common;
 [Route("api/custom/[controller]")]
 public class CountryController(IDataService dataService) : ControllerBase
 {
-    [HttpGet($"/")]
+    [HttpGet("GetCountries")]
     [SwaggerOperation("Returns all Countries")]
-    public async Task<ActionResult<List<ListItem>>> GetCountries(
-        string? search = null,
-        int page = 1,
-        int pageSize = 20)
+    public async Task<ActionResult<List<ListItem>>> GetCountries(int page = 1, int pageSize = 20)
     {
         var objectSpace = dataService.GetObjectSpace(typeof(Country));
 
-        var query = objectSpace.GetObjectsQuery<Country>();
-
-        if (!string.IsNullOrWhiteSpace(search)) query = query.Where(c => c.Name.Contains(search));
-        
-        var result = await query
+        var result = await objectSpace.GetObjectsQuery<Country>()
             .OrderBy(c => c.Name)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
@@ -41,6 +33,4 @@ public class CountryController(IDataService dataService) : ControllerBase
 
         return Ok(result);
     }
-    
-    
 }
