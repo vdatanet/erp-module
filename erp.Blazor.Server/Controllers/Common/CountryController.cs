@@ -15,11 +15,14 @@ public class CountryController(IDataService dataService) : ControllerBase
 {
     [HttpGet("GetCountries")]
     [SwaggerOperation("Returns all Countries")]
-    public async Task<ActionResult<List<ListItem>>> GetCountries()
+    public async Task<ActionResult<List<ListItem>>> GetCountries(int page = 1, int pageSize = 20)
     {
         var objectSpace = dataService.GetObjectSpace(typeof(Country));
 
         var result = await objectSpace.GetObjectsQuery<Country>()
+            .OrderBy(c => c.Name)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .Select(country => new ListItem
             {
                 Oid = country.Oid.ToString(),
