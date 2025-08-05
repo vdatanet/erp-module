@@ -1,3 +1,7 @@
+#nullable enable
+using DevExpress.Data.Filtering;
+using DevExpress.Data.Linq;
+using DevExpress.Xpo;
 using System.Linq.Expressions;
 
 namespace erp.Blazor.Server.Helpers;
@@ -7,52 +11,35 @@ public static class SearchHelper
     public static IQueryable<T> ApplySearchFilter<T>(
         this IQueryable<T> query,
         string? search,
-        params Expression<Func<T, string>>[] propertySelectors)
+        params Expression<Func<T, string>>[] propertySelectors) where T : class
     {
-        if (string.IsNullOrWhiteSpace(search) || !propertySelectors.Any()) return query;
+        if (string.IsNullOrWhiteSpace(search) || propertySelectors.Length == 0)
+        {
+            return query;
+        }
 
-        var parameter = Expression.Parameter(typeof(T), "x");
-        var containsMethod = typeof(string).GetMethod("Contains", [typeof(string)]);
-        var searchConstant = Expression.Constant(search);
-
-        Expression? combinedExpression = null;
+        var conditions = new List<CriteriaOperator>();
         foreach (var selector in propertySelectors)
         {
-            var memberAccess = Expression.Invoke(selector, parameter);
-            var condition = Expression.Call(memberAccess, containsMethod!, searchConstant);
-
-            combinedExpression = combinedExpression == null
-                ? condition
-                : Expression.OrElse(combinedExpression, condition);
+            var propertyName = (selector.Body as MemberExpression)?.Member.Name;
+            if (propertyName != null)
+            {
+                conditions.Add(CriteriaOperator.Parse($"Contains([{propertyName}], ?)", search));
+            }
         }
 
-        var lambda = Expression.Lambda<Func<T, bool>>(combinedExpression!, parameter);
-        return query.Where(lambda);
-    }
-
-    public static IQueryable<T> ApplySearchFilter<T>(
-        this IQueryable<T> query,
-        string? search,
-        params string[] propertyNames)
-    {
-        if (string.IsNullOrWhiteSpace(search) || !propertyNames.Any()) return query;
-
-        var parameter = Expression.Parameter(typeof(T), "x");
-        var containsMethod = typeof(string).GetMethod("Contains", [typeof(string)]);
-        var searchConstant = Expression.Constant(search);
-
-        Expression? combinedExpression = null;
-        foreach (var propertyName in propertyNames)
+        var combinedCriteria = CriteriaOperator.Or(conditions.ToArray());
+        var xpQuery = query as XPQuery<T>;
+        if (xpQuery == null)
         {
-            var property = Expression.Property(parameter, propertyName);
-            var condition = Expression.Call(property, containsMethod!, searchConstant);
-
-            combinedExpression = combinedExpression == null
-                ? condition
-                : Expression.OrElse(combinedExpression, condition);
+            return query;
         }
 
-        var lambda = Expression.Lambda<Func<T, bool>>(combinedExpression!, parameter);
-        return query.Where(lambda);
+        var converter = new CriteriaToExpressionConverter();
+        var parameter = Expression.Parameter(typeof(T), "x");
+        var convertedExpression = converter.Convert(parameter, combinedCriteria);
+        var lambda = Expression.Lambda<Func<T, bool>>(convertedExpression, parameter);
+
+        return xpQuery.Where(lambda);
     }
 }
