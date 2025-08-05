@@ -30,6 +30,11 @@ public class CountryController(IDataService dataService) : ControllerBase
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize);
         }
+        else
+        {
+            page = 0;
+            pageSize = 0;
+        }
         
         var result = await query
             .Select(country => new ListItem
