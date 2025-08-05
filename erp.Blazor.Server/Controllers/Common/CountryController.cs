@@ -33,7 +33,7 @@ public class CountryController(IDataService dataService) : ControllerBase
         else
         {
             page = 0;
-            pageSize = 0;
+            pageSize = totalCount;
         }
         
         var result = await query
