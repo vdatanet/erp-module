@@ -15,7 +15,7 @@ public class CountryController(IDataService dataService) : ControllerBase
 {
     [HttpGet]
     [SwaggerOperation("Returns all Countries")]
-    public async Task<ActionResult<List<ListItem>>> GetCountries(int page = 1, int pageSize = 20)
+    public async Task<ActionResult<PagedResponse<ListItem>>> GetCountries(int page = 1, int pageSize = 20)
     {
         var objectSpace = dataService.GetObjectSpace(typeof(Country));
         
@@ -45,7 +45,7 @@ public class CountryController(IDataService dataService) : ControllerBase
             })
             .ToListAsync();
 
-        return Ok(new
+        return Ok(new PagedResponse<ListItem>
         { 
             Items = result, 
             TotalCount = totalCount,
