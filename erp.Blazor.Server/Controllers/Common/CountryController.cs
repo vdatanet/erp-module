@@ -1,3 +1,5 @@
+#nullable enable
+
 using DevExpress.ExpressApp.WebApi.Services;
 using DevExpress.Xpo;
 using erp.Blazor.Server.DTOs.Common.Response;
@@ -15,21 +17,19 @@ public class CountryController(IDataService dataService) : ControllerBase
 {
     [HttpGet]
     [SwaggerOperation("Returns all Countries")]
-    public async Task<ActionResult<PagedResponse<ListItem>>> GetCountries(string? search = null, int page = 1, int pageSize = 20)
+    public async Task<ActionResult<PagedResponse<ListItem>>> GetCountries(string? search = null, int page = 1,
+        int pageSize = 20)
     {
         var objectSpace = dataService.GetObjectSpace(typeof(Country));
-        
-        IQueryable<Country> query = objectSpace.GetObjectsQuery<Country>();
 
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            query = query.Where(c => c.Name.Contains(search));
-        }
+        var query = objectSpace.GetObjectsQuery<Country>();
+
+        if (!string.IsNullOrEmpty(search)) query = query.Where(c => c.Name.Contains(search));
 
         query = query.OrderBy(c => c.Name);
-        
+
         var totalCount = await query.CountAsync();
-        
+
         if (page > 0)
         {
             query = query
@@ -42,8 +42,6 @@ public class CountryController(IDataService dataService) : ControllerBase
             pageSize = totalCount;
         }
         
-        
-        
         var result = await query
             .Select(country => new ListItem
             {
@@ -54,11 +52,11 @@ public class CountryController(IDataService dataService) : ControllerBase
             .ToListAsync();
 
         return Ok(new PagedResponse<ListItem>
-        { 
-            Items = result, 
+        {
+            Items = result,
             TotalCount = totalCount,
             Page = page,
-            PageSize = pageSize 
+            PageSize = pageSize
         });
     }
 }
