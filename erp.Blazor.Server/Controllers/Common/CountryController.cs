@@ -15,12 +15,18 @@ public class CountryController(IDataService dataService) : ControllerBase
 {
     [HttpGet]
     [SwaggerOperation("Returns all Countries")]
-    public async Task<ActionResult<PagedResponse<ListItem>>> GetCountries(int page = 1, int pageSize = 20)
+    public async Task<ActionResult<PagedResponse<ListItem>>> GetCountries(string? search = null, int page = 1, int pageSize = 20)
     {
         var objectSpace = dataService.GetObjectSpace(typeof(Country));
         
-        IQueryable<Country> query = objectSpace.GetObjectsQuery<Country>()
-            .OrderBy(c => c.Name);
+        IQueryable<Country> query = objectSpace.GetObjectsQuery<Country>();
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            query = query.Where(c => c.Name.Contains(search));
+        }
+
+        query = query.OrderBy(c => c.Name);
         
         var totalCount = await query.CountAsync();
         
@@ -35,6 +41,8 @@ public class CountryController(IDataService dataService) : ControllerBase
             page = 0;
             pageSize = totalCount;
         }
+        
+        
         
         var result = await query
             .Select(country => new ListItem
