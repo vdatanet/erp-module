@@ -25,7 +25,8 @@ public class CountryController(IDataService dataService) : ControllerBase
 
         var query = objectSpace.GetObjectsQuery<Country>();
 
-        if (!string.IsNullOrEmpty(search)) query = query.Where(c => c.Name.Contains(search));
+        query = query.ApplySearch(search, c => c.Name)
+            .OrderBy(c => c.Name);
 
         query = query.ApplyPaging(page, pageSize);
 
