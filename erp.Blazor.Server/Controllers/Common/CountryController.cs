@@ -3,6 +3,7 @@
 using DevExpress.ExpressApp.WebApi.Services;
 using DevExpress.Xpo;
 using erp.Blazor.Server.DTOs.Common.Response;
+using erp.Blazor.Server.Extensions;
 using erp.Module.BusinessObjects.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,7 @@ public class CountryController(IDataService dataService) : ControllerBase
 
         if (!string.IsNullOrEmpty(search)) query = query.Where(c => c.Name.Contains(search));
 
-        query = query.OrderBy(c => c.Name);
+        query = query.ApplyPaging(page, pageSize);
 
         var totalCount = await query.CountAsync();
 
