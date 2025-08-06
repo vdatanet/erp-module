@@ -30,13 +30,10 @@ public class CountryController(IDataService dataService) : ControllerBase
 
         var totalCount = await query.CountAsync();
         
-        if (page <= 0)
-        {
-            pageSize = totalCount;
-            page = 1;
-        }
-        
         if (totalCount < 1) return Ok(new PagedResponse<ListItem>());
+        
+        if (page <= 0) page = 1;
+        if (pageSize <= 0) pageSize = 20;
         
         query = query.ApplyPaging(page, pageSize);
         
@@ -54,7 +51,7 @@ public class CountryController(IDataService dataService) : ControllerBase
             Items = result,
             TotalCount = totalCount,
             Page = page,
-            PageSize = pageSize
+            PageSize = pageSize,
         });
     }
 }
