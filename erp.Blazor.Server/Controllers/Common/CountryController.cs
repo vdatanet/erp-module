@@ -32,8 +32,13 @@ public class CountryController(IDataService dataService) : ControllerBase
         
         if (totalCount < 1) return Ok(new PagedResponse<ListItem>());
         
-        if (page <= 0) page = 1;
         if (pageSize <= 0) pageSize = 20;
+
+        if (page <= 0)
+        {
+            page = 1;
+            pageSize = totalCount;
+        }
         
         query = query.ApplyPaging(page, pageSize);
         
