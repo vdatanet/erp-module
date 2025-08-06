@@ -24,19 +24,20 @@ public class CountryController(IDataService dataService) : ControllerBase
         var objectSpace = dataService.GetObjectSpace(typeof(Country));
 
         var query = objectSpace.GetObjectsQuery<Country>();
-        var totalCount = await query.CountAsync();
 
         query = query.ApplySearch(search, c => c.Name)
             .OrderBy(c => c.Name);
 
+        var totalCount = await query.CountAsync();
+
         query = query.ApplyPaging(page, pageSize);
-        
+
         if (page <= 0)
         {
             pageSize = totalCount;
             page = 1;
         }
-        
+
         var result = await query
             .Select(country => new ListItem
             {
