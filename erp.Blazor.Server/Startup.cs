@@ -28,7 +28,6 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OData;
 using Microsoft.OpenApi.Models;
-using Country = erp.Module.BusinessObjects.Common.Country;
 using State = erp.Module.BusinessObjects.Common.State;
 using Task = erp.Module.BusinessObjects.Common.Task;
 
@@ -65,7 +64,7 @@ public class Startup(IConfiguration configuration)
                     options.BusinessObject<Attachment>();
                     options.BusinessObject<Picture>();
                     options.BusinessObject<Task>();
-                    
+
                     options.BusinessObject<Contact>();
                     options.BusinessObject<CompanyInfo>();
                     options.BusinessObject<Partner>();
