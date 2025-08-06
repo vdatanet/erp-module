@@ -29,15 +29,17 @@ public class CountryController(IDataService dataService) : ControllerBase
             .OrderBy(c => c.Name);
 
         var totalCount = await query.CountAsync();
-
-        query = query.ApplyPaging(page, pageSize);
-
+        
         if (page <= 0)
         {
             pageSize = totalCount;
             page = 1;
         }
-
+        
+        if (totalCount < 1) return Ok(new PagedResponse<ListItem>());
+        
+        query = query.ApplyPaging(page, pageSize);
+        
         var result = await query
             .Select(country => new ListItem
             {
