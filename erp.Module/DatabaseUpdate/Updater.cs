@@ -14,13 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 namespace erp.Module.DatabaseUpdate;
 
 // For more typical usage scenarios, be sure to check out https://docs.devexpress.com/eXpressAppFramework/DevExpress.ExpressApp.Updating.ModuleUpdater
-public class Updater : ModuleUpdater
+public class Updater(IObjectSpace objectSpace, Version currentDbVersion) : ModuleUpdater(objectSpace, currentDbVersion)
 {
-    public Updater(IObjectSpace objectSpace, Version currentDbVersion) :
-        base(objectSpace, currentDbVersion)
-    {
-    }
-
     public override void UpdateDatabaseAfterUpdateSchema()
     {
         base.UpdateDatabaseAfterUpdateSchema();
@@ -32,7 +27,7 @@ public class Updater : ModuleUpdater
         //}
         if (!ObjectSpace.CanInstantiate(typeof(ApplicationUser))) return;
 
-#if !RELEASE
+//#if !RELEASE
         if (TenantName == null)
         {
             _ = CreateTenant("demo", "erp_demo");
@@ -40,7 +35,7 @@ public class Updater : ModuleUpdater
             _ = CreateTenant("miravent", "erp_miravent");
             ObjectSpace.CommitChanges();
         }
-#endif
+//#endif
 
         // The code below creates users and roles for testing purposes only.
         // In production code, you can create users and assign roles to them automatically, as described in the following help topic:
@@ -107,7 +102,7 @@ public class Updater : ModuleUpdater
             tenant = ObjectSpace.CreateObject<Tenant>();
             tenant.Name = tenantName;
             tenant.ConnectionString =
-                $"XpoProvider=MySql;server=erp.vdata.net;user={databaseName};password=G@n@$3l3ctiv@;database={databaseName}";
+                $"XpoProvider=MySql;server=vdatanet.mysql.database.azure.com;user=vdatanet;password=G@n@$3l3ctiv@;database={databaseName}";
         }
 
         return tenant;
