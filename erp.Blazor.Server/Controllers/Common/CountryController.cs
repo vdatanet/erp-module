@@ -30,18 +30,6 @@ public class CountryController(IDataService dataService) : ControllerBase
         query = query.ApplyPaging(page, pageSize);
 
         var totalCount = await query.CountAsync();
-
-        if (page > 0)
-        {
-            query = query
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize);
-        }
-        else
-        {
-            page = 0;
-            pageSize = totalCount;
-        }
         
         var result = await query
             .Select(country => new ListItem
