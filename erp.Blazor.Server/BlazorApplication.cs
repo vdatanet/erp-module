@@ -24,12 +24,11 @@ namespace erp.Blazor.Server
         {
             base.OnSetupStarted();
 
-//#if DEBUG
-            //if(System.Diagnostics.Debugger.IsAttached && CheckCompatibilityType == CheckCompatibilityType.DatabaseSchema) {
-            if(CheckCompatibilityType == CheckCompatibilityType.DatabaseSchema) {
+#if DEBUG
+            if(System.Diagnostics.Debugger.IsAttached && CheckCompatibilityType == CheckCompatibilityType.DatabaseSchema) {
                 DatabaseUpdateMode = DatabaseUpdateMode.UpdateDatabaseAlways;
             }
-//#endif
+#endif
         }
         void erpBlazorApplication_DatabaseVersionMismatch(object sender, DatabaseVersionMismatchEventArgs e)
         {
