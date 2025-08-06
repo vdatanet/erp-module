@@ -13,26 +13,23 @@ public static class QueryableExtensions
         if (page > 0 && pageSize > 0) query = query.Skip((page - 1) * pageSize).Take(pageSize);
         return query;
     }
-    
+
     public static IQueryable<T> ApplySearch<T>(
         this IQueryable<T> query,
         string? search,
         Expression<Func<T, string>> propertySelector)
     {
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            var parameter = propertySelector.Parameters[0];
-            var toLowerMethod = typeof(string).GetMethod(nameof(string.ToLower), Type.EmptyTypes)!;
-            var containsMethod = typeof(string).GetMethod(nameof(string.Contains), [typeof(string)])!;
+        if (string.IsNullOrWhiteSpace(search)) return query;
+        var parameter = propertySelector.Parameters[0];
+        var toLowerMethod = typeof(string).GetMethod(nameof(string.ToLower), Type.EmptyTypes)!;
+        var containsMethod = typeof(string).GetMethod(nameof(string.Contains), [typeof(string)])!;
 
-            var property = Expression.Call(propertySelector.Body, toLowerMethod);
-            var searchConstant = Expression.Constant(search.ToLower());
-            var contains = Expression.Call(property, containsMethod, searchConstant);
+        var property = Expression.Call(propertySelector.Body, toLowerMethod);
+        var searchConstant = Expression.Constant(search.ToLower());
+        var contains = Expression.Call(property, containsMethod, searchConstant);
 
-            var lambda = Expression.Lambda<Func<T, bool>>(contains, parameter);
-            query = query.Where(lambda);
-        }
+        var lambda = Expression.Lambda<Func<T, bool>>(contains, parameter);
+        query = query.Where(lambda);
         return query;
     }
-    
 }
