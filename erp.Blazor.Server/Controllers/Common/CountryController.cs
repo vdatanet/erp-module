@@ -18,8 +18,8 @@ public class CountryController(IDataService dataService) : ControllerBase
 {
     [HttpGet]
     [SwaggerOperation("Returns all Countries")]
-    public async Task<ActionResult<PagedResponse<ListItem>>> GetCountries(string? search = null, int page = 1,
-        int pageSize = 20)
+    public async Task<ActionResult<PagedResponse<ListItem>>> GetCountries(string? search = null, int page = 1, int pageSize = 20)
+    
     {
         var objectSpace = dataService.GetObjectSpace(typeof(Country));
 
@@ -57,6 +57,23 @@ public class CountryController(IDataService dataService) : ControllerBase
             TotalCount = totalCount,
             Page = page,
             PageSize = pageSize,
+        });
+    }
+
+    [HttpGet("{countryOid}")]
+    [SwaggerOperation("Returns Country by Oid")]
+    public async Task<ActionResult<ListItem>> GetCountry(string countryOid)
+    {
+        var objectSpace = dataService.GetObjectSpace(typeof(Country));
+
+        var country = await objectSpace.GetObjectsQuery<Country>().FirstOrDefaultAsync(x => x.Oid.ToString() == countryOid);
+        
+        if (country == null) return NotFound();
+        return Ok(new ListItem
+        {
+            Oid = country.Oid.ToString(),
+            Name = country.Name,
+            Description = null
         });
     }
 }
