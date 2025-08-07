@@ -1,5 +1,7 @@
 using System.ComponentModel;
+using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.Persistent.Base;
+using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Common;
 using erp.Module.BusinessObjects.Contacts;
@@ -12,6 +14,10 @@ namespace erp.Module.BusinessObjects.Sales;
 [NavigationItem("Sales")]
 [ImageName("BO_Order")]
 [DefaultProperty(nameof(OrderNumber))]
+[Appearance("OrderPrefixDisabled", AppearanceItemType = "ViewItem", TargetItems = "Prefix",
+    Criteria = "This is not null and !IsNewObject(This)", Context = "DetailView", Enabled = false)]
+[Appearance("OrderNumberDisabled", AppearanceItemType = "ViewItem", TargetItems = "OrderNumber",
+    Criteria = "This is not null and !IsNewObject(This)", Context = "DetailView", Enabled = false)]
 public class SalesOrder(Session session): BaseEntity(session)
 {
     private string _prefix;
@@ -21,6 +27,7 @@ public class SalesOrder(Session session): BaseEntity(session)
     private Customer _customer;
     private decimal _totalAmount;
 
+    [RuleRequiredField]
     public string Prefix
     {
         get => _prefix;
@@ -33,6 +40,7 @@ public class SalesOrder(Session session): BaseEntity(session)
         set => SetPropertyValue(nameof(OrderNumber), ref _orderNumber, value);
     }
     
+    [RuleRequiredField]
     public DateTime OrderDate
     {
         get => _orderDate;
