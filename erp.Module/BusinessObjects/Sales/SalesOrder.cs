@@ -4,7 +4,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Common;
 using erp.Module.BusinessObjects.Contacts;
 using erp.Module.BusinessObjects.Crm;
-using erp.Module.Services;
+using SequenceFactory = erp.Module.Factories.SequenceFactory;
 
 namespace erp.Module.BusinessObjects.Sales;
 
@@ -66,10 +66,8 @@ public class SalesOrder(Session session): BaseEntity(session)
     protected override void OnSaving()
     {
         base.OnSaving();
-
-        // Solo asignar número si es un objeto nuevo y no tiene número
+        
         if (!Session.IsNewObject(this) || !string.IsNullOrEmpty(OrderNumber) || Session is NestedUnitOfWork) return;
-        var sequenceService = new SequenceService(Session);
-        OrderNumber = sequenceService.GetNextSequence($"{typeof(SalesOrder).FullName}.{Prefix}", Prefix, 6);
+        OrderNumber = SequenceFactory.GetNextSequence(Session, $"{typeof(SalesOrder).FullName}.{Prefix}", Prefix, 5);
     }
 }
