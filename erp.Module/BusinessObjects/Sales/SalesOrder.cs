@@ -68,10 +68,8 @@ public class SalesOrder(Session session): BaseEntity(session)
         base.OnSaving();
 
         // Solo asignar número si es un objeto nuevo y no tiene número
-        if (Session.IsNewObject(this) && string.IsNullOrEmpty(OrderNumber))
-        {
-            var sequenceService = new SequenceService(Session);
-            OrderNumber = sequenceService.GetNextSequence($"{typeof(SalesOrder).FullName}.{Prefix}", Prefix, 6);
-        }
+        if (!Session.IsNewObject(this) || !string.IsNullOrEmpty(OrderNumber) || Session is NestedUnitOfWork) return;
+        var sequenceService = new SequenceService(Session);
+        OrderNumber = sequenceService.GetNextSequence($"{typeof(SalesOrder).FullName}.{Prefix}", Prefix, 6);
     }
 }
