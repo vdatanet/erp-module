@@ -1,5 +1,4 @@
 #nullable enable
-
 using DevExpress.ExpressApp.WebApi.Services;
 using DevExpress.Xpo;
 using erp.Blazor.Server.DTOs.Common.Response;
@@ -18,8 +17,8 @@ public class CountryController(IDataService dataService) : ControllerBase
 {
     [HttpGet]
     [SwaggerOperation("Returns all Countries")]
-    public async Task<ActionResult<PagedResponse<ListItem>>> GetCountries(string? search = null, int page = 1, int pageSize = 20)
-    
+    public async Task<ActionResult<PagedResponse<ListItem>>> GetCountries(string? search = null, int page = 1,
+        int pageSize = 20)
     {
         var objectSpace = dataService.GetObjectSpace(typeof(Country));
 
@@ -29,9 +28,9 @@ public class CountryController(IDataService dataService) : ControllerBase
             .OrderBy(c => c.Name);
 
         var totalCount = await query.CountAsync();
-        
+
         if (totalCount < 1) return Ok(new PagedResponse<ListItem>());
-        
+
         if (pageSize <= 0) pageSize = 20;
 
         if (page <= 0)
@@ -39,9 +38,9 @@ public class CountryController(IDataService dataService) : ControllerBase
             page = 1;
             pageSize = totalCount;
         }
-        
+
         query = query.ApplyPaging(page, pageSize);
-        
+
         var result = await query
             .Select(country => new ListItem
             {
@@ -56,7 +55,7 @@ public class CountryController(IDataService dataService) : ControllerBase
             Items = result,
             TotalCount = totalCount,
             Page = page,
-            PageSize = pageSize,
+            PageSize = pageSize
         });
     }
 
@@ -66,8 +65,9 @@ public class CountryController(IDataService dataService) : ControllerBase
     {
         var objectSpace = dataService.GetObjectSpace(typeof(Country));
 
-        var country = await objectSpace.GetObjectsQuery<Country>().FirstOrDefaultAsync(x => x.Oid.ToString() == countryOid);
-        
+        var country = await objectSpace.GetObjectsQuery<Country>()
+            .FirstOrDefaultAsync(x => x.Oid.ToString() == countryOid);
+
         if (country == null) return NotFound();
         return Ok(new ListItem
         {
