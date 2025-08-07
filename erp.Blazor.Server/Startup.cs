@@ -12,11 +12,6 @@ using DevExpress.Persistent.BaseImpl.PermissionPolicy;
 using erp.Blazor.Server.Services;
 using erp.Module;
 using erp.Module.BusinessObjects;
-using erp.Module.BusinessObjects.Common;
-using erp.Module.BusinessObjects.Contacts;
-using erp.Module.BusinessObjects.Crm;
-using erp.Module.BusinessObjects.Products;
-using erp.Module.BusinessObjects.Sales;
 using erp.WebApi.JWT;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -28,8 +23,6 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OData;
 using Microsoft.OpenApi.Models;
-using State = erp.Module.BusinessObjects.Common.State;
-using Task = erp.Module.BusinessObjects.Common.Task;
 
 namespace erp.Blazor.Server;
 
@@ -56,30 +49,10 @@ public class Startup(IConfiguration configuration)
             {
                 webApiBuilder.AddXpoServices();
 
-                webApiBuilder.ConfigureOptions(options =>
-                {
-                    //options.BusinessObject<Country>();
-                    options.BusinessObject<State>();
-                    options.BusinessObject<City>();
-                    options.BusinessObject<Attachment>();
-                    options.BusinessObject<Picture>();
-                    options.BusinessObject<Task>();
-
-                    options.BusinessObject<Contact>();
-                    options.BusinessObject<CompanyInfo>();
-                    options.BusinessObject<Partner>();
-                    options.BusinessObject<Customer>();
-                    options.BusinessObject<Vendor>();
-                    options.BusinessObject<Employee>();
-
-                    options.BusinessObject<Lead>();
-
-                    options.BusinessObject<Product>();
-                    options.BusinessObject<Category>();
-
-                    options.BusinessObject<SalesOrder>();
-                    options.BusinessObject<OrderLine>();
-                });
+                //webApiBuilder.ConfigureOptions(options =>
+                //{
+                //options.BusinessObject<YourBusinessObject>();
+                //});
             });
 
             builder.Modules

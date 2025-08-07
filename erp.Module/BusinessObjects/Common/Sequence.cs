@@ -1,10 +1,8 @@
-using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
 
 namespace erp.Module.BusinessObjects.Common;
 
-[DefaultClassOptions]
 public class Sequence(Session session) : BaseObject(session)
 {
     private string _name;
@@ -23,7 +21,7 @@ public class Sequence(Session session) : BaseObject(session)
         get => _prefix;
         set => SetPropertyValue(nameof(Prefix), ref _prefix, value);
     }
-    
+
     public int CurrentValue
     {
         get => _currentValue;
