@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace erp.Module.BusinessObjects.Common;
 
 [NonPersistent]
+[ModelDefault("IsCloneable", "True")]
 public abstract class BaseEntity(Session session) : BaseObject(session)
 {
     private ApplicationUser _createdBy;

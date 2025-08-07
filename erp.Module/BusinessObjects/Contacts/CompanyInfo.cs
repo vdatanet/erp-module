@@ -6,7 +6,7 @@ namespace erp.Module.BusinessObjects.Contacts;
 
 [DefaultClassOptions]
 [NavigationItem("Contacts")]
-[ImageName("BO_Company")]
+[ImageName("Actions_Info")]
 [RuleObjectExists("CompanyInfoExists", DefaultContexts.Save, "True", InvertResult = true,
     CustomMessageTemplate = "Company Info already exists.")]
 [RuleCriteria("NotDeleteCompanyInfo", DefaultContexts.Delete, "False",
