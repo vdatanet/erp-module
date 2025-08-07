@@ -9,6 +9,7 @@ using DevExpress.Persistent.BaseImpl.MultiTenancy;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
 using erp.Module.BusinessObjects;
 using erp.Module.BusinessObjects.Common;
+using erp.Module.BusinessObjects.Contacts;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.DatabaseUpdate;
