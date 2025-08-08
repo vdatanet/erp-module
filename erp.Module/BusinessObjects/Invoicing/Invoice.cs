@@ -83,8 +83,9 @@ public class Invoice(Session session): BaseEntity(session)
         
         foreach (var invoiceLine in InvoiceLines)
         {
-            invoiceLine.Recalculate(); // Garantiza consistencia
+            invoiceLine.Recalculate();
         }
+        
         RecalculateTotals();
         
         if (!Session.IsNewObject(this) || !string.IsNullOrEmpty(InvoiceNumber) || Session is NestedUnitOfWork) return;
