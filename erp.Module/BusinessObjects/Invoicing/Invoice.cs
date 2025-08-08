@@ -58,9 +58,9 @@ public class Invoice(Session session): BaseEntity(session)
         set => SetPropertyValue(nameof(TotalAmount), ref _totalAmount, value);
     }
     
-    //[Aggregated]
-    //[Association("SalesOrder-OrderLines")]
-    //public XPCollection<OrderLine> OrderLines => GetCollection<OrderLine>(nameof(OrderLines));
+    [Aggregated]
+    [Association("Invoice-InvoiceLines")]
+    public XPCollection<InvoiceLine> InvoiceLines => GetCollection<InvoiceLine>(nameof(InvoiceLines));
     
     protected override void OnSaving()
     {
