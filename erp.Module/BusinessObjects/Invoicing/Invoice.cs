@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using DevExpress.ExpressApp.ConditionalAppearance;
+using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
@@ -52,6 +53,8 @@ public class Invoice(Session session): BaseEntity(session)
         set => SetPropertyValue(nameof(Customer), ref _customer, value);
     }
     
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
     public decimal TotalAmount
     {
         get => _totalAmount;
@@ -62,9 +65,26 @@ public class Invoice(Session session): BaseEntity(session)
     [Association("Invoice-InvoiceLines")]
     public XPCollection<InvoiceLine> InvoiceLines => GetCollection<InvoiceLine>(nameof(InvoiceLines));
     
+    public void RecalculateTotals()
+    {
+        if (IsLoading || Session?.IsObjectsLoading == true)
+            return;
+
+        // Suma de campos persistidos en líneas para rendimiento
+        //SubTotal = Lines.Sum(l => l.BaseAmount);
+        //TaxTotal = Lines.Sum(l => l.TaxAmount);
+        TotalAmount = InvoiceLines.Sum(l => l.BaseAmount);
+    }
+    
     protected override void OnSaving()
     {
         base.OnSaving();
+        
+        foreach (var invoiceLine in InvoiceLines)
+        {
+            invoiceLine.Recalculate(); // Garantiza consistencia
+        }
+        RecalculateTotals();
         
         if (!Session.IsNewObject(this) || !string.IsNullOrEmpty(InvoiceNumber) || Session is NestedUnitOfWork) return;
         InvoiceNumber = SequenceFactory.GetNextSequence(Session, $"{typeof(Invoice).FullName}.{Prefix}", Prefix, 5);

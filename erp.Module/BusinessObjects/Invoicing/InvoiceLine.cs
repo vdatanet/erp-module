@@ -10,6 +10,7 @@ namespace erp.Module.BusinessObjects.Invoicing;
 public class InvoiceLine(Session session): BaseEntity(session)
 {
     private Invoice _invoice;
+    private Invoice _invoiceAtDelete;
     private Product _product;
     private string _productName;
     private string _description;
@@ -104,7 +105,7 @@ public class InvoiceLine(Session session): BaseEntity(session)
         set => SetPropertyValue(nameof(BaseAmount), ref _baseAmount, value);
     }
 
-    private void Recalculate()
+    public void Recalculate()
     {
         var gross = Quantity * UnitPrice;
         var discount = MoneyMath.RoundMoney(gross * (DiscountPercent / 100m));
@@ -125,7 +126,20 @@ public class InvoiceLine(Session session): BaseEntity(session)
         //LineTotal = RoundMoney(BaseAmount + TaxAmount);
 
         // 3) Actualizar totales de la factura
-        //Invoice?.RecalculateTotals();
+        Invoice?.RecalculateTotals();
         //Invoice.TotalAmount    = Invoice.InvoiceLines.Sum(l => l.BaseAmount);
+    }
+    
+    protected override void OnDeleting()
+    {
+        _invoiceAtDelete = Invoice;
+        base.OnDeleting();
+    }
+
+    protected override void OnDeleted()
+    {
+        base.OnDeleted();
+        _invoiceAtDelete?.RecalculateTotals();
+        _invoiceAtDelete = null;
     }
 }
