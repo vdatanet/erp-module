@@ -64,7 +64,7 @@ public class Invoice(Session session): BaseEntity(session)
     
     [Aggregated]
     [Association("Invoice-InvoiceLines")]
-    public XPCollection<InvoiceLine> InvoiceLines => GetCollection<InvoiceLine>(nameof(InvoiceLines));
+    public XPCollection<InvoiceLine> InvoiceLines => GetCollection<InvoiceLine>();
     
     public void RecalculateTotals()
     {
