@@ -1,3 +1,4 @@
+using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Common;
@@ -14,8 +15,9 @@ public class InvoiceLine(Session session): BaseEntity(session)
     private string _description;
     private string _notes;
     private decimal _quantity;
-    private decimal _unitPrice; 
-    private decimal _totalAmount;
+    private decimal _unitPrice;
+    private decimal _discountPercent;
+    private decimal _baseAmount;
     //private decimal _discount;
     //private decimal _tax;
     //private decimal _taxAmount;
@@ -58,21 +60,72 @@ public class InvoiceLine(Session session): BaseEntity(session)
         set => SetPropertyValue(nameof(Notes), ref _notes, value);
     }
     
+    [ImmediatePostData]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
     public decimal Quantity
     {
         get => _quantity;
-        set => SetPropertyValue(nameof(Quantity), ref _quantity, value);
+        set
+        {
+            if (SetPropertyValue(nameof(Quantity), ref _quantity, value)) 
+                Recalculate();
+        }
     }
     
+    [ImmediatePostData]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
     public decimal UnitPrice
     {
         get => _unitPrice;
-        set => SetPropertyValue(nameof(UnitPrice), ref _unitPrice, value);
+        set
+        {
+            if (SetPropertyValue(nameof(UnitPrice), ref _unitPrice, value)) 
+                Recalculate();
+        }
     }
     
-    public decimal TotalAmount
+    [ImmediatePostData]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    public decimal DiscountPercent {
+        get => _discountPercent;
+        set {
+            if (SetPropertyValue(nameof(DiscountPercent), ref _discountPercent, value))
+                Recalculate();
+        }
+    }
+    
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    public decimal BaseAmount {
+        get => _baseAmount;
+        set => SetPropertyValue(nameof(BaseAmount), ref _baseAmount, value);
+    }
+
+    private void Recalculate()
     {
-        get => _totalAmount;
-        set => SetPropertyValue(nameof(TotalAmount), ref _totalAmount, value);
+        var gross = Quantity * UnitPrice;
+        var discount = MoneyMath.RoundMoney(gross * (DiscountPercent / 100m));
+        BaseAmount = MoneyMath.RoundMoney(gross - discount);
+
+        // 2) Impuestos por línea (en orden)
+        //decimal runningTaxSum = 0m;
+        //foreach (var t in Taxes.OrderBy(t => t.Sequence).ThenBy(t => t.Oid))
+        //{
+            //var taxableBase = BaseAmount + (t.IsCompound ? runningTaxSum : 0m);
+            //t.Base = RoundMoney(taxableBase);
+            //var sign = t.IsWithholding ? -1m : 1m;
+            //t.Amount = RoundMoney(t.Base * (t.Rate / 100m) * sign);
+            //runningTaxSum += t.Amount;
+        //}
+
+        //TaxAmount = RoundMoney(Taxes.Sum(tt => tt.Amount));
+        //LineTotal = RoundMoney(BaseAmount + TaxAmount);
+
+        // 3) Actualizar totales de la factura
+        //Invoice?.RecalculateTotals();
+        //Invoice.TotalAmount    = Invoice.InvoiceLines.Sum(l => l.BaseAmount);
     }
 }
