@@ -100,6 +100,7 @@ public class InvoiceLine(Session session): BaseEntity(session)
     
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
+    [ModelDefault("AllowEdit", "False")]
     public decimal BaseAmount {
         get => _baseAmount;
         set => SetPropertyValue(nameof(BaseAmount), ref _baseAmount, value);

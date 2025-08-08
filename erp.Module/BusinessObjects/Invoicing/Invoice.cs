@@ -55,6 +55,7 @@ public class Invoice(Session session): BaseEntity(session)
     
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
+    [ModelDefault("AllowEdit", "False")]
     public decimal TotalAmount
     {
         get => _totalAmount;
