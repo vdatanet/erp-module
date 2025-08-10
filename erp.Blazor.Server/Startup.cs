@@ -23,6 +23,9 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OData;
 using Microsoft.OpenApi.Models;
+using Country = erp.Module.BusinessObjects.Common.Country;
+using State = erp.Module.BusinessObjects.Common.State;
+using City = erp.Module.BusinessObjects.Common.City;
 
 namespace erp.Blazor.Server;
 
@@ -49,10 +52,12 @@ public class Startup(IConfiguration configuration)
             {
                 webApiBuilder.AddXpoServices();
 
-                //webApiBuilder.ConfigureOptions(options =>
-                //{
-                //options.BusinessObject<YourBusinessObject>();
-                //});
+                webApiBuilder.ConfigureOptions(options =>
+                {
+                    options.BusinessObject<Country>();
+                    options.BusinessObject<State>();
+                    options.BusinessObject<City>();
+                });
             });
 
             builder.Modules
