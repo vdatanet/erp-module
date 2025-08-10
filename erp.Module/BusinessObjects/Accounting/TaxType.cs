@@ -17,11 +17,13 @@ public class TaxType(Session session): BaseEntity(session)
     private string _code;
     private string _name;
     private string _notes;
-    private TaxKind _kind;
     private Account _account;
     private decimal _rate;
     private bool _isActive;
+    private bool _isAvailableInSales;
+    private bool _isAvailableInPurchases;
     private bool _isCompound;
+    private bool _isWithHolding;
     
     [RuleRequiredField]
     [RuleUniqueValue]
@@ -45,12 +47,6 @@ public class TaxType(Session session): BaseEntity(session)
         set => SetPropertyValue(nameof(Notes), ref _notes, value);
     }
     
-    public TaxKind Kind
-    {
-        get => _kind;
-        set => SetPropertyValue(nameof(Kind), ref _kind, value);
-    }
-    
     public Account Account
     {
         get => _account;
@@ -70,11 +66,29 @@ public class TaxType(Session session): BaseEntity(session)
         get => _isActive;
         set => SetPropertyValue(nameof(IsActive), ref _isActive, value);
     }
+
+    public bool IsAvailableInSales
+    {
+        get => _isAvailableInSales;
+        set => SetPropertyValue(nameof(IsAvailableInSales), ref _isAvailableInSales, value);
+    }
+    
+    public bool IsAvailableInPurchases
+    {
+        get => _isAvailableInPurchases;
+        set => SetPropertyValue(nameof(IsAvailableInPurchases), ref _isAvailableInPurchases, value);
+    }
     
     public bool IsCompound
     {
         get => _isCompound;
         set => SetPropertyValue(nameof(IsCompound), ref _isCompound, value);
+    }
+
+    public bool IsWithHolding
+    {
+        get => _isWithHolding;
+        set => SetPropertyValue(nameof(IsWithHolding), ref _isWithHolding, value);
     }
     
     [Association("Products-SalesTaxes")]
@@ -82,12 +96,6 @@ public class TaxType(Session session): BaseEntity(session)
     
     [Association("Products-PurchaseTaxes")]
     public XPCollection<Product> ProductPurchaseTaxes => GetCollection<Product>(nameof(ProductPurchaseTaxes));
-    
-    public enum TaxKind {
-        OutputTax,
-        Withholding,
-        Other
-    }
     
     public override void AfterConstruction()
     {
@@ -98,8 +106,10 @@ public class TaxType(Session session): BaseEntity(session)
     private void InitValues()
     {
         IsActive = true;
+        IsAvailableInSales = false;
+        IsAvailableInPurchases = false;
         IsCompound = false;
-        Kind = TaxKind.OutputTax;
+        IsWithHolding = false;
         Rate = 0;
         Account = null;
     }
