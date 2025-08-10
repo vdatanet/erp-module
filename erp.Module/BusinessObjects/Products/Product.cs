@@ -2,6 +2,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Accounting;
 using erp.Module.BusinessObjects.Common;
 using erp.Module.BusinessObjects.Helpers;
 using Task = erp.Module.BusinessObjects.Common.Task;
@@ -98,6 +99,9 @@ public class Product(Session session) : BaseEntity(session)
         get => _picture;
         set => SetPropertyValue(nameof(Picture), ref _picture, value);
     }
+    
+    [Association("Products-TypeTaxes")]
+    public XPCollection<TaxType> TaxTypes => GetCollection<TaxType>(nameof(TaxTypes));
     
     [Aggregated]
     [Association("Product-Tasks")]
