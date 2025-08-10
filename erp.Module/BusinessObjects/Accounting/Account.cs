@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Text;
 using DevExpress.Persistent.Base;
+using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Common;
 
@@ -23,6 +24,8 @@ public class Account(Session session): BaseEntity(session)
     private AccountType _type;
     private AccountNature _nature;
     
+    [RuleRequiredField]
+    [RuleUniqueValue]
     public string Code
     {
         get => _code;
@@ -63,7 +66,7 @@ public class Account(Session session): BaseEntity(session)
             while (current != null) {
                 if (sb.Length > 0)
                     sb.Insert(0, " > ");
-                sb.Insert(0, current.Name);
+                sb.Insert(0, current.Code);
                 current = current.ParentAccount;
             }
             return sb.ToString();
