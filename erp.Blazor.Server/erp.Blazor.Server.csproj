@@ -40,4 +40,7 @@
   <ItemGroup>
     <ProjectReference Include="..\erp.Module\erp.Module.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controllers\Common\" />
+  </ItemGroup>
 </Project>
