@@ -22,7 +22,7 @@ public class Product(Session session) : BaseEntity(session)
     private decimal _standardCost;
     private decimal _priceList;
     private Account _salesAccount;
-    private Account _purchasesAccount;
+    private Account _purchaseAccount;
     private bool _isActive;
     private bool _isAvailableInSales;
     private bool _isAvailableInPurchases;
@@ -85,10 +85,10 @@ public class Product(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(SalesAccount), ref _salesAccount, value);
     }
 
-    public Account PurchasesAccount
+    public Account PurchaseAccount
     {
-        get => _purchasesAccount;
-        set => SetPropertyValue(nameof(PurchasesAccount), ref _purchasesAccount, value);
+        get => _purchaseAccount;
+        set => SetPropertyValue(nameof(PurchaseAccount), ref _purchaseAccount, value);
     }
 
     public bool IsActive
@@ -159,5 +159,8 @@ public class Product(Session session) : BaseEntity(session)
         IsAvailableInPurchases = false;
         IsAvailableInPos = false;
         var companyInfo = CompanyInfoHelper.GetCompanyInfo(Session);
+        if (companyInfo == null) return;
+        if (companyInfo.DefaultSalesAccount != null) SalesAccount = companyInfo.DefaultSalesAccount;
+        if (companyInfo.DefaultPurchaseAccount != null) PurchaseAccount = companyInfo.DefaultPurchaseAccount;
     }
 }
