@@ -7,7 +7,7 @@ namespace erp.Module.BusinessObjects.Accounting;
 
 [DefaultClassOptions]
 [NavigationItem("Accounting")]
-[ImageName("BO_Tax")]
+[ImageName("Top10Percent")]
 public class TaxType(Session session): BaseEntity(session)
 {
     private string _name;
