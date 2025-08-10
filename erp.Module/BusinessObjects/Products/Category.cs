@@ -7,7 +7,7 @@ namespace erp.Module.BusinessObjects.Products;
 
 [DefaultClassOptions]
 [NavigationItem("Products")]
-[ImageName("BO_Category")]
+[ImageName("BO_Product_Group")]
 public class Category(Session session) : BaseEntity(session)
 {
     private string _name;

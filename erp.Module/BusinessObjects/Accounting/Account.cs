@@ -1,14 +1,21 @@
+using System.ComponentModel;
+using System.Text;
+using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Common;
 
 namespace erp.Module.BusinessObjects.Accounting;
 
+[DefaultClassOptions]
+[NavigationItem("Accounting")]
+[ImageName("CustomerContactDirectory")]
+[DefaultProperty(nameof(Code))]
 public class Account(Session session): BaseEntity(session)
 {
     
     private string _code;
     private string _name;
-    private string _description;
+    private string _notes;
     private int _level;
     private Account _parentAccount;
     private bool _isActive;
@@ -22,16 +29,18 @@ public class Account(Session session): BaseEntity(session)
         set => SetPropertyValue(nameof(Code), ref _code, value);
     }
     
+    [Size(255)]
     public string Name
     {
         get => _name;
         set => SetPropertyValue(nameof(Name), ref _name, value);    
     }
     
-    public string Description
+    [Size(1000)]
+    public string Notes
     {
-        get => _description;
-        set => SetPropertyValue(nameof(Description), ref _description, value);
+        get => _notes;
+        set => SetPropertyValue(nameof(Notes), ref _notes, value);
     }
     
     public int Level
@@ -40,11 +49,25 @@ public class Account(Session session): BaseEntity(session)
         set => SetPropertyValue(nameof(Level), ref _level, value);  
     }
     
-    [Association("Account-Subaccounts")]
+    [Association("Parent-ChildrenAccounts")]
     public Account ParentAccount
     {
         get => _parentAccount;
         set => SetPropertyValue(nameof(ParentAccount), ref _parentAccount, value);
+    }
+    
+    public string FullPath {
+        get {
+            var sb = new StringBuilder();
+            Account current = this;
+            while (current != null) {
+                if (sb.Length > 0)
+                    sb.Insert(0, " > ");
+                sb.Insert(0, current.Name);
+                current = current.ParentAccount;
+            }
+            return sb.ToString();
+        }
     }
     
     public bool IsActive
@@ -71,8 +94,23 @@ public class Account(Session session): BaseEntity(session)
         set => SetPropertyValue(nameof(Nature), ref _nature, value);
     }
     
-    [Association("Account-Subaccounts")]
-    public XPCollection<Account> Subaccounts => GetCollection<Account>(nameof(Subaccounts));
+    [Association("Parent-ChildrenAccounts")]
+    public XPCollection<Account> ChildrenAccounts => GetCollection<Account>(nameof(ChildrenAccounts));
+    
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        InitValues();
+    }
+
+    private void InitValues()
+    {
+        Level = 1;
+        IsActive = true;
+        IsPostable = false;
+        Type = AccountType.Asset;
+        Nature = AccountNature.Debit;
+    }
     
     public enum AccountType
     {
