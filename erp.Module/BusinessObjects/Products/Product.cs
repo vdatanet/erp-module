@@ -100,8 +100,11 @@ public class Product(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(Picture), ref _picture, value);
     }
     
-    [Association("Products-TypeTaxes")]
-    public XPCollection<TaxType> TaxTypes => GetCollection<TaxType>(nameof(TaxTypes));
+    [Association("Products-SalesTaxes")]
+    public XPCollection<TaxType> SalesTaxes => GetCollection<TaxType>(nameof(SalesTaxes));
+    
+    [Association("Products-PurchaseTaxes")]
+    public XPCollection<TaxType> PurchaseTaxes => GetCollection<TaxType>(nameof(PurchaseTaxes));
     
     [Aggregated]
     [Association("Product-Tasks")]

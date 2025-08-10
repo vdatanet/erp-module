@@ -1,9 +1,13 @@
+using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Common;
 using erp.Module.BusinessObjects.Products;
 
 namespace erp.Module.BusinessObjects.Accounting;
 
+[DefaultClassOptions]
+[NavigationItem("Accounting")]
+[ImageName("BO_Tax")]
 public class TaxType(Session session): BaseEntity(session)
 {
     private string _name;
@@ -35,7 +39,10 @@ public class TaxType(Session session): BaseEntity(session)
         set => SetPropertyValue(nameof(IsActive), ref _isActive, value);
     }
     
-    [Association("Products-TypeTaxes")]
-    public XPCollection<Product> Products => GetCollection<Product>(nameof(Products)); 
+    [Association("Products-SalesTaxes")]
+    public XPCollection<Product> ProductSalesTaxes => GetCollection<Product>(nameof(ProductSalesTaxes)); 
+    
+    [Association("Products-PurchaseTaxes")]
+    public XPCollection<Product> ProductPurchaseTaxes => GetCollection<Product>(nameof(ProductPurchaseTaxes)); 
 
 }
