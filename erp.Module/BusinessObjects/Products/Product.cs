@@ -21,7 +21,11 @@ public class Product(Session session) : BaseEntity(session)
     private Category _category;
     private decimal _standardCost;
     private decimal _priceList;
+    private Account _salesAccount;
+    private Account _purchasesAccount;
     private bool _isActive;
+    private bool _isAvailableInSales;
+    private bool _isAvailableInPurchases;
     private bool _isAvailableInPos;
     private string _notes;
     private MediaDataObject _picture;
@@ -75,10 +79,34 @@ public class Product(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(PriceList), ref _priceList, value);
     }
 
+    public Account SalesAccount
+    {
+        get => _salesAccount;
+        set => SetPropertyValue(nameof(SalesAccount), ref _salesAccount, value);
+    }
+
+    public Account PurchasesAccount
+    {
+        get => _purchasesAccount;
+        set => SetPropertyValue(nameof(PurchasesAccount), ref _purchasesAccount, value);
+    }
+
     public bool IsActive
     {
         get => _isActive;
         set => SetPropertyValue(nameof(IsActive), ref _isActive, value);
+    }
+
+    public bool IsAvailableInSales
+    {
+        get => _isAvailableInSales;
+        set => SetPropertyValue(nameof(IsAvailableInSales), ref _isAvailableInSales, value);
+    }
+    
+    public bool IsAvailableInPurchases
+    {
+        get => _isAvailableInPurchases;
+        set => SetPropertyValue(nameof(IsAvailableInPurchases), ref _isAvailableInPurchases, value);
     }
 
     public bool IsAvailableInPos
@@ -127,8 +155,9 @@ public class Product(Session session) : BaseEntity(session)
     private void InitValues()
     {
         IsActive = true;
+        IsAvailableInSales = false;
+        IsAvailableInPurchases = false;
         IsAvailableInPos = false;
         var companyInfo = CompanyInfoHelper.GetCompanyInfo(Session);
-        if (companyInfo?.Name != null) Name = companyInfo.Name;
     }
 }
