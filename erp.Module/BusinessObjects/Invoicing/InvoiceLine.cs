@@ -81,6 +81,13 @@ public class InvoiceLine(Session session): BaseEntity(session)
         // Reiniciar impuestos asociados a la línea al cambiar el producto
         
         DeleteAllTaxes();
+        
+        // Cargar los impuestos asociados al producto
+
+        foreach (var tax in p.SalesTaxes)
+        {
+            
+        }
      
         // Recalcular importes en base a los nuevos datos
         
