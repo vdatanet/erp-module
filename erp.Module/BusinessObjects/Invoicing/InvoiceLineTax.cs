@@ -112,7 +112,7 @@ public class InvoiceLineTax(Session session): BaseEntity(session)
     public decimal TaxBase
     {
         get => _taxBase;
-        protected set => SetPropertyValue(nameof(TaxBase), ref _taxBase, value);
+        set => SetPropertyValue(nameof(TaxBase), ref _taxBase, value);
     }
 
     [ModelDefault("DisplayFormat", "{0:n2}")]
@@ -121,7 +121,7 @@ public class InvoiceLineTax(Session session): BaseEntity(session)
     public decimal Amount
     {
         get => _amount;
-        protected set => SetPropertyValue(nameof(Amount), ref _amount, value);   
+        set => SetPropertyValue(nameof(Amount), ref _amount, value);   
     }
     
     public override void AfterConstruction()

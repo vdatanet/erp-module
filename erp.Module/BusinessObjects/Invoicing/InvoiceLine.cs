@@ -19,16 +19,10 @@ public class InvoiceLine(Session session) : BaseEntity(session)
     private decimal _quantity;
     private decimal _unitPrice;
     private decimal _discountPercent;
-
     private decimal _baseAmount;
-    //private decimal _discount;
-    //private decimal _tax;
-    //private decimal _taxAmount;
-    //private decimal _totalTaxAmount;
-    //private decimal _totalAmountAfterDiscount;
-    //private decimal _totalAmountAfterTax;
-    //private decimal _totalAmountAfterDiscountAndTax;
-
+    private decimal _taxAmount;
+    private decimal _totalAmount;
+    
     [Association("Invoice-InvoiceLines")]
     public Invoice Invoice
     {
@@ -149,15 +143,46 @@ public class InvoiceLine(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(BaseAmount), ref _baseAmount, value);
     }
 
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    [ModelDefault("AllowEdit", "False")]
+    public decimal TaxAmount
+    {
+        get => _taxAmount;
+        set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);
+    }
+
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    [ModelDefault("AllowEdit", "False")]
+    public decimal TotalAmount
+    {
+        get => _totalAmount;
+        set => SetPropertyValue(nameof(TotalAmount), ref _totalAmount, value);
+    }
+
     [Aggregated]
     [Association("InvoiceLine-Taxes")]
     public XPCollection<InvoiceLineTax> Taxes => GetCollection<InvoiceLineTax>();
 
     public void Recalculate()
     {
+        if (IsLoading || IsSaving)
+        {
+            return;
+        }
+        
         var gross = Quantity * UnitPrice;
         var discount = MoneyMath.RoundMoney(gross * (DiscountPercent / 100m));
         BaseAmount = MoneyMath.RoundMoney(gross - discount);
+        
+        var runningTaxSum = 0m;
+
+        foreach (var tax in Taxes)
+        {
+            tax.TaxBase = BaseAmount;
+            tax.Amount = tax.TaxBase * (tax.Rate / 100m);
+        }
 
         // 2) Impuestos por línea (en orden)
         //decimal runningTaxSum = 0m;
