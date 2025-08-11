@@ -17,41 +17,10 @@ namespace erp.Module.BusinessObjects.Base.Sales;
     //Criteria = "This is not null and !IsNewObject(This)", Context = "DetailView", Enabled = false)]
 public abstract class SalesDocument(Session session): BaseEntity(session)
 {
-    private string _prefix;
-    //private string _invoiceNumber;
-    //private DateTime _invoceDate;
-    //private Customer _customer;
     private decimal _baseAmount;
     private decimal _taxAmount;
     private decimal _totalAmount;
-
-    [RuleRequiredField]
-    public string Prefix
-    {
-        get => _prefix;
-        set => SetPropertyValue(nameof(Prefix), ref _prefix, value); 
-    }
-
-    //public string InvoiceNumber
-    //{
-        //get => _invoiceNumber;
-        //set => SetPropertyValue(nameof(InvoiceNumber), ref _invoiceNumber, value);
-    //}
     
-    //[RuleRequiredField]
-    //public DateTime InvoiceDate
-    //{
-        //get => _invoceDate;
-        //set => SetPropertyValue(nameof(InvoiceDate), ref _invoceDate, value);
-    //}
-    
-    //[Association("Customer-Invoices")]
-    //public Customer Customer
-    //{
-        //get => _customer;
-        //set => SetPropertyValue(nameof(Customer), ref _customer, value);
-    //}
-
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     [ModelDefault("AllowEdit", "False")]

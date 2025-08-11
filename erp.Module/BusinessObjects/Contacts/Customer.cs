@@ -17,6 +17,6 @@ public class Customer(Session session) : Partner(session)
     //[Association("Customer-SalesOrders")]
     //public XPCollection<SalesOrder> SalesOrders => GetCollection<SalesOrder>(nameof(SalesOrders));
 
-    //[Association("Customer-Invoices")]
-    //public XPCollection<Invoice> Invoices => GetCollection<Invoice>(nameof(Invoices));
+    [Association("Customer-Invoices")]
+    public XPCollection<Invoice> Invoices => GetCollection<Invoice>(nameof(Invoices));
 }
