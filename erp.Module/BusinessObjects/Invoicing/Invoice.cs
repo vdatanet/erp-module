@@ -24,6 +24,8 @@ public class Invoice(Session session): BaseEntity(session)
     private string _invoiceNumber;
     private DateTime _invoceDate;
     private Customer _customer;
+    private decimal _baseAmount;
+    private decimal _taxAmount;
     private decimal _totalAmount;
 
     [RuleRequiredField]
@@ -52,6 +54,24 @@ public class Invoice(Session session): BaseEntity(session)
         get => _customer;
         set => SetPropertyValue(nameof(Customer), ref _customer, value);
     }
+
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    [ModelDefault("AllowEdit", "False")]
+    public decimal BaseAmount
+    {
+        get => _baseAmount;
+        set => SetPropertyValue(nameof(BaseAmount), ref _baseAmount, value);
+    }
+
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    [ModelDefault("AllowEdit", "False")]
+    public decimal TaxAmount
+    {
+        get => _taxAmount;
+        set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);
+    }
     
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
@@ -70,11 +90,10 @@ public class Invoice(Session session): BaseEntity(session)
     {
         if (IsLoading || Session?.IsObjectsLoading == true)
             return;
-
-        // Suma de campos persistidos en líneas para rendimiento
-        //SubTotal = Lines.Sum(l => l.BaseAmount);
-        //TaxTotal = Lines.Sum(l => l.TaxAmount);
-        TotalAmount = InvoiceLines.Sum(l => l.BaseAmount);
+        
+        BaseAmount = InvoiceLines.Sum(l => l.BaseAmount);
+        TaxAmount = InvoiceLines.Sum(l => l.TaxAmount);
+        TotalAmount = InvoiceLines.Sum(l => l.TotalAmount);
     }
     
     protected override void OnSaving()

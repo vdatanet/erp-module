@@ -182,6 +182,7 @@ public class InvoiceLine(Session session) : BaseEntity(session)
         {
             tax.TaxBase = BaseAmount;
             tax.Amount = tax.TaxBase * (tax.Rate / 100m);
+            runningTaxSum += tax.Amount;
         }
 
         // 2) Impuestos por línea (en orden)
@@ -195,8 +196,8 @@ public class InvoiceLine(Session session) : BaseEntity(session)
         //runningTaxSum += t.Amount;
         //}
 
-        //TaxAmount = RoundMoney(Taxes.Sum(tt => tt.Amount));
-        //LineTotal = RoundMoney(BaseAmount + TaxAmount);
+        TaxAmount = MoneyMath.RoundMoney(Taxes.Sum(tt => tt.Amount));
+        TotalAmount = MoneyMath.RoundMoney(BaseAmount + TaxAmount);
 
         // 3) Actualizar totales de la factura
         Invoice?.RecalculateTotals();
