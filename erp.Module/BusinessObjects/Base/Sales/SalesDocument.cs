@@ -14,7 +14,7 @@ namespace erp.Module.BusinessObjects.Base.Sales;
     //Criteria = "This is not null and !IsNewObject(This)", Context = "DetailView", Enabled = false)]
 //[Appearance("InvoiceNumberDisabled", AppearanceItemType = "ViewItem", TargetItems = nameof(InvoiceNumber),
     //Criteria = "This is not null and !IsNewObject(This)", Context = "DetailView", Enabled = false)]
-public class SalesDocument(Session session): BaseEntity(session)
+public abstract class SalesDocument(Session session): BaseEntity(session)
 {
     private string _prefix;
     //private string _invoiceNumber;
