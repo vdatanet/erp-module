@@ -200,7 +200,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         //TotalAmount = MoneyMath.RoundMoney(BaseAmount + TaxAmount);
 
         // 3) Actualizar totales de la factura
-        //Invoice?.RecalculateTotals();
+        SalesDocument?.RecalculateTotals();
         //Invoice.TotalAmount    = Invoice.InvoiceLines.Sum(l => l.BaseAmount);
     }
 
