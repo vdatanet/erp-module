@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.Validation;
@@ -12,12 +13,12 @@ namespace erp.Module.BusinessObjects.Products;
 [DefaultClassOptions]
 [NavigationItem("Products")]
 [ImageName("BO_Product")]
+[DefaultProperty(nameof(Code))]
 public class Product(Session session) : BaseEntity(session)
 {
     private string _code;
     private string _barcode;
     private string _name;
-    private string _description;
     private Category _category;
     private decimal _standardCost;
     private decimal _priceList;
@@ -46,20 +47,13 @@ public class Product(Session session) : BaseEntity(session)
 
     [RuleUniqueValue]
     [RuleRequiredField]
-    [Size(255)]
+    [Size(SizeAttribute.Unlimited)]
     public string Name
     {
         get => _name;
         set => SetPropertyValue(nameof(Name), ref _name, value);
     }
-
-    [Size(1000)]
-    public string Description
-    {
-        get => _description;
-        set => SetPropertyValue(nameof(Description), ref _description, value);
-    }
-
+    
     [Association("Category-Products")]
     public Category Category
     {
@@ -115,7 +109,7 @@ public class Product(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(IsAvailableInPos), ref _isAvailableInPos, value);
     }
 
-    [Size(1000)]
+    [Size(SizeAttribute.Unlimited)]
     public string Notes
     {
         get => _notes;

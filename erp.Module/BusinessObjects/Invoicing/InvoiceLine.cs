@@ -1,3 +1,4 @@
+using System.Drawing;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
@@ -13,7 +14,6 @@ public class InvoiceLine(Session session): BaseEntity(session)
     private Invoice _invoiceAtDelete;
     private Product _product;
     private string _productName;
-    private string _description;
     private string _notes;
     private decimal _quantity;
     private decimal _unitPrice;
@@ -37,24 +37,71 @@ public class InvoiceLine(Session session): BaseEntity(session)
     public Product Product
     {
         get => _product;
-        set => SetPropertyValue(nameof(Product), ref _product, value);
+        set
+        {
+            var modified = SetPropertyValue(nameof(Product), ref _product, value);
+            if (!IsLoading && !IsSaving && modified)
+            {
+                ApplyProductSnapshot(value);
+            }
+        }
     }
-    
-    [Size(255)]
+
+    private void ApplyProductSnapshot(Product p)
+    {
+        if (p is null)
+        {
+            ProductName = null;
+            Notes = null;
+            UnitPrice = 0m;
+            DiscountPercent = 0m;
+            DeleteAllTaxes();
+            Recalculate();
+            return;
+        }
+
+        // Copia de datos del producto (snapshot)
+        
+        ProductName = p.Name;
+        Notes = p.Notes;
+        
+        // Precio por defecto desde la tarifa del producto
+        
+        UnitPrice = p.PriceList;
+
+        // Si la cantidad no estaba informada, inicializar a 1
+        
+        if (Quantity == 0m)
+        {
+            Quantity = 1m;
+        }
+
+        // Reiniciar impuestos asociados a la línea al cambiar el producto
+        
+        DeleteAllTaxes();
+     
+        // Recalcular importes en base a los nuevos datos
+        
+        Recalculate();
+        return;
+
+        void DeleteAllTaxes()
+        {
+            for (var i = Taxes.Count - 1; i >= 0; i--)
+            {
+                Taxes[i].Delete();
+            }
+        }
+    }
+
+    [Size(SizeAttribute.Unlimited)]
     public string ProductName
     {
         get => _productName;
         set => SetPropertyValue(nameof(ProductName), ref _productName, value);
     }
     
-    [Size(1000)]
-    public string Description
-    {
-        get => _description;    
-        set => SetPropertyValue(nameof(Description), ref _description, value);
-    }
-
-    [Size(1000)]
+    [Size(SizeAttribute.Unlimited)]
     public string Notes
     {
         get => _notes;
