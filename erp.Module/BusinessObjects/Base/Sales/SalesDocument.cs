@@ -60,10 +60,8 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
 
     public void RebuildTaxSummaryByTaxType()
     {
-        // Limpiar resumen anterior (al ser Aggregated, elimina filas persistentes)
-        // Si prefieres “upsert”, te dejo una variante más abajo.
-        while (Taxes.Count > 0)
-            Taxes.Remove(Taxes[0]);
+        foreach (var row in Taxes.ToList())
+            row.Delete();
 
         var groups = Lines.SelectMany(l => l.Taxes)
             .GroupBy(t => t.TaxType)
@@ -81,7 +79,7 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
                      SalesDocument = this,
                      TaxType = g.TaxType,
                      Sequence = g.TaxType.Sequence,
-                     TaxableAmount = g.BaseSum, // aplica tu redondeo si corresponde
+                     TaxableAmount = g.BaseSum,
                      TaxAmount = g.AmountSum
                  }))
             Taxes.Add(row);
