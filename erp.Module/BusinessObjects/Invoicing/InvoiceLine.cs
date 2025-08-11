@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Drawing;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
@@ -8,6 +9,7 @@ using erp.Module.BusinessObjects.Products;
 namespace erp.Module.BusinessObjects.Invoicing;
 
 [ImageName("BO_Invoice")]
+[DefaultProperty(nameof(Product))]
 public class InvoiceLine(Session session): BaseEntity(session)
 {
     private Invoice _invoice;
