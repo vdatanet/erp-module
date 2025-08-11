@@ -1,3 +1,4 @@
+using System.Collections;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
@@ -195,6 +196,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     {
         _documentAtDelete = SalesDocument;
         base.OnDeleting();
+        foreach (var aggregated in new ArrayList(Taxes)) Session.Delete(aggregated);
     }
 
     protected override void OnDeleted()
