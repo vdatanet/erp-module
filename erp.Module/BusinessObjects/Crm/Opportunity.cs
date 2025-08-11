@@ -7,8 +7,8 @@ namespace erp.Module.BusinessObjects.Crm;
 
 [DefaultClassOptions]
 [NavigationItem("Crm")]
-[ImageName("BO_Lead")]
-public class Lead(Session session) : Contact(session)
+[ImageName("BO_Opportunity")]
+public class Opportunity(Session session) : Contact(session)
 {
     private string _description;
     private Customer _customer;
@@ -20,13 +20,13 @@ public class Lead(Session session) : Contact(session)
         set => SetPropertyValue(nameof(Description), ref _description, value);
     }
 
-    [Association("Customer-Leads")]
+    [Association("Customer-Opportunities")]
     public Customer Customer
     {
         get => _customer;
         set => SetPropertyValue(nameof(Customer), ref _customer, value);
     }
     
-    [Association("Lead-SalesOrders")]
-    public XPCollection<SalesOrder> SalesOrders => GetCollection<SalesOrder>(nameof(SalesOrders));
+    //[Association("Lead-SalesOrders")]
+    //public XPCollection<SalesOrder> SalesOrders => GetCollection<SalesOrder>(nameof(SalesOrders));
 }

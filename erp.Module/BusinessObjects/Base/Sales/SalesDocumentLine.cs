@@ -161,9 +161,9 @@ public abstract class SalesDocumentLine(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(TotalAmount), ref _totalAmount, value);
     }
 
-    //[Aggregated]
-    //[Association("InvoiceLine-Taxes")]
-    //public XPCollection<InvoiceLineTax> Taxes => GetCollection<InvoiceLineTax>();
+    [Aggregated]
+    [Association("SalesDocumentLine-Taxes")]
+    public XPCollection<SalesDcoumentLineTax> Taxes => GetCollection<SalesDcoumentLineTax>();
 
     public void Recalculate()
     {
