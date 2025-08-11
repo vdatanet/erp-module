@@ -1,9 +1,13 @@
+using System.ComponentModel;
+using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Accounting;
 using erp.Module.BusinessObjects.Base.Common;
 
 namespace erp.Module.BusinessObjects.Base.Sales;
 
+[ImageName("Top10Percent")]
+[DefaultProperty(nameof(Sequence))]
 public class SalesDocumentTax(Session session): BaseEntity(session)
 {
     private SalesDocument _salesDocument;

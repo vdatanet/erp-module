@@ -68,7 +68,7 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
             .Select(g => new {
                 TaxType = g.Key,
                 BaseSum = g.Sum(x => x.TaxableAmount),
-                AmountSum = g.Sum(x => x.TaxableAmount)
+                AmountSum = g.Sum(x => x.TaxAmount)
             })
             .OrderBy(x => x.TaxType.Sequence)
             .ToList();
@@ -78,6 +78,7 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
             var row = new SalesDocumentTax(Session) {
                 SalesDocument = this,
                 TaxType = g.TaxType,
+                Sequence = g.TaxType.Sequence,
                 TaxableAmount = g.BaseSum,     // aplica tu redondeo si corresponde
                 TaxAmount = g.AmountSum
             };
