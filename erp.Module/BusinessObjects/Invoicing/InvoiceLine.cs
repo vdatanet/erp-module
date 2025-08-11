@@ -105,6 +105,10 @@ public class InvoiceLine(Session session): BaseEntity(session)
         get => _baseAmount;
         set => SetPropertyValue(nameof(BaseAmount), ref _baseAmount, value);
     }
+    
+    [Aggregated]
+    [Association("InvoiceLine-Taxes")]
+    public XPCollection<InvoiceLineTax> Taxes => GetCollection<InvoiceLineTax>();
 
     public void Recalculate()
     {

@@ -22,7 +22,7 @@ public class Invoice(Session session): BaseEntity(session)
 {
     private string _prefix;
     private string _invoiceNumber;
-    private DateTime _orderDate;
+    private DateTime _invoceDate;
     private Customer _customer;
     private decimal _totalAmount;
 
@@ -40,10 +40,10 @@ public class Invoice(Session session): BaseEntity(session)
     }
     
     [RuleRequiredField]
-    public DateTime OrderDate
+    public DateTime InvoiceDate
     {
-        get => _orderDate;
-        set => SetPropertyValue(nameof(OrderDate), ref _orderDate, value);
+        get => _invoceDate;
+        set => SetPropertyValue(nameof(InvoiceDate), ref _invoceDate, value);
     }
     
     [Association("Customer-Invoices")]
