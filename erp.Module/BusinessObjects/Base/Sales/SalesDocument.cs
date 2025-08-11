@@ -1,3 +1,4 @@
+using System.Collections;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Accounting;
@@ -41,10 +42,11 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     [Aggregated]
     [Association("SalesDocument-Lines")]
     public XPCollection<SalesDocumentLine> Lines => GetCollection<SalesDocumentLine>();
-    
+
+    [Aggregated]
     [Association("SalesDocument-Taxes")]
     public XPCollection<SalesDocumentTax> Taxes => GetCollection<SalesDocumentTax>();
-    
+
     public void RecalculateTotals()
     {
         if (IsLoading || Session?.IsObjectsLoading == true)
@@ -55,7 +57,7 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
         TotalAmount = Lines.Sum(l => l.TotalAmount);
         RebuildTaxSummaryByTaxType();
     }
-    
+
     public void RebuildTaxSummaryByTaxType()
     {
         // Limpiar resumen anterior (al ser Aggregated, elimina filas persistentes)
@@ -65,7 +67,8 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
 
         var groups = Lines.SelectMany(l => l.Taxes)
             .GroupBy(t => t.TaxType)
-            .Select(g => new {
+            .Select(g => new
+            {
                 TaxType = g.Key,
                 BaseSum = g.Sum(x => x.TaxableAmount),
                 AmountSum = g.Sum(x => x.TaxAmount)
@@ -73,25 +76,32 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
             .OrderBy(x => x.TaxType.Sequence)
             .ToList();
 
-        foreach (var g in groups)
-        {
-            var row = new SalesDocumentTax(Session) {
-                SalesDocument = this,
-                TaxType = g.TaxType,
-                Sequence = g.TaxType.Sequence,
-                TaxableAmount = g.BaseSum,     // aplica tu redondeo si corresponde
-                TaxAmount = g.AmountSum
-            };
+        foreach (var row in groups.Select(g => new SalesDocumentTax(Session)
+                 {
+                     SalesDocument = this,
+                     TaxType = g.TaxType,
+                     Sequence = g.TaxType.Sequence,
+                     TaxableAmount = g.BaseSum, // aplica tu redondeo si corresponde
+                     TaxAmount = g.AmountSum
+                 }))
             Taxes.Add(row);
-        }
     }
 
     protected override void OnSaving()
     {
         base.OnSaving();
 
-        foreach (var line in Lines) line.Recalculate();
+        //foreach (var line in Lines) line.Recalculate();
 
-        RecalculateTotals();
+        //RecalculateTotals();
+    }
+
+    protected override void OnDeleting()
+    {
+        base.OnDeleting();
+
+        foreach (var aggregated in new ArrayList(Taxes)) Session.Delete(aggregated);
+
+        foreach (var aggregated in new ArrayList(Lines)) Session.Delete(aggregated);
     }
 }

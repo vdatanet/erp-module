@@ -6,6 +6,8 @@ using erp.Module.BusinessObjects.Base.Common;
 
 namespace erp.Module.BusinessObjects.Base.Sales;
 
+[DefaultClassOptions]
+[NavigationItem("Accounting")]
 [ImageName("Top10Percent")]
 [DefaultProperty(nameof(Sequence))]
 public class SalesDocumentTax(Session session): BaseEntity(session)
