@@ -29,6 +29,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(SalesDocument), ref _salesDocument, value);
     }
 
+    [ImmediatePostData]
     public Product Product
     {
         get => _product;
