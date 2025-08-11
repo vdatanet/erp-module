@@ -194,12 +194,10 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         //runningTaxSum += t.Amount;
         //}
 
-        //TaxAmount = MoneyMath.RoundMoney(Taxes.Sum(tt => tt.Amount));
-        //TotalAmount = MoneyMath.RoundMoney(BaseAmount + TaxAmount);
-
-        // 3) Actualizar totales de la factura
+        TaxAmount = MoneyMath.RoundMoney(Taxes.Sum(tt => tt.TaxAmount));
+        TotalAmount = MoneyMath.RoundMoney(TaxableAmount + TaxAmount);
+        
         SalesDocument?.RecalculateTotals();
-        //Invoice.TotalAmount    = Invoice.InvoiceLines.Sum(l => l.BaseAmount);
     }
 
     protected override void OnDeleting()
