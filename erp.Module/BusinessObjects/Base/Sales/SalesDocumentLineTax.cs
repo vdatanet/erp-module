@@ -62,7 +62,6 @@ public class SalesDocumentLineTax(Session session): BaseEntity(session)
         Notes = t.Notes;
         Account = t.Account;
         Rate = t.Rate;
-        IsCompound = t.IsCompound;
         IsWithHolding = t.IsWithHolding;
     }
 

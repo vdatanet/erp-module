@@ -179,23 +179,14 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         foreach (var tax in Taxes)
         {
             tax.TaxableAmount = TaxableAmount;
-            tax.TaxAmount = tax.TaxableAmount * (tax.Rate / 100m);
+            var sign = tax.IsWithHolding ? -1m : 1m;
+            tax.TaxAmount = MoneyMath.RoundMoney(tax.TaxableAmount * (tax.Rate / 100m) * sign);
             runningTaxSum += tax.TaxAmount;
+            
         }
-
-        // 2) Impuestos por línea (en orden)
-        //decimal runningTaxSum = 0m;
-        //foreach (var t in Taxes.OrderBy(t => t.Sequence).ThenBy(t => t.Oid))
-        //{
-        //var taxableBase = BaseAmount + (t.IsCompound ? runningTaxSum : 0m);
-        //t.Base = RoundMoney(taxableBase);
-        //var sign = t.IsWithholding ? -1m : 1m;
-        //t.Amount = RoundMoney(t.Base * (t.Rate / 100m) * sign);
-        //runningTaxSum += t.Amount;
-        //}
-
-        TaxAmount = MoneyMath.RoundMoney(Taxes.Sum(tt => tt.TaxAmount));
-        TotalAmount = MoneyMath.RoundMoney(TaxableAmount + TaxAmount);
+        
+        TaxAmount = runningTaxSum;
+        TotalAmount = TaxableAmount + TaxAmount;
         
         SalesDocument?.RecalculateTotals();
     }
