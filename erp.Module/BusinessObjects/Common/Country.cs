@@ -1,6 +1,7 @@
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Base.Common;
 
 namespace erp.Module.BusinessObjects.Common;
 

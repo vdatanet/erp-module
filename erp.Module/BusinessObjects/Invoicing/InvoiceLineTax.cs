@@ -4,6 +4,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Accounting;
+using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Common;
 
 namespace erp.Module.BusinessObjects.Invoicing;

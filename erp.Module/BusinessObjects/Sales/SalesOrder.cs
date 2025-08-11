@@ -3,6 +3,7 @@ using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Common;
 using erp.Module.BusinessObjects.Contacts;
 using erp.Module.BusinessObjects.Crm;

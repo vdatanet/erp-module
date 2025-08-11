@@ -4,6 +4,7 @@ using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Common;
 using erp.Module.BusinessObjects.Contacts;
 using SequenceFactory = erp.Module.Factories.SequenceFactory;

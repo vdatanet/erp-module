@@ -2,6 +2,7 @@ using System.ComponentModel;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Common;
 using Country = erp.Module.BusinessObjects.Common.Country;
 using State = erp.Module.BusinessObjects.Common.State;

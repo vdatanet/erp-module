@@ -6,7 +6,7 @@ using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace erp.Module.BusinessObjects.Common;
+namespace erp.Module.BusinessObjects.Base.Common;
 
 [NonPersistent]
 [ModelDefault("IsCloneable", "True")]
