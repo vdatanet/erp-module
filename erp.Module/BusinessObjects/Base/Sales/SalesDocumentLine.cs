@@ -8,6 +8,7 @@ using erp.Module.BusinessObjects.Products;
 
 namespace erp.Module.BusinessObjects.Base.Sales;
 
+[ImageName("BO_Order_Items")]
 public class SalesDocumentLine(Session session) : BaseEntity(session)
 {
     private SalesDocument _salesDocument;
