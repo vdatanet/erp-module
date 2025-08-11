@@ -17,6 +17,7 @@ public class TaxType(Session session) : BaseEntity(session)
     private string _code;
     private string _name;
     private string _notes;
+    private int _sequence;
     private Account _account;
     private decimal _rate;
     private bool _isActive;
@@ -44,6 +45,12 @@ public class TaxType(Session session) : BaseEntity(session)
     {
         get => _notes;
         set => SetPropertyValue(nameof(Notes), ref _notes, value);
+    }
+    
+    public int Sequence
+    {
+        get => _sequence;
+        set => SetPropertyValue(nameof(Sequence), ref _sequence, value);
     }
 
     public Account Account

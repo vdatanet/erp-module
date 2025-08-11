@@ -4,25 +4,25 @@ using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Accounting;
 using erp.Module.BusinessObjects.Base.Common;
-using erp.Module.BusinessObjects.Invoicing;
 
 namespace erp.Module.BusinessObjects.Base.Sales;
 
 [ImageName("Top10Percent")]
 [DefaultProperty(nameof(TaxType))]
-public class SalesDocumentLineTax(Session session): BaseEntity(session)
+public class SalesDocumentLineTax(Session session) : BaseEntity(session)
 {
     private SalesDocumentLine _salesDocumentLine;
     private TaxType _taxType;
     private string _name;
     private string _notes;
+    private int _sequence;
     private Account _account;
     private decimal _rate;
     private bool _isCompound;
     private bool _isWithHolding;
     private decimal _taxableAmount;
     private decimal _taxAmount;
-    
+
     [Association("SalesDocumentLine-Taxes")]
     public SalesDocumentLine SalesDocumentLine
     {
@@ -35,22 +35,20 @@ public class SalesDocumentLineTax(Session session): BaseEntity(session)
         get => _taxType;
         set
         {
-            if (SetPropertyValue(nameof(TaxType), ref _taxType, value)) 
+            if (SetPropertyValue(nameof(TaxType), ref _taxType, value))
                 ApplyTaxTypeSnapshot(value);
         }
     }
 
     private void ApplyTaxTypeSnapshot(TaxType t)
     {
-        if (IsLoading || IsSaving)
-        {
-            return;
-        }
+        if (IsLoading || IsSaving) return;
 
         if (t == null)
         {
             Name = null;
             Notes = null;
+            Sequence = 0;
             Account = null;
             Rate = 0m;
             IsCompound = false;
@@ -60,6 +58,7 @@ public class SalesDocumentLineTax(Session session): BaseEntity(session)
 
         Name = t.Name;
         Notes = t.Notes;
+        Sequence = t.Sequence;
         Account = t.Account;
         Rate = t.Rate;
         IsWithHolding = t.IsWithHolding;
@@ -78,13 +77,19 @@ public class SalesDocumentLineTax(Session session): BaseEntity(session)
         get => _notes;
         set => SetPropertyValue(nameof(Notes), ref _notes, value);
     }
-    
+
+    public int Sequence
+    {
+        get => _sequence;
+        set => SetPropertyValue(nameof(Sequence), ref _sequence, value);
+    }
+
     public Account Account
     {
         get => _account;
         set => SetPropertyValue(nameof(Account), ref _account, value);
     }
-    
+
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     public decimal Rate
@@ -92,7 +97,7 @@ public class SalesDocumentLineTax(Session session): BaseEntity(session)
         get => _rate;
         set => SetPropertyValue(nameof(Rate), ref _rate, value);
     }
-    
+
     public bool IsCompound
     {
         get => _isCompound;
@@ -120,9 +125,9 @@ public class SalesDocumentLineTax(Session session): BaseEntity(session)
     public decimal TaxAmount
     {
         get => _taxAmount;
-        set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);   
+        set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);
     }
-    
+
     public override void AfterConstruction()
     {
         base.AfterConstruction();
