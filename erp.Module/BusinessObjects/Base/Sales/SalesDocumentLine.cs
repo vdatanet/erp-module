@@ -50,7 +50,7 @@ public abstract class SalesDocumentLine(Session session) : BaseEntity(session)
             Notes = null;
             UnitPrice = 0m;
             DiscountPercent = 0m;
-            //DeleteAllTaxes();
+            DeleteAllTaxes();
             Recalculate();
             return;
         }
@@ -61,24 +61,24 @@ public abstract class SalesDocumentLine(Session session) : BaseEntity(session)
 
         if (Quantity == 0m) Quantity = 1m;
 
-        //DeleteAllTaxes();
+        DeleteAllTaxes();
 
-        //foreach (var tax in p.SalesTaxes)
-        //{
-            //var invoiceLineTax = new InvoiceLineTax(Session)
-            //{
-                //InvoiceLine = this,
-                //TaxType = tax
-            //};
-        //}
+        foreach (var tax in p.SalesTaxes)
+        {
+            var link = new SalesDocumentLineTax(Session)
+            {
+                SalesDocumentLine = this,
+                TaxType = tax
+            };
+        }
 
         Recalculate();
         return;
 
-        //void DeleteAllTaxes()
-        //{
-            //for (var i = Taxes.Count - 1; i >= 0; i--) Taxes[i].Delete();
-        //}
+        void DeleteAllTaxes()
+        {
+            for (var i = Taxes.Count - 1; i >= 0; i--) Taxes[i].Delete();
+        }
     }
 
     [Size(SizeAttribute.Unlimited)]
@@ -163,7 +163,7 @@ public abstract class SalesDocumentLine(Session session) : BaseEntity(session)
 
     [Aggregated]
     [Association("SalesDocumentLine-Taxes")]
-    public XPCollection<SalesDcoumentLineTax> Taxes => GetCollection<SalesDcoumentLineTax>();
+    public XPCollection<SalesDocumentLineTax> Taxes => GetCollection<SalesDocumentLineTax>();
 
     public void Recalculate()
     {

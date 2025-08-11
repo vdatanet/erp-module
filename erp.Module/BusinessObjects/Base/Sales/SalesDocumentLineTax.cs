@@ -10,7 +10,7 @@ namespace erp.Module.BusinessObjects.Base.Sales;
 
 [ImageName("Top10Percent")]
 [DefaultProperty(nameof(TaxType))]
-public class SalesDcoumentLineTax(Session session): BaseEntity(session)
+public class SalesDocumentLineTax(Session session): BaseEntity(session)
 {
     private SalesDocumentLine _salesDocumentLine;
     private TaxType _taxType;
