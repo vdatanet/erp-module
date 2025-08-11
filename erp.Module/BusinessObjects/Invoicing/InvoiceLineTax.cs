@@ -9,11 +9,11 @@ using erp.Module.BusinessObjects.Common;
 namespace erp.Module.BusinessObjects.Invoicing;
 
 [ImageName("Top10Percent")]
-[DefaultProperty(nameof(Code))]
+[DefaultProperty(nameof(TaxType))]
 public class InvoiceLineTax(Session session): BaseEntity(session)
 {
     private InvoiceLine _invoiceLine;
-    private string _code;
+    private TaxType _taxType;
     private string _name;
     private string _notes;
     private Account _account;
@@ -29,15 +29,43 @@ public class InvoiceLineTax(Session session): BaseEntity(session)
         get => _invoiceLine;
         set => SetPropertyValue(nameof(InvoiceLine), ref _invoiceLine, value);
     }
-    
-    [RuleRequiredField]
-    [RuleUniqueValue]
-    public string Code
+
+    public TaxType TaxType
     {
-        get => _code;
-        set => SetPropertyValue(nameof(Code), ref _code, value);   
+        get => _taxType;
+        set
+        {
+            if (SetPropertyValue(nameof(TaxType), ref _taxType, value)) 
+                ApplyTaxTypeSnapshot(value);
+        }
     }
-    
+
+    private void ApplyTaxTypeSnapshot(TaxType t)
+    {
+        if (IsLoading || IsSaving)
+        {
+            return;
+        }
+
+        if (t == null)
+        {
+            Name = null;
+            Notes = null;
+            Account = null;
+            Rate = 0m;
+            IsCompound = false;
+            IsWithHolding = false;
+            return;
+        }
+
+        Name = t.Name;
+        Notes = t.Notes;
+        Account = t.Account;
+        Rate = t.Rate;
+        IsCompound = t.IsCompound;
+        IsWithHolding = t.IsWithHolding;
+    }
+
     [Size(255)]
     public string Name
     {

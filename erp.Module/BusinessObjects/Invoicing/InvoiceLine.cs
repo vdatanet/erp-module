@@ -41,16 +41,18 @@ public class InvoiceLine(Session session): BaseEntity(session)
         get => _product;
         set
         {
-            var modified = SetPropertyValue(nameof(Product), ref _product, value);
-            if (!IsLoading && !IsSaving && modified)
-            {
-                ApplyProductSnapshot(value);
-            }
+            if (SetPropertyValue(nameof(Product), ref _product, value)) 
+                ApplyProductSnapshot(value);;
         }
     }
 
     private void ApplyProductSnapshot(Product p)
     {
+        if (IsLoading || IsSaving)
+        {
+            return;
+        }
+        
         if (p is null)
         {
             ProductName = null;
@@ -61,35 +63,26 @@ public class InvoiceLine(Session session): BaseEntity(session)
             Recalculate();
             return;
         }
-
-        // Copia de datos del producto (snapshot)
         
         ProductName = p.Name;
         Notes = p.Notes;
-        
-        // Precio por defecto desde la tarifa del producto
-        
         UnitPrice = p.PriceList;
-
-        // Si la cantidad no estaba informada, inicializar a 1
         
         if (Quantity == 0m)
         {
             Quantity = 1m;
         }
-
-        // Reiniciar impuestos asociados a la línea al cambiar el producto
         
         DeleteAllTaxes();
-        
-        // Cargar los impuestos asociados al producto
 
         foreach (var tax in p.SalesTaxes)
         {
-            
+            var link = new InvoiceLineTax(Session)
+            {
+                InvoiceLine = this,
+                TaxType = tax
+            };
         }
-     
-        // Recalcular importes en base a los nuevos datos
         
         Recalculate();
         return;
