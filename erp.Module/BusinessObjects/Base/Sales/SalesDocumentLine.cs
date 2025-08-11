@@ -9,7 +9,7 @@ namespace erp.Module.BusinessObjects.Base.Sales;
 
 //[ImageName("BO_Invoice")]
 //[DefaultProperty(nameof(Product))]
-public abstract class SalesDocumentLine(Session session) : BaseEntity(session)
+public class SalesDocumentLine(Session session) : BaseEntity(session)
 {
     private SalesDocument _salesDocument;
     private SalesDocument _documentAtDelete;
