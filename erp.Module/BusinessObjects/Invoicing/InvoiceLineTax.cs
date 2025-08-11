@@ -20,6 +20,8 @@ public class InvoiceLineTax(Session session): BaseEntity(session)
     private decimal _rate;
     private bool _isCompound;
     private bool _isWithHolding;
+    private decimal _taxBase;
+    private decimal _amount;
     
     [Association("InvoiceLine-Taxes")]
     public InvoiceLine InvoiceLine
@@ -74,6 +76,24 @@ public class InvoiceLineTax(Session session): BaseEntity(session)
     {
         get => _isWithHolding;
         set => SetPropertyValue(nameof(IsWithHolding), ref _isWithHolding, value);
+    }
+
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    [ModelDefault("AllowEdit", "False")]
+    public decimal TaxBase
+    {
+        get => _taxBase;
+        protected set => SetPropertyValue(nameof(TaxBase), ref _taxBase, value);
+    }
+
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    [ModelDefault("AllowEdit", "False")]
+    public decimal Amount
+    {
+        get => _amount;
+        protected set => SetPropertyValue(nameof(Amount), ref _amount, value);   
     }
     
     public override void AfterConstruction()
