@@ -53,6 +53,36 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
         TaxableAmount = Lines.Sum(l => l.TaxableAmount);
         TaxAmount = Lines.Sum(l => l.TaxAmount);
         TotalAmount = Lines.Sum(l => l.TotalAmount);
+        RebuildTaxSummaryByTaxType();
+    }
+    
+    public void RebuildTaxSummaryByTaxType()
+    {
+        // Limpiar resumen anterior (al ser Aggregated, elimina filas persistentes)
+        // Si prefieres “upsert”, te dejo una variante más abajo.
+        while (Taxes.Count > 0)
+            Taxes.Remove(Taxes[0]);
+
+        var groups = Lines.SelectMany(l => l.Taxes)
+            .GroupBy(t => t.TaxType)
+            .Select(g => new {
+                TaxType = g.Key,
+                BaseSum = g.Sum(x => x.TaxableAmount),
+                AmountSum = g.Sum(x => x.TaxableAmount)
+            })
+            .OrderBy(x => x.TaxType.Sequence)
+            .ToList();
+
+        foreach (var g in groups)
+        {
+            var row = new SalesDocumentTax(Session) {
+                SalesDocument = this,
+                TaxType = g.TaxType,
+                TaxableAmount = g.BaseSum,     // aplica tu redondeo si corresponde
+                TaxAmount = g.AmountSum
+            };
+            Taxes.Add(row);
+        }
     }
 
     protected override void OnSaving()
