@@ -20,8 +20,8 @@ public class SalesDocumentLineTax(Session session): BaseEntity(session)
     private decimal _rate;
     private bool _isCompound;
     private bool _isWithHolding;
-    private decimal _taxBase;
-    private decimal _amount;
+    private decimal _taxableAmount;
+    private decimal _taxAmount;
     
     [Association("SalesDocumentLine-Taxes")]
     public SalesDocumentLine SalesDocumentLine
@@ -109,19 +109,19 @@ public class SalesDocumentLineTax(Session session): BaseEntity(session)
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     [ModelDefault("AllowEdit", "False")]
-    public decimal TaxBase
+    public decimal TaxableAmount
     {
-        get => _taxBase;
-        set => SetPropertyValue(nameof(TaxBase), ref _taxBase, value);
+        get => _taxableAmount;
+        set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
     }
 
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     [ModelDefault("AllowEdit", "False")]
-    public decimal Amount
+    public decimal TaxAmount
     {
-        get => _amount;
-        set => SetPropertyValue(nameof(Amount), ref _amount, value);   
+        get => _taxAmount;
+        set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);   
     }
     
     public override void AfterConstruction()

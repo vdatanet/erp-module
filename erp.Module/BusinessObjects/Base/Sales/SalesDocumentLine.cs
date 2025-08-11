@@ -19,7 +19,7 @@ public abstract class SalesDocumentLine(Session session) : BaseEntity(session)
     private decimal _quantity;
     private decimal _unitPrice;
     private decimal _discountPercent;
-    private decimal _baseAmount;
+    private decimal _taxableAmount;
     private decimal _taxAmount;
     private decimal _totalAmount;
     
@@ -137,10 +137,10 @@ public abstract class SalesDocumentLine(Session session) : BaseEntity(session)
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     [ModelDefault("AllowEdit", "False")]
-    public decimal BaseAmount
+    public decimal TaxableAmount
     {
-        get => _baseAmount;
-        set => SetPropertyValue(nameof(BaseAmount), ref _baseAmount, value);
+        get => _taxableAmount;
+        set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
     }
 
     [ModelDefault("DisplayFormat", "{0:n2}")]
@@ -174,16 +174,16 @@ public abstract class SalesDocumentLine(Session session) : BaseEntity(session)
         
         var gross = Quantity * UnitPrice;
         var discount = MoneyMath.RoundMoney(gross * (DiscountPercent / 100m));
-        BaseAmount = MoneyMath.RoundMoney(gross - discount);
+        TaxableAmount = MoneyMath.RoundMoney(gross - discount);
         
         var runningTaxSum = 0m;
 
-        //foreach (var tax in Taxes)
-        //{
-            //tax.TaxBase = BaseAmount;
-            //tax.Amount = tax.TaxBase * (tax.Rate / 100m);
-            //runningTaxSum += tax.Amount;
-        //}
+        foreach (var tax in Taxes)
+        {
+            tax.TaxableAmount = TaxableAmount;
+            tax.TaxAmount = tax.TaxableAmount * (tax.Rate / 100m);
+            runningTaxSum += tax.TaxAmount;
+        }
 
         // 2) Impuestos por línea (en orden)
         //decimal runningTaxSum = 0m;
@@ -206,14 +206,14 @@ public abstract class SalesDocumentLine(Session session) : BaseEntity(session)
 
     protected override void OnDeleting()
     {
-        //_invoiceAtDelete = Invoice;
+        _documentAtDelete = SalesDocument;
         base.OnDeleting();
     }
 
     protected override void OnDeleted()
     {
         base.OnDeleted();
-        //_invoiceAtDelete?.RecalculateTotals();
-        //_invoiceAtDelete = null;
+        _documentAtDelete?.RecalculateTotals();
+        _documentAtDelete = null;
     }
 }
