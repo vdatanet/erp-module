@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Drawing;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
@@ -10,7 +9,7 @@ namespace erp.Module.BusinessObjects.Invoicing;
 
 [ImageName("BO_Invoice")]
 [DefaultProperty(nameof(Product))]
-public class InvoiceLine(Session session): BaseEntity(session)
+public class InvoiceLine(Session session) : BaseEntity(session)
 {
     private Invoice _invoice;
     private Invoice _invoiceAtDelete;
@@ -20,6 +19,7 @@ public class InvoiceLine(Session session): BaseEntity(session)
     private decimal _quantity;
     private decimal _unitPrice;
     private decimal _discountPercent;
+
     private decimal _baseAmount;
     //private decimal _discount;
     //private decimal _tax;
@@ -35,24 +35,21 @@ public class InvoiceLine(Session session): BaseEntity(session)
         get => _invoice;
         set => SetPropertyValue(nameof(Invoice), ref _invoice, value);
     }
-    
+
     public Product Product
     {
         get => _product;
         set
         {
-            if (SetPropertyValue(nameof(Product), ref _product, value)) 
-                ApplyProductSnapshot(value);;
+            if (SetPropertyValue(nameof(Product), ref _product, value))
+                ApplyProductSnapshot(value);
         }
     }
 
     private void ApplyProductSnapshot(Product p)
     {
-        if (IsLoading || IsSaving)
-        {
-            return;
-        }
-        
+        if (IsLoading || IsSaving) return;
+
         if (p is null)
         {
             ProductName = null;
@@ -63,36 +60,30 @@ public class InvoiceLine(Session session): BaseEntity(session)
             Recalculate();
             return;
         }
-        
+
         ProductName = p.Name;
         Notes = p.Notes;
         UnitPrice = p.PriceList;
-        
-        if (Quantity == 0m)
-        {
-            Quantity = 1m;
-        }
-        
+
+        if (Quantity == 0m) Quantity = 1m;
+
         DeleteAllTaxes();
 
         foreach (var tax in p.SalesTaxes)
         {
-            var link = new InvoiceLineTax(Session)
+            var invoiceLineTax = new InvoiceLineTax(Session)
             {
                 InvoiceLine = this,
                 TaxType = tax
             };
         }
-        
+
         Recalculate();
         return;
 
         void DeleteAllTaxes()
         {
-            for (var i = Taxes.Count - 1; i >= 0; i--)
-            {
-                Taxes[i].Delete();
-            }
+            for (var i = Taxes.Count - 1; i >= 0; i--) Taxes[i].Delete();
         }
     }
 
@@ -102,14 +93,14 @@ public class InvoiceLine(Session session): BaseEntity(session)
         get => _productName;
         set => SetPropertyValue(nameof(ProductName), ref _productName, value);
     }
-    
+
     [Size(SizeAttribute.Unlimited)]
     public string Notes
     {
         get => _notes;
         set => SetPropertyValue(nameof(Notes), ref _notes, value);
     }
-    
+
     [ImmediatePostData]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
@@ -118,11 +109,11 @@ public class InvoiceLine(Session session): BaseEntity(session)
         get => _quantity;
         set
         {
-            if (SetPropertyValue(nameof(Quantity), ref _quantity, value)) 
+            if (SetPropertyValue(nameof(Quantity), ref _quantity, value))
                 Recalculate();
         }
     }
-    
+
     [ImmediatePostData]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
@@ -131,30 +122,33 @@ public class InvoiceLine(Session session): BaseEntity(session)
         get => _unitPrice;
         set
         {
-            if (SetPropertyValue(nameof(UnitPrice), ref _unitPrice, value)) 
+            if (SetPropertyValue(nameof(UnitPrice), ref _unitPrice, value))
                 Recalculate();
         }
     }
-    
+
     [ImmediatePostData]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
-    public decimal DiscountPercent {
+    public decimal DiscountPercent
+    {
         get => _discountPercent;
-        set {
+        set
+        {
             if (SetPropertyValue(nameof(DiscountPercent), ref _discountPercent, value))
                 Recalculate();
         }
     }
-    
+
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     [ModelDefault("AllowEdit", "False")]
-    public decimal BaseAmount {
+    public decimal BaseAmount
+    {
         get => _baseAmount;
         set => SetPropertyValue(nameof(BaseAmount), ref _baseAmount, value);
     }
-    
+
     [Aggregated]
     [Association("InvoiceLine-Taxes")]
     public XPCollection<InvoiceLineTax> Taxes => GetCollection<InvoiceLineTax>();
@@ -169,11 +163,11 @@ public class InvoiceLine(Session session): BaseEntity(session)
         //decimal runningTaxSum = 0m;
         //foreach (var t in Taxes.OrderBy(t => t.Sequence).ThenBy(t => t.Oid))
         //{
-            //var taxableBase = BaseAmount + (t.IsCompound ? runningTaxSum : 0m);
-            //t.Base = RoundMoney(taxableBase);
-            //var sign = t.IsWithholding ? -1m : 1m;
-            //t.Amount = RoundMoney(t.Base * (t.Rate / 100m) * sign);
-            //runningTaxSum += t.Amount;
+        //var taxableBase = BaseAmount + (t.IsCompound ? runningTaxSum : 0m);
+        //t.Base = RoundMoney(taxableBase);
+        //var sign = t.IsWithholding ? -1m : 1m;
+        //t.Amount = RoundMoney(t.Base * (t.Rate / 100m) * sign);
+        //runningTaxSum += t.Amount;
         //}
 
         //TaxAmount = RoundMoney(Taxes.Sum(tt => tt.Amount));
@@ -183,7 +177,7 @@ public class InvoiceLine(Session session): BaseEntity(session)
         Invoice?.RecalculateTotals();
         //Invoice.TotalAmount    = Invoice.InvoiceLines.Sum(l => l.BaseAmount);
     }
-    
+
     protected override void OnDeleting()
     {
         _invoiceAtDelete = Invoice;
