@@ -1,5 +1,6 @@
 using DevExpress.ExpressApp.Model;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Accounting;
 using erp.Module.BusinessObjects.Base.Common;
 
 namespace erp.Module.BusinessObjects.Base.Sales;
@@ -40,7 +41,15 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     [Aggregated]
     [Association("SalesDocument-Lines")]
     public XPCollection<SalesDocumentLine> Lines => GetCollection<SalesDocumentLine>();
-
+    
+    [ModelDefault("Caption", "All Taxes")]
+    public IList<SalesDocumentLineTax> AllTaxes
+        => Lines.SelectMany(l => l.Taxes)
+            //.OrderBy(t => t.Line.Oid)        
+            .OrderBy(t => t.Sequence)
+            //.ThenBy(t => t.Oid)
+            .ToList();
+    
     public void RecalculateTotals()
     {
         if (IsLoading || Session?.IsObjectsLoading == true)
