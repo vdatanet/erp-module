@@ -42,13 +42,8 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     [Association("SalesDocument-Lines")]
     public XPCollection<SalesDocumentLine> Lines => GetCollection<SalesDocumentLine>();
     
-    [ModelDefault("Caption", "All Taxes")]
-    public IList<SalesDocumentLineTax> AllTaxes
-        => Lines.SelectMany(l => l.Taxes)
-            //.OrderBy(t => t.Line.Oid)        
-            .OrderBy(t => t.Sequence)
-            //.ThenBy(t => t.Oid)
-            .ToList();
+    [Association("SalesDocument-Taxes")]
+    public XPCollection<SalesDocumentTax> Taxes => GetCollection<SalesDocumentTax>();
     
     public void RecalculateTotals()
     {
