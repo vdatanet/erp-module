@@ -124,10 +124,10 @@ public class Product(Session session) : BaseEntity(session)
     }
     
     [Association("Products-SalesTaxes")]
-    public XPCollection<TaxType> SalesTaxes => GetCollection<TaxType>(nameof(SalesTaxes));
+    public XPCollection<TaxKind> SalesTaxes => GetCollection<TaxKind>(nameof(SalesTaxes));
     
     [Association("Products-PurchaseTaxes")]
-    public XPCollection<TaxType> PurchaseTaxes => GetCollection<TaxType>(nameof(PurchaseTaxes));
+    public XPCollection<TaxKind> PurchaseTaxes => GetCollection<TaxKind>(nameof(PurchaseTaxes));
     
     [Aggregated]
     [Association("Product-Tasks")]

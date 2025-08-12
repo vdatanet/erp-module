@@ -69,7 +69,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
             var link = new SalesDocumentLineTax(Session)
             {
                 SalesDocumentLine = this,
-                TaxType = tax
+                TaxKind = tax
             };
         }
 

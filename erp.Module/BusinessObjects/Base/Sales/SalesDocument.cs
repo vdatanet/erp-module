@@ -64,7 +64,7 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
             row.Delete();
 
         var groups = Lines.SelectMany(l => l.Taxes)
-            .GroupBy(t => t.TaxType)
+            .GroupBy(t => t.TaxKind)
             .Select(g => new
             {
                 TaxType = g.Key,
@@ -77,7 +77,7 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
         foreach (var row in groups.Select(g => new SalesDocumentTax(Session)
                  {
                      SalesDocument = this,
-                     TaxType = g.TaxType,
+                     TaxKind = g.TaxType,
                      Sequence = g.TaxType.Sequence,
                      TaxableAmount = g.BaseSum,
                      TaxAmount = g.AmountSum

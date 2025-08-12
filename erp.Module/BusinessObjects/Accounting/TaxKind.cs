@@ -5,6 +5,8 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Products;
+using VeriFactu.Xml.Factu;
+using VeriFactu.Xml.Factu.Alta;
 
 namespace erp.Module.BusinessObjects.Accounting;
 
@@ -12,7 +14,7 @@ namespace erp.Module.BusinessObjects.Accounting;
 [NavigationItem("Accounting")]
 [ImageName("Top10Percent")]
 [DefaultProperty(nameof(Code))]
-public class TaxType(Session session) : BaseEntity(session)
+public class TaxKind(Session session) : BaseEntity(session)
 {
     private string _code;
     private string _name;
@@ -24,6 +26,10 @@ public class TaxType(Session session) : BaseEntity(session)
     private bool _isAvailableInSales;
     private bool _isAvailableInPurchases;
     private bool _isWithHolding;
+    private Impuesto _tax;
+    private ClaveRegimen _taxScheme;
+    private CalificacionOperacion _taxType;
+    private CausaExencion _taxExemption;
 
     [RuleRequiredField]
     [RuleUniqueValue]
@@ -89,6 +95,28 @@ public class TaxType(Session session) : BaseEntity(session)
     {
         get => _isWithHolding;
         set => SetPropertyValue(nameof(IsWithHolding), ref _isWithHolding, value);
+    }
+    public Impuesto Tax
+    {
+        get => _tax;
+        set => SetPropertyValue(nameof(Tax), ref _tax, value);
+    }
+    public ClaveRegimen TaxScheme
+    {
+        get => _taxScheme;
+        set => SetPropertyValue(nameof(TaxScheme), ref _taxScheme, value);
+    }
+    
+    public CalificacionOperacion TaxType
+    {
+        get => _taxType;
+        set => SetPropertyValue(nameof(TaxType), ref _taxType, value);
+    }
+    
+    public CausaExencion TaxExemption
+    {
+        get => _taxExemption;
+        set => SetPropertyValue(nameof(TaxExemption), ref _taxExemption, value);
     }
 
     [Association("Products-SalesTaxes")]

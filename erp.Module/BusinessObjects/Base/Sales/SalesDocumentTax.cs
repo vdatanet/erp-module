@@ -14,7 +14,7 @@ public class SalesDocumentTax(Session session): BaseEntity(session)
 {
     private SalesDocument _salesDocument;
     private int _sequence;
-    private TaxType _taxType;
+    private TaxKind _taxKind;
     private decimal _taxableAmount;
     private decimal _taxAmount;
     
@@ -31,10 +31,10 @@ public class SalesDocumentTax(Session session): BaseEntity(session)
         set => SetPropertyValue(nameof(Sequence), ref _sequence, value);
     }
     
-    public TaxType TaxType
+    public TaxKind TaxKind
     {
-        get => _taxType;
-        set => SetPropertyValue(nameof(TaxType), ref _taxType, value);
+        get => _taxKind;
+        set => SetPropertyValue(nameof(TaxKind), ref _taxKind, value);
     }
     
     public decimal TaxableAmount

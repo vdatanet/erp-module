@@ -8,11 +8,11 @@ using erp.Module.BusinessObjects.Base.Common;
 namespace erp.Module.BusinessObjects.Base.Sales;
 
 [ImageName("Top10Percent")]
-[DefaultProperty(nameof(TaxType))]
+[DefaultProperty(nameof(TaxKind))]
 public class SalesDocumentLineTax(Session session) : BaseEntity(session)
 {
     private SalesDocumentLine _salesDocumentLine;
-    private TaxType _taxType;
+    private TaxKind _taxKind;
     private string _name;
     private string _notes;
     private int _sequence;
@@ -30,17 +30,17 @@ public class SalesDocumentLineTax(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(SalesDocumentLine), ref _salesDocumentLine, value);
     }
 
-    public TaxType TaxType
+    public TaxKind TaxKind
     {
-        get => _taxType;
+        get => _taxKind;
         set
         {
-            if (SetPropertyValue(nameof(TaxType), ref _taxType, value))
+            if (SetPropertyValue(nameof(TaxKind), ref _taxKind, value))
                 ApplyTaxTypeSnapshot(value);
         }
     }
 
-    private void ApplyTaxTypeSnapshot(TaxType t)
+    private void ApplyTaxTypeSnapshot(TaxKind t)
     {
         if (IsLoading || IsSaving) return;
 
