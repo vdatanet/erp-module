@@ -5,7 +5,10 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Sales;
 using erp.Module.BusinessObjects.Contacts;
+using erp.Module.BusinessObjects.Helpers;
 using erp.Module.Factories;
+using VeriFactu.Xml.Factu;
+using VeriFactu.Xml.Factu.Alta;
 
 namespace erp.Module.BusinessObjects.Invoicing;
 
@@ -23,7 +26,12 @@ public class Invoice(Session session) : SalesDocument(session)
     private string _invoiceNumber;
     private DateTime _invoiceDate;
     private Customer _customer;
-
+    private TipoFactura _invoiceType;
+    private TipoRectificativa _rectificationType;
+    private IDType _relatedPartyIdType;
+    private bool _isInvoiceFix;
+    private string _text;
+    
     [RuleRequiredField]
     public string InvoicePrefix
     {
@@ -43,14 +51,64 @@ public class Invoice(Session session) : SalesDocument(session)
         get => _invoiceDate;
         set => SetPropertyValue(nameof(InvoiceDate), ref _invoiceDate, value);
     }
-
+    
     [Association("Customer-Invoices")]
     public Customer Customer
     {
         get => _customer;
         set => SetPropertyValue(nameof(Customer), ref _customer, value);
     }
+    
+    public TipoFactura InvoiceType
+    {
+        get => _invoiceType;
+        set => SetPropertyValue(nameof(InvoiceType), ref _invoiceType, value);
+    }
+    
+    public TipoRectificativa RectificationType
+    {
+        get => _rectificationType;
+        set => SetPropertyValue(nameof(RectificationType), ref _rectificationType, value);
+    }
+    
+    public bool IsInvoiceFix
+    {
+        get => _isInvoiceFix;
+        set => SetPropertyValue(nameof(IsInvoiceFix), ref _isInvoiceFix, value);
+    }
 
+    public IDType RelatedPartyIdType
+    {
+        get => _relatedPartyIdType;
+        set => SetPropertyValue(nameof(RelatedPartyIdType), ref _relatedPartyIdType, value);
+    }
+    
+    [Size(500)]
+    public string Text
+    {
+        get => _text;
+        set => SetPropertyValue(nameof(Text), ref _text, value);
+    }
+    
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        InitValues();
+    }
+
+    private void InitValues()
+    {
+        InvoiceType = TipoFactura.F1;
+        RectificationType = TipoRectificativa.I;
+        IsInvoiceFix = false;
+        Text = "Descripción operación";
+        RelatedPartyIdType = IDType.NIF_IVA;
+        var companyInfo = CompanyInfoHelper.GetCompanyInfo(Session);
+        if (companyInfo == null) return;
+        //if (companyInfo.DefaultSalesAccount != null) SalesAccount = companyInfo.DefaultSalesAccount;
+        //if (companyInfo.DefaultPurchaseAccount != null) PurchaseAccount = companyInfo.DefaultPurchaseAccount;
+    }
+    
     protected override void OnSaving()
     {
         base.OnSaving();
