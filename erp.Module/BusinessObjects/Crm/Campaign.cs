@@ -3,7 +3,7 @@ using erp.Module.BusinessObjects.Base.Common;
 
 namespace erp.Module.BusinessObjects.Crm;
 
-public class Cam(Session session): BaseEntity(session)
+public class Campaign(Session session): BaseEntity(session)
 {
     private string _name;
     private string _description;
