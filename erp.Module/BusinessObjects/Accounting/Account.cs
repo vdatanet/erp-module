@@ -4,7 +4,6 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
-using erp.Module.BusinessObjects.Common;
 
 namespace erp.Module.BusinessObjects.Accounting;
 
@@ -99,7 +98,7 @@ public class Account(Session session): BaseEntity(session)
     }
     
     [Association("Parent-ChildrenAccounts")]
-    public XPCollection<Account> ChildrenAccounts => GetCollection<Account>(nameof(ChildrenAccounts));
+    public XPCollection<Account> ChildrenAccounts => GetCollection<Account>();
     
     public override void AfterConstruction()
     {
