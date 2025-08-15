@@ -2,6 +2,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
+using erp.Module.BusinessObjects.Base.Sales;
 using erp.Module.BusinessObjects.Contacts;
 using erp.Module.BusinessObjects.Products;
 
@@ -12,6 +13,7 @@ public class Picture(Session session): BaseEntity(session)
 {
     private Contact _contact;
     private Product _product;
+    private SalesDocument _salesDocument;
     private Task _task;
     private MediaDataObject _mediaDataObject;
     private string _notes;
@@ -28,6 +30,13 @@ public class Picture(Session session): BaseEntity(session)
     {
         get => _product;
         set => SetPropertyValue(nameof(Product), ref _product, value);
+    }
+    
+    [Association("SalesDocument-Pictures")]
+    public SalesDocument SalesDocument
+    {
+        get => _salesDocument;
+        set => SetPropertyValue(nameof(SalesDocument), ref _salesDocument, value);
     }
     
     [Association("Task-Pictures")]

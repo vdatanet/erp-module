@@ -1,6 +1,7 @@
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
+using erp.Module.BusinessObjects.Base.Sales;
 using erp.Module.BusinessObjects.Contacts;
 using erp.Module.BusinessObjects.Products;
 
@@ -25,6 +26,7 @@ public class Task(Session session) : BaseEntity(session)
     private Task _parentTask;
     private Contact _contact;
     private Product _product;
+    private SalesDocument _salesDocument;
     private string _notes;
 
     [Size(255)]
@@ -96,6 +98,13 @@ public class Task(Session session) : BaseEntity(session)
     {
         get => _product;
         set => SetPropertyValue(nameof(Product), ref _product, value);
+    }
+    
+    [Association("SalesDocument-Tasks")]
+    public SalesDocument SalesDocument
+    {
+        get => _salesDocument;
+        set => SetPropertyValue(nameof(SalesDocument), ref _salesDocument, value);
     }
 
     [Size(1000)]

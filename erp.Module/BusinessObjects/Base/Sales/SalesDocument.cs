@@ -1,8 +1,9 @@
 using System.Collections;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Xpo;
-using erp.Module.BusinessObjects.Accounting;
 using erp.Module.BusinessObjects.Base.Common;
+using erp.Module.BusinessObjects.Common;
+using Task = erp.Module.BusinessObjects.Common.Task;
 
 namespace erp.Module.BusinessObjects.Base.Sales;
 
@@ -46,6 +47,18 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     [Aggregated]
     [Association("SalesDocument-Taxes")]
     public XPCollection<SalesDocumentTax> Taxes => GetCollection<SalesDocumentTax>();
+    
+    [Aggregated]
+    [Association("SalesDocument-Tasks")]
+    public XPCollection<Task> Tasks => GetCollection<Task>(nameof(Tasks));
+    
+    [Aggregated]
+    [Association("SalesDocument-Pictures")]
+    public XPCollection<Picture> Pictures => GetCollection<Picture>(nameof(Pictures));
+    
+    [Aggregated]
+    [Association("SalesDocument-Attachments")]
+    public XPCollection<Attachment> Attachments => GetCollection<Attachment>(nameof(Attachments));
 
     public void RecalculateTotals()
     {
