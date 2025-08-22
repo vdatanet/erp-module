@@ -1,9 +1,13 @@
+using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
 
 namespace erp.Module.BusinessObjects.Crm;
 
-public class Media(Session session) : BaseEntity(session)
+[DefaultClassOptions]
+[NavigationItem("Crm")]
+//[ImageName("BO_Opportunity")]
+public class Medium(Session session) : BaseEntity(session)
 {
     private string _name;
     private string _description;

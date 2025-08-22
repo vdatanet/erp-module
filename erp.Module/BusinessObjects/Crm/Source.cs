@@ -1,8 +1,12 @@
+using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
 
 namespace erp.Module.BusinessObjects.Crm;
 
+[DefaultClassOptions]
+[NavigationItem("Crm")]
+//[ImageName("BO_Opportunity")]
 public class Source(Session session) : BaseEntity(session)
 {
     private string _name;
