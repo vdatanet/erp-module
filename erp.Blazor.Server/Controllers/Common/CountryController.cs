@@ -1,5 +1,6 @@
 #nullable enable
 using DevExpress.ExpressApp;
+using DevExpress.ExpressApp.Security;
 using DevExpress.ExpressApp.WebApi.Services;
 using DevExpress.Xpo;
 using erp.Blazor.Server.DTOs.Common.Request;
@@ -18,25 +19,26 @@ namespace erp.Blazor.Server.Controllers.Common;
 public class CountryController(IDataService dataService) : ControllerBase
 {
     private readonly IObjectSpace _objectSpace = dataService.GetObjectSpace(typeof(Country));
-
+    
     [HttpPost]
     [SwaggerOperation("Create a new Country")]
     public IActionResult NewCountry(NewCountryRequest req)
     {
-        var exists = _objectSpace.GetObjectsQuery<Country>()
-            .Any(x => x.Name.Equals(req.Name, StringComparison.CurrentCultureIgnoreCase));
+        var country = _objectSpace
+            .GetObjectsQuery<Country>()
+            .FirstOrDefault(x => x.Name == req.Name);
 
-        if (exists)
+        if (country != null)
             return BadRequest($"Country with name '{req.Name}' already exists");
 
-        var country = _objectSpace.CreateObject<Country>();
-        country.Name = req.Name;
+        var newCountry = _objectSpace.CreateObject<Country>();
+        newCountry.Name = req.Name;
         _objectSpace.CommitChanges();
 
-        return CreatedAtAction(nameof(GetByKey), new { id = country.Oid.ToString() }, new ListItem
+        return CreatedAtAction(nameof(GetByKey), new { id = newCountry.Oid.ToString() }, new ListItem
         {
-            Oid = country.Oid.ToString(),
-            Name = country.Name,
+            Oid = newCountry.Oid.ToString(),
+            Name = newCountry.Name,
             Description = null
         });
     }
