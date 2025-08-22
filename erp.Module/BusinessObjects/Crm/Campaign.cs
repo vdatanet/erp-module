@@ -6,7 +6,7 @@ namespace erp.Module.BusinessObjects.Crm;
 
 [DefaultClassOptions]
 [NavigationItem("Crm")]
-//[ImageName("BO_Opportunity")]
+[ImageName("Shopping_Wallet")]
 public class Campaign(Session session) : BaseEntity(session)
 {
     private string _name;

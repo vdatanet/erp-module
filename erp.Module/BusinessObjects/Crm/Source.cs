@@ -6,7 +6,7 @@ namespace erp.Module.BusinessObjects.Crm;
 
 [DefaultClassOptions]
 [NavigationItem("Crm")]
-//[ImageName("BO_Opportunity")]
+[ImageName("Datasource")]
 public class Source(Session session) : BaseEntity(session)
 {
     private string _name;

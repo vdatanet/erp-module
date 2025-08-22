@@ -6,7 +6,7 @@ namespace erp.Module.BusinessObjects.Crm;
 
 [DefaultClassOptions]
 [NavigationItem("Crm")]
-//[ImageName("BO_Opportunity")]
+[ImageName("Medium")]
 public class Medium(Session session) : BaseEntity(session)
 {
     private string _name;
