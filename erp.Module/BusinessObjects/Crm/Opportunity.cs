@@ -12,6 +12,9 @@ public class Opportunity(Session session) : Contact(session)
 {
     private string _description;
     private Customer _customer;
+    private Campaign _campaign;
+    private Medium _medium;
+    private Source _source;
 
     [Size(1000)]
     public string Description
@@ -27,6 +30,24 @@ public class Opportunity(Session session) : Contact(session)
         set => SetPropertyValue(nameof(Customer), ref _customer, value);
     }
     
-    //[Association("Lead-SalesOrders")]
-    //public XPCollection<SalesOrder> SalesOrders => GetCollection<SalesOrder>(nameof(SalesOrders));
+    public Campaign Campaign
+    {
+        get => _campaign;
+        set => SetPropertyValue(nameof(Campaign), ref _campaign, value);
+    }
+    
+    public Medium Medium
+    {
+        get => _medium;
+        set => SetPropertyValue(nameof(Medium), ref _medium, value);
+    }
+    
+    public Source Source
+    {
+        get => _source;
+        set => SetPropertyValue(nameof(Source), ref _source, value);
+    }
+    
+    [Association("Opportunity-SalesOrders")]
+    public XPCollection<SalesOrder> SalesOrders => GetCollection<SalesOrder>();
 }
