@@ -1,6 +1,5 @@
 #nullable enable
 using DevExpress.ExpressApp;
-using DevExpress.ExpressApp.Security;
 using DevExpress.ExpressApp.WebApi.Services;
 using DevExpress.Xpo;
 using erp.Blazor.Server.DTOs.Common.Request;
@@ -19,9 +18,9 @@ namespace erp.Blazor.Server.Controllers.Common;
 public class CountryController(IDataService dataService) : ControllerBase
 {
     private readonly IObjectSpace _objectSpace = dataService.GetObjectSpace(typeof(Country));
-    
+
     [HttpPost]
-    [SwaggerOperation("Create a new Country")]
+    [SwaggerOperation("Creates a new Country")]
     public IActionResult NewCountry(NewCountryRequest req)
     {
         var country = _objectSpace
@@ -82,7 +81,7 @@ public class CountryController(IDataService dataService) : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [SwaggerOperation("Returns one Country by Key")]
+    [SwaggerOperation("Returns a Country by Key")]
     public async Task<ActionResult<ListItem>> GetByKey(string id)
     {
         var country = await _objectSpace.GetObjectsQuery<Country>()
@@ -97,5 +96,36 @@ public class CountryController(IDataService dataService) : ControllerBase
 
         if (country == null) return NotFound();
         return Ok(country);
+    }
+    
+    [HttpPut]
+    [SwaggerOperation("Updates a Country")]
+    public async Task<IActionResult> UpdateTodoItem(UpdateCountryRequest req)
+    {
+        var result = await _objectSpace.GetObjectsQuery<Country>()
+            .Where(x => x.Oid.ToString() == req.Oid)
+            .FirstOrDefaultAsync();
+
+        if (result == null) return NotFound();
+
+        result.Name = req.Name;
+        _objectSpace.CommitChanges();
+
+        return NoContent();
+    }
+    
+    [HttpDelete("{id}")]
+    [SwaggerOperation("Deletes a Country by Key")]
+    public async Task<IActionResult> DeleteByKey(string id)
+    {
+        var result = await _objectSpace.GetObjectsQuery<Country>()
+            .Where(x => x.Oid.ToString() == id)
+            .FirstOrDefaultAsync();
+        if (result == null) return NotFound();
+
+        _objectSpace.Delete(result);
+        _objectSpace.CommitChanges();
+
+        return NoContent();
     }
 }
