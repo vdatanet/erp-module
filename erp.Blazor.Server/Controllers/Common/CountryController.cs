@@ -1,3 +1,5 @@
+#nullable enable
+using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.WebApi.Services;
 using DevExpress.Xpo;
 using erp.Blazor.Server.DTOs.Common.Response;
@@ -14,14 +16,18 @@ namespace erp.Blazor.Server.Controllers.Common;
 [Route("api/custom/[controller]")]
 public class CountryController(IDataService dataService) : ControllerBase
 {
+    private readonly IObjectSpace _objectSpace = dataService.GetObjectSpace(typeof(Country));
+    
     [HttpGet]
     [SwaggerOperation("Returns all Countries")]
-    public async Task<ActionResult<PagedResponse<ListItem>>> GetCountries(string? search = null, int page = 1,
+    public async Task<ActionResult<PagedResponse<ListItem>>> GetAll(string? search = null, int page = 1,
         int pageSize = 20)
     {
-        var objectSpace = dataService.GetObjectSpace(typeof(Country));
-
-        var query = objectSpace.GetObjectsQuery<Country>();
+        if (pageSize <= 0) pageSize = 20;
+        if (pageSize > 1000) pageSize = 1000;
+        if (page <= 0) page = 1;
+        
+        var query = _objectSpace.GetObjectsQuery<Country>();
         
         query = query.ApplySearch(search, c => c.Name)
             .OrderBy(c => c.Name);
@@ -29,15 +35,7 @@ public class CountryController(IDataService dataService) : ControllerBase
         var totalCount = await query.CountAsync();
 
         if (totalCount < 1) return NotFound();
-
-        if (pageSize <= 0) pageSize = 20;
-
-        if (page <= 0)
-        {
-            page = 1;
-            pageSize = totalCount;
-        }
-
+        
         query = query.ApplyPaging(page, pageSize);
 
         var result = await query
@@ -56,5 +54,24 @@ public class CountryController(IDataService dataService) : ControllerBase
             Page = page,
             PageSize = pageSize,
         });
+    }
+    
+    [HttpGet("{id}")]
+    [SwaggerOperation("Returns one Country by Key")]
+    public async Task<ActionResult<ListItem>> GetByKey(string id)
+    {
+        
+        var country = await _objectSpace.GetObjectsQuery<Country>()
+            .Where(x => x.Oid.ToString() == id)
+            .Select(hero => new ListItem
+            {
+                Oid = hero.Oid.ToString(),
+                Name = hero.Name,
+                Description = null
+            })
+            .FirstOrDefaultAsync();
+
+        if (country == null) return NotFound();
+        return Ok(country);
     }
 }
