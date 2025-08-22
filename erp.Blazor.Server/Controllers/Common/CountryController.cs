@@ -28,7 +28,7 @@ public class CountryController(IDataService dataService) : ControllerBase
 
         var totalCount = await query.CountAsync();
 
-        if (totalCount < 1) return Ok(new PagedResponse<ListItem>());
+        if (totalCount < 1) return NotFound();
 
         if (pageSize <= 0) pageSize = 20;
 
