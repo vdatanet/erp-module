@@ -2,6 +2,7 @@
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.WebApi.Services;
 using DevExpress.Xpo;
+using erp.Blazor.Server.DTOs.Common.Request;
 using erp.Blazor.Server.DTOs.Common.Response;
 using erp.Blazor.Server.Extensions;
 using erp.Module.BusinessObjects.Common;
@@ -17,7 +18,29 @@ namespace erp.Blazor.Server.Controllers.Common;
 public class CountryController(IDataService dataService) : ControllerBase
 {
     private readonly IObjectSpace _objectSpace = dataService.GetObjectSpace(typeof(Country));
-    
+
+    [HttpPost]
+    [SwaggerOperation("Create a new Country")]
+    public IActionResult NewCountry(NewCountryRequest req)
+    {
+        var exists = _objectSpace.GetObjectsQuery<Country>()
+            .Any(x => x.Name.Equals(req.Name, StringComparison.CurrentCultureIgnoreCase));
+
+        if (exists)
+            return BadRequest($"Country with name '{req.Name}' already exists");
+
+        var country = _objectSpace.CreateObject<Country>();
+        country.Name = req.Name;
+        _objectSpace.CommitChanges();
+
+        return CreatedAtAction(nameof(GetByKey), new { id = country.Oid.ToString() }, new ListItem
+        {
+            Oid = country.Oid.ToString(),
+            Name = country.Name,
+            Description = null
+        });
+    }
+
     [HttpGet]
     [SwaggerOperation("Returns all Countries")]
     public async Task<ActionResult<PagedResponse<ListItem>>> GetAll(string? search = null, int page = 1,
@@ -26,16 +49,16 @@ public class CountryController(IDataService dataService) : ControllerBase
         if (pageSize <= 0) pageSize = 20;
         if (pageSize > 1000) pageSize = 1000;
         if (page <= 0) page = 1;
-        
+
         var query = _objectSpace.GetObjectsQuery<Country>();
-        
+
         query = query.ApplySearch(search, c => c.Name)
             .OrderBy(c => c.Name);
 
         var totalCount = await query.CountAsync();
 
         if (totalCount < 1) return NotFound();
-        
+
         query = query.ApplyPaging(page, pageSize);
 
         var result = await query
@@ -52,15 +75,14 @@ public class CountryController(IDataService dataService) : ControllerBase
             Items = result,
             TotalCount = totalCount,
             Page = page,
-            PageSize = pageSize,
+            PageSize = pageSize
         });
     }
-    
+
     [HttpGet("{id}")]
     [SwaggerOperation("Returns one Country by Key")]
     public async Task<ActionResult<ListItem>> GetByKey(string id)
     {
-        
         var country = await _objectSpace.GetObjectsQuery<Country>()
             .Where(x => x.Oid.ToString() == id)
             .Select(hero => new ListItem
@@ -74,7 +96,4 @@ public class CountryController(IDataService dataService) : ControllerBase
         if (country == null) return NotFound();
         return Ok(country);
     }
-    
-    
-    
 }
