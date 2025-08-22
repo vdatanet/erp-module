@@ -54,9 +54,9 @@ public class Startup(IConfiguration configuration)
 
                 webApiBuilder.ConfigureOptions(options =>
                 {
-                    options.BusinessObject<Country>();
-                    options.BusinessObject<State>();
-                    options.BusinessObject<City>();
+                    //options.BusinessObject<Country>();
+                    //options.BusinessObject<State>();
+                    //options.BusinessObject<City>();
                 });
             });
 
