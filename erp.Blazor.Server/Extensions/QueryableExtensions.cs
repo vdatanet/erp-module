@@ -7,10 +7,10 @@ public static class QueryableExtensions
 {
     public static IQueryable<T> ApplyPaging<T>(
         this IQueryable<T> query,
-        int page,
-        int pageSize)
+        int? page,
+        int? pageSize)
     {
-        if (page > 0 && pageSize > 0) query = query.Skip((page - 1) * pageSize).Take(pageSize);
+        if (page > 0 && pageSize > 0) query = query.Skip(((int)page - 1) * (int)pageSize).Take((int)pageSize);
         return query;
     }
 

@@ -44,8 +44,8 @@ public class CountryController(IDataService dataService) : ControllerBase
 
     [HttpGet]
     [SwaggerOperation("Returns all Countries")]
-    public async Task<ActionResult<PagedResponse<ListItem>>> GetAll(string? search = null, int page = 1,
-        int pageSize = 20)
+    public async Task<ActionResult<PagedResponse<ListItem>>> GetAll(string? search = null, int? page = 1,
+        int? pageSize = 20)
     {
         if (pageSize <= 0) pageSize = 20;
         if (pageSize > 1000) pageSize = 1000;
