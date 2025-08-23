@@ -21,11 +21,11 @@ public class CountryController(IDataService dataService) : ControllerBase
 
     [HttpPost]
     [SwaggerOperation("Creates a new Country")]
-    public IActionResult NewCountry(NewCountryRequest req)
+    public async Task<ActionResult<ListItem>> NewCountry(NewCountryRequest req)
     {
-        var country = _objectSpace
+        var country = await _objectSpace
             .GetObjectsQuery<Country>()
-            .FirstOrDefault(x => x.Name == req.Name);
+            .FirstOrDefaultAsync(x => x.Name == req.Name);
 
         if (country != null)
             return BadRequest($"Country with name '{req.Name}' already exists");
