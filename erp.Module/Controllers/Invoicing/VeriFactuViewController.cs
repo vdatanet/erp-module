@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using erp.Module.BusinessObjects.Invoicing;
 
 namespace erp.Module.Controllers.Invoicing
 {
@@ -24,7 +25,8 @@ namespace erp.Module.Controllers.Invoicing
         public VeriFactuViewController()
         {
             InitializeComponent();
-            // Target required Views (via the TargetXXX properties) and create their Actions.
+            TargetViewType = ViewType.DetailView;
+            TargetObjectType = typeof(Invoice);
         }
         protected override void OnActivated()
         {
