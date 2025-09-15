@@ -38,12 +38,12 @@
     <PackageReference Include="DevExpress.ExpressApp.Xpo" Version="25.1.*" />
     <PackageReference Include="DevExpress.Persistent.Base" Version="25.1.*" />
     <PackageReference Include="DevExpress.Persistent.BaseImpl.Xpo" Version="25.1.*" />
-    <PackageReference Include="Azure.Identity" Version="1.15.0" />
-    <PackageReference Include="FacturaE.Sdk" Version="2.1.1.5" />
+    <PackageReference Include="Azure.Identity" Version="1.16.0" />
+    <PackageReference Include="FacturaE.Sdk" Version="3.1.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
     <PackageReference Include="MimeKit" Version="4.13.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
     <PackageReference Include="MySqlConnector" Version="2.4.0" />
-    <PackageReference Include="VeriFactu" Version="1.0.46" />
+    <PackageReference Include="VeriFactu" Version="1.0.47" />
   </ItemGroup>
 </Project>
