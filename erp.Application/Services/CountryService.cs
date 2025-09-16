@@ -1,3 +1,4 @@
+using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.WebApi.Services;
 using DevExpress.ExpressApp.Xpo;
 using DevExpress.Xpo;
@@ -5,12 +6,13 @@ using erp.Application.Dtos.Common;
 using erp.Application.Helpers;
 using erp.Application.Interfaces.Common;
 using erp.Module.BusinessObjects.Common;
+using Task = System.Threading.Tasks.Task;
 
 namespace erp.Application.Services;
 
 public class CountryService(IDataService dataService) : ICountryService
 {
-    private readonly XPObjectSpace _objectSpace = (XPObjectSpace)dataService.GetObjectSpace(typeof(Country));
+    private readonly IObjectSpace _objectSpace = dataService.GetObjectSpace(typeof(Country));
 
     public async Task<List<CountryDto>> GetAll(string? search)
     {
@@ -46,12 +48,12 @@ public class CountryService(IDataService dataService) : ICountryService
         return hero != null ? MapToCountryDto(hero) : null;
     }
 
-    public async Task<CountryDto> Add(CountryRequest request)
+    public Task<CountryDto> Add(CountryRequest request)
     {
         var newCountry = _objectSpace.CreateObject<Country>();
         newCountry.Name = request.Name?.Trim();
-        await _objectSpace.CommitChangesAsync();
-        return MapToCountryDto(newCountry);
+        _objectSpace.CommitChanges();
+        return Task.FromResult(MapToCountryDto(newCountry));
     }
 
     public async Task<CountryDto?> Update(Guid oid, CountryRequest request)
@@ -59,13 +61,21 @@ public class CountryService(IDataService dataService) : ICountryService
         var country = await _objectSpace.GetObjectsQuery<Country>(false).FirstOrDefaultAsync(x => x.Oid == oid);
         if (country == null) return null;
         country.Name = request.Name;
-        await _objectSpace.CommitChangesAsync();
-        return MapToCountryDto(country);
+        _objectSpace.CommitChanges();
+        return await Task.FromResult(MapToCountryDto(country));
     }
 
-    public async Task<bool> Delete(Guid id)
+    public async Task<bool> Delete(Guid oid)
     {
-        throw new NotImplementedException();
+        var country = await _objectSpace.GetObjectsQuery<Country>().FirstOrDefaultAsync(x => x.Oid == oid);
+
+        if (country == null)
+            return false;
+
+        _objectSpace.Delete(country);
+        _objectSpace.CommitChanges();
+
+        return true;
     }
 
     private IQueryable<Country> BuildBaseQuery(string? search)

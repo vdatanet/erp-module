@@ -59,6 +59,14 @@ public class CountriesController(ICountryService service) : ControllerBase
         }
         
         var country = await service.Update(oid, request);
-        return country == null ? NotFound("Hero not found") : Ok(country);
+        return country == null ? NotFound("Country not found") : Ok(country);
+    }
+    
+    [HttpDelete("{oid:guid}")]
+    [SwaggerOperation("Deletes a country")]
+    public async Task<ActionResult<bool>> Delete(Guid oid)
+    {
+        var country = await service.Delete(oid);
+        return country ? Ok() : NotFound("Country not found");
     }
 }
