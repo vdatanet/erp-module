@@ -13,10 +13,26 @@ namespace erp.Blazor.Server.Controllers.Common;
 public class CountriesController(ICountryService service) : ControllerBase
 {
     [HttpGet]
-    [SwaggerOperation("Returns all Countries")]
+    [SwaggerOperation("Returns all countries with search option")]
     public async Task<ActionResult<List<CountryDto>>> GetAll(string? search)
     {
         var countries = await service.GetAll(search);
         return Ok(countries);
+    }
+    
+    [HttpGet("paged")]
+    [SwaggerOperation("Returns all countries with search option and pagination")]
+    public async Task<ActionResult<PagedResponse<CountryDto>>> GetPaged(string? search, int? page, int? pageSize)
+    {
+        var countries = await service.GetPaged(search, page, pageSize);
+        return Ok(countries);
+    }
+    
+    [HttpGet("{oid:guid}")]
+    [SwaggerOperation("Returns a country by its Oid")]
+    public async Task<ActionResult<CountryDto>> GetByOid(Guid oid)
+    {
+        var country = await service.GetByOid(oid);
+        return Ok(country);
     }
 }
