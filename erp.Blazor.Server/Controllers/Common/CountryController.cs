@@ -1,18 +1,24 @@
 #nullable enable
-using DevExpress.ExpressApp;
-using DevExpress.ExpressApp.WebApi.Services;
-using erp.Module.BusinessObjects.Common;
+using erp.Application.Dtos.Common;
+using erp.Application.Interfaces.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace erp.Blazor.Server.Controllers.Common;
 
 [Authorize]
 [ApiController]
 [Route("api/api/countries")]
-public class CountryController(IDataService dataService) : ControllerBase
+public class HeroesController(ICountryService service) : ControllerBase
 {
-    private readonly IObjectSpace _objectSpace = dataService.GetObjectSpace(typeof(Country));
+    [HttpGet]
+    [SwaggerOperation("Returns all Countries")]
+    public async Task<ActionResult<List<CountryDto>>> GetAll(string? search)
+    {
+        var countries = await service.GetAll(search);
+        return Ok(countries);
+    }
 
     // [HttpPost]
     // [SwaggerOperation("Creates a new Country")]

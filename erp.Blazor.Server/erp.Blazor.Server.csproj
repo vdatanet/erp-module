@@ -38,6 +38,7 @@
     <PackageReference Include="MySqlConnector" Version="2.4.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\erp.Application\erp.Application.csproj" />
     <ProjectReference Include="..\erp.Module\erp.Module.csproj" />
   </ItemGroup>
 </Project>

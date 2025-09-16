@@ -1,4 +1,3 @@
-using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.WebApi.Services;
 using DevExpress.ExpressApp.Xpo;
 using DevExpress.Xpo;
