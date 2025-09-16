@@ -35,4 +35,17 @@ public class CountriesController(ICountryService service) : ControllerBase
         var country = await service.GetByOid(oid);
         return Ok(country);
     }
+    
+    [HttpPost]
+    [SwaggerOperation("Creates a new country")]
+    public async Task<ActionResult<CountryDto>> Add(CountryRequest request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        
+        var country = await service.Add(request);
+        return CreatedAtAction(nameof(GetByOid), new { oid = country.Oid }, country);
+    }
 }

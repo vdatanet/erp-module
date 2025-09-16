@@ -48,12 +48,19 @@ public class CountryService(IDataService dataService) : ICountryService
 
     public async Task<CountryDto> Add(CountryRequest request)
     {
-        throw new NotImplementedException();
+        var newCountry = _objectSpace.CreateObject<Country>();
+        newCountry.Name = request.Name?.Trim();
+        await _objectSpace.CommitChangesAsync();
+        return MapToCountryDto(newCountry);
     }
 
-    public async Task<CountryDto?> Update(Guid id, CountryRequest request)
+    public async Task<CountryDto?> Update(Guid oid, CountryRequest request)
     {
-        throw new NotImplementedException();
+        var country = await _objectSpace.GetObjectsQuery<Country>(false).FirstOrDefaultAsync(x => x.Oid == oid);
+        if (country == null) return null;
+        country.Name = request.Name;
+        await _objectSpace.CommitChangesAsync();
+        return MapToCountryDto(country);
     }
 
     public async Task<bool> Delete(Guid id)
