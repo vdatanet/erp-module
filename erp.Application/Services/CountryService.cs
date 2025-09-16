@@ -1,0 +1,68 @@
+using DevExpress.ExpressApp;
+using DevExpress.ExpressApp.WebApi.Services;
+using DevExpress.ExpressApp.Xpo;
+using erp.Application.Dtos.Common;
+using erp.Application.Interfaces.Common;
+using erp.Module.BusinessObjects.Common;
+
+namespace erp.Application.Services;
+
+public class CountryService(IDataService dataService) : ICountryService
+{
+    private readonly XPObjectSpace _objectSpace = (XPObjectSpace)dataService.GetObjectSpace(typeof(Country));
+    
+    public async Task<List<CountryDto>> GetAll(string? search)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<PagedResponse<CountryDto>> GetPaged(string? search, int? page, int? pageSize)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<CountryDto?> GetById(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<CountryDto> Add(CountryRequest request)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<CountryDto?> Update(Guid id, CountryRequest request)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<bool> Delete(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+    
+    private IQueryable<Country> BuildBaseQuery(string? search)
+    {
+        var query = _objectSpace.GetObjectsQuery<Country>(false);
+
+        if (!string.IsNullOrWhiteSpace(search))
+            query = query.Where(x => !string.IsNullOrEmpty(x.Name) && x.Name.Contains(search));
+
+        return query.OrderBy(x => x.Name);
+    }
+
+    private IQueryable<Country> BuildPagedQuery(IQueryable<Country> query, int skip, int take)
+    {
+        return query
+            .Skip(skip)
+            .Take(take);
+    }
+
+    private CountryDto MapToCountryDto(Country country)
+    {
+        return new CountryDto(
+            country.Oid,
+            country.Name
+        );
+    }
+}
