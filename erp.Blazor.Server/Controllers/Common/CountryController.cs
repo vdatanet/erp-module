@@ -9,7 +9,7 @@ namespace erp.Blazor.Server.Controllers.Common;
 
 [Authorize]
 [ApiController]
-[Route("api/custom/[controller]")]
+[Route("api/api/countries")]
 public class CountryController(IDataService dataService) : ControllerBase
 {
     private readonly IObjectSpace _objectSpace = dataService.GetObjectSpace(typeof(Country));
