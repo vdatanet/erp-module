@@ -1,6 +1,7 @@
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.WebApi.Services;
 using DevExpress.ExpressApp.Xpo;
+using DevExpress.Xpo;
 using erp.Application.Dtos.Common;
 using erp.Application.Interfaces.Common;
 using erp.Module.BusinessObjects.Common;
@@ -13,7 +14,8 @@ public class CountryService(IDataService dataService) : ICountryService
     
     public async Task<List<CountryDto>> GetAll(string? search)
     {
-        throw new NotImplementedException();
+        var countries = await BuildBaseQuery(search).ToListAsync();
+        return countries.Select(MapToCountryDto).ToList();
     }
 
     public async Task<PagedResponse<CountryDto>> GetPaged(string? search, int? page, int? pageSize)
