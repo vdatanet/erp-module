@@ -9,7 +9,7 @@ namespace erp.Blazor.Server.Controllers.Common;
 
 [Authorize]
 [ApiController]
-[Route("api/api/countries")]
+[Route("api/v1/countries")]
 public class CountriesController(ICountryService service) : ControllerBase
 {
     [HttpGet]
