@@ -48,4 +48,17 @@ public class CountriesController(ICountryService service) : ControllerBase
         var country = await service.Add(request);
         return CreatedAtAction(nameof(GetByOid), new { oid = country.Oid }, country);
     }
+    
+    [HttpPut("{oid:guid}")]
+    [SwaggerOperation("Updates a country")]
+    public async Task<ActionResult<CountryDto>> Update(Guid oid, CountryRequest request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        
+        var country = await service.Update(oid, request);
+        return country == null ? NotFound("Hero not found") : Ok(country);
+    }
 }
