@@ -9,6 +9,8 @@ using DevExpress.ExpressApp.Security.Authentication.ClientServer;
 using DevExpress.ExpressApp.WebApi.Services;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
+using erp.Application.Interfaces.Common;
+using erp.Application.Services;
 using erp.Blazor.Server.Services;
 using erp.Module;
 using erp.Module.BusinessObjects;
@@ -59,6 +61,8 @@ public class Startup(IConfiguration configuration)
                     //options.BusinessObject<City>();
                 });
             });
+            
+            builder.Services.AddScoped<ICountryService, CountryService>();
 
             builder.Modules
                 .AddCloning()
