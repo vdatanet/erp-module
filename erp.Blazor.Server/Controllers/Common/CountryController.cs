@@ -1,6 +1,7 @@
 #nullable enable
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.WebApi.Services;
+using DevExpress.ExpressApp.Xpo;
 using DevExpress.Xpo;
 using erp.Blazor.Server.DTOs.Common.Request;
 using erp.Blazor.Server.DTOs.Common.Response;
@@ -17,14 +18,15 @@ namespace erp.Blazor.Server.Controllers.Common;
 [Route("api/custom/[controller]")]
 public class CountryController(IDataService dataService) : ControllerBase
 {
-    private readonly IObjectSpace _objectSpace = dataService.GetObjectSpace(typeof(Country));
+    private readonly IObjectSpace _objectSpaceBase = dataService.GetObjectSpace(typeof(Country));
+    private readonly XPObjectSpace _objectSpace = (XPObjectSpace)dataService.GetObjectSpace(typeof(Country));
 
     [HttpPost]
     [SwaggerOperation("Creates a new Country")]
     public async Task<ActionResult<ListItem>> NewCountry(NewCountryRequest req)
     {
         var country = await _objectSpace
-            .GetObjectsQuery<Country>()
+            .GetObjectsQuery<Country>(false)
             .FirstOrDefaultAsync(x => x.Name == req.Name);
 
         if (country != null)
@@ -32,7 +34,7 @@ public class CountryController(IDataService dataService) : ControllerBase
 
         var newCountry = _objectSpace.CreateObject<Country>();
         newCountry.Name = req.Name;
-        _objectSpace.CommitChanges();
+        await _objectSpace.CommitChangesAsync();
 
         return CreatedAtAction(nameof(GetByKey), new { id = newCountry.Oid.ToString() }, new ListItem
         {
@@ -50,7 +52,7 @@ public class CountryController(IDataService dataService) : ControllerBase
         //if (pageSize > 1000) pageSize = 1000;
         //if (page <= 0) page = 1;
 
-        var query = _objectSpace.GetObjectsQuery<Country>();
+        var query = _objectSpace.GetObjectsQuery<Country>(false);
 
         query = query.ApplySearch(search, c => c.Name)
             .OrderBy(c => c.Name);
@@ -83,7 +85,7 @@ public class CountryController(IDataService dataService) : ControllerBase
     [SwaggerOperation("Returns a Country by Key")]
     public async Task<ActionResult<ListItem>> GetByKey(string id)
     {
-        var country = await _objectSpace.GetObjectsQuery<Country>()
+        var country = await _objectSpace.GetObjectsQuery<Country>(false)
             .Where(x => x.Oid.ToString() == id)
             .Select(hero => new ListItem
             {
@@ -101,7 +103,7 @@ public class CountryController(IDataService dataService) : ControllerBase
     [SwaggerOperation("Updates a Country")]
     public async Task<IActionResult> UpdateTodoItem(UpdateCountryRequest req)
     {
-        var result = await _objectSpace.GetObjectsQuery<Country>()
+        var result = await _objectSpace.GetObjectsQuery<Country>(false)
             .Where(x => x.Oid.ToString() == req.Oid)
             .FirstOrDefaultAsync();
 
@@ -117,7 +119,7 @@ public class CountryController(IDataService dataService) : ControllerBase
     [SwaggerOperation("Deletes a Country by Key")]
     public async Task<IActionResult> DeleteByKey(string id)
     {
-        var result = await _objectSpace.GetObjectsQuery<Country>()
+        var result = await _objectSpace.GetObjectsQuery<Country>(false)
             .Where(x => x.Oid.ToString() == id)
             .FirstOrDefaultAsync();
         if (result == null) return NotFound();
