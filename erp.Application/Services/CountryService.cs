@@ -48,12 +48,12 @@ public class CountryService(IDataService dataService) : ICountryService
         return hero != null ? MapToCountryDto(hero) : null;
     }
 
-    public Task<CountryDto> Add(CountryRequest request)
+    public CountryDto Add(CountryRequest request)
     {
         var newCountry = _objectSpace.CreateObject<Country>();
         newCountry.Name = request.Name?.Trim();
         _objectSpace.CommitChanges();
-        return Task.FromResult(MapToCountryDto(newCountry));
+        return MapToCountryDto(newCountry);
     }
 
     public async Task<CountryDto?> Update(Guid oid, CountryRequest request)
@@ -62,7 +62,7 @@ public class CountryService(IDataService dataService) : ICountryService
         if (country == null) return null;
         country.Name = request.Name;
         _objectSpace.CommitChanges();
-        return await Task.FromResult(MapToCountryDto(country));
+        return MapToCountryDto(country);
     }
 
     public async Task<bool> Delete(Guid oid)
