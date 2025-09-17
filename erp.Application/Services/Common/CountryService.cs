@@ -7,7 +7,7 @@ using erp.Application.Helpers;
 using erp.Application.Interfaces.Common;
 using erp.Module.BusinessObjects.Common;
 
-namespace erp.Application.Services;
+namespace erp.Application.Services.Common;
 
 public class CountryService(IDataService dataService) : ICountryService
 {
@@ -18,7 +18,7 @@ public class CountryService(IDataService dataService) : ICountryService
         var countries = await BuildBaseQuery(search)
             .Select(x => MapToCountryDto(x))
             .ToListAsync();
-        
+
         return new ItemsResponse<CountryDto>(
             countries,
             countries.Count
@@ -38,7 +38,7 @@ public class CountryService(IDataService dataService) : ICountryService
         var countries = await BuildPagedQuery(baseQuery, skip, validPageSize)
             .Select(x => MapToCountryDto(x))
             .ToListAsync();
-        
+
         return new PagedResponse<CountryDto>(
             countries,
             totalCount,
@@ -50,8 +50,9 @@ public class CountryService(IDataService dataService) : ICountryService
     public async Task<CountryDto?> GetByOid(Guid oid)
     {
         return await _objectSpace.GetObjectsQuery<Country>()
+            .Where(x => x.Oid == oid)
             .Select(x => MapToCountryDto(x))
-            .FirstOrDefaultAsync(x => x.Oid == oid);
+            .FirstOrDefaultAsync();
     }
 
     public CountryDto Add(CountryRequest request)
@@ -89,7 +90,7 @@ public class CountryService(IDataService dataService) : ICountryService
         var query = _objectSpace.GetObjectsQuery<Country>();
 
         if (!string.IsNullOrWhiteSpace(search))
-            query = query.Where(x => !string.IsNullOrEmpty(x.Name) && x.Name.Contains(search));
+            query = query.Where(x => x.Name.Contains(search, StringComparison.CurrentCultureIgnoreCase));
 
         return query.OrderBy(x => x.Name);
     }
