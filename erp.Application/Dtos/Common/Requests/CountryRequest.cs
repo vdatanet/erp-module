@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace erp.Application.Dtos.Common;
+namespace erp.Application.Dtos.Common.Requests;
 
 public class CountryRequest
 {

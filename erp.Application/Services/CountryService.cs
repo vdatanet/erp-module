@@ -2,6 +2,8 @@ using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.WebApi.Services;
 using DevExpress.Xpo;
 using erp.Application.Dtos.Common;
+using erp.Application.Dtos.Common.Requests;
+using erp.Application.Dtos.Common.Responses;
 using erp.Application.Helpers;
 using erp.Application.Interfaces.Common;
 using erp.Module.BusinessObjects.Common;
@@ -12,11 +14,16 @@ public class CountryService(IDataService dataService) : ICountryService
 {
     private readonly IObjectSpace _objectSpace = dataService.GetObjectSpace(typeof(Country));
 
-    public async Task<List<CountryDto>> GetAll(string? search)
+    public async Task<ItemsResponse<CountryDto>> GetAll(string? search)
     {
-        return await BuildBaseQuery(search)
+        var countries = await BuildBaseQuery(search)
             .Select(x => MapToCountryDto(x))
             .ToListAsync();
+        
+        return new ItemsResponse<CountryDto>(
+            countries,
+            countries.Count
+        );
     }
 
     public async Task<PagedResponse<CountryDto>> GetPaged(string? search, int? page, int? pageSize)
@@ -43,21 +50,22 @@ public class CountryService(IDataService dataService) : ICountryService
 
     public async Task<CountryDto?> GetByOid(Guid oid)
     {
-        var hero = await _objectSpace.GetObjectsQuery<Country>(false).FirstOrDefaultAsync(x => x.Oid == oid);
-        return hero != null ? MapToCountryDto(hero) : null;
+        return await _objectSpace.GetObjectsQuery<Country>()
+            .Select(x => MapToCountryDto(x))
+            .FirstOrDefaultAsync(x => x.Oid == oid);
     }
 
     public CountryDto Add(CountryRequest request)
     {
         var newCountry = _objectSpace.CreateObject<Country>();
-        newCountry.Name = request.Name?.Trim();
+        newCountry.Name = request.Name.Trim();
         _objectSpace.CommitChanges();
         return MapToCountryDto(newCountry);
     }
 
     public async Task<CountryDto?> Update(Guid oid, CountryRequest request)
     {
-        var country = await _objectSpace.GetObjectsQuery<Country>(false).FirstOrDefaultAsync(x => x.Oid == oid);
+        var country = await _objectSpace.GetObjectsQuery<Country>().FirstOrDefaultAsync(x => x.Oid == oid);
         if (country == null) return null;
         country.Name = request.Name;
         _objectSpace.CommitChanges();
