@@ -29,7 +29,7 @@ public class CountriesController(ICountryService service) : ControllerBase
     }
     
     [HttpGet("{oid:guid}")]
-    [SwaggerOperation("Returns a country by its Oid")]
+    [SwaggerOperation("Returns a country by its oid")]
     public async Task<ActionResult<CountryDto>> GetByOid(Guid oid)
     {
         var country = await service.GetByOid(oid);
