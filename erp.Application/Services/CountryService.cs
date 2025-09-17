@@ -14,8 +14,9 @@ public class CountryService(IDataService dataService) : ICountryService
 
     public async Task<List<CountryDto>> GetAll(string? search)
     {
-        var countries = await BuildBaseQuery(search).ToListAsync();
-        return countries.Select(MapToCountryDto).ToList();
+        return await BuildBaseQuery(search)
+            .Select(x => MapToCountryDto(x))
+            .ToListAsync();
     }
 
     public async Task<PagedResponse<CountryDto>> GetPaged(string? search, int? page, int? pageSize)
@@ -28,10 +29,10 @@ public class CountryService(IDataService dataService) : ICountryService
 
         var totalCount = await baseQuery.CountAsync();
 
-        var pagedCountries = await BuildPagedQuery(baseQuery, skip, validPageSize).ToListAsync();
-
-        var countries = pagedCountries.Select(MapToCountryDto).ToList();
-
+        var countries = await BuildPagedQuery(baseQuery, skip, validPageSize)
+            .Select(x => MapToCountryDto(x))
+            .ToListAsync();
+        
         return new PagedResponse<CountryDto>(
             countries,
             totalCount,
@@ -78,7 +79,7 @@ public class CountryService(IDataService dataService) : ICountryService
 
     private IQueryable<Country> BuildBaseQuery(string? search)
     {
-        var query = _objectSpace.GetObjectsQuery<Country>(false);
+        var query = _objectSpace.GetObjectsQuery<Country>();
 
         if (!string.IsNullOrWhiteSpace(search))
             query = query.Where(x => !string.IsNullOrEmpty(x.Name) && x.Name.Contains(search));
@@ -93,7 +94,7 @@ public class CountryService(IDataService dataService) : ICountryService
             .Take(take);
     }
 
-    private CountryDto MapToCountryDto(Country country)
+    private static CountryDto MapToCountryDto(Country country)
     {
         return new CountryDto(
             country.Oid,
