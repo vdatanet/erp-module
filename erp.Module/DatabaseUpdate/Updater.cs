@@ -103,7 +103,7 @@ public class Updater(IObjectSpace objectSpace, Version currentDbVersion) : Modul
             tenant = ObjectSpace.CreateObject<Tenant>();
             tenant.Name = tenantName;
             tenant.ConnectionString =
-                $"XpoProvider=MySql;server=erp.vdata.net;user={databaseName};password=G@n@$3l3ctiv@;database={databaseName}";
+                $"XpoProvider=MySql;server=vdatanet.mysql.database.azure.com;user=vdatanet;password=G@n@$3l3ctiv@;database={databaseName}";
         }
 
         return tenant;
