@@ -1,3 +1,4 @@
+#nullable enable
 using DevExpress.ExpressApp;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects;
@@ -12,7 +13,13 @@ public static class TimesheetHelper
 
     public sealed record ToggleResult(ToggleResultType Type, TimesheetEntry Entry, DailyTimesheet Daily);
 
-    public static ToggleResult ToggleClock(Session session, ApplicationUser user, DateTime now, Project? project = null, ProjectActivity? activity = null, string? prefix = null)
+    public static ToggleResult ToggleClock(
+        Session session, 
+        ApplicationUser user, 
+        DateTime now, 
+        Project? project = null, 
+        ProjectActivity? activity = null, 
+        string? prefix = null)
     {
         var daily = GetOrCreateDaily(session, user, now.Date, prefix);
         var open = GetOpenEntry(daily);
@@ -45,9 +52,7 @@ public static class TimesheetHelper
             return new ToggleResult(ToggleResultType.ClockOut, open, daily);
         }
     }
-
-    // Utilidades
-
+    
     private static DailyTimesheet GetOrCreateDaily(Session session, ApplicationUser user, DateTime date, string? prefix)
     {
         var q = new XPQuery<DailyTimesheet>(session);
