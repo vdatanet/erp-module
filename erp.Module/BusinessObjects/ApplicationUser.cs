@@ -135,13 +135,13 @@ public class ApplicationUser(Session session)
     private DateTime? _lastClockIn;
     private DateTime? _lastClockOut;
 
-    // [Association("WorkdayRule-ApplicationUsers")]
-    // [XafDisplayName("Workday Rule")]
-    // public WorkdayRule WorkdayRule
-    // {
-    //     get => _workdayRule;
-    //     set => SetPropertyValue(nameof(WorkdayRule), ref _workdayRule, value);
-    // }
+    [Association("WorkdayRule-ApplicationUsers")]
+    [XafDisplayName("Workday Rule")]
+    public WorkdayRule WorkdayRule
+    {
+        get => _workdayRule;
+        set => SetPropertyValue(nameof(WorkdayRule), ref _workdayRule, value);
+    }
 
     [XafDisplayName("Is Working")]
     public bool IsWorking

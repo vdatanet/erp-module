@@ -92,6 +92,9 @@ public class WorkdayRule(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(ToleranceLateOut), ref _toleranceLateOut, value);
     }
     
+    [Association("WorkdayRule-ApplicationUsers")]
+    public XPCollection<ApplicationUser> ApplicationUsers => GetCollection<ApplicationUser>(nameof(ApplicationUsers));
+    
     protected override void OnSaving()
     {
         base.OnSaving();
