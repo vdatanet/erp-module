@@ -13,36 +13,10 @@ namespace erp.Blazor.Server.Controllers.TimeTracking;
 public class TimeController(ITime service) : ControllerBase
 {
     [HttpPost("clock-toggle")]
-    public ActionResult Toggle([FromBody] ToggleRequest request)
+    public async Task<ActionResult<ToggleResponse?>> Toggle([FromBody] ToggleRequest request)
     {
-        //var os = dataService.GetObjectSpace(typeof(ApplicationUser));
-        //var session = ((XPObjectSpace)os).Session;
-
-        //var user = os.GetObjectByKey<ApplicationUser>(req.EmployeeOid);
-        //if (user is null) return NotFound("Empleado no encontrado");
-
-        //Project? project = null;
-        //ProjectActivity? activity = null;
-        //if (req.ProjectOid.HasValue) project = os.GetObjectByKey<Project>(req.ProjectOid.Value);
-        //if (req.ActivityOid.HasValue) activity = os.GetObjectByKey<ProjectActivity>(req.ActivityOid.Value);
-
-        //var now = req.Timestamp ?? DateTime.Now;
-
-        //var result = TimesheetHelper.ToggleClock(session, user, now, project, activity, req.Prefix);
-        //os.CommitChanges();
-
-        //return Ok(new
-        //{
-            //action = result.Type.ToString(),           // ClockIn | ClockOut
-            //entryId = result.Entry.Oid,
-            //startOn = result.Entry.StartOn,
-            //endOn = result.Entry.EndOn,
-            //dailyId = result.Daily.Oid,
-            //date = result.Daily.Date
-        //});
-        
-        return Ok(new ToggleResponse(
-            "Hello there!"
-            ));
+        var result = await service.Toggle(request);
+        if (result is null) return BadRequest();
+        return Ok(result);
     }
 }

@@ -11,8 +11,8 @@ public class TimeService(IDataService dataService) : ITime
 {
     private readonly IObjectSpace _objectSpace = dataService.GetObjectSpace(typeof(TimesheetEntry));
     
-    public async Task<ToggleResponse> Toggle(ToggleRequest request)
+    public async Task<ToggleResponse?> Toggle(ToggleRequest request)
     {
-        return await Task.FromResult(new ToggleResponse("Hello there!"));
+        return await Task.FromResult(new ToggleResponse(request.Message));
     }
 }
