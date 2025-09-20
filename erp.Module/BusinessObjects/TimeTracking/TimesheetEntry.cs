@@ -1,10 +1,13 @@
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
+using DevExpress.ExpressApp.Security;
+using DevExpress.ExpressApp.Xpo;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Projects;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.BusinessObjects.TimeTracking;
 
@@ -26,6 +29,7 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
 
     [Association("ApplicationUser-TimesheetEntries")]
     [RuleRequiredField]
+    [ModelDefault("AllowEdit", "False")]
     public ApplicationUser Employee
     {
         get => _user;
@@ -82,7 +86,7 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
         get => _notes;
         set => SetPropertyValue(nameof(Notes), ref _notes, value);
     }
-    
+
     [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Duration")]
     public TimeSpan Duration
@@ -90,12 +94,23 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
         get => _duration;
         set => SetPropertyValue(nameof(Duration), ref _duration, value);
     }
-    
+
     [Association("DailyTimesheet-Entries")]
     public DailyTimesheet DailyTimesheet
     {
         get => _dailyTimesheet;
         set => SetPropertyValue(nameof(DailyTimesheet), ref _dailyTimesheet, value);
+    }
+
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        InitValues();
+    }
+
+    private void InitValues()
+    {
+        SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(Employee), GetCurrentUser());
     }
 
     protected override void OnSaving()
@@ -115,7 +130,7 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
     {
         base.OnDeleted();
 
-        if (_previousDailyTimesheet is {} ts && _previousWorkdayRuleEmployee is {} rule)
+        if (_previousDailyTimesheet is { } ts && _previousWorkdayRuleEmployee is { } rule)
             ts.Recalculate(rule);
 
         _previousDailyTimesheet = null;
@@ -131,5 +146,11 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
 
         if (DailyTimesheet is { } ts && Employee?.WorkdayRule is { } rule)
             ts.Recalculate(rule);
+    }
+
+    private ApplicationUser GetCurrentUser()
+    {
+        return Session.GetObjectByKey<ApplicationUser>(
+            Session.ServiceProvider.GetRequiredService<ISecurityStrategyBase>().UserId);
     }
 }

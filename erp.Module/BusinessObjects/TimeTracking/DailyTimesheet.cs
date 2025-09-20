@@ -58,7 +58,7 @@ public class DailyTimesheet(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(Date), ref _date, value.Date);
     }
 
-    [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
+    //[ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
     [ModelDefault("AllowEdit", "False")]
     public TimeSpan TotalWork
     {
@@ -66,16 +66,18 @@ public class DailyTimesheet(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(TotalWork), ref _totalWork, value);
     }
 
+    [ModelDefault("AllowEdit", "False")]
     public bool IsLateIn
     {
         get => _isLateIn;
-        protected set => SetPropertyValue(nameof(IsLateIn), ref _isLateIn, value);
+        set => SetPropertyValue(nameof(IsLateIn), ref _isLateIn, value);
     }
 
+    [ModelDefault("AllowEdit", "False")]
     public bool IsEarlyOut
     {
         get => _isEarlyOut;
-        protected set => SetPropertyValue(nameof(IsEarlyOut), ref _isEarlyOut, value);
+        set => SetPropertyValue(nameof(IsEarlyOut), ref _isEarlyOut, value);
     }
     
     [Size(SizeAttribute.Unlimited)]
