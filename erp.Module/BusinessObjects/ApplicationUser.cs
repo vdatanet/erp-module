@@ -2,6 +2,7 @@
 using System.Text;
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.DC;
+using DevExpress.ExpressApp.Model;
 using DevExpress.ExpressApp.Security;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
@@ -48,6 +49,46 @@ namespace erp.Module.BusinessObjects
         [XafDisplayName("Timesheet Entries")]
         public XPCollection<TimesheetEntry> TimesheetEntries => GetCollection<TimesheetEntry>(nameof(TimesheetEntries));
 
+        [Association("ApplicationUser-DailyTimesheets")]
+        [XafDisplayName("Daily Timesheets")]
+        public XPCollection<DailyTimesheet> DailyTimesheets => GetCollection<DailyTimesheet>(nameof(DailyTimesheets));
+        
+        private WorkdayRule _workdayRule;
+        private bool _isActive;
+        private DateTime? _lastClockIn;
+        private DateTime? _lastClockOut;
+
+        // [Association("WorkdayRule-ApplicationUsers")]
+        // [XafDisplayName("Workday Rule")]
+        // public WorkdayRule WorkdayRule
+        // {
+        //     get => _workdayRule;
+        //     set => SetPropertyValue(nameof(WorkdayRule), ref _workdayRule, value);
+        // }
+
+        [XafDisplayName("Active")]
+        public bool IsActive
+        {
+            get => _isActive;
+            set => SetPropertyValue(nameof(IsActive), ref _isActive, value);
+        }
+
+        [XafDisplayName("Last Clock In")]
+        [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
+        public DateTime? LastClockIn
+        {
+            get => _lastClockIn;
+            set => SetPropertyValue(nameof(LastClockIn), ref _lastClockIn, value);
+        }
+
+        [XafDisplayName("Last Clock Out")]
+        [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
+        public DateTime? LastClockOut
+        {
+            get => _lastClockOut;
+            set => SetPropertyValue(nameof(LastClockOut), ref _lastClockOut, value);
+        }
+        
         IEnumerable<ISecurityUserLoginInfo> IOAuthSecurityUser.UserLogins => LoginInfo.OfType<ISecurityUserLoginInfo>();
 
         ISecurityUserLoginInfo ISecurityUserWithLoginInfo.CreateUserLoginInfo(string loginProviderName, string providerUserKey)
