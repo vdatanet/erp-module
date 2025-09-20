@@ -4,6 +4,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
+using erp.Module.BusinessObjects.TimeTracking;
 
 namespace erp.Module.BusinessObjects.Projects;
 
@@ -57,9 +58,7 @@ public class Project(Session session) : BaseEntity(session)
     [XafDisplayName("Activities")]
     public XPCollection<ProjectActivity> Activities => GetCollection<ProjectActivity>(nameof(Activities));
 
-    // [Association("Project-TimesheetEntries")]
-    // [XafDisplayName("Partes de tiempo")]
-    // public XPCollection<TimesheetEntry> TimesheetEntries => GetCollection<TimesheetEntry>(nameof(TimesheetEntries));
-    //
-    // public override string ToString() => !string.IsNullOrWhiteSpace(Code) ? $"{Code} - {Name}" : Name;
+    [Association("Project-TimesheetEntries")]
+    [XafDisplayName("Partes de tiempo")]
+    public XPCollection<TimesheetEntry> TimesheetEntries => GetCollection<TimesheetEntry>(nameof(TimesheetEntries));
 }
