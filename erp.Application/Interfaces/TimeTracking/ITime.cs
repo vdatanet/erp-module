@@ -3,7 +3,7 @@ using erp.Application.Dtos.Common.Responses;
 
 namespace erp.Application.Interfaces.TimeTracking;
 
-public interface ITimesheetEntry
+public interface ITime
 {
     Task<ItemsResponse<CountryDto>> GetAll(string? search);
     Task<PagedResponse<CountryDto>> GetPaged(string? search, int? page, int? pageSize);

@@ -9,7 +9,7 @@ using erp.Module.BusinessObjects.Common;
 
 namespace erp.Application.Services.Common;
 
-public class TimesheetEntry(IDataService dataService) : ITimesheetEntry
+public class TimeService(IDataService dataService) : ITime
 {
     private readonly IObjectSpace _objectSpace = dataService.GetObjectSpace(typeof(Country));
 

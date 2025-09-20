@@ -62,7 +62,7 @@ public class Startup(IConfiguration configuration)
                 });
             });
             
-            builder.Services.AddScoped<ITimesheetEntry, TimesheetEntry>();
+            builder.Services.AddScoped<ITime, TimeService>();
 
             builder.Modules
                 .AddCloning()

@@ -8,7 +8,7 @@ namespace erp.Blazor.Server.Controllers.TimeTracking;
 [Authorize]
 [ApiController]
 [Route("api/v1/time")]
-public class TimeController(ITimesheetEntry service) : ControllerBase
+public class TimeController(ITime service) : ControllerBase
 {
 
 }
