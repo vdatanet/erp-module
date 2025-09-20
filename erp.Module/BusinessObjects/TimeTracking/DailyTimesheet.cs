@@ -4,18 +4,21 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
+using erp.Module.BusinessObjects.Invoicing;
 using erp.Module.BusinessObjects.Projects;
+using erp.Module.Factories;
 
 namespace erp.Module.BusinessObjects.TimeTracking;
 
 [DefaultClassOptions]
 [NavigationItem("Time Tracking")]
 [ImageName("ShowWorkTimeOnly")]
-public class DailyTimesheet : BaseEntity
+[XafDefaultProperty(nameof(DailyTimesheetCode))]
+public class DailyTimesheet(Session session) : BaseEntity(session)
 {
-    public DailyTimesheet(Session session) : base(session) { }
-
     private ApplicationUser _employee;
+    private string _dailyTimesheetPrefix;
+    private string _dailyTimesheetCode;
     private DateTime _date;
     private TimeSpan _totalWork;
     private bool _isLateIn;
@@ -28,7 +31,20 @@ public class DailyTimesheet : BaseEntity
         get => _employee;
         set => SetPropertyValue(nameof(Employee), ref _employee, value);
     }
+    
+    [RuleRequiredField]
+    public string DailyTimesheetPrefix
+    {
+        get => _dailyTimesheetPrefix;
+        set => SetPropertyValue(nameof(DailyTimesheetPrefix), ref _dailyTimesheetPrefix, value);
+    }
 
+    public string DailyTimesheetCode
+    {
+        get => _dailyTimesheetCode;
+        set => SetPropertyValue(nameof(DailyTimesheetCode), ref _dailyTimesheetCode, value);
+    }
+    
     [RuleRequiredField]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "d")]
     public DateTime Date
@@ -96,5 +112,13 @@ public class DailyTimesheet : BaseEntity
         {
             IsEarlyOut = false;
         }
+    }
+    
+    protected override void OnSaving()
+    {
+        base.OnSaving();
+        if (!Session.IsNewObject(this) || !string.IsNullOrEmpty(DailyTimesheetCode) || Session is NestedUnitOfWork) return;
+        DailyTimesheetCode =
+            SequenceFactory.GetNextSequence(Session, $"{typeof(Invoice).FullName}.{DailyTimesheetPrefix}", DailyTimesheetPrefix, 5);
     }
 }
