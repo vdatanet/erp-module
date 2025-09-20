@@ -58,11 +58,12 @@ public class DailyTimesheet(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(Date), ref _date, value.Date);
     }
 
-    //[ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
+    [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
+    [ModelDefault("AllowEdit", "False")]
     public TimeSpan TotalWork
     {
         get => _totalWork;
-        protected set => SetPropertyValue(nameof(TotalWork), ref _totalWork, value);
+        set => SetPropertyValue(nameof(TotalWork), ref _totalWork, value);
     }
 
     public bool IsLateIn
@@ -145,9 +146,7 @@ public class DailyTimesheet(Session session) : BaseEntity(session)
     protected override void OnSaving()
     {
         base.OnSaving();
-
-        if (Employee?.WorkdayRule != null) Recalculate(Employee.WorkdayRule);
-
+        
         if (!Session.IsNewObject(this) || !string.IsNullOrEmpty(DailyTimesheetSequence) ||
             Session is NestedUnitOfWork) return;
         DailyTimesheetSequence =

@@ -21,6 +21,6 @@
     <SchemaModule Name="SystemModule" Version="25.1.3.0" IsNewNode="True" />
   </SchemaModules>
   <Views>
-    <ListView Id="ApplicationUser_ListView" Caption="Users" />
+    <ListView Id="ApplicationUser_ListView" Caption="Employees" />
   </Views>
 </Application>

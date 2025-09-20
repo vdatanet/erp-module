@@ -20,6 +20,9 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
     private ProjectActivity _activity;
     private string _notes;
     private TimeSpan _duration;
+    private DailyTimesheet _dailyTimesheet;
+    private DailyTimesheet _previousDailyTimesheet;
+    private WorkdayRule _previousWorkdayRuleEmployee;
 
     [Association("ApplicationUser-TimesheetEntries")]
     [RuleRequiredField]
@@ -79,18 +82,15 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
         get => _notes;
         set => SetPropertyValue(nameof(Notes), ref _notes, value);
     }
-
-    [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
+    
     [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Duration")]
     public TimeSpan Duration
     {
         get => _duration;
-        protected set => SetPropertyValue(nameof(Duration), ref _duration, value);
+        set => SetPropertyValue(nameof(Duration), ref _duration, value);
     }
-
-    private DailyTimesheet _dailyTimesheet;
-
+    
     [Association("DailyTimesheet-Entries")]
     public DailyTimesheet DailyTimesheet
     {
@@ -104,11 +104,32 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
         RecalculateDuration();
     }
 
+    protected override void OnDeleting()
+    {
+        if (DailyTimesheet is not null) _previousDailyTimesheet = DailyTimesheet;
+        _previousWorkdayRuleEmployee = Employee?.WorkdayRule ?? _previousWorkdayRuleEmployee;
+        base.OnDeleting();
+    }
+
+    protected override void OnDeleted()
+    {
+        base.OnDeleted();
+
+        if (_previousDailyTimesheet is {} ts && _previousWorkdayRuleEmployee is {} rule)
+            ts.Recalculate(rule);
+
+        _previousDailyTimesheet = null;
+        _previousWorkdayRuleEmployee = null;
+    }
+
     private void RecalculateDuration()
     {
         if (EndOn.HasValue && EndOn.Value >= StartOn)
             Duration = EndOn.Value - StartOn;
         else
             Duration = TimeSpan.Zero;
+
+        if (DailyTimesheet is { } ts && Employee?.WorkdayRule is { } rule)
+            ts.Recalculate(rule);
     }
 }
