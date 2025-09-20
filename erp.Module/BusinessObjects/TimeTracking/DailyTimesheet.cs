@@ -10,9 +10,9 @@ using erp.Module.BusinessObjects.Projects;
 namespace erp.Module.BusinessObjects.TimeTracking;
 
 [DefaultClassOptions]
-[NavigationItem("Registro Horario")]
+[NavigationItem("Time Tracking")]
 [ImageName("BO_List")]
-[XafDisplayName("Parte Diario")]
+[XafDisplayName("Daily Timesheet")]
 public class DailyTimesheet : BaseEntity
 {
     public DailyTimesheet(Session session) : base(session) { }

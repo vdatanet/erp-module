@@ -18,7 +18,7 @@ public enum OvertimePolicy
 [DefaultClassOptions]
 [NavigationItem("Time Tracking")]
 [ImageName("BO_Rules")]
-[XafDisplayName("Reglas de Jornada")]
+[XafDisplayName("Workday Rule")]
 public class WorkdayRule : BaseEntity
 {
     public WorkdayRule(Session session) : base(session) { }
