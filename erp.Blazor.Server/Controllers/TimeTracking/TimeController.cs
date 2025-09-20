@@ -16,7 +16,11 @@ public class TimeController(ITime service) : ControllerBase
     public async Task<ActionResult<ToggleResponse?>> Toggle([FromBody] ToggleRequest request)
     {
         var result = await service.Toggle(request);
-        if (result is null) return BadRequest();
-        return Ok(result);
+        return result is null
+            ? Problem(
+                title: "TODO Title.", 
+                detail: "TODO Detail.", 
+                statusCode: StatusCodes.Status500InternalServerError)
+            : Ok(result);
     }
 }
