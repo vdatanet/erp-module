@@ -29,7 +29,7 @@ public class Project(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(Code), ref _code, value);
     }
 
-    [Size(256)]
+    [Size(255)]
     [RuleRequiredField]
     [XafDisplayName("Name")]
     public string Name

@@ -31,6 +31,8 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
 
     [RuleRequiredField]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
+    [ModelDefault(nameof(IModelCommonMemberViewItem.EditMask), "g")]
+
     public DateTime StartOn
     {
         get => _startOn;
@@ -41,6 +43,7 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
     }
 
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
+    [ModelDefault(nameof(IModelCommonMemberViewItem.EditMask), "g")]
     public DateTime? EndOn
     {
         get => _endOn;
@@ -81,7 +84,7 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
         get => _duration;
         protected set => SetPropertyValue(nameof(Duration), ref _duration, value);
     }
-    
+
     private DailyTimesheet _dailyTimesheet;
 
     [Association("DailyTimesheet-Entries")]
