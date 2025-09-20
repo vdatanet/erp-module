@@ -14,5 +14,6 @@ public class TimeService(IDataService dataService) : ITime
     public async Task<ToggleResponse?> Toggle(ToggleRequest request)
     {
         return await Task.FromResult(new ToggleResponse(request.Message));
+        //return await Task.FromResult<ToggleResponse?>(null);
     }
 }
