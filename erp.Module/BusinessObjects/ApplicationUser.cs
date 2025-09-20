@@ -54,7 +54,7 @@ namespace erp.Module.BusinessObjects
         public XPCollection<DailyTimesheet> DailyTimesheets => GetCollection<DailyTimesheet>(nameof(DailyTimesheets));
         
         private WorkdayRule _workdayRule;
-        private bool _isActive;
+        private bool _isWorking;
         private DateTime? _lastClockIn;
         private DateTime? _lastClockOut;
 
@@ -66,11 +66,11 @@ namespace erp.Module.BusinessObjects
         //     set => SetPropertyValue(nameof(WorkdayRule), ref _workdayRule, value);
         // }
 
-        [XafDisplayName("Active")]
-        public bool IsActive
+        [XafDisplayName("Is Working")]
+        public bool IsWorking
         {
-            get => _isActive;
-            set => SetPropertyValue(nameof(IsActive), ref _isActive, value);
+            get => _isWorking;
+            set => SetPropertyValue(nameof(IsWorking), ref _isWorking, value);
         }
 
         [XafDisplayName("Last Clock In")]
