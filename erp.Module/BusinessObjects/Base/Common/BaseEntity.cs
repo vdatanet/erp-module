@@ -17,7 +17,7 @@ public abstract class BaseEntity(Session session) : BaseObject(session)
     private DateTime? _createdOn;
     private DateTime? _modifiedOn;
 
-    //[HideInUI(HideInUI.All)]
+    [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
     public ApplicationUser CreatedBy
     {
@@ -25,7 +25,7 @@ public abstract class BaseEntity(Session session) : BaseObject(session)
         set => SetPropertyValue(nameof(CreatedBy), ref _createdBy, value);
     }
 
-    //[HideInUI(HideInUI.All)]
+    [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
     public ApplicationUser ModifiedBy
     {
@@ -33,7 +33,7 @@ public abstract class BaseEntity(Session session) : BaseObject(session)
         set => SetPropertyValue(nameof(ModifiedBy), ref _modifiedBy, value);
     }
 
-    //[HideInUI(HideInUI.All)]
+    [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
     public DateTime? CreatedOn
@@ -42,7 +42,7 @@ public abstract class BaseEntity(Session session) : BaseObject(session)
         set => SetPropertyValue(nameof(CreatedOn), ref _createdOn, value);
     }
 
-    //[HideInUI(HideInUI.All)]
+    [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
     public DateTime? ModifiedOn
