@@ -10,7 +10,7 @@ namespace erp.Module.BusinessObjects.TimeTracking;
 
 [DefaultClassOptions]
 [NavigationItem("Time Tracking")]
-[ImageName("BO_Time")]
+[ImageName("Time")]
 public class TimesheetEntry(Session session) : BaseEntity(session)
 {
     private ApplicationUser _user;

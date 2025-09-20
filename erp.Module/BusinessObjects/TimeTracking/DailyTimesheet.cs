@@ -10,8 +10,7 @@ namespace erp.Module.BusinessObjects.TimeTracking;
 
 [DefaultClassOptions]
 [NavigationItem("Time Tracking")]
-[ImageName("BO_List")]
-[XafDisplayName("Daily Timesheet")]
+[ImageName("ShowWorkTimeOnly")]
 public class DailyTimesheet : BaseEntity
 {
     public DailyTimesheet(Session session) : base(session) { }
