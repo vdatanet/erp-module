@@ -16,7 +16,7 @@ public class WorkdayRule(Session session) : BaseEntity(session)
     private string _name;
 
     private TimeSpan _workdayStart = new(10, 0, 0);
-    private TimeSpan _workdayEnd = new(20, 0, 0);
+    private TimeSpan _workdayEnd = new(18, 0, 0);
     private TimeSpan _dailyTarget;
 
     private TimeSpan _toleranceEarlyIn = TimeSpan.Zero;
@@ -64,28 +64,28 @@ public class WorkdayRule(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(DailyTarget), ref _dailyTarget, value);
     }
 
-    [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
+    [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
     public TimeSpan ToleranceEarlyIn
     {
         get => _toleranceEarlyIn;
         set => SetPropertyValue(nameof(ToleranceEarlyIn), ref _toleranceEarlyIn, value);
     }
 
-    [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
+    [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
     public TimeSpan ToleranceLateIn
     {
         get => _toleranceLateIn;
         set => SetPropertyValue(nameof(ToleranceLateIn), ref _toleranceLateIn, value);
     }
 
-    [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
+    [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
     public TimeSpan ToleranceEarlyOut
     {
         get => _toleranceEarlyOut;
         set => SetPropertyValue(nameof(ToleranceEarlyOut), ref _toleranceEarlyOut, value);
     }
 
-    [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
+    [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
     public TimeSpan ToleranceLateOut
     {
         get => _toleranceLateOut;
