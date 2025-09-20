@@ -18,7 +18,6 @@ public enum OvertimePolicy
 [DefaultClassOptions]
 [NavigationItem("Time Tracking")]
 [ImageName("BO_Rules")]
-[XafDisplayName("Workday Rule")]
 public class WorkdayRule : BaseEntity
 {
     public WorkdayRule(Session session) : base(session) { }
@@ -38,77 +37,67 @@ public class WorkdayRule : BaseEntity
 
     [Size(128)]
     [RuleRequiredField]
-    [XafDisplayName("Nombre")]
     public string Name
     {
         get => _name;
         set => SetPropertyValue(nameof(Name), ref _name, value);
     }
-
-    [XafDisplayName("Inicio Jornada")]
+    
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
     public TimeSpan WorkdayStart
     {
         get => _workdayStart;
         set => SetPropertyValue(nameof(WorkdayStart), ref _workdayStart, value);
     }
-
-    [XafDisplayName("Fin Jornada")]
+    
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
     public TimeSpan WorkdayEnd
     {
         get => _workdayEnd;
         set => SetPropertyValue(nameof(WorkdayEnd), ref _workdayEnd, value);
     }
-
-    [XafDisplayName("Objetivo Diario")]
+    
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
     public TimeSpan DailyTarget
     {
         get => _dailyTarget;
         set => SetPropertyValue(nameof(DailyTarget), ref _dailyTarget, value);
     }
-
-    [XafDisplayName("Tol. Entrada Temprana")]
+    
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
     public TimeSpan ToleranceEarlyIn
     {
         get => _toleranceEarlyIn;
         set => SetPropertyValue(nameof(ToleranceEarlyIn), ref _toleranceEarlyIn, value);
     }
-
-    [XafDisplayName("Tol. Entrada Tardía")]
+    
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
     public TimeSpan ToleranceLateIn
     {
         get => _toleranceLateIn;
         set => SetPropertyValue(nameof(ToleranceLateIn), ref _toleranceLateIn, value);
     }
-
-    [XafDisplayName("Tol. Salida Temprana")]
+    
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
     public TimeSpan ToleranceEarlyOut
     {
         get => _toleranceEarlyOut;
         set => SetPropertyValue(nameof(ToleranceEarlyOut), ref _toleranceEarlyOut, value);
     }
-
-    [XafDisplayName("Tol. Salida Tardía")]
+    
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
     public TimeSpan ToleranceLateOut
     {
         get => _toleranceLateOut;
         set => SetPropertyValue(nameof(ToleranceLateOut), ref _toleranceLateOut, value);
     }
-
-    [XafDisplayName("Política Horas Extra")]
+    
     public OvertimePolicy OvertimePolicy
     {
         get => _overtimePolicy;
         set => SetPropertyValue(nameof(OvertimePolicy), ref _overtimePolicy, value);
     }
-
-    [XafDisplayName("Predeterminada")]
+    
     public bool IsDefault
     {
         get => _isDefault;
