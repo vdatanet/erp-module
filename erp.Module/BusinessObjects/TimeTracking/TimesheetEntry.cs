@@ -11,7 +11,6 @@ namespace erp.Module.BusinessObjects.TimeTracking;
 [DefaultClassOptions]
 [NavigationItem("Time Tracking")]
 [ImageName("BO_Time")]
-[XafDisplayName("Timesheet Entry")]
 public class TimesheetEntry(Session session) : BaseEntity(session)
 {
     private ApplicationUser _user;
@@ -24,16 +23,14 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
 
     [Association("ApplicationUser-TimesheetEntries")]
     [RuleRequiredField]
-    [XafDisplayName("Application User")]
-    public ApplicationUser User
+    public ApplicationUser Employee
     {
         get => _user;
-        set => SetPropertyValue(nameof(User), ref _user, value);
+        set => SetPropertyValue(nameof(Employee), ref _user, value);
     }
 
     [RuleRequiredField]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
-    [XafDisplayName("Start On")]
     public DateTime StartOn
     {
         get => _startOn;
@@ -44,7 +41,6 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
     }
 
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
-    [XafDisplayName("End On")]
     public DateTime? EndOn
     {
         get => _endOn;
@@ -56,7 +52,6 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
 
     [Association("Project-TimesheetEntries")]
     [RuleRequiredField]
-    [XafDisplayName("Project")]
     public Project Project
     {
         get => _project;
@@ -64,7 +59,6 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
     }
 
     [Association("ProjectActivity-TimesheetEntries")]
-    [XafDisplayName("Activity")]
     public ProjectActivity Activity
     {
         get => _activity;
@@ -87,11 +81,10 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
         get => _duration;
         protected set => SetPropertyValue(nameof(Duration), ref _duration, value);
     }
-    
+
     private DailyTimesheet _dailyTimesheet;
 
     [Association("DailyTimesheet-Entries")]
-    [XafDisplayName("Daily Timesheet")]
     public DailyTimesheet DailyTimesheet
     {
         get => _dailyTimesheet;

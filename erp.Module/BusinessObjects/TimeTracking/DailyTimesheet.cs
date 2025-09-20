@@ -5,7 +5,6 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Projects;
-// using erp.Module.BusinessObjects.Security; // Ajusta el namespace de ApplicationUser
 
 namespace erp.Module.BusinessObjects.TimeTracking;
 
@@ -17,26 +16,23 @@ public class DailyTimesheet : BaseEntity
 {
     public DailyTimesheet(Session session) : base(session) { }
 
-    private ApplicationUser _user;
-    private DateTime _date; // solo fecha
+    private ApplicationUser _employee;
+    private DateTime _date;
     private TimeSpan _totalWork;
     private TimeSpan _regularTime;
-    private TimeSpan _overtime;
     private bool _isLateIn;
     private bool _isEarlyOut;
 
     [Association("ApplicationUser-DailyTimesheets")]
     [RuleRequiredField]
-    [XafDisplayName("ApplicationUser")]
-    public ApplicationUser User
+    public ApplicationUser Employee
     {
-        get => _user;
-        set => SetPropertyValue(nameof(User), ref _user, value);
+        get => _employee;
+        set => SetPropertyValue(nameof(Employee), ref _employee, value);
     }
 
     [RuleRequiredField]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "d")]
-    [XafDisplayName("Fecha")]
     public DateTime Date
     {
         get => _date.Date;
@@ -44,7 +40,6 @@ public class DailyTimesheet : BaseEntity
     }
 
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
-    [XafDisplayName("Trabajo Total")]
     public TimeSpan TotalWork
     {
         get => _totalWork;
@@ -52,29 +47,18 @@ public class DailyTimesheet : BaseEntity
     }
 
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
-    [XafDisplayName("Tiempo Regular")]
     public TimeSpan RegularTime
     {
         get => _regularTime;
         protected set => SetPropertyValue(nameof(RegularTime), ref _regularTime, value);
     }
-
-    [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
-    [XafDisplayName("Horas Extra")]
-    public TimeSpan Overtime
-    {
-        get => _overtime;
-        protected set => SetPropertyValue(nameof(Overtime), ref _overtime, value);
-    }
-
-    [XafDisplayName("Entrada Tardía")]
+    
     public bool IsLateIn
     {
         get => _isLateIn;
         protected set => SetPropertyValue(nameof(IsLateIn), ref _isLateIn, value);
     }
-
-    [XafDisplayName("Salida Temprana")]
+    
     public bool IsEarlyOut
     {
         get => _isEarlyOut;
@@ -82,10 +66,8 @@ public class DailyTimesheet : BaseEntity
     }
 
     [Association("DailyTimesheet-Entries")]
-    [XafDisplayName("Entries")]
     public XPCollection<TimesheetEntry> Entries => GetCollection<TimesheetEntry>(nameof(Entries));
-
-    // Recalcula agregados a partir de las TimesheetEntry asociadas
+    
     public void Recalculate(WorkdayRule rule)
     {
         TimeSpan total = TimeSpan.Zero;
@@ -103,8 +85,7 @@ public class DailyTimesheet : BaseEntity
         }
 
         TotalWork = total;
-
-        // Flags según tolerancias
+        
         if (firstStart.HasValue)
         {
             var allowedStartMax = firstStart.Value.Date + rule.WorkdayStart + rule.ToleranceLateIn;
@@ -128,36 +109,7 @@ public class DailyTimesheet : BaseEntity
         // Regular vs Extra
         TimeSpan regular = total;
         TimeSpan extra = TimeSpan.Zero;
-
-        switch (rule.OvertimePolicy)
-        {
-            case OvertimePolicy.None:
-                regular = total;
-                extra = TimeSpan.Zero;
-                break;
-            case OvertimePolicy.AfterTarget:
-                if (total > rule.DailyTarget)
-                {
-                    regular = rule.DailyTarget;
-                    extra = total - rule.DailyTarget;
-                }
-                break;
-            case OvertimePolicy.AfterEndPlusTolerance:
-                if (lastEnd.HasValue)
-                {
-                    var threshold = lastEnd.Value.Date + rule.WorkdayEnd + rule.ToleranceLateOut;
-                    if (lastEnd.Value > threshold)
-                    {
-                        // Extra = tiempo trabajado después del umbral
-                        var after = lastEnd.Value - threshold;
-                        extra = after > TimeSpan.Zero ? after : TimeSpan.Zero;
-                        regular = total - extra;
-                    }
-                }
-                break;
-        }
-
+        
         RegularTime = regular < TimeSpan.Zero ? TimeSpan.Zero : regular;
-        Overtime = extra < TimeSpan.Zero ? TimeSpan.Zero : extra;
     }
 }
