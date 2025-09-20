@@ -1,13 +1,18 @@
 ﻿using System.ComponentModel;
 using System.Text;
 using DevExpress.ExpressApp;
+using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Security;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.TimeTracking;
 
 namespace erp.Module.BusinessObjects
 {
+    [NavigationItem("Contacts")]
+    [ImageName("BO_Employee")]
+    [XafDisplayName("Employee")]
     [MapInheritance(MapInheritanceType.ParentTable)]
     [DefaultProperty(nameof(UserName))]
     public class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLoginInfo, ISecurityUserLockout
@@ -33,11 +38,15 @@ namespace erp.Module.BusinessObjects
 
         [Browsable(false)]
         [NonCloneable]
-        [Aggregated, Association("User-LoginInfo")]
+        [DevExpress.Xpo.Aggregated, Association("User-LoginInfo")]
         public XPCollection<ApplicationUserLoginInfo> LoginInfo
         {
             get { return GetCollection<ApplicationUserLoginInfo>(nameof(LoginInfo)); }
         }
+        
+        [Association("ApplicationUser-TimesheetEntries")]
+        [XafDisplayName("Timesheet Entries")]
+        public XPCollection<TimesheetEntry> TimesheetEntries => GetCollection<TimesheetEntry>(nameof(TimesheetEntries));
 
         IEnumerable<ISecurityUserLoginInfo> IOAuthSecurityUser.UserLogins => LoginInfo.OfType<ISecurityUserLoginInfo>();
 

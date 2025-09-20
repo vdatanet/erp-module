@@ -22,14 +22,14 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
     private string _notes;
     private TimeSpan _duration;
 
-    // [Association("User-TimesheetEntries")]
-    // [RuleRequiredField]
-    // [XafDisplayName("Usuario")]
-    // public ApplicationUser User
-    // {
-    //     get => _user;
-    //     set => SetPropertyValue(nameof(User), ref _user, value);
-    // }
+    [Association("ApplicationUser-TimesheetEntries")]
+    [RuleRequiredField]
+    [XafDisplayName("Application User")]
+    public ApplicationUser User
+    {
+        get => _user;
+        set => SetPropertyValue(nameof(User), ref _user, value);
+    }
 
     [RuleRequiredField]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
