@@ -57,7 +57,6 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
 
     [Association("Project-TimesheetEntries")]
     [ImmediatePostData]
-    [RuleRequiredField]
     public Project Project
     {
         get => _project;

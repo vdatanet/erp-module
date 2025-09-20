@@ -16,6 +16,7 @@ public class CompanyInfo(Session session) : Contact(session)
 {
     private Account _defaultSalesAccount;
     private Account _defaultPurchaseAccount;
+    private string _defaultDailyTimeSheetPrefix;
     
     public Account DefaultSalesAccount
     {
@@ -29,4 +30,9 @@ public class CompanyInfo(Session session) : Contact(session)
         set => SetPropertyValue(nameof(DefaultPurchaseAccount), ref _defaultPurchaseAccount, value);
     }
     
+    public string DefaultDailyTimeSheetPrefix
+    {
+        get => _defaultDailyTimeSheetPrefix;
+        set => SetPropertyValue(nameof(DefaultDailyTimeSheetPrefix), ref _defaultDailyTimeSheetPrefix, value);
+    }
 }

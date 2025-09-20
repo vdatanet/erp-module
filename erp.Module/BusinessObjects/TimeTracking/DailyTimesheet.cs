@@ -1,30 +1,38 @@
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
+using DevExpress.ExpressApp.Security;
+using DevExpress.ExpressApp.Xpo;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
+using DevExpress.XtraSpreadsheet.Model.CopyOperation;
 using erp.Module.BusinessObjects.Base.Common;
+using erp.Module.BusinessObjects.Helpers;
 using erp.Module.BusinessObjects.Invoicing;
 using erp.Module.BusinessObjects.Projects;
-using erp.Module.Factories;
+using Microsoft.Extensions.DependencyInjection;
+using VeriFactu.Xml.Factu;
+using VeriFactu.Xml.Factu.Alta;
+using SequenceFactory = erp.Module.Factories.SequenceFactory;
 
 namespace erp.Module.BusinessObjects.TimeTracking;
 
 [DefaultClassOptions]
 [NavigationItem("Time Tracking")]
 [ImageName("ShowWorkTimeOnly")]
-[XafDefaultProperty(nameof(DailyTimesheetCode))]
+[XafDefaultProperty(nameof(DailyTimesheetSequence))]
 public class DailyTimesheet(Session session) : BaseEntity(session)
 {
     private ApplicationUser _employee;
     private string _dailyTimesheetPrefix;
-    private string _dailyTimesheetCode;
+    private string _dailyTimesheetSequence;
     private DateTime _date;
     private TimeSpan _totalWork;
     private bool _isLateIn;
     private bool _isEarlyOut;
 
     [Association("ApplicationUser-DailyTimesheets")]
+    [ModelDefault("AllowEdit", "False")]
     [RuleRequiredField]
     public ApplicationUser Employee
     {
@@ -39,10 +47,10 @@ public class DailyTimesheet(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(DailyTimesheetPrefix), ref _dailyTimesheetPrefix, value);
     }
 
-    public string DailyTimesheetCode
+    public string DailyTimesheetSequence
     {
-        get => _dailyTimesheetCode;
-        set => SetPropertyValue(nameof(DailyTimesheetCode), ref _dailyTimesheetCode, value);
+        get => _dailyTimesheetSequence;
+        set => SetPropertyValue(nameof(DailyTimesheetSequence), ref _dailyTimesheetSequence, value);
     }
     
     [RuleRequiredField]
@@ -72,7 +80,7 @@ public class DailyTimesheet(Session session) : BaseEntity(session)
         protected set => SetPropertyValue(nameof(IsEarlyOut), ref _isEarlyOut, value);
     }
 
-    [Association("DailyTimesheet-Entries")]
+    [Association("DailyTimesheet-Entries"), DevExpress.Xpo.Aggregated]
     public XPCollection<TimesheetEntry> Entries => GetCollection<TimesheetEntry>(nameof(Entries));
     
     public void Recalculate(WorkdayRule rule)
@@ -114,11 +122,32 @@ public class DailyTimesheet(Session session) : BaseEntity(session)
         }
     }
     
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        InitValues();
+    }
+
+    private void InitValues()
+    {
+        SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(Employee), GetCurrentUser());
+        Date = DateTime.Today.Date;
+        var companyInfo = CompanyInfoHelper.GetCompanyInfo(Session);
+        if (companyInfo == null) return;
+        DailyTimesheetPrefix = companyInfo.DefaultDailyTimeSheetPrefix;
+    }
+    
     protected override void OnSaving()
     {
         base.OnSaving();
-        if (!Session.IsNewObject(this) || !string.IsNullOrEmpty(DailyTimesheetCode) || Session is NestedUnitOfWork) return;
-        DailyTimesheetCode =
+        if (!Session.IsNewObject(this) || !string.IsNullOrEmpty(DailyTimesheetSequence) || Session is NestedUnitOfWork) return;
+        DailyTimesheetSequence =
             SequenceFactory.GetNextSequence(Session, $"{typeof(Invoice).FullName}.{DailyTimesheetPrefix}", DailyTimesheetPrefix, 5);
+    }
+    
+    private ApplicationUser GetCurrentUser()
+    {
+        return Session.GetObjectByKey<ApplicationUser>(
+            Session.ServiceProvider.GetRequiredService<ISecurityStrategyBase>().UserId);
     }
 }
