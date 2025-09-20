@@ -81,6 +81,7 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
     }
 
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Duration")]
     public TimeSpan Duration
     {
