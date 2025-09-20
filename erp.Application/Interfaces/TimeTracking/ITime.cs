@@ -1,14 +1,11 @@
 using erp.Application.Dtos.Common.Requests;
 using erp.Application.Dtos.Common.Responses;
+using erp.Application.Dtos.TimeTracking.Requests;
+using erp.Application.Dtos.TimeTracking.Responses;
 
 namespace erp.Application.Interfaces.TimeTracking;
 
 public interface ITime
 {
-    Task<ItemsResponse<CountryDto>> GetAll(string? search);
-    Task<PagedResponse<CountryDto>> GetPaged(string? search, int? page, int? pageSize);
-    Task<CountryDto?> GetByOid(Guid id);
-    CountryDto Add(CountryRequest request);
-    Task<CountryDto?> Update(Guid id, CountryRequest request);
-    Task<bool> Delete(Guid id);
+    Task<ToggleResponse> Toggle(ToggleRequest request);
 }
