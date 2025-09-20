@@ -19,7 +19,6 @@ public class DailyTimesheet : BaseEntity
     private ApplicationUser _employee;
     private DateTime _date;
     private TimeSpan _totalWork;
-    private TimeSpan _regularTime;
     private bool _isLateIn;
     private bool _isEarlyOut;
 
@@ -44,13 +43,6 @@ public class DailyTimesheet : BaseEntity
     {
         get => _totalWork;
         protected set => SetPropertyValue(nameof(TotalWork), ref _totalWork, value);
-    }
-
-    [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
-    public TimeSpan RegularTime
-    {
-        get => _regularTime;
-        protected set => SetPropertyValue(nameof(RegularTime), ref _regularTime, value);
     }
     
     public bool IsLateIn
@@ -105,11 +97,5 @@ public class DailyTimesheet : BaseEntity
         {
             IsEarlyOut = false;
         }
-
-        // Regular vs Extra
-        TimeSpan regular = total;
-        TimeSpan extra = TimeSpan.Zero;
-        
-        RegularTime = regular < TimeSpan.Zero ? TimeSpan.Zero : regular;
     }
 }

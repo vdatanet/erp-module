@@ -81,7 +81,7 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
         get => _duration;
         protected set => SetPropertyValue(nameof(Duration), ref _duration, value);
     }
-
+    
     private DailyTimesheet _dailyTimesheet;
 
     [Association("DailyTimesheet-Entries")]
