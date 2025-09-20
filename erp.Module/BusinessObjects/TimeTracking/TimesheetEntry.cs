@@ -30,6 +30,7 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
     }
 
     [RuleRequiredField]
+    [ImmediatePostData]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
     [ModelDefault(nameof(IModelCommonMemberViewItem.EditMask), "g")]
 
@@ -42,6 +43,7 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
         }
     }
 
+    [ImmediatePostData]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
     [ModelDefault(nameof(IModelCommonMemberViewItem.EditMask), "g")]
     public DateTime? EndOn
@@ -54,6 +56,7 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
     }
 
     [Association("Project-TimesheetEntries")]
+    [ImmediatePostData]
     [RuleRequiredField]
     public Project Project
     {
@@ -62,6 +65,7 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
     }
 
     [Association("ProjectActivity-TimesheetEntries")]
+    [DataSourceProperty("Project.Activities")]
     public ProjectActivity Activity
     {
         get => _activity;
@@ -77,7 +81,7 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(Notes), ref _notes, value);
     }
 
-    [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
+    [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
     [XafDisplayName("Duration")]
     public TimeSpan Duration
     {
