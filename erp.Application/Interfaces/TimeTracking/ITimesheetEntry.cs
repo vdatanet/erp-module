@@ -1,9 +1,9 @@
 using erp.Application.Dtos.Common.Requests;
 using erp.Application.Dtos.Common.Responses;
 
-namespace erp.Application.Interfaces.Common;
+namespace erp.Application.Interfaces.TimeTracking;
 
-public interface ICountryService
+public interface ITimesheetEntry
 {
     Task<ItemsResponse<CountryDto>> GetAll(string? search);
     Task<PagedResponse<CountryDto>> GetPaged(string? search, int? page, int? pageSize);

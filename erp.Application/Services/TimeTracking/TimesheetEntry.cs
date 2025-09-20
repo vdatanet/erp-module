@@ -4,12 +4,12 @@ using DevExpress.Xpo;
 using erp.Application.Dtos.Common.Requests;
 using erp.Application.Dtos.Common.Responses;
 using erp.Application.Helpers;
-using erp.Application.Interfaces.Common;
+using erp.Application.Interfaces.TimeTracking;
 using erp.Module.BusinessObjects.Common;
 
 namespace erp.Application.Services.Common;
 
-public class CountryService(IDataService dataService) : ICountryService
+public class TimesheetEntry(IDataService dataService) : ITimesheetEntry
 {
     private readonly IObjectSpace _objectSpace = dataService.GetObjectSpace(typeof(Country));
 

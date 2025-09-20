@@ -1,7 +1,7 @@
 #nullable enable
 using erp.Application.Dtos.Common.Requests;
 using erp.Application.Dtos.Common.Responses;
-using erp.Application.Interfaces.Common;
+using erp.Application.Interfaces.TimeTracking;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -10,8 +10,8 @@ namespace erp.Blazor.Server.Controllers.Common;
 
 [Authorize]
 [ApiController]
-[Route("api/v1/countries")]
-public class CountriesController(ICountryService service) : ControllerBase
+[Route("api/v1/timesheet-entries")]
+public class TimesheetEntries(ITimesheetEntry service) : ControllerBase
 {
     [HttpGet]
     [SwaggerOperation("Returns all countries with search option")]

@@ -9,8 +9,7 @@ using DevExpress.ExpressApp.Security.Authentication.ClientServer;
 using DevExpress.ExpressApp.WebApi.Services;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
-using erp.Application.Interfaces.Common;
-using erp.Application.Services;
+using erp.Application.Interfaces.TimeTracking;
 using erp.Application.Services.Common;
 using erp.Blazor.Server.Services;
 using erp.Module;
@@ -57,13 +56,13 @@ public class Startup(IConfiguration configuration)
 
                 webApiBuilder.ConfigureOptions(options =>
                 {
-                    //options.BusinessObject<Country>();
-                    //options.BusinessObject<State>();
-                    //options.BusinessObject<City>();
+                    options.BusinessObject<Country>();
+                    options.BusinessObject<State>();
+                    options.BusinessObject<City>();
                 });
             });
             
-            builder.Services.AddScoped<ICountryService, CountryService>();
+            builder.Services.AddScoped<ITimesheetEntry, TimesheetEntry>();
 
             builder.Modules
                 .AddCloning()
