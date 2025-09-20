@@ -7,5 +7,5 @@ namespace erp.Application.Interfaces.TimeTracking;
 
 public interface ITime
 {
-    Task<ToggleResponse?> Toggle(ToggleRequest request);
+    Task<ToggleResponse?> Toggle(ToggleRequest request, string userId);
 }
