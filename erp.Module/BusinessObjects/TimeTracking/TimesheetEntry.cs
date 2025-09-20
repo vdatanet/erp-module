@@ -87,6 +87,16 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
         get => _duration;
         protected set => SetPropertyValue(nameof(Duration), ref _duration, value);
     }
+    
+    private DailyTimesheet _dailyTimesheet;
+
+    [Association("DailyTimesheet-Entries")]
+    [XafDisplayName("Daily Timesheet")]
+    public DailyTimesheet DailyTimesheet
+    {
+        get => _dailyTimesheet;
+        set => SetPropertyValue(nameof(DailyTimesheet), ref _dailyTimesheet, value);
+    }
 
     protected override void OnSaving()
     {
