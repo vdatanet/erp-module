@@ -2,6 +2,7 @@
 using DevExpress.ExpressApp;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects;
+using erp.Module.BusinessObjects.Contacts;
 using erp.Module.BusinessObjects.Projects;
 using erp.Module.BusinessObjects.TimeTracking;
 
@@ -15,13 +16,13 @@ public static class TimesheetHelper
 
     public static ToggleResult ToggleClock(
         Session session, 
-        ApplicationUser user, 
+        Employee employee,  
         DateTime now, 
         Project? project = null, 
         ProjectActivity? activity = null, 
         string? prefix = null)
     {
-        var daily = GetOrCreateDaily(session, user, now.Date, prefix);
+        var daily = GetOrCreateDaily(session, employee, now.Date, prefix);
         var open = GetOpenEntry(daily);
 
         if (open is null)
@@ -29,13 +30,13 @@ public static class TimesheetHelper
             // Clock In
             var entry = new TimesheetEntry(session)
             {
-                Employee = user,
+                Employee = employee,
                 StartOn = now,
                 Project = project,
                 Activity = activity,
                 DailyTimesheet = daily
             };
-            EnsureNoOverlap(session, user, entry.StartOn, entry.EndOn, null);
+            EnsureNoOverlap(session, employee, entry.StartOn, entry.EndOn, null);
             entry.Save();
             Recalc(daily);
             return new ToggleResult(ToggleResultType.ClockIn, entry, daily);
@@ -46,22 +47,22 @@ public static class TimesheetHelper
             open.EndOn = now;
             if (open.EndOn < open.StartOn)
                 throw new UserFriendlyException("La hora de salida no puede ser anterior a la de entrada.");
-            EnsureNoOverlap(session, user, open.StartOn, open.EndOn, open);
+            EnsureNoOverlap(session, employee, open.StartOn, open.EndOn, open);
             open.Save();
             Recalc(daily);
             return new ToggleResult(ToggleResultType.ClockOut, open, daily);
         }
     }
     
-    private static DailyTimesheet GetOrCreateDaily(Session session, ApplicationUser user, DateTime date, string? prefix)
+    private static DailyTimesheet GetOrCreateDaily(Session session, Employee employee, DateTime date, string? prefix)
     {
         var q = new XPQuery<DailyTimesheet>(session);
-        var daily = q.FirstOrDefault(t => t.Employee == user && t.Date == date);
+        var daily = q.FirstOrDefault(t => t.Employee == employee && t.Date == date);
         if (daily != null) return daily;
 
         daily = new DailyTimesheet(session)
         {
-            Employee = user,
+            Employee = employee,
             Date = date
         };
         if (!string.IsNullOrWhiteSpace(prefix))
@@ -74,12 +75,12 @@ public static class TimesheetHelper
     private static TimesheetEntry? GetOpenEntry(DailyTimesheet daily) =>
         daily.Entries.FirstOrDefault(e => !e.EndOn.HasValue);
 
-    private static void EnsureNoOverlap(Session session, ApplicationUser user, DateTime start, DateTime? end, TimesheetEntry? exclude)
+    private static void EnsureNoOverlap(Session session, Employee employee, DateTime start, DateTime? end, TimesheetEntry? exclude)
     {
         var q = new XPQuery<TimesheetEntry>(session);
         var overlaps = q.Any(e =>
             e != exclude &&
-            e.Employee == user &&
+            e.Employee == employee &&
             e.StartOn.Date == start.Date &&
             start < (e.EndOn ?? DateTime.MaxValue) &&
             (end ?? DateTime.MaxValue) > e.StartOn);
