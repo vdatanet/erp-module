@@ -6,6 +6,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
+using erp.Module.BusinessObjects.Contacts;
 using erp.Module.BusinessObjects.Helpers;
 using erp.Module.BusinessObjects.Invoicing;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,7 +20,7 @@ namespace erp.Module.BusinessObjects.TimeTracking;
 [XafDefaultProperty(nameof(DailyTimesheetSequence))]
 public class DailyTimesheet(Session session) : BaseEntity(session)
 {
-    private ApplicationUser _employee;
+    private Employee _employee;
     private string _dailyTimesheetPrefix;
     private string _dailyTimesheetSequence;
     private DateTime _date;
@@ -28,10 +29,10 @@ public class DailyTimesheet(Session session) : BaseEntity(session)
     private bool _isEarlyOut;
     private string _notes;
 
-    [Association("ApplicationUser-DailyTimesheets")]
+    [Association("Employee-DailyTimesheets")]
     [ModelDefault("AllowEdit", "False")]
     [RuleRequiredField]
-    public ApplicationUser Employee
+    public Employee Employee
     {
         get => _employee;
         set => SetPropertyValue(nameof(Employee), ref _employee, value);

@@ -4,6 +4,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
+using erp.Module.BusinessObjects.Contacts;
 
 namespace erp.Module.BusinessObjects.TimeTracking;
 
@@ -92,8 +93,8 @@ public class WorkdayRule(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(ToleranceLateOut), ref _toleranceLateOut, value);
     }
     
-    [Association("WorkdayRule-ApplicationUsers")]
-    public XPCollection<ApplicationUser> ApplicationUsers => GetCollection<ApplicationUser>(nameof(ApplicationUsers));
+    [Association("WorkdayRule-Employees")]
+    public XPCollection<Employee> Employees => GetCollection<Employee>(nameof(Employees));
     
     protected override void OnSaving()
     {

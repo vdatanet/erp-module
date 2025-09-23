@@ -6,6 +6,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
+using erp.Module.BusinessObjects.Contacts;
 using erp.Module.BusinessObjects.Projects;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,7 +17,7 @@ namespace erp.Module.BusinessObjects.TimeTracking;
 [ImageName("Time")]
 public class TimesheetEntry(Session session) : BaseEntity(session)
 {
-    private ApplicationUser _user;
+    private Employee _employee;
     private DateTime _startOn;
     private DateTime? _endOn;
     private Project _project;
@@ -27,13 +28,13 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
     private DailyTimesheet _previousDailyTimesheet;
     private WorkdayRule _previousWorkdayRuleEmployee;
 
-    [Association("ApplicationUser-TimesheetEntries")]
+    [Association("Employee-TimesheetEntries")]
     [RuleRequiredField]
     [ModelDefault("AllowEdit", "False")]
-    public ApplicationUser Employee
+    public Employee Employee
     {
-        get => _user;
-        set => SetPropertyValue(nameof(Employee), ref _user, value);
+        get => _employee;
+        set => SetPropertyValue(nameof(Employee), ref _employee, value);
     }
 
     [RuleRequiredField]
