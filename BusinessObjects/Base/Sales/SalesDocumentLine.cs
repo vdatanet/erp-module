@@ -12,6 +12,7 @@ namespace erp.Module.BusinessObjects.Base.Sales;
 public class SalesDocumentLine(Session session) : BaseEntity(session)
 {
     private SalesDocument _salesDocument;
+    private SalesDocument _previousSalesDocument;
     private Product _product;
     private string _productName;
     private string _notes;
@@ -161,13 +162,20 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         OnChanged(nameof(TaxAmount));
         OnChanged(nameof(TotalAmount));
         
-        //SalesDocument?.Touch();
+        SalesDocument?.RebuildTaxSummaryByTaxType();
+    }
+
+    protected override void OnDeleted()
+    {
+        base.OnDeleted();
+        _previousSalesDocument?.RebuildTaxSummaryByTaxType();
+        _previousSalesDocument = null;
     }
 
     protected override void OnDeleting()
     {
         base.OnDeleting();
-        //SalesDocument?.Touch();
+        _previousSalesDocument = SalesDocument;
         foreach (var aggregated in new ArrayList(Taxes)) Session.Delete(aggregated);
     }
 }

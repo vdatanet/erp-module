@@ -9,15 +9,6 @@ namespace erp.Module.BusinessObjects.Base.Sales;
 
 public abstract class SalesDocument(Session session) : BaseEntity(session)
 {
-    // [NonPersistent]
-    // public int TouchStamp { get; private set; }
-    //
-    // public void Touch()
-    // {
-    //     TouchStamp++; // solo para marcar cambio
-    //     OnChanged(nameof(TouchStamp));
-    // }
-    
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [PersistentAlias("Lines.Sum(TaxableAmount)")]
     public decimal TaxableAmount => Convert.ToDecimal(EvaluateAlias());
@@ -52,6 +43,8 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
 
     public void RebuildTaxSummaryByTaxType()
     {
+        if (IsLoading) return;
+        
         foreach (var row in Taxes.ToList())
             row.Delete();
 
@@ -78,17 +71,11 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
             Taxes.Add(row);
         }
     }
-
-    protected override void OnSaving()
-    {
-        base.OnSaving();
-        //RebuildTaxSummaryByTaxType();
-    }
-
+    
     protected override void OnDeleting()
     {
         base.OnDeleting();
-        //foreach (var aggregated in new ArrayList(Taxes)) Session.Delete(aggregated);
-        //foreach (var aggregated in new ArrayList(Lines)) Session.Delete(aggregated);
+        foreach (var aggregated in new ArrayList(Taxes)) Session.Delete(aggregated);
+        foreach (var aggregated in new ArrayList(Lines)) Session.Delete(aggregated);
     }
 }
