@@ -23,11 +23,11 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     
     [Aggregated]
     [Association("SalesDocument-Lines")]
-    XPCollection<SalesDocumentLine> Lines => GetCollection<SalesDocumentLine>();
+    public XPCollection<SalesDocumentLine> Lines => GetCollection<SalesDocumentLine>();
 
     [Aggregated]
     [Association("SalesDocument-Taxes")]
-    XPCollection<SalesDocumentTax> Taxes => GetCollection<SalesDocumentTax>();
+    public XPCollection<SalesDocumentTax> Taxes => GetCollection<SalesDocumentTax>();
     
     [Aggregated]
     [Association("SalesDocument-Tasks")]
