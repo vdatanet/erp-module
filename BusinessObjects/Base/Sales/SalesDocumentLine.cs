@@ -96,7 +96,11 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     public decimal Quantity
     {
         get => _quantity;
-        set => SetPropertyValue(nameof(Quantity), ref _quantity, value);
+        set
+        {
+            if (SetPropertyValue(nameof(Quantity), ref _quantity, value))
+                RecalculateTaxes();
+        }
     }
 
     [ImmediatePostData]
@@ -105,7 +109,11 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     public decimal UnitPrice
     {
         get => _unitPrice;
-        set => SetPropertyValue(nameof(UnitPrice), ref _unitPrice, value);
+        set
+        {
+            if (SetPropertyValue(nameof(UnitPrice), ref _unitPrice, value))
+                RecalculateTaxes();
+        }
     }
 
     [ImmediatePostData]
@@ -114,7 +122,11 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     public decimal DiscountPercent
     {
         get => _discountPercent;
-        set => SetPropertyValue(nameof(DiscountPercent), ref _discountPercent, value);
+        set
+        {
+            if (SetPropertyValue(nameof(DiscountPercent), ref _discountPercent, value))
+                RecalculateTaxes();
+        }
     }
 
     [ModelDefault("DisplayFormat", "{0:n2}")]
@@ -147,11 +159,5 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     {
         base.OnDeleting();
         foreach (var aggregated in new ArrayList(Taxes)) Session.Delete(aggregated);
-    }
-
-    protected override void OnSaving()
-    {
-        base.OnSaving();
-        RecalculateTaxes();
     }
 }
