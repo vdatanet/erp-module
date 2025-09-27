@@ -12,16 +12,15 @@ namespace erp.Module.BusinessObjects.Base.Sales;
 public class SalesDocumentLine(Session session) : BaseEntity(session)
 {
     private SalesDocument _salesDocument;
-    private SalesDocument _documentAtDelete;
     private Product _product;
     private string _productName;
     private string _notes;
     private decimal _quantity;
     private decimal _unitPrice;
     private decimal _discountPercent;
-    private decimal _taxableAmount;
-    private decimal _taxAmount;
-    private decimal _totalAmount;
+    //private decimal _taxableAmount;
+    //private decimal _taxAmount;
+    //private decimal _totalAmount;
     
     [Association("SalesDocument-Lines")]
     public SalesDocument SalesDocument
@@ -52,7 +51,6 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
             UnitPrice = 0m;
             DiscountPercent = 0m;
             DeleteAllTaxes();
-            Recalculate();
             return;
         }
 
@@ -72,8 +70,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
                 TaxKind = tax
             };
         }
-
-        Recalculate();
+        
         return;
 
         void DeleteAllTaxes()
@@ -102,11 +99,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     public decimal Quantity
     {
         get => _quantity;
-        set
-        {
-            if (SetPropertyValue(nameof(Quantity), ref _quantity, value))
-                Recalculate();
-        }
+        set => SetPropertyValue(nameof(Quantity), ref _quantity, value);
     }
 
     [ImmediatePostData]
@@ -115,11 +108,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     public decimal UnitPrice
     {
         get => _unitPrice;
-        set
-        {
-            if (SetPropertyValue(nameof(UnitPrice), ref _unitPrice, value))
-                Recalculate();
-        }
+        set => SetPropertyValue(nameof(UnitPrice), ref _unitPrice, value);
     }
 
     [ImmediatePostData]
@@ -128,83 +117,79 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     public decimal DiscountPercent
     {
         get => _discountPercent;
-        set
-        {
-            if (SetPropertyValue(nameof(DiscountPercent), ref _discountPercent, value))
-                Recalculate();
-        }
+        set => SetPropertyValue(nameof(DiscountPercent), ref _discountPercent, value);
     }
 
-    [ModelDefault("DisplayFormat", "{0:n2}")]
-    [ModelDefault("EditMask", "n2")]
-    [ModelDefault("AllowEdit", "False")]
-    public decimal TaxableAmount
-    {
-        get => _taxableAmount;
-        set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
-    }
+    // [ModelDefault("DisplayFormat", "{0:n2}")]
+    // [ModelDefault("EditMask", "n2")]
+    // [ModelDefault("AllowEdit", "False")]
+    // public decimal TaxableAmount
+    // {
+    //     get => _taxableAmount;
+    //     set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
+    // }
 
-    [ModelDefault("DisplayFormat", "{0:n2}")]
-    [ModelDefault("EditMask", "n2")]
-    [ModelDefault("AllowEdit", "False")]
-    public decimal TaxAmount
-    {
-        get => _taxAmount;
-        set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);
-    }
+    // [ModelDefault("DisplayFormat", "{0:n2}")]
+    // [ModelDefault("EditMask", "n2")]
+    // [ModelDefault("AllowEdit", "False")]
+    // public decimal TaxAmount
+    // {
+    //     get => _taxAmount;
+    //     set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);
+    // }
 
-    [ModelDefault("DisplayFormat", "{0:n2}")]
-    [ModelDefault("EditMask", "n2")]
-    [ModelDefault("AllowEdit", "False")]
-    public decimal TotalAmount
-    {
-        get => _totalAmount;
-        set => SetPropertyValue(nameof(TotalAmount), ref _totalAmount, value);
-    }
+    // [ModelDefault("DisplayFormat", "{0:n2}")]
+    // [ModelDefault("EditMask", "n2")]
+    // [ModelDefault("AllowEdit", "False")]
+    // public decimal TotalAmount
+    // {
+    //     get => _totalAmount;
+    //     set => SetPropertyValue(nameof(TotalAmount), ref _totalAmount, value);
+    // }
 
     [Aggregated]
     [Association("SalesDocumentLine-Taxes")]
     public XPCollection<SalesDocumentLineTax> Taxes => GetCollection<SalesDocumentLineTax>();
 
-    public void Recalculate()
-    {
-        if (IsLoading || IsSaving)
-        {
-            return;
-        }
-        
-        var gross = Quantity * UnitPrice;
-        var discount = MoneyMath.RoundMoney(gross * (DiscountPercent / 100m));
-        TaxableAmount = MoneyMath.RoundMoney(gross - discount);
-        
-        var runningTaxSum = 0m;
+    // public void Recalculate()
+    // {
+    //     if (IsLoading || IsSaving)
+    //     {
+    //         return;
+    //     }
+    //     
+    //     var gross = Quantity * UnitPrice;
+    //     var discount = MoneyMath.RoundMoney(gross * (DiscountPercent / 100m));
+    //     TaxableAmount = MoneyMath.RoundMoney(gross - discount);
+    //     
+    //     var runningTaxSum = 0m;
+    //
+    //     foreach (var tax in Taxes)
+    //     {
+    //         tax.TaxableAmount = TaxableAmount;
+    //         var sign = tax.IsWithHolding ? -1m : 1m;
+    //         tax.TaxAmount = MoneyMath.RoundMoney(tax.TaxableAmount * (tax.Rate / 100m) * sign);
+    //         runningTaxSum += tax.TaxAmount;
+    //         
+    //     }
+    //     
+    //     TaxAmount = runningTaxSum;
+    //     TotalAmount = TaxableAmount + TaxAmount;
+    //     
+    //     SalesDocument?.RecalculateTotals();
+    // }
 
-        foreach (var tax in Taxes)
-        {
-            tax.TaxableAmount = TaxableAmount;
-            var sign = tax.IsWithHolding ? -1m : 1m;
-            tax.TaxAmount = MoneyMath.RoundMoney(tax.TaxableAmount * (tax.Rate / 100m) * sign);
-            runningTaxSum += tax.TaxAmount;
-            
-        }
-        
-        TaxAmount = runningTaxSum;
-        TotalAmount = TaxableAmount + TaxAmount;
-        
-        SalesDocument?.RecalculateTotals();
-    }
+    // protected override void OnDeleting()
+    // {
+    //     _documentAtDelete = SalesDocument;
+    //     base.OnDeleting();
+    //     foreach (var aggregated in new ArrayList(Taxes)) Session.Delete(aggregated);
+    // }
 
-    protected override void OnDeleting()
-    {
-        _documentAtDelete = SalesDocument;
-        base.OnDeleting();
-        foreach (var aggregated in new ArrayList(Taxes)) Session.Delete(aggregated);
-    }
-
-    protected override void OnDeleted()
-    {
-        base.OnDeleted();
-        _documentAtDelete?.RecalculateTotals();
-        _documentAtDelete = null;
-    }
+    // protected override void OnDeleted()
+    // {
+    //     base.OnDeleted();
+    //     _documentAtDelete?.RecalculateTotals();
+    //     _documentAtDelete = null;
+    // }
 }
