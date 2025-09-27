@@ -160,6 +160,9 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         
         OnChanged(nameof(TaxAmount));
         OnChanged(nameof(TotalAmount));
+        OnChanged(nameof(SalesDocument));
+        
+        //SalesDocument?.Touch();
     }
 
     protected override void OnDeleting()

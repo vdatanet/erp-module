@@ -72,7 +72,7 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     {
         base.OnSaving();
         
-        //RebuildTaxSummaryByTaxType();
+        RebuildTaxSummaryByTaxType();
     }
 
     protected override void OnDeleting()
