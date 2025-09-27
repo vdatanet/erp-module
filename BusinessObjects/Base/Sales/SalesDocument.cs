@@ -43,7 +43,7 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
 
     public void RebuildTaxSummaryByTaxType()
     {
-        if (IsLoading) return;
+        if (IsLoading || IsSaving) return;
         
         foreach (var row in Taxes.ToList())
             row.Delete();
