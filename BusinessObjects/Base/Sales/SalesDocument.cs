@@ -9,18 +9,12 @@ namespace erp.Module.BusinessObjects.Base.Sales;
 
 public abstract class SalesDocument(Session session) : BaseEntity(session)
 {
-    // private decimal _taxableAmount;
     // private decimal _taxAmount;
     // private decimal _totalAmount;
-
-    // [ModelDefault("DisplayFormat", "{0:n2}")]
-    // [ModelDefault("EditMask", "n2")]
-    // [ModelDefault("AllowEdit", "False")]
-    // public decimal TaxableAmount
-    // {
-    //     get => _taxableAmount;
-    //     set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
-    // }
+    
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [PersistentAlias("Lines.Sum(TaxableAmount)")]
+    public decimal TaxableAmount => Convert.ToDecimal(EvaluateAlias());
 
     // [ModelDefault("DisplayFormat", "{0:n2}")]
     // [ModelDefault("EditMask", "n2")]
@@ -98,21 +92,21 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
             Taxes.Add(row);
     }
 
-    protected override void OnSaving()
-    {
-        base.OnSaving();
+    // protected override void OnSaving()
+    // {
+    //     base.OnSaving();
+    //
+    //     foreach (var line in Lines) line.Recalculate();
+    //
+    //     RecalculateTotals();
+    // }
 
-        //foreach (var line in Lines) line.Recalculate();
-
-        //RecalculateTotals();
-    }
-
-    protected override void OnDeleting()
-    {
-        base.OnDeleting();
-
-        foreach (var aggregated in new ArrayList(Taxes)) Session.Delete(aggregated);
-
-        foreach (var aggregated in new ArrayList(Lines)) Session.Delete(aggregated);
-    }
+    // protected override void OnDeleting()
+    // {
+    //     base.OnDeleting();
+    //
+    //     foreach (var aggregated in new ArrayList(Taxes)) Session.Delete(aggregated);
+    //
+    //     foreach (var aggregated in new ArrayList(Lines)) Session.Delete(aggregated);
+    // }
 }
