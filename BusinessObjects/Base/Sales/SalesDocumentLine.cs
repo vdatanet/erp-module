@@ -1,7 +1,9 @@
+using System.Collections;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
+using erp.Module.BusinessObjects.Common;
 using erp.Module.BusinessObjects.Products;
 
 namespace erp.Module.BusinessObjects.Base.Sales;
@@ -118,10 +120,24 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [PersistentAlias("Round(Quantity * UnitPrice - DiscountPercent / 100 * Quantity * UnitPrice,2)")]
     public decimal TaxableAmount => Convert.ToDecimal(EvaluateAlias());
-    
+
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [PersistentAlias("Round(Taxes.Sum(TaxAmount),2)")]
+    public decimal TaxAmount => Convert.ToDecimal(EvaluateAlias());
+
     [Aggregated]
     [Association("SalesDocumentLine-Taxes")]
     public XPCollection<SalesDocumentLineTax> Taxes => GetCollection<SalesDocumentLineTax>();
+
+    private void RecalculateTaxes()
+    {
+        foreach (var tax in Taxes)
+        {
+            tax.TaxableAmount = TaxableAmount;
+            var sign = tax.IsWithHolding ? -1m : 1m;
+            tax.TaxAmount = MoneyMath.RoundMoney(tax.TaxableAmount * (tax.Rate / 100m) * sign);
+        }
+    }
 
     // public void Recalculate()
     // {
@@ -151,17 +167,15 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     //     SalesDocument?.RecalculateTotals();
     // }
 
-    // protected override void OnDeleting()
-    // {
-    //     _documentAtDelete = SalesDocument;
-    //     base.OnDeleting();
-    //     foreach (var aggregated in new ArrayList(Taxes)) Session.Delete(aggregated);
-    // }
+    protected override void OnDeleting()
+    {
+        base.OnDeleting();
+        foreach (var aggregated in new ArrayList(Taxes)) Session.Delete(aggregated);
+    }
 
-    // protected override void OnDeleted()
-    // {
-    //     base.OnDeleted();
-    //     _documentAtDelete?.RecalculateTotals();
-    //     _documentAtDelete = null;
-    // }
+    protected override void OnSaving()
+    {
+        base.OnSaving();
+        RecalculateTaxes();
+    }
 }
