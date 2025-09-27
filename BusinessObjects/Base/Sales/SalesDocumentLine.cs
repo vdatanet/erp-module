@@ -124,7 +124,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [PersistentAlias("Round(Taxes.Sum(TaxAmount),2)")]
     public decimal TaxAmount => Convert.ToDecimal(EvaluateAlias());
-    
+
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [PersistentAlias("TaxableAmount + TaxAmount")]
     public decimal TotalAmount => Convert.ToDecimal(EvaluateAlias());
@@ -142,6 +142,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
             tax.TaxAmount = MoneyMath.RoundMoney(tax.TaxableAmount * (tax.Rate / 100m) * sign);
         }
     }
+
     protected override void OnDeleting()
     {
         base.OnDeleting();
