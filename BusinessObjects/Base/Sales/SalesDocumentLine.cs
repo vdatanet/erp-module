@@ -1,9 +1,7 @@
-using System.Collections;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
-using erp.Module.BusinessObjects.Common;
 using erp.Module.BusinessObjects.Products;
 
 namespace erp.Module.BusinessObjects.Base.Sales;
@@ -18,10 +16,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     private decimal _quantity;
     private decimal _unitPrice;
     private decimal _discountPercent;
-    //private decimal _taxableAmount;
-    //private decimal _taxAmount;
-    //private decimal _totalAmount;
-    
+
     [Association("SalesDocument-Lines")]
     public SalesDocument SalesDocument
     {
@@ -70,7 +65,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
                 TaxKind = tax
             };
         }
-        
+
         return;
 
         void DeleteAllTaxes()
@@ -120,33 +115,10 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(DiscountPercent), ref _discountPercent, value);
     }
 
-    // [ModelDefault("DisplayFormat", "{0:n2}")]
-    // [ModelDefault("EditMask", "n2")]
-    // [ModelDefault("AllowEdit", "False")]
-    // public decimal TaxableAmount
-    // {
-    //     get => _taxableAmount;
-    //     set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
-    // }
-
-    // [ModelDefault("DisplayFormat", "{0:n2}")]
-    // [ModelDefault("EditMask", "n2")]
-    // [ModelDefault("AllowEdit", "False")]
-    // public decimal TaxAmount
-    // {
-    //     get => _taxAmount;
-    //     set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);
-    // }
-
-    // [ModelDefault("DisplayFormat", "{0:n2}")]
-    // [ModelDefault("EditMask", "n2")]
-    // [ModelDefault("AllowEdit", "False")]
-    // public decimal TotalAmount
-    // {
-    //     get => _totalAmount;
-    //     set => SetPropertyValue(nameof(TotalAmount), ref _totalAmount, value);
-    // }
-
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [PersistentAlias("Round(Quantity * UnitPrice - DiscountPercent / 100 * Quantity * UnitPrice,2)")]
+    public decimal TaxableAmount => Convert.ToDecimal(EvaluateAlias());
+    
     [Aggregated]
     [Association("SalesDocumentLine-Taxes")]
     public XPCollection<SalesDocumentLineTax> Taxes => GetCollection<SalesDocumentLineTax>();
