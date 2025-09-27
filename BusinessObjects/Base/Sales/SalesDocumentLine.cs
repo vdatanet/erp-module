@@ -157,6 +157,9 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
             var sign = tax.IsWithHolding ? -1m : 1m;
             tax.TaxAmount = MoneyMath.RoundMoney(tax.TaxableAmount * (tax.Rate / 100m) * sign);
         }
+        
+        OnChanged(nameof(TaxAmount));
+        OnChanged(nameof(TotalAmount));
     }
 
     protected override void OnDeleting()
