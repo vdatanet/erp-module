@@ -9,31 +9,18 @@ namespace erp.Module.BusinessObjects.Base.Sales;
 
 public abstract class SalesDocument(Session session) : BaseEntity(session)
 {
-    // private decimal _taxAmount;
-    // private decimal _totalAmount;
-    
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [PersistentAlias("Lines.Sum(TaxableAmount)")]
     public decimal TaxableAmount => Convert.ToDecimal(EvaluateAlias());
+    
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [PersistentAlias("Lines.Sum(TaxAmount)")]
+    public decimal TaxAmount => Convert.ToDecimal(EvaluateAlias());
 
-    // [ModelDefault("DisplayFormat", "{0:n2}")]
-    // [ModelDefault("EditMask", "n2")]
-    // [ModelDefault("AllowEdit", "False")]
-    // public decimal TaxAmount
-    // {
-    //     get => _taxAmount;
-    //     set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);
-    // }
-
-    // [ModelDefault("DisplayFormat", "{0:n2}")]
-    // [ModelDefault("EditMask", "n2")]
-    // [ModelDefault("AllowEdit", "False")]
-    // public decimal TotalAmount
-    // {
-    //     get => _totalAmount;
-    //     set => SetPropertyValue(nameof(TotalAmount), ref _totalAmount, value);
-    // }
-
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [PersistentAlias("Lines.Sum(TotalAmount)")]
+    public decimal TotalAmount => Convert.ToDecimal(EvaluateAlias());
+    
     [Aggregated]
     [Association("SalesDocument-Lines")]
     public XPCollection<SalesDocumentLine> Lines => GetCollection<SalesDocumentLine>();
