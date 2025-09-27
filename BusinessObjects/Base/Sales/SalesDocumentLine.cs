@@ -147,6 +147,8 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
 
     private void RecalculateTaxes()
     {
+        if (IsLoading || IsSaving) return;
+        
         foreach (var tax in Taxes)
         {
             tax.TaxableAmount = TaxableAmount;
