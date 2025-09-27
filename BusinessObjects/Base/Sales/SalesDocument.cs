@@ -12,7 +12,7 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [PersistentAlias("Lines.Sum(TaxableAmount)")]
     public decimal TaxableAmount => Convert.ToDecimal(EvaluateAlias());
-    
+
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [PersistentAlias("Lines.Sum(TaxAmount)")]
     public decimal TaxAmount => Convert.ToDecimal(EvaluateAlias());
@@ -20,7 +20,7 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [PersistentAlias("Lines.Sum(TotalAmount)")]
     public decimal TotalAmount => Convert.ToDecimal(EvaluateAlias());
-    
+
     [Aggregated]
     [Association("SalesDocument-Lines")]
     public XPCollection<SalesDocumentLine> Lines => GetCollection<SalesDocumentLine>();
@@ -28,15 +28,15 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     [Aggregated]
     [Association("SalesDocument-Taxes")]
     public XPCollection<SalesDocumentTax> Taxes => GetCollection<SalesDocumentTax>();
-    
+
     [Aggregated]
     [Association("SalesDocument-Tasks")]
     public XPCollection<Task> Tasks => GetCollection<Task>();
-    
+
     [Aggregated]
     [Association("SalesDocument-Pictures")]
     public XPCollection<Picture> Pictures => GetCollection<Picture>();
-    
+
     [Aggregated]
     [Association("SalesDocument-Attachments")]
     public XPCollection<Attachment> Attachments => GetCollection<Attachment>();
@@ -44,7 +44,7 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     public void RebuildTaxSummaryByTaxType()
     {
         if (IsLoading || IsSaving) return;
-        
+
         foreach (var row in Taxes.ToList())
             row.Delete();
 
@@ -59,19 +59,18 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
             .OrderBy(x => x.TaxType.Sequence)
             .ToList();
 
-        foreach (var row in groups.Select(g => new SalesDocumentTax(Session)
-                 {
-                     SalesDocument = this,
-                     TaxKind = g.TaxType,
-                     Sequence = g.TaxType.Sequence,
-                     TaxableAmount = g.BaseSum,
-                     TaxAmount = g.AmountSum
-                 }))
+        var newTaxes = groups.Select(g => new SalesDocumentTax(Session)
         {
-            Taxes.Add(row);
-        }
+            SalesDocument = this,
+            TaxKind = g.TaxType,
+            Sequence = g.TaxType.Sequence,
+            TaxableAmount = g.BaseSum,
+            TaxAmount = g.AmountSum
+        });
+
+        Taxes.AddRange(newTaxes);
     }
-    
+
     protected override void OnDeleting()
     {
         base.OnDeleting();
