@@ -124,6 +124,10 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [PersistentAlias("Round(Taxes.Sum(TaxAmount),2)")]
     public decimal TaxAmount => Convert.ToDecimal(EvaluateAlias());
+    
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [PersistentAlias("TaxableAmount + TaxAmount")]
+    public decimal TotalAmount => Convert.ToDecimal(EvaluateAlias());
 
     [Aggregated]
     [Association("SalesDocumentLine-Taxes")]
@@ -138,35 +142,6 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
             tax.TaxAmount = MoneyMath.RoundMoney(tax.TaxableAmount * (tax.Rate / 100m) * sign);
         }
     }
-
-    // public void Recalculate()
-    // {
-    //     if (IsLoading || IsSaving)
-    //     {
-    //         return;
-    //     }
-    //     
-    //     var gross = Quantity * UnitPrice;
-    //     var discount = MoneyMath.RoundMoney(gross * (DiscountPercent / 100m));
-    //     TaxableAmount = MoneyMath.RoundMoney(gross - discount);
-    //     
-    //     var runningTaxSum = 0m;
-    //
-    //     foreach (var tax in Taxes)
-    //     {
-    //         tax.TaxableAmount = TaxableAmount;
-    //         var sign = tax.IsWithHolding ? -1m : 1m;
-    //         tax.TaxAmount = MoneyMath.RoundMoney(tax.TaxableAmount * (tax.Rate / 100m) * sign);
-    //         runningTaxSum += tax.TaxAmount;
-    //         
-    //     }
-    //     
-    //     TaxAmount = runningTaxSum;
-    //     TotalAmount = TaxableAmount + TaxAmount;
-    //     
-    //     SalesDocument?.RecalculateTotals();
-    // }
-
     protected override void OnDeleting()
     {
         base.OnDeleting();
