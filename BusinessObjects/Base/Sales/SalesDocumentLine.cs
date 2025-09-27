@@ -162,7 +162,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         OnChanged(nameof(TotalAmount));
         OnChanged(nameof(SalesDocument));
         
-        //SalesDocument?.Touch();
+        SalesDocument?.RebuildTaxSummaryByTaxType();
     }
 
     protected override void OnDeleting()

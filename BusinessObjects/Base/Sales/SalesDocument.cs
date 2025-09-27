@@ -40,7 +40,7 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     [Aggregated]
     [Association("SalesDocument-Attachments")]
     public XPCollection<Attachment> Attachments => GetCollection<Attachment>(nameof(Attachments));
-    
+
     public void RebuildTaxSummaryByTaxType()
     {
         foreach (var row in Taxes.ToList())
@@ -71,14 +71,12 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     protected override void OnSaving()
     {
         base.OnSaving();
-        
-        RebuildTaxSummaryByTaxType();
+        //RebuildTaxSummaryByTaxType();
     }
 
     protected override void OnDeleting()
     {
         base.OnDeleting();
-    
         foreach (var aggregated in new ArrayList(Taxes)) Session.Delete(aggregated);
         foreach (var aggregated in new ArrayList(Lines)) Session.Delete(aggregated);
     }
