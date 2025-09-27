@@ -60,9 +60,9 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
 
         DeleteAllTaxes();
 
-        foreach (var tax in p.SalesTaxes)
+        foreach (var tax in p.SalesTaxes.OrderBy(t => t.Sequence))
         {
-            var link = new SalesDocumentLineTax(Session)
+            _ = new SalesDocumentLineTax(Session)
             {
                 SalesDocumentLine = this,
                 TaxKind = tax
