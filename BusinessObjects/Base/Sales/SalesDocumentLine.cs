@@ -67,6 +67,8 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
                 TaxKind = tax
             };
         }
+        
+        RecalculateTaxes();
 
         return;
 
