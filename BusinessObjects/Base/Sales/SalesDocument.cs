@@ -9,14 +9,14 @@ namespace erp.Module.BusinessObjects.Base.Sales;
 
 public abstract class SalesDocument(Session session) : BaseEntity(session)
 {
-    [NonPersistent]
-    public int TouchStamp { get; private set; }
-
-    public void Touch()
-    {
-        TouchStamp++; // solo para marcar cambio
-        OnChanged(nameof(TouchStamp));
-    }
+    // [NonPersistent]
+    // public int TouchStamp { get; private set; }
+    //
+    // public void Touch()
+    // {
+    //     TouchStamp++; // solo para marcar cambio
+    //     OnChanged(nameof(TouchStamp));
+    // }
     
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [PersistentAlias("Lines.Sum(TaxableAmount)")]
@@ -66,14 +66,15 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
             .OrderBy(x => x.TaxType.Sequence)
             .ToList();
 
-        foreach (var g in groups)
+        foreach (var row in groups.Select(g => new SalesDocumentTax(Session)
+                 {
+                     SalesDocument = this,
+                     TaxKind = g.TaxType,
+                     Sequence = g.TaxType.Sequence,
+                     TaxableAmount = g.BaseSum,
+                     TaxAmount = g.AmountSum
+                 }))
         {
-            var row = new SalesDocumentTax(Session);
-            row.SetMemberValue(nameof(SalesDocumentTax.SalesDocument), this);
-            row.SetMemberValue(nameof(SalesDocumentTax.TaxKind), g.TaxType);
-            row.SetMemberValue(nameof(SalesDocumentTax.Sequence), g.TaxType.Sequence);
-            row.SetMemberValue(nameof(SalesDocumentTax.TaxableAmount), g.BaseSum);
-            row.SetMemberValue(nameof(SalesDocumentTax.TaxAmount), g.AmountSum);
             Taxes.Add(row);
         }
     }
@@ -81,7 +82,7 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     protected override void OnSaving()
     {
         base.OnSaving();
-        RebuildTaxSummaryByTaxType();
+        //RebuildTaxSummaryByTaxType();
     }
 
     protected override void OnDeleting()

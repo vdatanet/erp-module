@@ -160,15 +160,14 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         
         OnChanged(nameof(TaxAmount));
         OnChanged(nameof(TotalAmount));
-        OnChanged(nameof(SalesDocument));
         
-        SalesDocument?.Touch();
+        //SalesDocument?.Touch();
     }
 
     protected override void OnDeleting()
     {
         base.OnDeleting();
-        SalesDocument?.Touch();
+        //SalesDocument?.Touch();
         foreach (var aggregated in new ArrayList(Taxes)) Session.Delete(aggregated);
     }
 }
