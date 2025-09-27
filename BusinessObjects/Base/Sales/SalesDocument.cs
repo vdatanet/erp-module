@@ -23,23 +23,23 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     
     [Aggregated]
     [Association("SalesDocument-Lines")]
-    public XPCollection<SalesDocumentLine> Lines => GetCollection<SalesDocumentLine>();
+    XPCollection<SalesDocumentLine> Lines => GetCollection<SalesDocumentLine>();
 
     [Aggregated]
     [Association("SalesDocument-Taxes")]
-    public XPCollection<SalesDocumentTax> Taxes => GetCollection<SalesDocumentTax>();
+    XPCollection<SalesDocumentTax> Taxes => GetCollection<SalesDocumentTax>();
     
     [Aggregated]
     [Association("SalesDocument-Tasks")]
-    public XPCollection<Task> Tasks => GetCollection<Task>(nameof(Tasks));
+    public XPCollection<Task> Tasks => GetCollection<Task>();
     
     [Aggregated]
     [Association("SalesDocument-Pictures")]
-    public XPCollection<Picture> Pictures => GetCollection<Picture>(nameof(Pictures));
+    public XPCollection<Picture> Pictures => GetCollection<Picture>();
     
     [Aggregated]
     [Association("SalesDocument-Attachments")]
-    public XPCollection<Attachment> Attachments => GetCollection<Attachment>(nameof(Attachments));
+    public XPCollection<Attachment> Attachments => GetCollection<Attachment>();
 
     public void RebuildTaxSummaryByTaxType()
     {
