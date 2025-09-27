@@ -40,18 +40,7 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     [Aggregated]
     [Association("SalesDocument-Attachments")]
     public XPCollection<Attachment> Attachments => GetCollection<Attachment>(nameof(Attachments));
-
-    // public void RecalculateTotals()
-    // {
-    //     if (IsLoading || Session?.IsObjectsLoading == true)
-    //         return;
-    //
-    //     TaxableAmount = Lines.Sum(l => l.TaxableAmount);
-    //     TaxAmount = Lines.Sum(l => l.TaxAmount);
-    //     TotalAmount = Lines.Sum(l => l.TotalAmount);
-    //     RebuildTaxSummaryByTaxType();
-    // }
-
+    
     public void RebuildTaxSummaryByTaxType()
     {
         foreach (var row in Taxes.ToList())
@@ -79,21 +68,18 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
             Taxes.Add(row);
     }
 
-    // protected override void OnSaving()
-    // {
-    //     base.OnSaving();
-    //
-    //     foreach (var line in Lines) line.Recalculate();
-    //
-    //     RecalculateTotals();
-    // }
+    protected override void OnSaving()
+    {
+        base.OnSaving();
+        
+        RebuildTaxSummaryByTaxType();
+    }
 
-    // protected override void OnDeleting()
-    // {
-    //     base.OnDeleting();
-    //
-    //     foreach (var aggregated in new ArrayList(Taxes)) Session.Delete(aggregated);
-    //
-    //     foreach (var aggregated in new ArrayList(Lines)) Session.Delete(aggregated);
-    // }
+    protected override void OnDeleting()
+    {
+        base.OnDeleting();
+    
+        foreach (var aggregated in new ArrayList(Taxes)) Session.Delete(aggregated);
+        foreach (var aggregated in new ArrayList(Lines)) Session.Delete(aggregated);
+    }
 }
