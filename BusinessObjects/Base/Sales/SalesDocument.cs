@@ -43,8 +43,8 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
 
     public void RebuildTaxSummaryByTaxType()
     {
-        foreach (var row in Taxes.ToList())
-            row.Delete();
+        //foreach (var row in Taxes.ToList())
+            //row.Delete();
 
         var groups = Lines.SelectMany(l => l.Taxes)
             .GroupBy(t => t.TaxKind)
@@ -77,7 +77,7 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     protected override void OnDeleting()
     {
         base.OnDeleting();
-        foreach (var aggregated in new ArrayList(Taxes)) Session.Delete(aggregated);
-        foreach (var aggregated in new ArrayList(Lines)) Session.Delete(aggregated);
+        //foreach (var aggregated in new ArrayList(Taxes)) Session.Delete(aggregated);
+        //foreach (var aggregated in new ArrayList(Lines)) Session.Delete(aggregated);
     }
 }
