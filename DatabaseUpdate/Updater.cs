@@ -29,13 +29,13 @@ public class Updater(IObjectSpace objectSpace, Version currentDbVersion) : Modul
         if (!ObjectSpace.CanInstantiate(typeof(ApplicationUser))) return;
 
 #if !RELEASE
-        if (TenantName == null)
-        {
-            _ = CreateTenant("demo", "erp_demo");
-            _ = CreateTenant("vdata", "erp_vdata");
-            _ = CreateTenant("miravent", "erp_miravent");
-            ObjectSpace.CommitChanges();
-        }
+        //if (TenantName == null)
+        //{
+            //_ = CreateTenant("demo", "erp_demo");
+            //_ = CreateTenant("vdata", "erp_vdata");
+            //_ = CreateTenant("miravent", "erp_miravent");
+            //ObjectSpace.CommitChanges();
+        //}
 #endif
 
         // The code below creates users and roles for testing purposes only.
