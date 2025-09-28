@@ -43,7 +43,7 @@ public class SalesDocumentController : ViewController
         {
             if (obj is SalesDocumentLine salesDocumentLine)
             {
-                _documentService.CalculateTaxableAmount(salesDocument);
+                _documentService.ComputeTotals(salesDocument);
             }
         }
     }
@@ -51,6 +51,6 @@ public class SalesDocumentController : ViewController
     private void ObjectSpace_Committing(object sender, System.ComponentModel.CancelEventArgs e)
     {
         var salesDocument = (SalesDocument)View.CurrentObject;
-        _documentService.CalculateTaxableAmount(salesDocument);
+        _documentService.ComputeTotals(salesDocument);
     }
 }

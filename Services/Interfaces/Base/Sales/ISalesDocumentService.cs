@@ -4,5 +4,5 @@ namespace erp.Module.Services.Interfaces.Base.Sales;
 
 public interface ISalesDocumentService
 {
-    void CalculateTaxableAmount(SalesDocument salesDocument);
+    void ComputeTotals(SalesDocument salesDocument);
 }

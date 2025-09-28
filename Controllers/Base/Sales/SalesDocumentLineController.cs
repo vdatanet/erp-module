@@ -45,7 +45,7 @@ public class SalesDocumentLineController : ViewController
              e.PropertyName == nameof(SalesDocumentLine.DiscountPercent)))
         {
             _lineService.CalculateLineTaxableAmount(line);
-            _documentService.CalculateTaxableAmount(line.SalesDocument);
+            _documentService.ComputeTotals(line.SalesDocument);
         }
     }
 }
