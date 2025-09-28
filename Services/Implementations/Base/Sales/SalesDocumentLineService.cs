@@ -7,6 +7,10 @@ public class SalesDocumentLineService : ISalesDocumentLineService
 {
     public void CalculateLineTaxableAmount(SalesDocumentLine line)
     {
-        throw new NotImplementedException();
+        if (line is null) return;
+
+        decimal gross = line.Quantity * line.UnitPrice;
+        decimal discount = (line.DiscountPercent / 100m) * gross;
+        line.TaxableAmount = Math.Round(gross - discount, 2);
     }
 }
