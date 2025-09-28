@@ -14,12 +14,16 @@ public class SalesDocumentLineController : ViewController
     }
 
     [ActivatorUtilitiesConstructor]
-    public SalesDocumentLineController(ISalesDocumentLineService service) : this()
+    public SalesDocumentLineController(
+        ISalesDocumentLineService lineService,
+        ISalesDocumentService documentService) : this()
     {
-        _service = service;
+        _lineService = lineService;
+        _documentService = documentService;
     }
 
-    private readonly ISalesDocumentLineService _service;
+    private readonly ISalesDocumentLineService _lineService;
+    private readonly ISalesDocumentService _documentService;
 
     protected override void OnActivated()
     {
@@ -40,7 +44,8 @@ public class SalesDocumentLineController : ViewController
              e.PropertyName == nameof(SalesDocumentLine.UnitPrice) ||
              e.PropertyName == nameof(SalesDocumentLine.DiscountPercent)))
         {
-            _service.CalculateLineTaxableAmount(line);
+            _lineService.CalculateLineTaxableAmount(line);
+            _documentService.CalculateTaxableAmount(line.SalesDocument);
         }
     }
 }
