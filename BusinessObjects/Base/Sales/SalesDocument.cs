@@ -1,3 +1,4 @@
+using DevExpress.ExpressApp.Model;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Common;
@@ -18,6 +19,37 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     // [ModelDefault("DisplayFormat", "{0:n2}")]
     // [PersistentAlias("Lines.Sum(TotalAmount)")]
     // public decimal TotalAmount => Convert.ToDecimal(EvaluateAlias());
+    
+    private decimal _taxableAmount;
+    private decimal _taxAmount;
+    private decimal _totalAmount;
+    
+    [ModelDefault("AllowEdit", "False")]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    public decimal TaxableAmount
+    {
+        get => _taxableAmount;
+        set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
+    }
+
+    [ModelDefault("AllowEdit", "False")]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    public decimal TaxAmount
+    {
+        get => _taxAmount;
+        set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);
+    }
+
+    [ModelDefault("AllowEdit", "False")]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    public decimal TotalAmount
+    {
+        get => _totalAmount;
+        set => SetPropertyValue(nameof(TotalAmount), ref _totalAmount, value);
+    }
 
     [Aggregated]
     [Association("SalesDocument-Lines")]
