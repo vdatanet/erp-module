@@ -49,6 +49,11 @@ public class SalesLineController : ViewController
                 _lineService.RebuildTaxes(line);
                 _documentService.RebuildTaxSummary(line.SalesDocument);
                 break;
+            case nameof(SalesDocumentLine.Quantity):
+            case nameof(SalesDocumentLine.UnitPrice):
+            case nameof(SalesDocumentLine.DiscountPercent):
+                _lineService.SetTaxableAmount(line);
+                break;
             case nameof(SalesDocumentLine.TaxableAmount):
                 _lineService.RebuildTaxes(line);
                 _documentService.RebuildTaxSummary(line.SalesDocument);
