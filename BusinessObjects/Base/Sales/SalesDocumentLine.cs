@@ -98,7 +98,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         }
     }
     
-    [Persistent(nameof(_taxableAmount))]
+    [Persistent(nameof(TaxableAmount))]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     public decimal TaxableAmount
@@ -107,7 +107,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         protected set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
     }
 
-    [Persistent(nameof(_taxAmount))]
+    [Persistent(nameof(TaxAmount))]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     public decimal TaxAmount
@@ -116,7 +116,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         protected set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);
     }
 
-    [Persistent(nameof(_totalAmount))]
+    [Persistent(nameof(TotalAmount))]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     public decimal TotalAmount
