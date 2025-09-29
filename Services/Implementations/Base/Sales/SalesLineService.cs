@@ -11,6 +11,7 @@ public class SalesLineService : ISalesLineService
         {
             line.ProductName = null;
             line.Notes = null;
+            line.Quantity = 0;
             line.UnitPrice = 0m;
             line.DiscountPercent = 0m;
             DeleteAllTaxes(line);
