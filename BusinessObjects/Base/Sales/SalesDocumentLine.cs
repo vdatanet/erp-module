@@ -98,7 +98,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         }
     }
     
-    //[ModelDefault("AllowEdit", "False")]
+    [ModelDefault("AllowEdit", "False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     public decimal TaxableAmount
@@ -107,7 +107,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
     }
 
-    //[ModelDefault("AllowEdit", "False")]
+    [ModelDefault("AllowEdit", "False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     public decimal TaxAmount
@@ -116,7 +116,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);
     }
 
-    //[ModelDefault("AllowEdit", "False")]
+    [ModelDefault("AllowEdit", "False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     public decimal TotalAmount
@@ -161,6 +161,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     private void SetTaxableAmount()
     {
         TaxableAmount = AmountCalculator.GetTaxableAmount(Quantity, UnitPrice, DiscountPercent);
+        RebuildTaxes();
     }
 
     private void RebuildTaxes()
