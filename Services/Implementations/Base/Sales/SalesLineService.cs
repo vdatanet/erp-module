@@ -37,20 +37,15 @@ public class SalesLineService : ISalesLineService
     
     public void RebuildTaxes(SalesDocumentLine line)
     {
-        //if (line.IsLoading || line.IsSaving) 
-            //return;
-
         foreach (var tax in line.Taxes)
         {
             tax.TaxableAmount = line.TaxableAmount;
             var sign = tax.TaxKind.IsWithHolding ? -1m : 1m;
             tax.TaxAmount = MoneyMath.RoundMoney(tax.TaxableAmount * (tax.TaxKind.Rate / 100m) * sign);
         }
-
-        //line.OnChanged(nameof(SalesDocumentLine.TaxAmount));
-        //line.OnChanged(nameof(SalesDocumentLine.TotalAmount));
-
-        //line.SalesDocument?.RebuildTaxSummaryByTaxType();
+        
+        line.TaxAmount = line.Taxes.Sum(t => t.TaxAmount);
+        line.TotalAmount = line.TaxableAmount + line.TaxAmount;
     }
 
     public void DeleteTaxes(SalesDocumentLine line)
