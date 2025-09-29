@@ -128,12 +128,6 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         TaxableAmount = AmountCalculator.GetTaxableAmount(Quantity, UnitPrice, DiscountPercent);
     }
     
-    private void ApplyProductSnapshot()
-    {
-        if (IsLoading || IsSaving) 
-            return;
-    }
-    
     // protected override void OnDeleted()
     // {
     //     base.OnDeleted();
