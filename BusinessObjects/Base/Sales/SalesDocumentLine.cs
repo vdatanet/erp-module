@@ -92,16 +92,23 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     public decimal Quantity
     {
         get => _quantity;
-        set => SetPropertyValue(nameof(Quantity), ref _quantity, value);
+        set
+        {
+            if (SetPropertyValue(nameof(Quantity), ref _quantity, value))
+                SetTaxableAmount();
+        }
     }
-
+    
     [ImmediatePostData]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     public decimal UnitPrice
     {
         get => _unitPrice;
-        set => SetPropertyValue(nameof(UnitPrice), ref _unitPrice, value);
+        set
+        {
+            SetPropertyValue(nameof(UnitPrice), ref _unitPrice, value);
+        }
     }
 
     [ImmediatePostData]
@@ -110,7 +117,10 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     public decimal DiscountPercent
     {
         get => _discountPercent;
-        set => SetPropertyValue(nameof(DiscountPercent), ref _discountPercent, value);
+        set
+        {
+            SetPropertyValue(nameof(DiscountPercent), ref _discountPercent, value);
+        }
     }
     
     [ModelDefault("DisplayFormat", "{0:n2}")]
@@ -128,6 +138,11 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     [Aggregated]
     [Association("SalesDocumentLine-Taxes")]
     public XPCollection<SalesDocumentLineTax> Taxes => GetCollection<SalesDocumentLineTax>();
+    
+    private void SetTaxableAmount()
+    {
+        if (IsLoading || IsSaving) return;
+    }
 
     // private void RecalculateTaxes()
     // {
