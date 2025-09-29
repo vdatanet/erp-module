@@ -92,12 +92,12 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         get => _discountPercent;
         set
         {
-           var modified = SetPropertyValue(nameof(DiscountPercent), ref _discountPercent, value);
-           if (!modified || IsLoading || IsSaving) return;
-           SetTaxableAmount();
+            var modified = SetPropertyValue(nameof(DiscountPercent), ref _discountPercent, value);
+            if (!modified || IsLoading || IsSaving) return;
+            SetTaxableAmount();
         }
     }
-    
+
     [Persistent(nameof(TaxableAmount))]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
@@ -149,13 +149,11 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
             Quantity = 1m;
 
         foreach (var tax in Product.SalesTaxes.OrderBy(t => t.Sequence))
-        {
             _ = new SalesDocumentLineTax(Session)
             {
                 SalesDocumentLine = this,
                 TaxKind = tax
             };
-        }
     }
 
     private void SetTaxableAmount()
