@@ -44,8 +44,9 @@ public class SalesLineController : ViewController
         switch (e.PropertyName)
         {
             case nameof(SalesDocumentLine.Product):
-                _lineService.RebuildTaxes(line);
+                _lineService.DeleteTaxes(line);
                 _lineService.ApplyProductSnapshot(line);
+                _lineService.RebuildTaxes(line);
                 break;
             case nameof(SalesDocumentLine.TaxableAmount):
                 _lineService.RebuildTaxes(line);
