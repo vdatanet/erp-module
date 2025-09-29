@@ -1,4 +1,5 @@
 using erp.Module.BusinessObjects.Base.Sales;
+using erp.Module.BusinessObjects.Common;
 using erp.Module.Services.Interfaces.Base.Sales;
 
 namespace erp.Module.Services.Implementations.Base.Sales;
@@ -33,8 +34,26 @@ public class SalesLineService : ISalesLineService
             };
         }
     }
+    
+    public void RebuildTaxes(SalesDocumentLine line)
+    {
+        //if (line.IsLoading || line.IsSaving) 
+            //return;
 
-    public void DeleteAllTaxes(SalesDocumentLine line)
+        foreach (var tax in line.Taxes)
+        {
+            tax.TaxableAmount = line.TaxableAmount;
+            var sign = tax.TaxKind.IsWithHolding ? -1m : 1m;
+            tax.TaxAmount = MoneyMath.RoundMoney(tax.TaxableAmount * (tax.TaxKind.Rate / 100m) * sign);
+        }
+
+        //line.OnChanged(nameof(SalesDocumentLine.TaxAmount));
+        //line.OnChanged(nameof(SalesDocumentLine.TotalAmount));
+
+        //line.SalesDocument?.RebuildTaxSummaryByTaxType();
+    }
+
+    public void DeleteTaxes(SalesDocumentLine line)
     {
         for (var i = line.Taxes.Count - 1; i >= 0; i--) 
             line.Taxes[i].Delete();

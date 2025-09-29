@@ -125,24 +125,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         if (IsLoading || IsSaving) 
             return;
     }
-
-    // private void RecalculateTaxes()
-    // {
-    //     if (IsLoading || IsSaving) return;
-    //     
-    //     foreach (var tax in Taxes)
-    //     {
-    //         tax.TaxableAmount = TaxableAmount;
-    //         var sign = tax.IsWithHolding ? -1m : 1m;
-    //         tax.TaxAmount = MoneyMath.RoundMoney(tax.TaxableAmount * (tax.Rate / 100m) * sign);
-    //     }
-    //     
-    //     OnChanged(nameof(TaxAmount));
-    //     OnChanged(nameof(TotalAmount));
-    //     
-    //     SalesDocument?.RebuildTaxSummaryByTaxType();
-    // }
-
+    
     // protected override void OnDeleted()
     // {
     //     base.OnDeleted();
