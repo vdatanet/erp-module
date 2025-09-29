@@ -43,7 +43,7 @@ public class SalesLineController : ViewController
         
         if (e.Object is SalesDocumentLine line && e.PropertyName == nameof(SalesDocumentLine.Product))
         {
-            line.ProductName = "Hello there";
+            _lineService.ApplyProductSnapshot(line);
         }
     }
 }

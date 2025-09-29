@@ -7,10 +7,38 @@ public class SalesLineService : ISalesLineService
 {
     public void ApplyProductSnapshot(SalesDocumentLine line)
     {
-        //if (line is null) return;
+        if (line.Product is null)
+        {
+            line.ProductName = null;
+            line.Notes = null;
+            line.UnitPrice = 0m;
+            line.DiscountPercent = 0m;
+            DeleteAllTaxes(line);
+            return;
+        }
 
-        //decimal gross = line.Quantity * line.UnitPrice;
-        //decimal discount = (line.DiscountPercent / 100m) * gross;
-        //line.TaxableAmount = Math.Round(gross - discount, 2);
+        line.ProductName = line.Product.Name;
+        line.Notes = line.Product.Notes;
+        line.UnitPrice = line.Product.PriceList;
+
+        if (line.Quantity == 0m) 
+            line.Quantity = 1m;
+
+        DeleteAllTaxes(line);
+
+        foreach (var tax in line.Product.SalesTaxes.OrderBy(t => t.Sequence))
+        {
+            _ = new SalesDocumentLineTax(line.Session)
+            {
+                SalesDocumentLine = line,
+                TaxKind = tax
+            };
+        }
+    }
+
+    private static void DeleteAllTaxes(SalesDocumentLine line)
+    {
+        for (var i = line.Taxes.Count - 1; i >= 0; i--) 
+            line.Taxes[i].Delete();
     }
 }
