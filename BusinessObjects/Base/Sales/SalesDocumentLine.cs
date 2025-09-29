@@ -32,7 +32,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         get => _product;
         set => SetPropertyValue(nameof(Product), ref _product, value);
     }
-
+    
     // private void ApplyProductSnapshot(Product p)
     // {
     //     if (IsLoading || IsSaving) return;
@@ -159,6 +159,12 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
             return;
         
         TaxableAmount = AmountCalculator.GetTaxableAmount(Quantity, UnitPrice, DiscountPercent);
+    }
+    
+    private void ApplyProductSnapshot()
+    {
+        if (IsLoading || IsSaving) 
+            return;
     }
 
     // private void RecalculateTaxes()

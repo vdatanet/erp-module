@@ -3,9 +3,9 @@ using erp.Module.Services.Interfaces.Base.Sales;
 
 namespace erp.Module.Services.Implementations.Base.Sales;
 
-public class SalesDocumentLineService : ISalesDocumentLineService
+public class SalesLineService : ISalesLineService
 {
-    public void CalculateLineTaxableAmount(SalesDocumentLine line)
+    public void ApplyProductSnapshot(SalesDocumentLine line)
     {
         //if (line is null) return;
 
