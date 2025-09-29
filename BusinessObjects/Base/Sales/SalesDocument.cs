@@ -8,36 +8,17 @@ namespace erp.Module.BusinessObjects.Base.Sales;
 
 public abstract class SalesDocument(Session session) : BaseEntity(session)
 {
-    private decimal _taxableAmount;
-    private decimal _taxAmount;
-    private decimal _totalAmount;
-    
-    [ModelDefault("AllowEdit", "False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
-    [ModelDefault("EditMask", "n2")]
-    public decimal TaxableAmount
-    {
-        get => _taxableAmount;
-        set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
-    }
+    [PersistentAlias("Lines.Sum(TaxableAmount)")]
+    public decimal TaxableAmount => Convert.ToDecimal(EvaluateAlias());
 
-    [ModelDefault("AllowEdit", "False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
-    [ModelDefault("EditMask", "n2")]
-    public decimal TaxAmount
-    {
-        get => _taxAmount;
-        set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);
-    }
+    [PersistentAlias("Lines.Sum(TaxAmount)")]
+    public decimal TaxAmount => Convert.ToDecimal(EvaluateAlias());
 
-    [ModelDefault("AllowEdit", "False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
-    [ModelDefault("EditMask", "n2")]
-    public decimal TotalAmount
-    {
-        get => _totalAmount;
-        set => SetPropertyValue(nameof(TotalAmount), ref _totalAmount, value);
-    }
+    [PersistentAlias("Lines.Sum(TotalAmount)")]
+    public decimal TotalAmount => Convert.ToDecimal(EvaluateAlias());
 
     [Aggregated]
     [Association("SalesDocument-Lines")]

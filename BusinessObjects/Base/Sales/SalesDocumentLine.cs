@@ -16,10 +16,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     private decimal _quantity;
     private decimal _unitPrice;
     private decimal _discountPercent;
-    private decimal _taxableAmount;
-    private decimal _taxAmount;
-    private decimal _totalAmount;
-
+    
     [Association("SalesDocument-Lines")]
     public SalesDocument SalesDocument
     {
@@ -115,45 +112,18 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         get => _discountPercent;
         set => SetPropertyValue(nameof(DiscountPercent), ref _discountPercent, value);
     }
-
-    [ModelDefault("AllowEdit", "False")]
+    
     [ModelDefault("DisplayFormat", "{0:n2}")]
-    [ModelDefault("EditMask", "n2")]
-    public decimal TaxableAmount
-    {
-        get => _taxableAmount;
-        set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
-    }
+    [PersistentAlias("Round(Quantity * UnitPrice - DiscountPercent / 100 * Quantity * UnitPrice,2)")]
+    public decimal TaxableAmount => Convert.ToDecimal(EvaluateAlias());
 
-    [ModelDefault("AllowEdit", "False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
-    [ModelDefault("EditMask", "n2")]
-    public decimal TaxAmount
-    {
-        get => _taxAmount;
-        set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);
-    }
+    [PersistentAlias("Round(Taxes.Sum(TaxAmount),2)")]
+    public decimal TaxAmount => Convert.ToDecimal(EvaluateAlias());
 
-    [ModelDefault("AllowEdit", "False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
-    [ModelDefault("EditMask", "n2")]
-    public decimal TotalAmount
-    {
-        get => _totalAmount;
-        set => SetPropertyValue(nameof(TotalAmount), ref _totalAmount, value);
-    }
-
-    // [ModelDefault("DisplayFormat", "{0:n2}")]
-    // [PersistentAlias("Round(Quantity * UnitPrice - DiscountPercent / 100 * Quantity * UnitPrice,2)")]
-    // public decimal TaxableAmount => Convert.ToDecimal(EvaluateAlias());
-
-    // [ModelDefault("DisplayFormat", "{0:n2}")]
-    // [PersistentAlias("Round(Taxes.Sum(TaxAmount),2)")]
-    // public decimal TaxAmount => Convert.ToDecimal(EvaluateAlias());
-
-    // [ModelDefault("DisplayFormat", "{0:n2}")]
-    // [PersistentAlias("TaxableAmount + TaxAmount")]
-    // public decimal TotalAmount => Convert.ToDecimal(EvaluateAlias());
+    [PersistentAlias("TaxableAmount + TaxAmount")]
+    public decimal TotalAmount => Convert.ToDecimal(EvaluateAlias());
 
     [Aggregated]
     [Association("SalesDocumentLine-Taxes")]
