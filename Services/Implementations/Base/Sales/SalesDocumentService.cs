@@ -31,5 +31,9 @@ public class SalesDocumentService : ISalesDocumentService
         });
 
         salesDocument.Taxes.AddRange(newTaxes);
+        
+        salesDocument.TaxableAmount = salesDocument.Taxes.Sum(t => t.TaxableAmount);
+        salesDocument.TaxAmount = salesDocument.Taxes.Sum(t => t.TaxAmount);
+        salesDocument.TotalAmount = salesDocument.TaxableAmount + salesDocument.TaxAmount;
     }
 }
