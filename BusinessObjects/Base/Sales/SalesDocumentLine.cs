@@ -98,31 +98,31 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         }
     }
     
-    [ModelDefault("AllowEdit", "False")]
+    //[ModelDefault("AllowEdit", "False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     public decimal TaxableAmount
     {
         get => _taxableAmount;
-        set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
+        protected set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
     }
 
-    [ModelDefault("AllowEdit", "False")]
+    //[ModelDefault("AllowEdit", "False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     public decimal TaxAmount
     {
         get => _taxAmount;
-        set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);
+        protected set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);
     }
 
-    [ModelDefault("AllowEdit", "False")]
+    //[ModelDefault("AllowEdit", "False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     public decimal TotalAmount
     {
         get => _totalAmount;
-        set => SetPropertyValue(nameof(TotalAmount), ref _totalAmount, value);
+        protected set => SetPropertyValue(nameof(TotalAmount), ref _totalAmount, value);
     }
 
     [Aggregated]
