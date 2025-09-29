@@ -107,7 +107,8 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         get => _unitPrice;
         set
         {
-            SetPropertyValue(nameof(UnitPrice), ref _unitPrice, value);
+            if (SetPropertyValue(nameof(UnitPrice), ref _unitPrice, value))
+                SetTaxableAmount();
         }
     }
 
@@ -119,21 +120,22 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         get => _discountPercent;
         set
         {
-            SetPropertyValue(nameof(DiscountPercent), ref _discountPercent, value);
+            if (SetPropertyValue(nameof(DiscountPercent), ref _discountPercent, value))
+                SetTaxableAmount();
         }
     }
     
-    [ModelDefault("DisplayFormat", "{0:n2}")]
-    [PersistentAlias("Round(Quantity * UnitPrice - DiscountPercent / 100 * Quantity * UnitPrice,2)")]
-    public decimal TaxableAmount => Convert.ToDecimal(EvaluateAlias());
+    // [ModelDefault("DisplayFormat", "{0:n2}")]
+    // [PersistentAlias("Round(Quantity * UnitPrice - DiscountPercent / 100 * Quantity * UnitPrice,2)")]
+    // public decimal TaxableAmount => Convert.ToDecimal(EvaluateAlias());
 
-    [ModelDefault("DisplayFormat", "{0:n2}")]
-    [PersistentAlias("Round(Taxes.Sum(TaxAmount),2)")]
-    public decimal TaxAmount => Convert.ToDecimal(EvaluateAlias());
+    // [ModelDefault("DisplayFormat", "{0:n2}")]
+    // [PersistentAlias("Round(Taxes.Sum(TaxAmount),2)")]
+    // public decimal TaxAmount => Convert.ToDecimal(EvaluateAlias());
 
-    [ModelDefault("DisplayFormat", "{0:n2}")]
-    [PersistentAlias("TaxableAmount + TaxAmount")]
-    public decimal TotalAmount => Convert.ToDecimal(EvaluateAlias());
+    // [ModelDefault("DisplayFormat", "{0:n2}")]
+    // [PersistentAlias("TaxableAmount + TaxAmount")]
+    // public decimal TotalAmount => Convert.ToDecimal(EvaluateAlias());
 
     [Aggregated]
     [Association("SalesDocumentLine-Taxes")]
@@ -141,7 +143,8 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     
     private void SetTaxableAmount()
     {
-        if (IsLoading || IsSaving) return;
+        if (IsLoading || IsSaving) 
+            return;
     }
 
     // private void RecalculateTaxes()
