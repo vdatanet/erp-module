@@ -17,7 +17,6 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     private decimal _quantity;
     private decimal _unitPrice;
     private decimal _discountPercent;
-    //[Persistent(nameof(TaxableAmount))]
     private decimal _taxableAmount;
     private decimal _taxAmount;
     private decimal _totalAmount;
@@ -39,7 +38,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
             if (!modified || IsLoading || IsSaving) return;
             DeleteTaxes();
             ApplyProductSnapshot();
-            RebuildTaxes(this);
+            RebuildTaxes();
         }
     }
 
@@ -98,24 +97,23 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
            SetTaxableAmount();
         }
     }
-
-    //[PersistentAlias(nameof(_taxableAmount))]
+    
+    //[ModelDefault("AllowEdit", "False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     public decimal TaxableAmount
     {
         get => _taxableAmount;
-        protected set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
+        set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
     }
 
-    //protected set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
     //[ModelDefault("AllowEdit", "False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     public decimal TaxAmount
     {
         get => _taxAmount;
-        protected set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);
+        set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);
     }
 
     //[ModelDefault("AllowEdit", "False")]
@@ -124,7 +122,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     public decimal TotalAmount
     {
         get => _totalAmount;
-        protected set => SetPropertyValue(nameof(TotalAmount), ref _totalAmount, value);
+        set => SetPropertyValue(nameof(TotalAmount), ref _totalAmount, value);
     }
 
     [Aggregated]
@@ -162,20 +160,20 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
 
     private void SetTaxableAmount()
     {
-        _taxableAmount = AmountCalculator.GetTaxableAmount(Quantity, UnitPrice, DiscountPercent);
+        TaxableAmount = AmountCalculator.GetTaxableAmount(Quantity, UnitPrice, DiscountPercent);
     }
 
-    private static void RebuildTaxes(SalesDocumentLine line)
+    private void RebuildTaxes()
     {
-        foreach (var tax in line.Taxes)
+        foreach (var tax in Taxes)
         {
-            tax.TaxableAmount = line.TaxableAmount;
+            tax.TaxableAmount = TaxableAmount;
             tax.TaxAmount =
                 AmountCalculator.GetTaxAmount(tax.TaxableAmount, tax.TaxKind.Rate, tax.TaxKind.IsWithHolding);
         }
 
-        line.TaxAmount = line.Taxes.Sum(t => t.TaxAmount);
-        line.TotalAmount = line.TaxableAmount + line.TaxAmount;
+        TaxAmount = Taxes.Sum(t => t.TaxAmount);
+        TotalAmount = TaxableAmount + TaxAmount;
     }
 
     private void DeleteTaxes()
