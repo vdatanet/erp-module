@@ -3,6 +3,8 @@ using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Accounting;
 using erp.Module.BusinessObjects.Base.Common;
+using VeriFactu.Xml.Factu;
+using VeriFactu.Xml.Factu.Alta;
 
 namespace erp.Module.BusinessObjects.Base.Sales;
 
@@ -15,6 +17,10 @@ public class SalesDocumentTax(Session session): BaseEntity(session)
     private SalesDocument _salesDocument;
     private int _sequence;
     private TaxKind _taxKind;
+    private Impuesto _tax;
+    private ClaveRegimen _taxScheme;
+    private CalificacionOperacion _taxType;
+    private CausaExencion _taxExemption;
     private decimal _taxableAmount;
     private decimal _taxAmount;
     
@@ -35,6 +41,29 @@ public class SalesDocumentTax(Session session): BaseEntity(session)
     {
         get => _taxKind;
         set => SetPropertyValue(nameof(TaxKind), ref _taxKind, value);
+    }
+    
+    public Impuesto Tax
+    {
+        get => _tax;
+        set => SetPropertyValue(nameof(Tax), ref _tax, value);
+    }
+    public ClaveRegimen TaxScheme
+    {
+        get => _taxScheme;
+        set => SetPropertyValue(nameof(TaxScheme), ref _taxScheme, value);
+    }
+    
+    public CalificacionOperacion TaxType
+    {
+        get => _taxType;
+        set => SetPropertyValue(nameof(TaxType), ref _taxType, value);
+    }
+    
+    public CausaExencion TaxExemption
+    {
+        get => _taxExemption;
+        set => SetPropertyValue(nameof(TaxExemption), ref _taxExemption, value);
     }
     
     public decimal TaxableAmount
