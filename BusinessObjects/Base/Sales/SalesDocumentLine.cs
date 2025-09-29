@@ -127,11 +127,4 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         
         TaxableAmount = AmountCalculator.GetTaxableAmount(Quantity, UnitPrice, DiscountPercent);
     }
-    
-    // protected override void OnDeleted()
-    // {
-    //     base.OnDeleted();
-    //     _previousSalesDocument?.RebuildTaxSummaryByTaxType();
-    //     _previousSalesDocument = null;
-    // }
 }
