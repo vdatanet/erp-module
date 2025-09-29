@@ -134,11 +134,4 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     //     _previousSalesDocument?.RebuildTaxSummaryByTaxType();
     //     _previousSalesDocument = null;
     // }
-
-    // protected override void OnDeleting()
-    // {
-    //     base.OnDeleting();
-    //     _previousSalesDocument = SalesDocument;
-    //     foreach (var aggregated in new ArrayList(Taxes)) Session.Delete(aggregated);
-    // }
 }

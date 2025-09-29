@@ -29,11 +29,13 @@ public class SalesLineController : ViewController
     {
         base.OnActivated();
         View.ObjectSpace.ObjectChanged += ObjectSpace_ObjectChanged;
+        View.ObjectSpace.ObjectDeleting += ObjectSpace_ObjectDeleting;
     }
 
     protected override void OnDeactivated()
     {
         View.ObjectSpace.ObjectChanged -= ObjectSpace_ObjectChanged;
+        View.ObjectSpace.ObjectDeleting -= ObjectSpace_ObjectDeleting;
         base.OnDeactivated();
     }
 
@@ -52,5 +54,18 @@ public class SalesLineController : ViewController
                 _lineService.RebuildTaxes(line);
                 break;
         }
+    }
+    
+    private void ObjectSpace_ObjectDeleting(object sender, ObjectsManipulatingEventArgs e)
+    {
+        // var salesDocument = (SalesDocument)View.CurrentObject;
+        //
+        // foreach (var obj in e.Objects)
+        // {
+        //     if (obj is SalesDocumentLine salesDocumentLine)
+        //     {
+        //         _documentService.ComputeTotals(salesDocument);
+        //     }
+        // }
     }
 }
