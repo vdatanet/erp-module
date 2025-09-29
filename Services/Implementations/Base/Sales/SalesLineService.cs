@@ -14,7 +14,6 @@ public class SalesLineService : ISalesLineService
             line.Quantity = 0;
             line.UnitPrice = 0m;
             line.DiscountPercent = 0m;
-            DeleteAllTaxes(line);
             return;
         }
 
@@ -24,9 +23,7 @@ public class SalesLineService : ISalesLineService
 
         if (line.Quantity == 0m) 
             line.Quantity = 1m;
-
-        DeleteAllTaxes(line);
-
+        
         foreach (var tax in line.Product.SalesTaxes.OrderBy(t => t.Sequence))
         {
             _ = new SalesDocumentLineTax(line.Session)
@@ -37,7 +34,7 @@ public class SalesLineService : ISalesLineService
         }
     }
 
-    private static void DeleteAllTaxes(SalesDocumentLine line)
+    public void DeleteAllTaxes(SalesDocumentLine line)
     {
         for (var i = line.Taxes.Count - 1; i >= 0; i--) 
             line.Taxes[i].Delete();
