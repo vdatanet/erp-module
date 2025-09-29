@@ -39,10 +39,9 @@ public class SalesDocumentController : ViewController
 
         foreach (var obj in e.Objects)
         {
-            if (obj is SalesDocumentLine salesDocumentLine)
-            {
-                _documentService.RebuildTaxSummary(salesDocument);
-            }
+            if (obj is not SalesDocumentLine salesDocumentLine) continue;
+            _documentService.DeleteTaxes(salesDocument);
+            _documentService.RebuildTaxSummary(salesDocument);
         }
     }
 }

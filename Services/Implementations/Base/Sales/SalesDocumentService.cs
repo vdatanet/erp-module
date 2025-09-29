@@ -5,11 +5,14 @@ namespace erp.Module.Services.Implementations.Base.Sales;
 
 public class SalesDocumentService : ISalesDocumentService
 {
+    public void DeleteTaxes(SalesDocument salesDocument)
+    {
+        for (var i = salesDocument.Taxes.Count - 1; i >= 0; i--)
+            salesDocument.Taxes[i].Delete();
+    }
+    
     public void RebuildTaxSummary(SalesDocument salesDocument)
     {
-        foreach (var row in salesDocument.Taxes.ToList())
-            row.Delete();
-    
         var groups = salesDocument.Lines.SelectMany(l => l.Taxes)
             .GroupBy(t => t.TaxKind)
             .Select(g => new
