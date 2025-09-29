@@ -35,7 +35,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         set
         {
             var modified = SetPropertyValue(nameof(Product), ref _product, value);
-            if (!modified || IsLoading || IsSaving) return;
+            if (!modified || IsLoading || IsSaving || IsDeleted) return;
             DeleteTaxes();
             ApplyProductSnapshot();
             RebuildTaxes();
@@ -65,7 +65,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         set
         {
             var modified = SetPropertyValue(nameof(Quantity), ref _quantity, value);
-            if (!modified || IsLoading || IsSaving) return;
+            if (!modified || IsLoading || IsSaving || IsDeleted) return;
             SetTaxableAmount();
         }
     }
@@ -79,7 +79,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         set
         {
             var modified = SetPropertyValue(nameof(UnitPrice), ref _unitPrice, value);
-            if (!modified || IsLoading || IsSaving) return;
+            if (!modified || IsLoading || IsSaving || IsDeleted) return;
             SetTaxableAmount();
         }
     }
@@ -93,7 +93,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         set
         {
             var modified = SetPropertyValue(nameof(DiscountPercent), ref _discountPercent, value);
-            if (!modified || IsLoading || IsSaving) return;
+            if (!modified || IsLoading || IsSaving || IsDeleted) return;
             SetTaxableAmount();
         }
     }
