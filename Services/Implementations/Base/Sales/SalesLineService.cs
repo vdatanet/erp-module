@@ -35,6 +35,11 @@ public class SalesLineService : ISalesLineService
         }
     }
 
+    public void SetTaxableAmount(SalesDocumentLine line)
+    {
+        line.TaxableAmount = AmountCalculator.GetTaxableAmount(line.Quantity, line.UnitPrice, line.DiscountPercent);
+    }
+
     public void RebuildTaxes(SalesDocumentLine line)
     {
         foreach (var tax in line.Taxes)

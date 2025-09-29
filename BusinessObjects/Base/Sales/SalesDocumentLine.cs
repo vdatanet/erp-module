@@ -2,7 +2,6 @@ using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
-using erp.Module.BusinessObjects.Helpers.Common;
 using erp.Module.BusinessObjects.Products;
 
 namespace erp.Module.BusinessObjects.Base.Sales;
@@ -20,7 +19,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     private decimal _taxableAmount;
     private decimal _taxAmount;
     private decimal _totalAmount;
-    
+
     [Association("SalesDocument-Lines")]
     public SalesDocument SalesDocument
     {
@@ -34,7 +33,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         get => _product;
         set => SetPropertyValue(nameof(Product), ref _product, value);
     }
-    
+
     [Size(SizeAttribute.Unlimited)]
     public string ProductName
     {
@@ -55,24 +54,16 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     public decimal Quantity
     {
         get => _quantity;
-        set
-        {
-            if (SetPropertyValue(nameof(Quantity), ref _quantity, value))
-                SetTaxableAmount();
-        }
+        set => SetPropertyValue(nameof(Quantity), ref _quantity, value);
     }
-    
+
     [ImmediatePostData]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     public decimal UnitPrice
     {
         get => _unitPrice;
-        set
-        {
-            if (SetPropertyValue(nameof(UnitPrice), ref _unitPrice, value))
-                SetTaxableAmount();
-        }
+        set => SetPropertyValue(nameof(UnitPrice), ref _unitPrice, value);
     }
 
     [ImmediatePostData]
@@ -81,15 +72,11 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     public decimal DiscountPercent
     {
         get => _discountPercent;
-        set
-        {
-            if (SetPropertyValue(nameof(DiscountPercent), ref _discountPercent, value))
-                SetTaxableAmount();
-        }
+        set => SetPropertyValue(nameof(DiscountPercent), ref _discountPercent, value);
     }
 
     [ImmediatePostData]
-    [ModelDefault("AllowEdit","False")]
+    [ModelDefault("AllowEdit", "False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     public decimal TaxableAmount
@@ -119,12 +106,4 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     [Aggregated]
     [Association("SalesDocumentLine-Taxes")]
     public XPCollection<SalesDocumentLineTax> Taxes => GetCollection<SalesDocumentLineTax>();
-    
-    private void SetTaxableAmount()
-    {
-        if (IsLoading || IsSaving) 
-            return;
-        
-        TaxableAmount = AmountCalculator.GetTaxableAmount(Quantity, UnitPrice, DiscountPercent);
-    }
 }
