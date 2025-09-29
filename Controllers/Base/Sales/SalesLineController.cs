@@ -33,16 +33,17 @@ public class SalesLineController : ViewController
 
     protected override void OnDeactivated()
     {
-        //View.ObjectSpace.ObjectChanged -= ObjectSpace_ObjectChanged;
+        View.ObjectSpace.ObjectChanged -= ObjectSpace_ObjectChanged;
         base.OnDeactivated();
     }
 
     private void ObjectSpace_ObjectChanged(object sender, ObjectChangedEventArgs e)
     {
-        if (e.Object is SalesDocumentLine line && e.PropertyName == nameof(SalesDocumentLine.Quantity))
+        // Apply Product Snapshot
+        
+        if (e.Object is SalesDocumentLine line && e.PropertyName == nameof(SalesDocumentLine.Product))
         {
-            //_lineService.CalculateLineTaxableAmount(line);
-            //_documentService.ComputeTotals(line.SalesDocument);
+            line.ProductName = "Hello there";
         }
     }
 }
