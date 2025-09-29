@@ -39,37 +39,7 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     [Aggregated]
     [Association("SalesDocument-Attachments")]
     public XPCollection<Attachment> Attachments => GetCollection<Attachment>();
-
-    // public void RebuildTaxSummaryByTaxType()
-    // {
-    //     if (IsLoading || IsSaving) return;
-    //
-    //     foreach (var row in Taxes.ToList())
-    //         row.Delete();
-    //
-    //     var groups = Lines.SelectMany(l => l.Taxes)
-    //         .GroupBy(t => t.TaxKind)
-    //         .Select(g => new
-    //         {
-    //             TaxType = g.Key,
-    //             BaseSum = g.Sum(x => x.TaxableAmount),
-    //             AmountSum = g.Sum(x => x.TaxAmount)
-    //         })
-    //         .OrderBy(x => x.TaxType.Sequence)
-    //         .ToList();
-    //
-    //     var newTaxes = groups.Select(g => new SalesDocumentTax(Session)
-    //     {
-    //         SalesDocument = this,
-    //         TaxKind = g.TaxType,
-    //         Sequence = g.TaxType.Sequence,
-    //         TaxableAmount = g.BaseSum,
-    //         TaxAmount = g.AmountSum
-    //     });
-    //
-    //     Taxes.AddRange(newTaxes);
-    // }
-
+    
     // protected override void OnDeleting()
     // {
     //     base.OnDeleting();

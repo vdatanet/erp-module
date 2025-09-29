@@ -47,9 +47,11 @@ public class SalesLineController : ViewController
                 _lineService.DeleteTaxes(line);
                 _lineService.ApplyProductSnapshot(line);
                 _lineService.RebuildTaxes(line);
+                _documentService.RebuildTaxSummary(line.SalesDocument);
                 break;
             case nameof(SalesDocumentLine.TaxableAmount):
                 _lineService.RebuildTaxes(line);
+                _documentService.RebuildTaxSummary(line.SalesDocument);
                 break;
         }
     }

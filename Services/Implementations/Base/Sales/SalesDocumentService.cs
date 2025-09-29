@@ -5,12 +5,31 @@ namespace erp.Module.Services.Implementations.Base.Sales;
 
 public class SalesDocumentService : ISalesDocumentService
 {
-    public void ComputeTotals(SalesDocument salesDocument)
+    public void RebuildTaxSummary(SalesDocument salesDocument)
     {
-        //if (salesDocument == null) return;
+        foreach (var row in salesDocument.Taxes.ToList())
+            row.Delete();
+    
+        var groups = salesDocument.Lines.SelectMany(l => l.Taxes)
+            .GroupBy(t => t.TaxKind)
+            .Select(g => new
+            {
+                TaxType = g.Key,
+                BaseSum = g.Sum(x => x.TaxableAmount),
+                AmountSum = g.Sum(x => x.TaxAmount)
+            })
+            .OrderBy(x => x.TaxType.Sequence)
+            .ToList();
+    
+        var newTaxes = groups.Select(g => new SalesDocumentTax(salesDocument.Session)
+        {
+            SalesDocument = salesDocument,
+            TaxKind = g.TaxType,
+            Sequence = g.TaxType.Sequence,
+            TaxableAmount = g.BaseSum,
+            TaxAmount = g.AmountSum
+        });
 
-        //salesDocument.TaxableAmount = salesDocument.Lines.Sum(l => l.TaxableAmount);
-        //salesDocument.TaxAmount = salesDocument.Lines.Sum(l => l.TaxAmount);
-        //salesDocument.TotalAmount = salesDocument.Lines.Sum(l => l.TotalAmount);    
+        salesDocument.Taxes.AddRange(newTaxes);
     }
 }
