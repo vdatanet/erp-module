@@ -8,6 +8,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Contacts;
 using erp.Module.BusinessObjects.Helpers;
+using erp.Module.BusinessObjects.Helpers.Contacts;
 using erp.Module.BusinessObjects.Invoicing;
 using Microsoft.Extensions.DependencyInjection;
 using SequenceFactory = erp.Module.Factories.SequenceFactory;

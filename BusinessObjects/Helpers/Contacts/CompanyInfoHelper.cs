@@ -1,8 +1,7 @@
 using DevExpress.Xpo;
-using erp.Module.BusinessObjects.Common;
 using erp.Module.BusinessObjects.Contacts;
 
-namespace erp.Module.BusinessObjects.Helpers;
+namespace erp.Module.BusinessObjects.Helpers.Contacts;
 
 public static class CompanyInfoHelper
 {

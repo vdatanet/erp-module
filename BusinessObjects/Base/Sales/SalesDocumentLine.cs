@@ -2,6 +2,7 @@ using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
+using erp.Module.BusinessObjects.Helpers.Common;
 using erp.Module.BusinessObjects.Products;
 
 namespace erp.Module.BusinessObjects.Base.Sales;
@@ -16,6 +17,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     private decimal _quantity;
     private decimal _unitPrice;
     private decimal _discountPercent;
+    private decimal _taxableAmount;
     
     [Association("SalesDocument-Lines")]
     public SalesDocument SalesDocument
@@ -124,6 +126,16 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
                 SetTaxableAmount();
         }
     }
+
+    [ImmediatePostData]
+    [ModelDefault("AllowEdit","False")]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    public decimal TaxableAmount
+    {
+        get => _taxableAmount;
+        set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
+    }
     
     // [ModelDefault("DisplayFormat", "{0:n2}")]
     // [PersistentAlias("Round(Quantity * UnitPrice - DiscountPercent / 100 * Quantity * UnitPrice,2)")]
@@ -145,6 +157,8 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     {
         if (IsLoading || IsSaving) 
             return;
+        
+        TaxableAmount = AmountCalculator.GetTaxableAmount(Quantity, UnitPrice, DiscountPercent);
     }
 
     // private void RecalculateTaxes()

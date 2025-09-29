@@ -44,4 +44,7 @@
     <PackageReference Include="MySqlConnector" Version="2.4.0" />
     <PackageReference Include="VeriFactu" Version="1.0.48" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="BusinessObjects\Helpers\Math\" />
+  </ItemGroup>
 </Project>

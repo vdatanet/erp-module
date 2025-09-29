@@ -28,24 +28,24 @@ public class SalesDocumentLineController : ViewController
     protected override void OnActivated()
     {
         base.OnActivated();
-        View.ObjectSpace.ObjectChanged += ObjectSpace_ObjectChanged;
+        //View.ObjectSpace.ObjectChanged += ObjectSpace_ObjectChanged;
     }
 
     protected override void OnDeactivated()
     {
-        View.ObjectSpace.ObjectChanged -= ObjectSpace_ObjectChanged;
+        //View.ObjectSpace.ObjectChanged -= ObjectSpace_ObjectChanged;
         base.OnDeactivated();
     }
 
     private void ObjectSpace_ObjectChanged(object sender, ObjectChangedEventArgs e)
     {
-        if (e.Object is SalesDocumentLine line &&
-            (e.PropertyName == nameof(SalesDocumentLine.Quantity) ||
-             e.PropertyName == nameof(SalesDocumentLine.UnitPrice) ||
-             e.PropertyName == nameof(SalesDocumentLine.DiscountPercent)))
-        {
-            _lineService.CalculateLineTaxableAmount(line);
-            _documentService.ComputeTotals(line.SalesDocument);
-        }
+        // if (e.Object is SalesDocumentLine line &&
+        //     (e.PropertyName == nameof(SalesDocumentLine.Quantity) ||
+        //      e.PropertyName == nameof(SalesDocumentLine.UnitPrice) ||
+        //      e.PropertyName == nameof(SalesDocumentLine.DiscountPercent)))
+        // {
+        //     _lineService.CalculateLineTaxableAmount(line);
+        //     _documentService.ComputeTotals(line.SalesDocument);
+        // }
     }
 }

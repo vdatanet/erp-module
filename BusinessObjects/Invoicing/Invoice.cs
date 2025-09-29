@@ -6,6 +6,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Sales;
 using erp.Module.BusinessObjects.Contacts;
 using erp.Module.BusinessObjects.Helpers;
+using erp.Module.BusinessObjects.Helpers.Contacts;
 using erp.Module.Factories;
 using VeriFactu.Xml.Factu;
 using VeriFactu.Xml.Factu.Alta;
