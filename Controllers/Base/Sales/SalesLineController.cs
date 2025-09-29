@@ -40,10 +40,17 @@ public class SalesLineController : ViewController
     private void ObjectSpace_ObjectChanged(object sender, ObjectChangedEventArgs e)
     {
         // Apply Product Snapshot
-        
-        if (e.Object is SalesDocumentLine line && e.PropertyName == nameof(SalesDocumentLine.Product))
+
+        if (e.Object is not SalesDocumentLine line) return;
+
+        switch (e.PropertyName)
         {
-            _lineService.ApplyProductSnapshot(line);
+            case nameof(SalesDocumentLine.Product):
+                _lineService.ApplyProductSnapshot(line);
+                break;
+            case nameof(SalesDocumentLine.TaxableAmount):
+                // Rebuild Taxes
+                break;
         }
     }
 }
