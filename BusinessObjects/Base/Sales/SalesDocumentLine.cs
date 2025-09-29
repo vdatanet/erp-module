@@ -33,47 +33,6 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(Product), ref _product, value);
     }
     
-    // private void ApplyProductSnapshot(Product p)
-    // {
-    //     if (IsLoading || IsSaving) return;
-    //
-    //     if (p is null)
-    //     {
-    //         ProductName = null;
-    //         Notes = null;
-    //         UnitPrice = 0m;
-    //         DiscountPercent = 0m;
-    //         DeleteAllTaxes();
-    //         return;
-    //     }
-    //
-    //     ProductName = p.Name;
-    //     Notes = p.Notes;
-    //     UnitPrice = p.PriceList;
-    //
-    //     if (Quantity == 0m) Quantity = 1m;
-    //
-    //     DeleteAllTaxes();
-    //
-    //     foreach (var tax in p.SalesTaxes.OrderBy(t => t.Sequence))
-    //     {
-    //         _ = new SalesDocumentLineTax(Session)
-    //         {
-    //             SalesDocumentLine = this,
-    //             TaxKind = tax
-    //         };
-    //     }
-    //     
-    //     RecalculateTaxes();
-    //
-    //     return;
-    //
-    //     void DeleteAllTaxes()
-    //     {
-    //         for (var i = Taxes.Count - 1; i >= 0; i--) Taxes[i].Delete();
-    //     }
-    // }
-
     [Size(SizeAttribute.Unlimited)]
     public string ProductName
     {
