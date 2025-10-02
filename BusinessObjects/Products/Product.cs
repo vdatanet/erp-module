@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using DevExpress.ExpressApp.Editors;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.Validation;
@@ -124,10 +125,14 @@ public class Product(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(Picture), ref _picture, value);
     }
     
+    [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
     [Association("Products-SalesTaxes")]
+    [DataSourceCriteria("IsAvailableInSales = True AND IsActive = True")]
     public XPCollection<TaxKind> SalesTaxes => GetCollection<TaxKind>(nameof(SalesTaxes));
     
+    [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
     [Association("Products-PurchaseTaxes")]
+    [DataSourceCriteria("IsAvailableInPurchases = True AND IsActive = True")]
     public XPCollection<TaxKind> PurchaseTaxes => GetCollection<TaxKind>(nameof(PurchaseTaxes));
     
     [Aggregated]
