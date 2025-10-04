@@ -25,8 +25,6 @@ public sealed class erpModule : ModuleBase {
         AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.ModelDifference));
         AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.ModelDifferenceAspect));
         AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.BaseObject));
-        AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.AuditDataItemPersistent));
-        AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.AuditedObjectWeakReference));
         AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.FileData));
         AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.FileAttachmentBase));
         AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.Analysis));
@@ -35,7 +33,6 @@ public sealed class erpModule : ModuleBase {
         AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.HCategory));
         RequiredModuleTypes.Add(typeof(DevExpress.ExpressApp.SystemModule.SystemModule));
         RequiredModuleTypes.Add(typeof(DevExpress.ExpressApp.Security.SecurityModule));
-        RequiredModuleTypes.Add(typeof(DevExpress.ExpressApp.AuditTrail.AuditTrailModule));
         RequiredModuleTypes.Add(typeof(DevExpress.ExpressApp.Objects.BusinessClassLibraryCustomizationModule));
         RequiredModuleTypes.Add(typeof(DevExpress.ExpressApp.Chart.ChartModule));
         RequiredModuleTypes.Add(typeof(DevExpress.ExpressApp.CloneObject.CloneObjectModule));
@@ -48,8 +45,6 @@ public sealed class erpModule : ModuleBase {
         RequiredModuleTypes.Add(typeof(DevExpress.ExpressApp.PivotGrid.PivotGridModule));
         RequiredModuleTypes.Add(typeof(DevExpress.ExpressApp.ReportsV2.ReportsModuleV2));
         RequiredModuleTypes.Add(typeof(DevExpress.ExpressApp.Scheduler.SchedulerModuleBase));
-        RequiredModuleTypes.Add(typeof(DevExpress.ExpressApp.ScriptRecorder.ScriptRecorderModuleBase));
-        RequiredModuleTypes.Add(typeof(DevExpress.ExpressApp.StateMachine.StateMachineModule));
         RequiredModuleTypes.Add(typeof(DevExpress.ExpressApp.TreeListEditors.TreeListEditorsModuleBase));
         RequiredModuleTypes.Add(typeof(DevExpress.ExpressApp.Validation.ValidationModule));
         RequiredModuleTypes.Add(typeof(DevExpress.ExpressApp.ViewVariantsModule.ViewVariantsModule));

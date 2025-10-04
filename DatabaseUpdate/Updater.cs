@@ -89,7 +89,7 @@ public class Updater : ModuleUpdater {
         if (tenant == null) {
             tenant = ObjectSpace.CreateObject<Tenant>();
             tenant.Name = tenantName;
-            tenant.ConnectionString = $"XpoProvider=Postgres;Host=localhost;Username=postgres;Password=password;Database={databaseName}";
+            tenant.ConnectionString = $"XpoProvider=MySql;server=localhost;user=root;password=password;database={databaseName}";
         }
         return tenant;
     }
@@ -117,9 +117,6 @@ public class Updater : ModuleUpdater {
             defaultRole.AddObjectPermission<ModelDifferenceAspect>(SecurityOperations.ReadWriteAccess, "Owner.UserId = ToStr(CurrentUserId())", SecurityPermissionState.Allow);
             defaultRole.AddTypePermissionsRecursively<ModelDifference>(SecurityOperations.Create, SecurityPermissionState.Allow);
             defaultRole.AddTypePermissionsRecursively<ModelDifferenceAspect>(SecurityOperations.Create, SecurityPermissionState.Allow);
-            defaultRole.AddTypePermission<AuditDataItemPersistent>(SecurityOperations.Read, SecurityPermissionState.Deny);
-            defaultRole.AddObjectPermissionFromLambda<AuditDataItemPersistent>(SecurityOperations.Read, a => a.UserId == CurrentUserIdOperator.CurrentUserId().ToString(), SecurityPermissionState.Allow);
-            defaultRole.AddTypePermission<AuditedObjectWeakReference>(SecurityOperations.Read, SecurityPermissionState.Allow);
         }
         return defaultRole;
     }
