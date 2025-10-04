@@ -34,11 +34,11 @@ public class Updater : ModuleUpdater {
         }
 
 #if !RELEASE
-        if (TenantName == null) {
-            _ = CreateTenant("company1.com", "erp_company1");
-            _ = CreateTenant("company2.com", "erp_company2");
-            ObjectSpace.CommitChanges();
-        }
+        //if (TenantName == null) {
+            //_ = CreateTenant("company1.com", "erp_company1");
+            //_ = CreateTenant("company2.com", "erp_company2");
+            //ObjectSpace.CommitChanges();
+        //}
 #endif
 
         // The code below creates users and roles for testing purposes only.
