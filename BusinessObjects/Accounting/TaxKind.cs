@@ -4,6 +4,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
+using erp.Module.BusinessObjects.Base.Sales;
 using erp.Module.BusinessObjects.Products;
 using VeriFactu.Xml.Factu;
 using VeriFactu.Xml.Factu.Alta;
@@ -118,6 +119,9 @@ public class TaxKind(Session session) : BaseEntity(session)
         get => _taxExemption;
         set => SetPropertyValue(nameof(TaxExemption), ref _taxExemption, value);
     }
+    
+    [Association("SalesDocumentLines-TaxKinds")]
+    public XPCollection<SalesDocumentLine> SalesDocumentLines => GetCollection<SalesDocumentLine>(nameof(SalesDocumentLines));
 
     [Association("Products-SalesTaxes")]
     public XPCollection<Product> ProductSalesTaxes => GetCollection<Product>(nameof(ProductSalesTaxes));

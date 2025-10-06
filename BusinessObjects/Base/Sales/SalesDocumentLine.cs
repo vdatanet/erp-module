@@ -1,6 +1,8 @@
+using DevExpress.ExpressApp.Editors;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Accounting;
 using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Helpers.Common;
 using erp.Module.BusinessObjects.Products;
@@ -124,11 +126,16 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         get => _totalAmount;
         protected set => SetPropertyValue(nameof(TotalAmount), ref _totalAmount, value);
     }
+    
+    [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
+    [Association("SalesDocumentLines-TaxKinds")]
+    [DataSourceCriteria("IsAvailableInSales = True AND IsActive = True")]
+    public XPCollection<TaxKind> SalesTaxes => GetCollection<TaxKind>(nameof(SalesTaxes));
 
     [Aggregated]
     [Association("SalesDocumentLine-Taxes")]
     public XPCollection<SalesDocumentLineTax> Taxes => GetCollection<SalesDocumentLineTax>();
-
+    
     private void ApplyProductSnapshot()
     {
         if (Product is null)
