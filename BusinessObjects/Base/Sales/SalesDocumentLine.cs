@@ -190,7 +190,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         
         foreach (var tax in SalesTaxes)
         {
-            var documentTax = new SalesDocumentLineTax(Session)
+            _ = new SalesDocumentLineTax(Session)
             {
                 SalesDocumentLine = this,
                 TaxKind = tax,
