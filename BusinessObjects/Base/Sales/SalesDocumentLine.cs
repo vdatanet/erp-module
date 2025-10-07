@@ -40,7 +40,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
             if (!modified || IsLoading || IsSaving || IsDeleted) return;
             DeleteTaxes();
             ApplyProductSnapshot();
-            RebuildTaxes();
+            //RebuildTaxes();
         }
     }
 
@@ -156,11 +156,9 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
             Quantity = 1m;
 
         foreach (var tax in Product.SalesTaxes.OrderBy(t => t.Sequence))
-            _ = new SalesDocumentLineTax(Session)
-            {
-                SalesDocumentLine = this,
-                TaxKind = tax
-            };
+        {
+            SalesTaxes.Add(tax);
+        }
     }
 
     private void SetTaxableAmount()
@@ -184,7 +182,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
 
     private void DeleteTaxes()
     {
-        for (var i = Taxes.Count - 1; i >= 0; i--)
+        for (var i = SalesTaxes.Count - 1; i >= 0; i--)
             Taxes[i].Delete();
     }
 }
