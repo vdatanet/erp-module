@@ -130,7 +130,24 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
     [Association("SalesDocumentLines-TaxKinds")]
     [DataSourceCriteria("IsAvailableInSales = True AND IsActive = True")]
-    public XPCollection<TaxKind> SalesTaxes => GetCollection<TaxKind>(nameof(SalesTaxes));
+    public XPCollection<TaxKind> SalesTaxes
+    {
+        get
+        {
+            var collection = GetCollection<TaxKind>(nameof(SalesTaxes));
+            if (!collection.IsLoaded)
+            {
+                collection.CollectionChanged += SalesTaxes_CollectionChanged;
+            }
+            return collection;
+        }
+    }
+
+    private void SalesTaxes_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
+    {
+        if (IsLoading || IsSaving || IsDeleted) return;
+        RebuildTaxes();
+    }
 
     [Aggregated]
     [Association("SalesDocumentLine-Taxes")]
@@ -169,15 +186,22 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
 
     private void RebuildTaxes()
     {
-        //foreach (var tax in Taxes)
-        //{
-            //tax.TaxableAmount = TaxableAmount;
-            //tax.TaxAmount =
-                //AmountCalculator.GetTaxAmount(tax.TaxableAmount, tax.TaxKind.Rate, tax.TaxKind.IsWithHolding);
-        //}
+        for (var i = Taxes.Count - 1; i >= 0; i--) Taxes[i].Delete();
+        
+        foreach (var tax in SalesTaxes)
+        {
+            var documentTax = new SalesDocumentLineTax(Session)
+            {
+                SalesDocumentLine = this,
+                TaxKind = tax,
+                TaxableAmount = TaxableAmount,
+                TaxAmount = AmountCalculator.GetTaxAmount(TaxableAmount, tax.Rate, tax.IsWithHolding)
+            };
+            
+        }
 
-        //TaxAmount = Taxes.Sum(t => t.TaxAmount);
-        //TotalAmount = TaxableAmount + TaxAmount;
+        TaxAmount = Taxes.Sum(t => t.TaxAmount);
+        TotalAmount = TaxableAmount + TaxAmount;
     }
 
     private void DeleteProductTaxes()
