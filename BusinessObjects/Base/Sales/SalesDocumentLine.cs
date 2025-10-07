@@ -38,9 +38,9 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         {
             var modified = SetPropertyValue(nameof(Product), ref _product, value);
             if (!modified || IsLoading || IsSaving || IsDeleted) return;
-            DeleteTaxes();
+            DeleteProductTaxes();
             ApplyProductSnapshot();
-            //RebuildTaxes();
+            RebuildTaxes();
         }
     }
 
@@ -126,7 +126,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
         get => _totalAmount;
         protected set => SetPropertyValue(nameof(TotalAmount), ref _totalAmount, value);
     }
-    
+
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
     [Association("SalesDocumentLines-TaxKinds")]
     [DataSourceCriteria("IsAvailableInSales = True AND IsActive = True")]
@@ -135,7 +135,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     [Aggregated]
     [Association("SalesDocumentLine-Taxes")]
     public XPCollection<SalesDocumentLineTax> Taxes => GetCollection<SalesDocumentLineTax>();
-    
+
     private void ApplyProductSnapshot()
     {
         if (Product is null)
@@ -169,20 +169,23 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
 
     private void RebuildTaxes()
     {
-        foreach (var tax in Taxes)
-        {
-            tax.TaxableAmount = TaxableAmount;
-            tax.TaxAmount =
-                AmountCalculator.GetTaxAmount(tax.TaxableAmount, tax.TaxKind.Rate, tax.TaxKind.IsWithHolding);
-        }
+        //foreach (var tax in Taxes)
+        //{
+            //tax.TaxableAmount = TaxableAmount;
+            //tax.TaxAmount =
+                //AmountCalculator.GetTaxAmount(tax.TaxableAmount, tax.TaxKind.Rate, tax.TaxKind.IsWithHolding);
+        //}
 
-        TaxAmount = Taxes.Sum(t => t.TaxAmount);
-        TotalAmount = TaxableAmount + TaxAmount;
+        //TaxAmount = Taxes.Sum(t => t.TaxAmount);
+        //TotalAmount = TaxableAmount + TaxAmount;
     }
 
-    private void DeleteTaxes()
-    {
-        for (var i = SalesTaxes.Count - 1; i >= 0; i--)
-            Taxes[i].Delete();
+    private void DeleteProductTaxes()
+    { 
+        var salesTaxesToRemove = SalesTaxes.ToList();
+        foreach (var tax in salesTaxesToRemove)
+        {
+            SalesTaxes.Remove(tax);
+        }
     }
 }
