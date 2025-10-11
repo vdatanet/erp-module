@@ -58,11 +58,40 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     [Aggregated]
     [Association("SalesDocument-Attachments")]
     public XPCollection<Attachment> Attachments => GetCollection<Attachment>();
+
+    public void DeleteTaxesSummary()
+    {
+        for (var i = Taxes.Count - 1; i >= 0; i--)
+            Taxes[i].Delete();
+    }
+
+    public void RebuildTaxSummary()
+    {
+        var groups = Lines.SelectMany(l => l.Taxes)
+            .GroupBy(t => t.TaxKind)
+            .Select(g => new
+            {
+                TaxType = g.Key,
+                BaseSum = g.Sum(x => x.TaxableAmount),
+                AmountSum = g.Sum(x => x.TaxAmount)
+            })
+            .OrderBy(x => x.TaxType.Sequence)
+            .ToList();
+
+        var newTaxes = groups.Select(g => new SalesDocumentTax(this.Session)
+        {
+            SalesDocument = this,
+            TaxKind = g.TaxType,
+            Sequence = g.TaxType.Sequence,
+            TaxableAmount = g.BaseSum,
+            TaxAmount = g.AmountSum
+        });
+
+        Taxes.AddRange(newTaxes);
+
+        TaxableAmount = Lines.Sum(t => t.TaxableAmount);
+        TaxAmount = Lines.Sum(t => t.TaxAmount);
+        TotalAmount = TaxableAmount + TaxAmount;
+    }
     
-    // protected override void OnDeleting()
-    // {
-    //     base.OnDeleting();
-    //     foreach (var aggregated in new ArrayList(Taxes)) Session.Delete(aggregated);
-    //     foreach (var aggregated in new ArrayList(Lines)) Session.Delete(aggregated);
-    // }
 }

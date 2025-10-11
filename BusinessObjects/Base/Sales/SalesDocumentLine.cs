@@ -202,6 +202,12 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
 
         TaxAmount = Taxes.Sum(t => t.TaxAmount);
         TotalAmount = TaxableAmount + TaxAmount;
+
+        if (SalesDocument is not null)
+        {
+            SalesDocument.DeleteTaxesSummary();
+            SalesDocument.RebuildTaxSummary();
+        }
     }
 
     private void DeleteProductTaxes()
