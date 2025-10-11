@@ -41,11 +41,30 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
 
     [Aggregated]
     [Association("SalesDocument-Lines")]
-    public XPCollection<SalesDocumentLine> Lines => GetCollection<SalesDocumentLine>();
-
+    public XPCollection<SalesDocumentLine> Lines
+    {
+        get
+        {
+            var collection = GetCollection<SalesDocumentLine>(nameof(Lines));
+            if (!collection.IsLoaded)
+            {
+                collection.CollectionChanged += Lines_CollectionChanged;
+            }
+            return collection;
+        }
+    }
+    
     [Aggregated]
     [Association("SalesDocument-Taxes")]
     public XPCollection<SalesDocumentTax> Taxes => GetCollection<SalesDocumentTax>();
+    
+    private void Lines_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
+    {
+        if (IsLoading || IsSaving || IsDeleted) return;
+        if (e.CollectionChangedType != XPCollectionChangedType.AfterRemove) return;
+        DeleteTaxesSummary();
+        RebuildTaxSummary();
+    }
 
     [Aggregated]
     [Association("SalesDocument-Tasks")]
