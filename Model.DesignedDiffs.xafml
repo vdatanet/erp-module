@@ -16,23 +16,23 @@
     <DetailView Id="Category_DetailView">
       <Layout>
         <LayoutGroup Id="Main" RelativeSize="100">
-          <LayoutGroup Id="SimpleEditors" RelativeSize="13.171140939597315">
+          <LayoutGroup Id="SimpleEditors" RelativeSize="14.693534844668346">
             <LayoutGroup Id="Category" RelativeSize="100">
               <LayoutGroup Id="Category_col1" RelativeSize="50">
-                <LayoutItem Id="Name" RelativeSize="27.11864406779661" />
-                <LayoutItem Id="ParentCategory" RelativeSize="20.338983050847457" />
-                <LayoutItem Id="FullPath" ViewItem="FullPath" Index="2" RelativeSize="52.54237288135593" IsNewNode="True" />
-                <LayoutItem Id="IsActive" Index="3" RelativeSize="28.571428571428573" Removed="True" />
+                <LayoutItem Id="Name" RelativeSize="23.529411764705884" />
+                <LayoutItem Id="ParentCategory" RelativeSize="17.647058823529413" />
+                <LayoutItem Id="FullPath" ViewItem="FullPath" Index="2" RelativeSize="17.647058823529413" IsNewNode="True" />
+                <LayoutItem Id="IsActive" ViewItem="IsActive" Index="3" RelativeSize="17.647058823529413" IsNewNode="True" Removed="True" />
+                <LayoutItem Id="IsAvailableInPos" ViewItem="IsAvailableInPos" Index="4" RelativeSize="23.529411764705884" IsNewNode="True" />
               </LayoutGroup>
               <LayoutGroup Id="Category_col2" RelativeSize="50">
-                <LayoutItem Id="IsActive" ViewItem="IsActive" Index="0" RelativeSize="27.11864406779661" IsNewNode="True" />
-                <LayoutItem Id="IsAvailableInPos" RelativeSize="20.338983050847457" Index="1" />
-                <LayoutItem Id="Notes" ViewItem="Notes" Index="2" RelativeSize="52.54237288135593" IsNewNode="True" />
+                <LayoutItem Id="IsAvailableInPos" RelativeSize="28.571428571428573" Index="0" Removed="True" />
+                <LayoutItem Id="Notes" ViewItem="Notes" Index="0" RelativeSize="100" IsNewNode="True" />
                 <LayoutItem Id="FullPath" Removed="True" />
               </LayoutGroup>
             </LayoutGroup>
           </LayoutGroup>
-          <TabbedGroup Id="Tabs" RelativeSize="86.82885906040268" Index="1">
+          <TabbedGroup Id="Tabs" RelativeSize="85.30646515533165" Index="1">
             <LayoutGroup Id="Subcategories" RelativeSize="100">
               <LayoutItem Id="Subcategories" RelativeSize="100" />
             </LayoutGroup>
@@ -46,5 +46,14 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
+    <ListView Id="Category_ListView">
+      <Columns>
+        <ColumnInfo Id="IsAvailableInPos" Width="111" Index="-1" />
+        <ColumnInfo Id="Name" Width="95" />
+        <ColumnInfo Id="ParentCategory" Width="117" />
+        <ColumnInfo Id="FullPath" Width="87" Index="2" />
+        <ColumnInfo Id="IsActive" Width="53" Index="3" />
+      </Columns>
+    </ListView>
   </Views>
 </Application>
