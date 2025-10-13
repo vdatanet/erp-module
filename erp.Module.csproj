@@ -20,6 +20,7 @@
     <PackageReference Include="DevExpress.ExpressApp.CloneObject" Version="25.1.*" />
     <PackageReference Include="DevExpress.ExpressApp.CodeAnalysis" Version="25.1.*" />
     <PackageReference Include="DevExpress.ExpressApp.ConditionalAppearance" Version="25.1.*" />
+    <PackageReference Include="DevExpress.ExpressApp.Core.All.es" Version="25.1.5" />
     <PackageReference Include="DevExpress.ExpressApp.Dashboards" Version="25.1.*" />
     <PackageReference Include="DevExpress.ExpressApp.Kpi" Version="25.1.*" />
     <PackageReference Include="DevExpress.ExpressApp.MultiTenancy.Xpo" Version="25.1.*" />
