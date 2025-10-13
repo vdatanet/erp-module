@@ -48,7 +48,6 @@
     </DetailView>
     <ListView Id="Category_ListView">
       <Columns>
-        <ColumnInfo Id="IsActive" Index="-1" />
         <ColumnInfo Id="IsAvailableInPos" Index="-1" />
       </Columns>
     </ListView>

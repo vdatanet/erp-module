@@ -58,6 +58,7 @@ public class Product(Session session) : BaseEntity(session)
     }
     
     [Association("Category-Products")]
+    [DataSourceCriteria("IsActive = True")]
     public Category Category
     {
         get => _category;
