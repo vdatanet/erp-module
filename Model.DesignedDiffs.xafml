@@ -13,5 +13,38 @@
   </SchemaModules>
   <Views>
     <ListView Id="ApplicationUser_ListView" Caption="Users" />
+    <DetailView Id="Category_DetailView">
+      <Layout>
+        <LayoutGroup Id="Main" RelativeSize="100">
+          <LayoutGroup Id="SimpleEditors" RelativeSize="13.171140939597315">
+            <LayoutGroup Id="Category" RelativeSize="100">
+              <LayoutGroup Id="Category_col1" RelativeSize="50">
+                <LayoutItem Id="Name" RelativeSize="27.11864406779661" />
+                <LayoutItem Id="ParentCategory" RelativeSize="20.338983050847457" />
+                <LayoutItem Id="FullPath" ViewItem="FullPath" Index="2" RelativeSize="52.54237288135593" IsNewNode="True" />
+                <LayoutItem Id="IsActive" Index="3" RelativeSize="28.571428571428573" Removed="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="Category_col2" RelativeSize="50">
+                <LayoutItem Id="IsActive" ViewItem="IsActive" Index="0" RelativeSize="27.11864406779661" IsNewNode="True" />
+                <LayoutItem Id="IsAvailableInPos" RelativeSize="20.338983050847457" Index="1" />
+                <LayoutItem Id="Notes" ViewItem="Notes" Index="2" RelativeSize="52.54237288135593" IsNewNode="True" />
+                <LayoutItem Id="FullPath" Removed="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+          <TabbedGroup Id="Tabs" RelativeSize="86.82885906040268" Index="1">
+            <LayoutGroup Id="Subcategories" RelativeSize="100">
+              <LayoutItem Id="Subcategories" RelativeSize="100" />
+            </LayoutGroup>
+            <LayoutGroup Id="Products" RelativeSize="100">
+              <LayoutItem Id="Products" RelativeSize="100" />
+            </LayoutGroup>
+          </TabbedGroup>
+          <LayoutGroup Id="SizeableEditors" RelativeSize="43.37248322147651" Removed="True">
+            <LayoutItem Id="Notes" RelativeSize="100" Removed="True" />
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
   </Views>
 </Application>

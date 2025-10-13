@@ -60,4 +60,20 @@
       <Item Id="Time Tracking" Caption="Control horario" />
     </Items>
   </NavigationItems>
+  <Views>
+    <DetailView Id="Category_DetailView">
+      <Layout>
+        <LayoutGroup Id="Main">
+          <LayoutGroup Id="SimpleEditors">
+            <LayoutGroup Id="Category" Caption="Categoría">
+              <LayoutGroup Id="Category_col2" Caption="Category_col2" />
+            </LayoutGroup>
+          </LayoutGroup>
+          <LayoutGroup Id="SizeableEditors" Caption="Notas" />
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="Category_ListView" Caption="Categorías" />
+    <ListView Id="Category_LookupListView" Caption="Categorías" />
+  </Views>
 </Application>
