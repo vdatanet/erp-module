@@ -1,11 +1,48 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Application>
   <BOModel>
+    <Class Name="erp.Module.BusinessObjects.Accounting.Account" Caption="Cuenta" />
+    <Class Name="erp.Module.BusinessObjects.Accounting.TaxKind" Caption="Tipo de impuesto" />
     <Class Name="erp.Module.BusinessObjects.Invoicing.Invoice" Caption="Factura">
       <OwnMembers>
         <Member Name="Customer" Caption="Cliente" />
         <Member Name="InvoiceDate" Caption="Fecha Factura" />
         <Member Name="Text" Caption="Detalle operación" />
+      </OwnMembers>
+    </Class>
+    <Class Name="erp.Module.BusinessObjects.Products.Category" Caption="Categoría">
+      <OwnMembers>
+        <Member Name="FullPath" Caption="Ruta completa" />
+        <Member Name="IsActive" Caption="Activa" />
+        <Member Name="IsAvailableInPos" Caption="Diponible en TPV" />
+        <Member Name="Name" Caption="Descripción" />
+        <Member Name="Notes" Caption="Notas" />
+        <Member Name="ParentCategory" Caption="Categoría superior" />
+        <Member Name="Products" Caption="Productos" />
+        <Member Name="Subcategories" Caption="Subcategorías" />
+      </OwnMembers>
+    </Class>
+    <Class Name="erp.Module.BusinessObjects.Products.Product" Caption="Producto">
+      <OwnMembers>
+        <Member Name="Attachments" Caption="Archivos" />
+        <Member Name="Barcode" Caption="Código de barras" />
+        <Member Name="Category" Caption="Categoría" />
+        <Member Name="Code" Caption="Código" />
+        <Member Name="IsActive" Caption="Activo" />
+        <Member Name="IsAvailableInPos" Caption="Disponible en TPV" />
+        <Member Name="IsAvailableInPurchases" Caption="Disponible en compras" />
+        <Member Name="IsAvailableInSales" Caption="Disponible en ventas" />
+        <Member Name="Name" Caption="Descripción" />
+        <Member Name="Notes" Caption="Notas" />
+        <Member Name="Picture" Caption="Imagen" />
+        <Member Name="Pictures" Caption="Imágenes" />
+        <Member Name="PriceList" Caption="Precio de venta" />
+        <Member Name="PurchaseAccount" Caption="Cuenta de compras" />
+        <Member Name="PurchaseTaxes" Caption="Impuestos en compras" />
+        <Member Name="SalesAccount" Caption="Cuenta de ventas" />
+        <Member Name="SalesTaxes" Caption="Impuestos en ventas" />
+        <Member Name="StandardCost" Caption="Precio de compra" />
+        <Member Name="Tasks" Caption="Tareas" />
       </OwnMembers>
     </Class>
   </BOModel>
