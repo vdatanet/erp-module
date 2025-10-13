@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Application>
+  <BOModel>
+    <Class Name="erp.Module.BusinessObjects.Invoicing.Invoice" Caption="Factura">
+      <OwnMembers>
+        <Member Name="Customer" Caption="Cliente" />
+        <Member Name="InvoiceDate" Caption="Fecha Factura" />
+        <Member Name="Text" Caption="Detalle operación" />
+      </OwnMembers>
+    </Class>
+  </BOModel>
   <NavigationItems>
     <Items>
       <Item Id="Accounting" Caption="Contabilidad" />
