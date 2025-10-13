@@ -3,7 +3,7 @@
   <BOModel>
     <Class Name="DevExpress.Persistent.BaseImpl.PermissionPolicy.PermissionPolicyUser" Caption="Base User" />
   </BOModel>
-  <Options>
+  <Options DataAccessMode="Server">
     <LayoutManagerOptions RequiredFieldMark="*" />
   </Options>
   <SchemaModules>

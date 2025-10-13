@@ -1,2 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Application />
+<Application>
+  <NavigationItems>
+    <Items>
+      <Item Id="Accounting" Caption="Contabilidad" />
+      <Item Id="Common" Caption="Comunes" />
+      <Item Id="Contacts" Caption="Contactos" />
+      <Item Id="Default" Caption="Predeterminado" />
+      <Item Id="Invoicing" Caption="Facturación" />
+      <Item Id="Products" Caption="Productos" />
+      <Item Id="Projects" Caption="Proyectos" />
+      <Item Id="Reports" Caption="Informes" />
+      <Item Id="Sales" Caption="Ventas" />
+      <Item Id="Time Tracking" Caption="Control horario" />
+    </Items>
+  </NavigationItems>
+</Application>
