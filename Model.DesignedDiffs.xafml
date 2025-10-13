@@ -46,9 +46,22 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
-    <ListView Id="Category_ListView">
+    <ListView Id="Category_ListView" FreezeColumnIndices="True">
       <Columns>
         <ColumnInfo Id="IsAvailableInPos" Index="-1" />
+        <ColumnInfo Id="Notes" Index="-1" />
+        <ColumnInfo Id="Oid" Index="-1" />
+        <ColumnInfo Id="Name" Index="0" />
+        <ColumnInfo Id="ParentCategory" Index="1" />
+        <ColumnInfo Id="FullPath" Index="2" />
+        <ColumnInfo Id="IsActive" Index="3" />
+      </Columns>
+    </ListView>
+    <ListView Id="Category_Subcategories_ListView">
+      <Columns>
+        <ColumnInfo Id="IsAvailableInPos" Index="-1" />
+        <ColumnInfo Id="FullPath" Index="1" />
+        <ColumnInfo Id="IsActive" Index="2" />
       </Columns>
     </ListView>
   </Views>

@@ -75,5 +75,6 @@
     </DetailView>
     <ListView Id="Category_ListView" Caption="Categorías" />
     <ListView Id="Category_LookupListView" Caption="Categorías" />
+    <ListView Id="Category_Subcategories_ListView" Caption="Subcategorías" />
   </Views>
 </Application>
