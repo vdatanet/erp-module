@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using DevExpress.Persistent.Base;
+using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Helpers.Contacts;
@@ -18,6 +19,8 @@ public class Category(Session session) : BaseEntity(session)
     private string _notes;
 
     [Size(255)]
+    [RuleRequiredField]
+    [RuleUniqueValue]
     public string Name
     {
         get => _name;
