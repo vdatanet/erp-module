@@ -17,7 +17,6 @@ public class Account(Session session): BaseEntity(session)
     private string _code;
     private string _name;
     private string _notes;
-    private int _level;
     private Account _parentAccount;
     private bool _isActive;
     private bool _isPostable;
@@ -33,25 +32,21 @@ public class Account(Session session): BaseEntity(session)
     }
     
     [Size(255)]
+    [RuleRequiredField]
+
     public string Name
     {
         get => _name;
         set => SetPropertyValue(nameof(Name), ref _name, value);    
     }
     
-    [Size(1000)]
+    [Size(SizeAttribute.Unlimited)]
     public string Notes
     {
         get => _notes;
         set => SetPropertyValue(nameof(Notes), ref _notes, value);
     }
-    
-    public int Level
-    {
-        get => _level;
-        set => SetPropertyValue(nameof(Level), ref _level, value);  
-    }
-    
+        
     [Association("Parent-ChildrenAccounts")]
     public Account ParentAccount
     {
@@ -108,7 +103,6 @@ public class Account(Session session): BaseEntity(session)
 
     private void InitValues()
     {
-        Level = 1;
         IsActive = true;
         IsPostable = false;
         Type = AccountType.Asset;
@@ -130,5 +124,4 @@ public class Account(Session session): BaseEntity(session)
         Debit,
         Credit
     }
-    
 }

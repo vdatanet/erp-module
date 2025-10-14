@@ -1,7 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Application>
   <BOModel>
-    <Class Name="erp.Module.BusinessObjects.Accounting.Account" Caption="Cuenta" />
+    <Class Name="erp.Module.BusinessObjects.Accounting.Account" Caption="Cuenta">
+      <OwnMembers>
+        <Member Name="ChildrenAccounts" Caption="Subcuentas" />
+        <Member Name="Code" Caption="Código" />
+        <Member Name="FullPath" Caption="Ruta completa" />
+        <Member Name="IsActive" Caption="Activa" />
+        <Member Name="IsPostable" Caption="Contabilizable" />
+        <Member Name="Level" Caption="Nivel" />
+        <Member Name="Name" Caption="Nombre" />
+        <Member Name="Nature" Caption="Naturaleza" />
+        <Member Name="Notes" Caption="Notas" />
+        <Member Name="ParentAccount" Caption="Cuenta superior" />
+        <Member Name="Type" Caption="Tipo" />
+      </OwnMembers>
+    </Class>
     <Class Name="erp.Module.BusinessObjects.Accounting.Journal" Caption="Diario">
       <OwnMembers>
         <Member Name="IsActive" Caption="Activo" />
