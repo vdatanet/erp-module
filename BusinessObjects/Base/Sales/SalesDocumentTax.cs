@@ -3,13 +3,14 @@ using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Accounting;
 using erp.Module.BusinessObjects.Base.Common;
+using erp.Module.BusinessObjects.Taxes;
 using VeriFactu.Xml.Factu;
 using VeriFactu.Xml.Factu.Alta;
 
 namespace erp.Module.BusinessObjects.Base.Sales;
 
 [DefaultClassOptions]
-[NavigationItem("Accounting")]
+[NavigationItem("Taxes")]
 [ImageName("Top10Percent")]
 [DefaultProperty(nameof(Sequence))]
 public class SalesDocumentTax(Session session): BaseEntity(session)

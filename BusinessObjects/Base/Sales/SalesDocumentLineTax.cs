@@ -4,6 +4,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Accounting;
 using erp.Module.BusinessObjects.Base.Common;
+using erp.Module.BusinessObjects.Taxes;
 
 namespace erp.Module.BusinessObjects.Base.Sales;
 

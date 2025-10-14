@@ -9,6 +9,7 @@ using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Common;
 using erp.Module.BusinessObjects.Helpers;
 using erp.Module.BusinessObjects.Helpers.Contacts;
+using erp.Module.BusinessObjects.Taxes;
 using Task = erp.Module.BusinessObjects.Common.Task;
 
 namespace erp.Module.BusinessObjects.Products;
