@@ -1,8 +1,10 @@
+using DevExpress.ExpressApp.Editors;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Accounting;
 using erp.Module.BusinessObjects.Contacts;
+using erp.Module.BusinessObjects.Taxes;
 
 namespace erp.Module.BusinessObjects.Settings;
 
@@ -92,4 +94,14 @@ public class CompanyInfo(Session session) : Contact(session)
         get => _defaultDailyTimeSheetPrefix;
         set => SetPropertyValue(nameof(DefaultDailyTimeSheetPrefix), ref _defaultDailyTimeSheetPrefix, value);
     }
+    
+    [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
+    [Association("CompanyInfos-SalesTaxes")]
+    [DataSourceCriteria("IsAvailableInSales = True AND IsActive = True")]
+    public XPCollection<TaxKind> SalesTaxes => GetCollection<TaxKind>(nameof(SalesTaxes));
+    
+    [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
+    [Association("CompanyInfos-PurchaseTaxes")]
+    [DataSourceCriteria("IsAvailableInPurchases = True AND IsActive = True")]
+    public XPCollection<TaxKind> PurchaseTaxes => GetCollection<TaxKind>(nameof(PurchaseTaxes));
 }

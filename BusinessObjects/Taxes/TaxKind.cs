@@ -7,6 +7,7 @@ using erp.Module.BusinessObjects.Accounting;
 using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Base.Sales;
 using erp.Module.BusinessObjects.Products;
+using erp.Module.BusinessObjects.Settings;
 using VeriFactu.Xml.Factu;
 using VeriFactu.Xml.Factu.Alta;
 
@@ -129,7 +130,13 @@ public class TaxKind(Session session) : BaseEntity(session)
 
     [Association("Products-PurchaseTaxes")]
     public XPCollection<Product> ProductPurchaseTaxes => GetCollection<Product>(nameof(ProductPurchaseTaxes));
+    
+    [Association("CompanyInfos-SalesTaxes")]
+    public XPCollection<CompanyInfo> CompanyInfoSalesTaxes => GetCollection<CompanyInfo>(nameof(CompanyInfoSalesTaxes));
 
+    [Association("CompanyInfos-PurchaseTaxes")]
+    public XPCollection<CompanyInfo> CompanyInfoPurchaseTaxes => GetCollection<CompanyInfo>(nameof(CompanyInfoPurchaseTaxes));
+    
     public override void AfterConstruction()
     {
         base.AfterConstruction();
