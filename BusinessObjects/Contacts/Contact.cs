@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
+using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Common;
@@ -17,21 +18,39 @@ namespace erp.Module.BusinessObjects.Contacts;
 public class Contact(Session session) : BaseEntity(session)
 {
     private string _name;
+    private string _tradeName;
+    private string _vatNumber;
     private string _address;
     private Country _country;
     private State _state;
     private City _city;
     private string _phone;
+    private string _cellPhone;
     private string _email;
     private string _website;
     private MediaDataObject _picture;
     private string _notes;
 
     [Size(255)]
+    [RuleRequiredField]
     public string Name
     {
         get => _name;
         set => SetPropertyValue(nameof(Name), ref _name, value);
+    }
+
+    [Size(255)]
+    public string TradeName
+    {
+        get => _tradeName;
+        set => SetPropertyValue(nameof(TradeName), ref _tradeName, value);
+    }
+
+    [Size(50)]
+    public string VatNumber
+    {
+        get => _vatNumber;
+        set => SetPropertyValue(nameof(VatNumber), ref _vatNumber, value);
     }
 
     [Size(255)]
@@ -67,6 +86,12 @@ public class Contact(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(Phone), ref _phone, value);
     }
 
+    public string CellPhone
+    {
+        get => _cellPhone;
+        set => SetPropertyValue(nameof(CellPhone), ref _cellPhone, value);
+    }
+
     public string Email
     {
         get => _email;
@@ -85,7 +110,7 @@ public class Contact(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(Picture), ref _picture, value);
     }
     
-    [Size(1000)]
+    [Size(SizeAttribute.Unlimited)]
     public string Notes
     {
         get => _notes;

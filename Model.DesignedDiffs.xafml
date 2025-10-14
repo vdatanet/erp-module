@@ -83,6 +83,128 @@
         <ColumnInfo Id="IsActive" Index="2" />
       </Columns>
     </ListView>
+    <DetailView Id="Contact_DetailView" FreezeLayout="True">
+      <Layout IsNewNode="True" Removed="True">
+        <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
+          <LayoutGroup Id="SimpleEditors" Index="0" ShowCaption="False" RelativeSize="19.211409395973153" IsNewNode="True">
+            <LayoutGroup Id="Contact" Index="0" Direction="Horizontal" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+              <LayoutGroup Id="Contact_col1" Index="0" ShowCaption="False" RelativeSize="49.758919961427196" IsNewNode="True">
+                <LayoutItem Id="Name" ViewItem="Name" ShowCaption="" Index="0" RelativeSize="16.842105263157894" IsNewNode="True" />
+                <LayoutItem Id="TradeName" ViewItem="TradeName" ShowCaption="" Index="1" RelativeSize="12.631578947368421" IsNewNode="True" />
+                <LayoutItem Id="VatNumber" ViewItem="VatNumber" ShowCaption="" Index="2" RelativeSize="12.631578947368421" IsNewNode="True" />
+                <LayoutItem Id="Address" ViewItem="Address" ShowCaption="" Index="3" RelativeSize="12.631578947368421" IsNewNode="True" />
+                <LayoutItem Id="Country" ViewItem="Country" ShowCaption="" Index="4" RelativeSize="12.631578947368421" IsNewNode="True" />
+                <LayoutItem Id="State" ViewItem="State" ShowCaption="" Index="5" RelativeSize="12.631578947368421" IsNewNode="True" />
+                <LayoutItem Id="City" ViewItem="City" Index="6" RelativeSize="20" IsNewNode="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="Contact_col2" Index="1" ShowCaption="False" RelativeSize="50.241080038572804" IsNewNode="True">
+                <LayoutItem Id="Phone" ViewItem="Phone" ShowCaption="" Index="0" RelativeSize="16.842105263157894" IsNewNode="True" />
+                <LayoutItem Id="CellPhone" ViewItem="CellPhone" Index="1" RelativeSize="12.631578947368421" IsNewNode="True" />
+                <LayoutItem Id="Email" ViewItem="Email" ShowCaption="" Index="2" RelativeSize="12.631578947368421" IsNewNode="True" />
+                <LayoutItem Id="Website" ViewItem="Website" ShowCaption="" Index="3" RelativeSize="12.631578947368421" IsNewNode="True" />
+                <LayoutItem Id="Notes" ViewItem="Notes" Index="4" RelativeSize="28.42105263157895" IsNewNode="True" />
+                <LayoutItem Id="Picture" ViewItem="Picture" ShowCaption="" Index="5" RelativeSize="16.842105263157894" IsNewNode="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+          <TabbedGroup Id="Tabs" Index="1" RelativeSize="80.78859060402685" IsNewNode="True">
+            <LayoutGroup Id="Tasks" Index="0" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+              <LayoutItem Id="Tasks" ViewItem="Tasks" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
+            </LayoutGroup>
+            <LayoutGroup Id="Pictures" Index="1" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+              <LayoutItem Id="Pictures" ViewItem="Pictures" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
+            </LayoutGroup>
+            <LayoutGroup Id="Attachments" Index="2" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+              <LayoutItem Id="Attachments" ViewItem="Attachments" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
+            </LayoutGroup>
+          </TabbedGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="Contact_ListView" FreezeColumnIndices="True">
+      <Columns>
+        <ColumnInfo Id="Notes" Index="-1" />
+        <ColumnInfo Id="Oid" Index="-1" />
+        <ColumnInfo Id="Name" Index="0" />
+        <ColumnInfo Id="TradeName" Index="1" />
+        <ColumnInfo Id="VatNumber" Index="2" />
+        <ColumnInfo Id="Address" Index="3" />
+        <ColumnInfo Id="Country" Index="4" />
+        <ColumnInfo Id="State" Index="5" />
+        <ColumnInfo Id="City" Index="6" />
+        <ColumnInfo Id="Phone" Index="7" />
+        <ColumnInfo Id="Email" Index="8" />
+        <ColumnInfo Id="Website" Index="9" />
+        <ColumnInfo Id="Picture" Index="10" />
+      </Columns>
+    </ListView>
+    <DetailView Id="Customer_DetailView" FreezeLayout="True">
+      <Layout IsNewNode="True" Removed="True">
+        <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
+          <LayoutGroup Id="SimpleEditors" Index="0" ShowCaption="False" RelativeSize="19.211409395973153" IsNewNode="True">
+            <LayoutGroup Id="Contact" Index="0" Direction="Horizontal" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+              <LayoutGroup Id="Contact_col1" Index="0" ShowCaption="False" RelativeSize="49.95178399228544" IsNewNode="True">
+                <LayoutItem Id="Name" ViewItem="Name" ShowCaption="" Index="0" RelativeSize="16.842105263157894" IsNewNode="True" />
+                <LayoutItem Id="TradeName" ViewItem="TradeName" ShowCaption="" Index="1" RelativeSize="12.631578947368421" IsNewNode="True" />
+                <LayoutItem Id="VatNumber" ViewItem="VatNumber" ShowCaption="" Index="2" RelativeSize="12.631578947368421" IsNewNode="True" />
+                <LayoutItem Id="Address" ViewItem="Address" ShowCaption="" Index="3" RelativeSize="12.631578947368421" IsNewNode="True" />
+                <LayoutItem Id="Country" ViewItem="Country" ShowCaption="" Index="4" RelativeSize="12.631578947368421" IsNewNode="True" />
+                <LayoutItem Id="State" ViewItem="State" ShowCaption="" Index="5" RelativeSize="12.631578947368421" IsNewNode="True" />
+                <LayoutItem Id="City" ViewItem="City" Index="6" RelativeSize="20" IsNewNode="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="Contact_col2" Index="1" ShowCaption="False" RelativeSize="50.04821600771456" IsNewNode="True">
+                <LayoutItem Id="Phone" ViewItem="Phone" ShowCaption="" Index="0" RelativeSize="16.842105263157894" IsNewNode="True" />
+                <LayoutItem Id="CellPhone" ViewItem="CellPhone" ShowCaption="" Index="1" RelativeSize="12.631578947368421" IsNewNode="True" />
+                <LayoutItem Id="Email" ViewItem="Email" ShowCaption="" Index="2" RelativeSize="12.631578947368421" IsNewNode="True" />
+                <LayoutItem Id="Website" ViewItem="Website" ShowCaption="" Index="3" RelativeSize="12.631578947368421" IsNewNode="True" />
+                <LayoutItem Id="Notes" ViewItem="Notes" Index="4" RelativeSize="28.42105263157895" IsNewNode="True" />
+                <LayoutItem Id="Picture" ViewItem="Picture" ShowCaption="" Index="5" RelativeSize="16.842105263157894" IsNewNode="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+          <TabbedGroup Id="Tabs" Index="1" RelativeSize="80.78859060402685" IsNewNode="True">
+            <LayoutGroup Id="Opportunities" Index="0" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+              <LayoutItem Id="Opportunities" ViewItem="Opportunities" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
+            </LayoutGroup>
+            <LayoutGroup Id="Invoices" Index="1" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+              <LayoutItem Id="Invoices" ViewItem="Invoices" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
+            </LayoutGroup>
+            <LayoutGroup Id="Tasks" Index="2" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+              <LayoutItem Id="Tasks" ViewItem="Tasks" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
+            </LayoutGroup>
+            <LayoutGroup Id="Pictures" Index="3" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+              <LayoutItem Id="Pictures" ViewItem="Pictures" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
+            </LayoutGroup>
+            <LayoutGroup Id="Attachments" Index="4" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+              <LayoutItem Id="Attachments" ViewItem="Attachments" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
+            </LayoutGroup>
+          </TabbedGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="Customer_ListView" FreezeColumnIndices="True">
+      <Columns>
+        <ColumnInfo Id="Notes" Index="-1" />
+        <ColumnInfo Id="Oid" Index="-1" />
+        <ColumnInfo Id="Name" Index="0" />
+        <ColumnInfo Id="TradeName" Index="1" />
+        <ColumnInfo Id="VatNumber" Index="2" />
+        <ColumnInfo Id="Address" Index="3" />
+        <ColumnInfo Id="Country" Index="4" />
+        <ColumnInfo Id="State" Index="5" />
+        <ColumnInfo Id="City" Index="6" />
+        <ColumnInfo Id="Phone" Index="7" />
+        <ColumnInfo Id="CellPhone" Index="8" />
+        <ColumnInfo Id="Email" Index="9" />
+        <ColumnInfo Id="Website" Index="10" />
+        <ColumnInfo Id="Picture" Index="11" />
+      </Columns>
+    </ListView>
+    <ListView Id="Customer_LookupListView" FreezeColumnIndices="True">
+      <Columns>
+        <ColumnInfo Id="Name" Index="0" />
+      </Columns>
+    </ListView>
     <DetailView Id="Journal_DetailView" FreezeLayout="True">
       <Layout IsNewNode="True" Removed="True">
         <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">

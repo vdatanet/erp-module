@@ -10,14 +10,13 @@ namespace erp.Module.BusinessObjects.Settings;
 
 [DefaultClassOptions]
 [NavigationItem("Settings")]
-[ImageName("BO_MyDetails")]
+[ImageName("Actions_Settings")]
 [RuleObjectExists("CompanyInfoExists", DefaultContexts.Save, "True", InvertResult = true,
     CustomMessageTemplate = "Company Info already exists.")]
 [RuleCriteria("NotDeleteCompanyInfo", DefaultContexts.Delete, "False",
     CustomMessageTemplate = "Can't delete Company Info.")]
 public class CompanyInfo(Session session) : Contact(session)
 {
-    private string _tradeName;
     private Journal _defaultSalesJournal;
     private Journal _defaultPurchaseJournal;
     private Account _defaultSalesAccount;
@@ -27,13 +26,6 @@ public class CompanyInfo(Session session) : Contact(session)
     private string _defaultInvoicePrefix;
     private string _defaultBillPrefix;
     private string _defaultDailyTimeSheetPrefix;
-
-    [Size(255)]
-    public string TradeName
-    {
-        get => _tradeName;
-        set => SetPropertyValue(nameof(TradeName), ref _tradeName, value);
-    }
 
     [DataSourceCriteria("IsActive = True")]
     public Journal DefaultSalesJournal

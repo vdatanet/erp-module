@@ -8,7 +8,6 @@
         <Member Name="FullPath" Caption="Ruta completa" />
         <Member Name="IsActive" Caption="Activa" />
         <Member Name="IsPostable" Caption="Contabilizable" />
-        <Member Name="Level" Caption="Nivel" />
         <Member Name="Name" Caption="Nombre" />
         <Member Name="Nature" Caption="Naturaleza" />
         <Member Name="Notes" Caption="Notas" />
@@ -23,6 +22,35 @@
         <Member Name="Notes" Caption="Notas" />
       </OwnMembers>
     </Class>
+    <Class Name="erp.Module.BusinessObjects.Contacts.Contact" Caption="Contacto">
+      <OwnMembers>
+        <Member Name="Address" Caption="Domicilio" />
+        <Member Name="Attachments" Caption="Archivos" />
+        <Member Name="CellPhone" Caption="Télefono móvil" />
+        <Member Name="City" Caption="Municipio" />
+        <Member Name="Country" Caption="País" />
+        <Member Name="Email" Caption="Correo electrónico" />
+        <Member Name="Name" Caption="Nombre" />
+        <Member Name="Notes" Caption="Notas" />
+        <Member Name="Phone" Caption="Teléfono" />
+        <Member Name="Picture" Caption="Imagen" />
+        <Member Name="Pictures" Caption="Imágenes" />
+        <Member Name="State" Caption="Província" />
+        <Member Name="Tasks" Caption="Tareas" />
+        <Member Name="TradeName" Caption="Nombre comercial" />
+        <Member Name="VatNumber" Caption="Nif" />
+        <Member Name="Website" Caption="Web" />
+      </OwnMembers>
+    </Class>
+    <Class Name="erp.Module.BusinessObjects.Contacts.Customer" Caption="Cliente">
+      <OwnMembers>
+        <Member Name="Invoices" Caption="Facturas" />
+        <Member Name="Opportunities" Caption="Oportunidades" />
+      </OwnMembers>
+    </Class>
+    <Class Name="erp.Module.BusinessObjects.Contacts.Employee" Caption="Empleado" />
+    <Class Name="erp.Module.BusinessObjects.Contacts.Partner" Caption="Empresa" />
+    <Class Name="erp.Module.BusinessObjects.Contacts.Vendor" Caption="Proveedor" />
     <Class Name="erp.Module.BusinessObjects.Invoicing.Invoice" Caption="Factura">
       <OwnMembers>
         <Member Name="Customer" Caption="Cliente" />
@@ -65,6 +93,7 @@
         <Member Name="Tasks" Caption="Tareas" />
       </OwnMembers>
     </Class>
+    <Class Name="erp.Module.BusinessObjects.Settings.CompanyInfo" Caption="Datos empresa" />
   </BOModel>
   <NavigationItems>
     <Items>
@@ -96,6 +125,27 @@
     <ListView Id="Category_ListView" Caption="Categorías" />
     <ListView Id="Category_LookupListView" Caption="Categorías" />
     <ListView Id="Category_Subcategories_ListView" Caption="Subcategorías" />
+    <DetailView Id="Contact_DetailView">
+      <Layout>
+        <LayoutGroup Id="Main">
+          <LayoutGroup Id="SimpleEditors">
+            <LayoutGroup Id="Contact" Caption="Contacto" />
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="Contact_ListView" Caption="Contactos" />
+    <DetailView Id="Customer_DetailView">
+      <Layout>
+        <LayoutGroup Id="Main">
+          <LayoutGroup Id="SimpleEditors">
+            <LayoutGroup Id="Contact" Caption="Cliente" />
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="Customer_ListView" Caption="Clientes" />
+    <ListView Id="Customer_LookupListView" Caption="Clientes" />
     <DetailView Id="Journal_DetailView">
       <Layout>
         <LayoutGroup Id="Main">
