@@ -31,24 +31,28 @@ public class CompanyInfo(Session session) : Contact(session)
         set => SetPropertyValue(nameof(TradeName), ref _tradeName, value);
     }
 
+    [DataSourceCriteria("IsActive = True")]
     public Journal DefaultSalesJournal
     {
         get => _defaultSalesJournal;
         set => SetPropertyValue(nameof(DefaultSalesJournal), ref _defaultSalesJournal, value);
     }
 
+    [DataSourceCriteria("IsActive = True")]
     public Journal DefaultPurchaseJournal
     {
         get => _defaultPurchaseJournal;
         set => SetPropertyValue(nameof(DefaultPurchaseJournal), ref _defaultPurchaseJournal, value);
     }
 
+    [DataSourceCriteria("IsActive = True and IsPostable = True")]
     public Account DefaultSalesAccount
     {
         get => _defaultSalesAccount;
         set => SetPropertyValue(nameof(DefaultSalesAccount), ref _defaultSalesAccount, value);
     }
 
+    [DataSourceCriteria("IsActive = True and IsPostable = True")]
     public Account DefaultPurchaseAccount
     {
         get => _defaultPurchaseAccount;
