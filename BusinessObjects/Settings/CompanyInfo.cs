@@ -2,11 +2,12 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Accounting;
+using erp.Module.BusinessObjects.Contacts;
 
-namespace erp.Module.BusinessObjects.Contacts;
+namespace erp.Module.BusinessObjects.Settings;
 
 [DefaultClassOptions]
-[NavigationItem("Contacts")]
+[NavigationItem("Settings")]
 [ImageName("BO_MyDetails")]
 [RuleObjectExists("CompanyInfoExists", DefaultContexts.Save, "True", InvertResult = true,
     CustomMessageTemplate = "Company Info already exists.")]

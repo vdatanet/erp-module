@@ -1,5 +1,6 @@
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Contacts;
+using erp.Module.BusinessObjects.Settings;
 
 namespace erp.Module.BusinessObjects.Helpers.Contacts;
 
