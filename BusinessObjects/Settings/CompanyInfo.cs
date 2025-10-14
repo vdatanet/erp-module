@@ -20,10 +20,12 @@ public class CompanyInfo(Session session) : Contact(session)
     private Journal _defaultPurchaseJournal;
     private Account _defaultSalesAccount;
     private Account _defaultPurchaseAccount;
+    private Account _defaultCustomerAccount;
+    private Account _defaultSupplierAccount;
     private string _defaultInvoicePrefix;
     private string _defaultBillPrefix;
     private string _defaultDailyTimeSheetPrefix;
-    
+
     [Size(255)]
     public string TradeName
     {
@@ -57,6 +59,20 @@ public class CompanyInfo(Session session) : Contact(session)
     {
         get => _defaultPurchaseAccount;
         set => SetPropertyValue(nameof(DefaultPurchaseAccount), ref _defaultPurchaseAccount, value);
+    }
+
+    [DataSourceCriteria("IsActive = True and IsPostable = True")]
+    public Account DefaultCustomerAccount
+    {
+        get => _defaultCustomerAccount;
+        set => SetPropertyValue(nameof(DefaultCustomerAccount), ref _defaultCustomerAccount, value);
+    }
+
+    [DataSourceCriteria("IsActive = True and IsPostable = True")]
+    public Account DefaultSupplierAccount
+    {
+        get => _defaultSupplierAccount;
+        set => SetPropertyValue(nameof(DefaultSupplierAccount), ref _defaultSupplierAccount, value);
     }
 
     public string DefaultInvoicePrefix
