@@ -2,7 +2,7 @@ using DevExpress.ExpressApp.Model;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Common;
-using Task = erp.Module.BusinessObjects.Common.Task;
+using Task = erp.Module.BusinessObjects.Planning.Task;
 
 namespace erp.Module.BusinessObjects.Base.Sales;
 

@@ -6,7 +6,7 @@ using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Common;
 using Country = erp.Module.BusinessObjects.Common.Country;
 using State = erp.Module.BusinessObjects.Common.State;
-using Task = erp.Module.BusinessObjects.Common.Task;
+using Task = erp.Module.BusinessObjects.Planning.Task;
 
 namespace erp.Module.BusinessObjects.Contacts;
 

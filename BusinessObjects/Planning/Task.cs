@@ -2,13 +2,14 @@ using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Base.Sales;
+using erp.Module.BusinessObjects.Common;
 using erp.Module.BusinessObjects.Contacts;
 using erp.Module.BusinessObjects.Products;
 
-namespace erp.Module.BusinessObjects.Common;
+namespace erp.Module.BusinessObjects.Planning;
 
 [DefaultClassOptions]
-[NavigationItem("Common")]
+[NavigationItem("Planning")]
 [ImageName("BO_Task")]
 public class Task(Session session) : BaseEntity(session)
 {

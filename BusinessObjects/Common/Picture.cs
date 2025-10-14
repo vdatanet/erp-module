@@ -5,6 +5,7 @@ using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Base.Sales;
 using erp.Module.BusinessObjects.Contacts;
 using erp.Module.BusinessObjects.Products;
+using Task = erp.Module.BusinessObjects.Planning.Task;
 
 namespace erp.Module.BusinessObjects.Common;
 
