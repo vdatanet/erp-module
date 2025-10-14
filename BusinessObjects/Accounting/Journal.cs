@@ -26,7 +26,7 @@ public class Journal(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(Name), ref _name, value);
     }
     
-    [Size(1000)]
+    [Size(SizeAttribute.Unlimited)]
     public string Notes
     {
         get => _notes;
