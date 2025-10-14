@@ -9,7 +9,7 @@ namespace erp.Module.BusinessObjects.Accounting;
 
 [DefaultClassOptions]
 [NavigationItem("Accounting")]
-//[ImageName("CustomerContactDirectory")]
+[ImageName("Actions_Book")]
 [DefaultProperty(nameof(Name))]
 public class Journal(Session session) : BaseEntity(session)
 {

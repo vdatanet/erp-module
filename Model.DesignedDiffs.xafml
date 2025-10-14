@@ -3,6 +3,25 @@
   <BOModel>
     <Class Name="DevExpress.Persistent.BaseImpl.PermissionPolicy.PermissionPolicyUser" Caption="Base User" />
   </BOModel>
+  <NavigationItems>
+    <Items>
+      <Item Id="Default">
+        <Items>
+          <Item Id="Event_ListView" Removed="True" />
+        </Items>
+      </Item>
+      <Item Id="Planning">
+        <Items>
+          <Item Id="Event_ListView" ViewId="Event_ListView" ObjectKey="" IsNewNode="True" />
+        </Items>
+      </Item>
+      <Item Id="Settings">
+        <Items>
+          <Item Id="CompanyInfo_ListView" ViewId="CompanyInfo_DetailView" />
+        </Items>
+      </Item>
+    </Items>
+  </NavigationItems>
   <Options DataAccessMode="Server">
     <LayoutManagerOptions RequiredFieldMark="*" />
   </Options>
@@ -62,6 +81,35 @@
         <ColumnInfo Id="IsAvailableInPos" Index="-1" />
         <ColumnInfo Id="FullPath" Index="1" />
         <ColumnInfo Id="IsActive" Index="2" />
+      </Columns>
+    </ListView>
+    <DetailView Id="Journal_DetailView" FreezeLayout="True">
+      <Layout IsNewNode="True" Removed="True">
+        <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
+          <LayoutGroup Id="SimpleEditors" Index="0" ShowCaption="False" RelativeSize="13.171140939597315" IsNewNode="True">
+            <LayoutGroup Id="Journal" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
+              <LayoutGroup Id="Item1" ShowCaption="True" CaptionLocation="Top" Index="0" RelativeSize="100" IsNewNode="True">
+                <LayoutItem Id="Name" ViewItem="Name" Index="0" RelativeSize="27.11864406779661" IsNewNode="True" />
+                <LayoutItem Id="Notes" ViewItem="Notes" Index="1" RelativeSize="45.76271186440678" IsNewNode="True" />
+                <LayoutItem Id="IsActive" ViewItem="IsActive" Index="2" RelativeSize="27.11864406779661" IsNewNode="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+          <LayoutGroup Id="SizeableEditors" Index="1" ShowCaption="False" RelativeSize="86.82885906040268" IsNewNode="True" />
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="Journal_ListView" FreezeColumnIndices="True">
+      <Columns>
+        <ColumnInfo Id="Notes" Index="-1" />
+        <ColumnInfo Id="Oid" Index="-1" />
+        <ColumnInfo Id="Name" Index="0" />
+        <ColumnInfo Id="IsActive" Index="1" />
+      </Columns>
+    </ListView>
+    <ListView Id="Journal_LookupListView" FreezeColumnIndices="True">
+      <Columns>
+        <ColumnInfo Id="Name" Index="0" />
       </Columns>
     </ListView>
   </Views>

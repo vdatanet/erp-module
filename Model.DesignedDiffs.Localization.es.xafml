@@ -2,7 +2,13 @@
 <Application>
   <BOModel>
     <Class Name="erp.Module.BusinessObjects.Accounting.Account" Caption="Cuenta" />
-    <Class Name="erp.Module.BusinessObjects.Accounting.TaxKind" Caption="Tipo de impuesto" />
+    <Class Name="erp.Module.BusinessObjects.Accounting.Journal" Caption="Diario">
+      <OwnMembers>
+        <Member Name="IsActive" Caption="Activo" />
+        <Member Name="Name" Caption="Nombre" />
+        <Member Name="Notes" Caption="Notas" />
+      </OwnMembers>
+    </Class>
     <Class Name="erp.Module.BusinessObjects.Invoicing.Invoice" Caption="Factura">
       <OwnMembers>
         <Member Name="Customer" Caption="Cliente" />
@@ -76,5 +82,19 @@
     <ListView Id="Category_ListView" Caption="Categorías" />
     <ListView Id="Category_LookupListView" Caption="Categorías" />
     <ListView Id="Category_Subcategories_ListView" Caption="Subcategorías" />
+    <DetailView Id="Journal_DetailView">
+      <Layout>
+        <LayoutGroup Id="Main">
+          <LayoutGroup Id="SimpleEditors">
+            <LayoutGroup Id="Journal">
+              <LayoutGroup Id="Item1" Caption="Diario" />
+            </LayoutGroup>
+          </LayoutGroup>
+          <LayoutGroup Id="SizeableEditors" Caption="Notas" />
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="Journal_ListView" Caption="Diarios" />
+    <ListView Id="Journal_LookupListView" Caption="Diarios" />
   </Views>
 </Application>
