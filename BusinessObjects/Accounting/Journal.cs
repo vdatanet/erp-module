@@ -25,7 +25,7 @@ public class Journal(Session session) : BaseEntity(session)
         get => _name;
         set => SetPropertyValue(nameof(Name), ref _name, value);
     }
-    
+
     [Size(SizeAttribute.Unlimited)]
     public string Notes
     {
@@ -38,7 +38,7 @@ public class Journal(Session session) : BaseEntity(session)
         base.AfterConstruction();
         InitValues();
     }
-    
+
     public bool IsActive
     {
         get => _isActive;
