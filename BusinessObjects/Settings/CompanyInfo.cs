@@ -15,22 +15,58 @@ namespace erp.Module.BusinessObjects.Settings;
     CustomMessageTemplate = "Can't delete Company Info.")]
 public class CompanyInfo(Session session) : Contact(session)
 {
+    private string _tradeName;
+    private Journal _defaultSalesJournal;
+    private Journal _defaultPurchaseJournal;
     private Account _defaultSalesAccount;
     private Account _defaultPurchaseAccount;
+    private string _defaultInvoicePrefix;
+    private string _defaultBillPrefix;
     private string _defaultDailyTimeSheetPrefix;
     
+    [Size(255)]
+    public string TradeName
+    {
+        get => _tradeName;
+        set => SetPropertyValue(nameof(TradeName), ref _tradeName, value);
+    }
+
+    public Journal DefaultSalesJournal
+    {
+        get => _defaultSalesJournal;
+        set => SetPropertyValue(nameof(DefaultSalesJournal), ref _defaultSalesJournal, value);
+    }
+
+    public Journal DefaultPurchaseJournal
+    {
+        get => _defaultPurchaseJournal;
+        set => SetPropertyValue(nameof(DefaultPurchaseJournal), ref _defaultPurchaseJournal, value);
+    }
+
     public Account DefaultSalesAccount
     {
         get => _defaultSalesAccount;
         set => SetPropertyValue(nameof(DefaultSalesAccount), ref _defaultSalesAccount, value);
     }
-    
+
     public Account DefaultPurchaseAccount
     {
         get => _defaultPurchaseAccount;
         set => SetPropertyValue(nameof(DefaultPurchaseAccount), ref _defaultPurchaseAccount, value);
     }
-    
+
+    public string DefaultInvoicePrefix
+    {
+        get => _defaultInvoicePrefix;
+        set => SetPropertyValue(nameof(DefaultInvoicePrefix), ref _defaultInvoicePrefix, value);
+    }
+
+    public string DefaultBillPrefix
+    {
+        get => _defaultBillPrefix;
+        set => SetPropertyValue(nameof(DefaultBillPrefix), ref _defaultBillPrefix, value);
+    }
+
     public string DefaultDailyTimeSheetPrefix
     {
         get => _defaultDailyTimeSheetPrefix;
