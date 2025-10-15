@@ -84,14 +84,10 @@ public class VeriFactuController : ViewController
         invoice.Csv = invoiceEntry.CSV;
         invoice.ValidationUrl = validationUrl;
 
-        if (qr != null)
-        {
-            var qrMedia = ObjectSpace.CreateObject<MediaDataObject>();
-            qrMedia.MediaData = qr;
-            invoice.Qr = qrMedia;
-        }
-
-        invoice.Save();
+        var qrMedia = ObjectSpace.CreateObject<MediaDataObject>();
+        qrMedia.MediaData = qr;
+        invoice.Qr = qrMedia;
+        
         ObjectSpace.CommitChanges();
     }
 
