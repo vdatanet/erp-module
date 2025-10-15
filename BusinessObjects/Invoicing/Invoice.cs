@@ -1,12 +1,14 @@
-using System.ComponentModel;
 using DevExpress.ExpressApp.ConditionalAppearance;
+using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
+using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Sales;
 using erp.Module.BusinessObjects.Contacts;
 using erp.Module.Factories;
 using erp.Module.Helpers.Contacts;
+using System.ComponentModel;
 using VeriFactu.Xml.Factu;
 using VeriFactu.Xml.Factu.Alta;
 
@@ -26,13 +28,16 @@ public class Invoice(Session session) : SalesDocument(session)
     private string _invoiceNumber;
     private DateTime _invoiceDate;
     private Customer _customer;
+    private VeriFactuStatusValues _veriFactuStatus;
     private TipoFactura _invoiceType;
     private TipoRectificativa _rectificationType;
     private IDType _relatedPartyIdType;
     private bool _isInvoiceFix;
     private string _text;
     private string _csv;
-    
+    private string _validationUrl;
+    private MediaDataObject _qr;
+
     [RuleRequiredField]
     public string InvoicePrefix
     {
@@ -59,7 +64,14 @@ public class Invoice(Session session) : SalesDocument(session)
         get => _customer;
         set => SetPropertyValue(nameof(Customer), ref _customer, value);
     }
-    
+
+    [ModelDefault("AllowEdit", "False")]
+    public VeriFactuStatusValues VeriFactuStatus
+    {
+        get => _veriFactuStatus;
+        set => SetPropertyValue(nameof(VeriFactuStatus), ref _veriFactuStatus, value);
+    }
+
     public TipoFactura InvoiceType
     {
         get => _invoiceType;
@@ -91,12 +103,34 @@ public class Invoice(Session session) : SalesDocument(session)
         set => SetPropertyValue(nameof(Text), ref _text, value);
     }
 
+    [ModelDefault("AllowEdit", "False")]
     public string Csv
     {
         get => _csv;
         set => SetPropertyValue(nameof(Csv), ref _csv, value);
     }
-    
+
+    [Size(255)]
+    [ModelDefault("AllowEdit", "False")]
+    public string ValidationUrl
+    {
+        get => _validationUrl;
+        set => SetPropertyValue(nameof(ValidationUrl), ref _validationUrl, value);
+    }
+
+    [ModelDefault("AllowEdit", "False")]
+    public MediaDataObject Qr
+    {
+        get => _qr;
+        set => SetPropertyValue(nameof(Qr), ref _qr, value);
+    }
+
+    public enum VeriFactuStatusValues
+    {
+        Draft,
+        Send
+    }
+
     public override void AfterConstruction()
     {
         base.AfterConstruction();
@@ -105,6 +139,7 @@ public class Invoice(Session session) : SalesDocument(session)
 
     private void InitValues()
     {
+        VeriFactuStatus = VeriFactuStatusValues.Draft;
         InvoiceType = TipoFactura.F1;
         RectificationType = TipoRectificativa.I;
         IsInvoiceFix = false;

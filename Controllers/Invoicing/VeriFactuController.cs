@@ -1,6 +1,7 @@
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
 using DevExpress.Persistent.Base;
+using DevExpress.Persistent.BaseImpl;
 using erp.Module.BusinessObjects.Settings;
 using VeriFactu.Business;
 using VeriFactu.Config;
@@ -35,7 +36,8 @@ public class VeriFactuController : ViewController
             return;
         }
 
-        SendInvoice(invoice);
+        if (invoice.VeriFactuStatus != Invoice.VeriFactuStatusValues.Send) 
+            SendInvoice(invoice);
     }
 
     private void SendInvoice(Invoice invoice)
@@ -72,8 +74,22 @@ public class VeriFactuController : ViewController
         invoiceEntry.Save();
 
         if (invoiceEntry.Status != "Correcto") return;
-        
+
+        var newRecord = veriFactuInvoice.GetRegistroAlta();
+        var validationUrl = newRecord.GetUrlValidate();
+        var qr = newRecord.GetValidateQr();
+
+        invoice.VeriFactuStatus = Invoice.VeriFactuStatusValues.Send;
         invoice.Csv = invoiceEntry.CSV;
+        invoice.ValidationUrl = validationUrl;
+        
+        if (qr != null)
+        {
+            var qrMedia = ObjectSpace.CreateObject<MediaDataObject>();
+            qrMedia.MediaData = qr;
+            invoice.Qr = qrMedia;
+        }
+        
         invoice.Save();
         ObjectSpace.CommitChanges();
     }
