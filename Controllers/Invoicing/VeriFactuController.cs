@@ -2,6 +2,7 @@ using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
 using DevExpress.Persistent.Base;
 using erp.Module.BusinessObjects.Invoicing;
+using erp.Module.BusinessObjects.Settings;
 using erp.Module.Helpers.Contacts;
 
 namespace erp.Module.Controllers.Invoicing;
@@ -40,9 +41,9 @@ public class VeriFactuController : ViewController
     protected override void OnActivated()
     {
         base.OnActivated();
-
-        //var companyInfo = CompanyInfoHelper.GetCompanyInfo(Session);
-        //if (companyInfo == null) return;
+        
+        var companyInfo = ObjectSpace.FindObject<CompanyInfo>(null);
+        if (companyInfo == null) return;
 
         // if (configuracion != null && (!string.IsNullOrEmpty(configuracion.ConfigFileName)))
         // {
