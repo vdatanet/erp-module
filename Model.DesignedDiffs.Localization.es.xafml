@@ -94,6 +94,23 @@
       </OwnMembers>
     </Class>
     <Class Name="erp.Module.BusinessObjects.Settings.CompanyInfo" Caption="Datos empresa" />
+    <Class Name="erp.Module.BusinessObjects.Taxes.TaxKind" Caption="Tipo de Impuesto">
+      <OwnMembers>
+        <Member Name="Account" Caption="Cuenta" />
+        <Member Name="Code" Caption="Código" />
+        <Member Name="IsActive" Caption="Activo" />
+        <Member Name="IsAvailableInPurchases" Caption="Disponible en compras" />
+        <Member Name="IsAvailableInSales" Caption="Disponible en ventas" />
+        <Member Name="IsWithHolding" Caption="Retención" />
+        <Member Name="Name" Caption="Nombre" />
+        <Member Name="Notes" Caption="Notas" />
+        <Member Name="Rate" Caption="Tipo impositivo" />
+        <Member Name="Sequence" Caption="Orden" />
+        <Member Name="Tax" Caption="Tipo VeriFactu" />
+        <Member Name="TaxScheme" Caption="Esquema impositivo" />
+        <Member Name="TaxType" Caption="Tipo operación" />
+      </OwnMembers>
+    </Class>
   </BOModel>
   <NavigationItems>
     <Items>
@@ -107,6 +124,7 @@
       <Item Id="Reports" Caption="Informes" />
       <Item Id="Sales" Caption="Ventas" />
       <Item Id="Settings" Caption="Ajustes" />
+      <Item Id="Taxes" Caption="Impuestos" />
       <Item Id="Time Tracking" Caption="Control horario" />
     </Items>
   </NavigationItems>
