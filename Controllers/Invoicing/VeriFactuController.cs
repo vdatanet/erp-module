@@ -126,7 +126,6 @@ public class VeriFactuController : ViewController
 
     protected override void OnDeactivated()
     {
-        //View.ObjectSpace.ObjectChanged -= ObjectSpace_ObjectChanged;
         base.OnDeactivated();
     }
 }
