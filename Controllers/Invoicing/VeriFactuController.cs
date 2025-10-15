@@ -1,9 +1,10 @@
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
 using DevExpress.Persistent.Base;
-using erp.Module.BusinessObjects.Invoicing;
 using erp.Module.BusinessObjects.Settings;
+using VeriFactu.Business;
 using VeriFactu.Config;
+using Invoice = erp.Module.BusinessObjects.Invoicing.Invoice;
 
 namespace erp.Module.Controllers.Invoicing;
 
@@ -30,25 +31,62 @@ public class VeriFactuController : ViewController
     private void SendVeriFactuInvoice_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
         var invoice = View.CurrentObject as Invoice;
-        if (invoice == null) { return; }
+        if (invoice == null)
+        {
+            return;
+        }
+
         SendInvoice(invoice);
     }
 
     private void SendInvoice(Invoice invoice)
     {
-        throw new NotImplementedException();
+        var companyInfo = ObjectSpace.FindObject<CompanyInfo>(null);
+        
+        var veriFactuInvoice =
+            new VeriFactu.Business.Invoice(invoice.InvoiceNumber, invoice.InvoiceDate, companyInfo.VatNumber)
+            {
+                InvoiceType = invoice.InvoiceType,
+                SellerName = companyInfo.Name,
+                BuyerID = invoice.Customer.VatNumber,
+                BuyerName = invoice.Customer.Name,
+                Text = invoice.Text,
+                TaxItems = new List<TaxItem>()
+                {
+                    new TaxItem()
+                    {
+                        TaxRate = 4,
+                        TaxBase = 10,
+                        TaxAmount = 0.4m
+                    },
+                    new TaxItem()
+                    {
+                        TaxRate = 21,
+                        TaxBase = 100,
+                        TaxAmount = 21
+                    }
+                }
+            };
+        
+        var invoiceEntry = new InvoiceEntry(veriFactuInvoice);
+        invoiceEntry.Save();
+
+        if (invoiceEntry.Status == "Correcto")
+        {
+            
+        }
     }
 
     protected override void OnActivated()
     {
         base.OnActivated();
-        
+
         var companyInfo = ObjectSpace.FindObject<CompanyInfo>(null);
-        
+
         if (companyInfo == null) return;
 
         if (string.IsNullOrEmpty(companyInfo.VeriFactuConfigFileName)) return;
-          
+
         Settings.SetConfigFileName(companyInfo.VeriFactuConfigFileName);
         Settings.Current.CertificateSerial = companyInfo.VeriFactuCertificateSerial;
         Settings.Current.VeriFactuEndPointPrefix = companyInfo.VeriFactuEndPointPrefix;
