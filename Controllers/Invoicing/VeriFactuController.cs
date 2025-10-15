@@ -72,12 +72,11 @@ public class VeriFactuController : ViewController
         var invoiceEntry = new InvoiceEntry(veriFactuInvoice);
         invoiceEntry.Save();
 
-        if (invoiceEntry.Status == "Correcto")
-        {
-            invoice.Csv = invoiceEntry.CSV;
-            invoice.Save();
-            ObjectSpace.CommitChanges();
-        }
+        if (invoiceEntry.Status != "Correcto") return;
+        
+        invoice.Csv = invoiceEntry.CSV;
+        invoice.Save();
+        ObjectSpace.CommitChanges();
     }
 
     protected override void OnActivated()
