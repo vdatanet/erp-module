@@ -31,6 +31,8 @@ public class VeriFactuController : ViewController
 
     private void SendVeriFactuInvoice_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
+        ObjectSpace.CommitChanges();
+        
         if (View.CurrentObject is not Invoice invoice)
         {
             return;
@@ -73,12 +75,14 @@ public class VeriFactuController : ViewController
         var invoiceEntry = new InvoiceEntry(veriFactuInvoice);
         invoiceEntry.Save();
 
-        if (invoiceEntry.Status != "Correcto") return;
+        if (invoiceEntry.Status != "Correcto")
+            return;
 
         var newRecord = veriFactuInvoice.GetRegistroAlta();
         var validationUrl = newRecord.GetUrlValidate();
         var qr = newRecord.GetValidateQr();
 
+        invoice.TaxAgencyResponse = invoiceEntry.Response;
         invoice.VeriFactuStatus = Invoice.VeriFactuStatusValues.Send;
         invoice.Csv = invoiceEntry.CSV;
         invoice.ValidationUrl = validationUrl;

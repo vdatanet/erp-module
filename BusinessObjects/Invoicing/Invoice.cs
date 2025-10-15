@@ -34,6 +34,7 @@ public class Invoice(Session session) : SalesDocument(session)
     private IDType _relatedPartyIdType;
     private bool _isInvoiceFix;
     private string _text;
+    private string _taxAgencyResponse;
     private string _csv;
     private string _validationUrl;
     private MediaDataObject _qr;
@@ -58,6 +59,7 @@ public class Invoice(Session session) : SalesDocument(session)
         set => SetPropertyValue(nameof(InvoiceDate), ref _invoiceDate, value);
     }
     
+    [RuleRequiredField]
     [Association("Customer-Invoices")]
     public Customer Customer
     {
@@ -101,6 +103,14 @@ public class Invoice(Session session) : SalesDocument(session)
     {
         get => _text;
         set => SetPropertyValue(nameof(Text), ref _text, value);
+    }
+
+    [Size(SizeAttribute.Unlimited)]
+    [ModelDefault("AllowEdit","False")]
+    public string TaxAgencyResponse
+    {
+        get => _taxAgencyResponse;
+        set => SetPropertyValue(nameof(TaxAgencyResponse), ref _taxAgencyResponse, value);
     }
 
     [ModelDefault("AllowEdit", "False")]
