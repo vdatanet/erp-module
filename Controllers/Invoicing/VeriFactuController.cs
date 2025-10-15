@@ -74,7 +74,9 @@ public class VeriFactuController : ViewController
 
         if (invoiceEntry.Status == "Correcto")
         {
-            
+            invoice.Csv = invoiceEntry.CSV;
+            invoice.Save();
+            ObjectSpace.CommitChanges();
         }
     }
 

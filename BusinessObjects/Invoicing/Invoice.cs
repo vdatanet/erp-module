@@ -31,6 +31,7 @@ public class Invoice(Session session) : SalesDocument(session)
     private IDType _relatedPartyIdType;
     private bool _isInvoiceFix;
     private string _text;
+    private string _csv;
     
     [RuleRequiredField]
     public string InvoicePrefix
@@ -88,6 +89,12 @@ public class Invoice(Session session) : SalesDocument(session)
     {
         get => _text;
         set => SetPropertyValue(nameof(Text), ref _text, value);
+    }
+
+    public string Csv
+    {
+        get => _csv;
+        set => SetPropertyValue(nameof(Csv), ref _csv, value);
     }
     
     public override void AfterConstruction()
