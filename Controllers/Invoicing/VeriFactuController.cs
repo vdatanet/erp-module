@@ -30,8 +30,7 @@ public class VeriFactuController : ViewController
 
     private void SendVeriFactuInvoice_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
-        var invoice = View.CurrentObject as Invoice;
-        if (invoice == null)
+        if (View.CurrentObject is not Invoice invoice)
         {
             return;
         }
