@@ -26,6 +26,14 @@ public class CompanyInfo(Session session) : Contact(session)
     private string _defaultInvoicePrefix;
     private string _defaultBillPrefix;
     private string _defaultDailyTimeSheetPrefix;
+    private string _veriFactuConfigFileName;
+    private string _veriFactuCertificateSerial;
+    private string _veriFactuEndPointPrefix;
+    private string _veriFactuEndPointValidatePrefix;
+    private string _veriFactuSystemName;
+    private string _veriFactuSystemVersion;
+    private string _veriFactuSystemAdministratorName;
+    private string _veriFactuSystemAdministratorFiscalNumber;
 
     [DataSourceCriteria("IsActive = True")]
     public Journal DefaultSalesJournal
@@ -85,6 +93,54 @@ public class CompanyInfo(Session session) : Contact(session)
     {
         get => _defaultDailyTimeSheetPrefix;
         set => SetPropertyValue(nameof(DefaultDailyTimeSheetPrefix), ref _defaultDailyTimeSheetPrefix, value);
+    }
+
+    public string VeriFactuConfigFileName
+    {
+        get => _veriFactuConfigFileName;
+        set => SetPropertyValue(nameof(VeriFactuConfigFileName), ref _veriFactuConfigFileName, value);
+    }
+
+    public string VeriFactuCertificateSerial
+    {
+        get => _veriFactuCertificateSerial;
+        set => SetPropertyValue(nameof(VeriFactuCertificateSerial), ref _veriFactuCertificateSerial, value);
+    }
+    
+    public string VeriFactuEndPointPrefix
+    {
+        get => _veriFactuEndPointPrefix;
+        set => SetPropertyValue(nameof(VeriFactuEndPointPrefix), ref _veriFactuEndPointPrefix, value);
+    }
+    
+    public string VeriFactuEndPointValidatePrefix
+    {
+        get => _veriFactuEndPointValidatePrefix;
+        set => SetPropertyValue(nameof(VeriFactuEndPointValidatePrefix), ref _veriFactuEndPointValidatePrefix, value);
+    }
+
+    public string VeriFactuSystemName
+    {
+        get => _veriFactuSystemName;
+        set => SetPropertyValue(nameof(VeriFactuSystemName), ref _veriFactuSystemName, value);
+    }
+    
+    public string VeriFactuSystemVersion
+    {
+        get => _veriFactuSystemVersion;
+        set => SetPropertyValue(nameof(VeriFactuSystemVersion), ref _veriFactuSystemVersion, value);
+    }
+    
+    public string VeriFactuSystemAdministratorName
+    {
+        get => _veriFactuSystemAdministratorName;
+        set => SetPropertyValue(nameof(VeriFactuSystemAdministratorName), ref _veriFactuSystemAdministratorName, value);
+    }
+    
+    public string VeriFactuSystemAdministratorFiscalNumber
+    {
+        get => _veriFactuSystemAdministratorFiscalNumber;
+        set => SetPropertyValue(nameof(VeriFactuSystemAdministratorFiscalNumber), ref _veriFactuSystemAdministratorFiscalNumber, value);
     }
     
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
