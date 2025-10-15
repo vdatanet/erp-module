@@ -17,7 +17,7 @@
       </Item>
       <Item Id="Settings">
         <Items>
-          <Item Id="CompanyInfo_ListView" ViewId="CompanyInfo_DetailView" />
+          <Item Id="CompanyInfo_ListView" ViewId="CompanyInfo_ListView" />
         </Items>
       </Item>
     </Items>

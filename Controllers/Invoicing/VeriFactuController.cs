@@ -3,7 +3,6 @@ using DevExpress.ExpressApp.Actions;
 using DevExpress.Persistent.Base;
 using erp.Module.BusinessObjects.Invoicing;
 using erp.Module.BusinessObjects.Settings;
-using erp.Module.Helpers.Contacts;
 using VeriFactu.Config;
 
 namespace erp.Module.Controllers.Invoicing;
@@ -27,51 +26,24 @@ public class VeriFactuController : ViewController
         };
     }
 
-    // [ActivatorUtilitiesConstructor]
-    // public SalesLineController(
-    //     ISalesLineService lineService,
-    //     ISalesDocumentService documentService) : this()
-    // {
-    //     _lineService = lineService;
-    //     _documentService = documentService;
-    // }
-    //
-    // private readonly ISalesLineService _lineService;
-    // private readonly ISalesDocumentService _documentService;
-
     protected override void OnActivated()
     {
         base.OnActivated();
         
         var companyInfo = ObjectSpace.FindObject<CompanyInfo>(null);
+        
         if (companyInfo == null) return;
 
         if (string.IsNullOrEmpty(companyInfo.VeriFactuConfigFileName)) return;
-        
-        var settingsFolder = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + 
-                             System.IO.Path.DirectorySeparatorChar + "VeriFactu";
-
-  ;
+          
         Settings.SetConfigFileName(companyInfo.VeriFactuConfigFileName);
+        Settings.Current.CertificateSerial = companyInfo.VeriFactuCertificateSerial;
+        Settings.Current.VeriFactuEndPointPrefix = companyInfo.VeriFactuEndPointPrefix;
+        Settings.Current.SistemaInformatico.NombreSistemaInformatico = companyInfo.VeriFactuSystemName;
+        Settings.Current.SistemaInformatico.Version = companyInfo.VeriFactuSystemVersion;
+        Settings.Current.SistemaInformatico.NombreRazon = companyInfo.VeriFactuSystemAdministratorName;
+        Settings.Current.SistemaInformatico.NIF = companyInfo.VeriFactuSystemAdministratorFiscalNumber;
         Settings.Save();
-
-        // if (configuracion != null && (!string.IsNullOrEmpty(configuracion.ConfigFileName)))
-        // {
-        //     Settings.SetConfigFileName(configuracion.ConfigFileName);
-        //
-        //     if (!string.IsNullOrEmpty(configuracion.NumeroSerieCertificado)) Settings.Current.CertificateSerial = configuracion.NumeroSerieCertificado;
-        //
-        //     if (!string.IsNullOrEmpty(configuracion.VeriFactuSOAP)) Settings.Current.VeriFactuEndPointPrefix = configuracion.VeriFactuSOAP;
-        //     if (!string.IsNullOrEmpty(configuracion.VeriFactuValidarQR)) Settings.Current.VeriFactuEndPointValidatePrefix = configuracion.VeriFactuValidarQR;
-        //
-        //     if (!string.IsNullOrEmpty(configuracion.NombreSistemaInformatico)) Settings.Current.SistemaInformatico.NombreSistemaInformatico = configuracion.NombreSistemaInformatico;
-        //     if (!string.IsNullOrEmpty(configuracion.VersionSistemaInformatico)) Settings.Current.SistemaInformatico.Version = configuracion.VersionSistemaInformatico;
-        //     if (!string.IsNullOrEmpty(configuracion.NombreResponsableSistemaInformatico)) Settings.Current.SistemaInformatico.NombreRazon = configuracion.NombreResponsableSistemaInformatico;
-        //     if (!string.IsNullOrEmpty(configuracion.NifResponsableSistemaInformatico)) Settings.Current.SistemaInformatico.NIF = configuracion.NifResponsableSistemaInformatico;
-        //
-        //     Settings.Save();
-        // }
-
     }
 
     protected override void OnDeactivated()

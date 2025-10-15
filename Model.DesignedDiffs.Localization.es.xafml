@@ -106,6 +106,7 @@
       <Item Id="Projects" Caption="Proyectos" />
       <Item Id="Reports" Caption="Informes" />
       <Item Id="Sales" Caption="Ventas" />
+      <Item Id="Settings" Caption="Ajustes" />
       <Item Id="Time Tracking" Caption="Control horario" />
     </Items>
   </NavigationItems>
