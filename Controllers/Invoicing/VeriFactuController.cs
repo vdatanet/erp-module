@@ -91,12 +91,25 @@ public class VeriFactuController : ViewController
         if (string.IsNullOrEmpty(companyInfo.VeriFactuConfigFileName)) return;
 
         Settings.SetConfigFileName(companyInfo.VeriFactuConfigFileName);
-        Settings.Current.CertificateSerial = companyInfo.VeriFactuCertificateSerial;
-        Settings.Current.VeriFactuEndPointPrefix = companyInfo.VeriFactuEndPointPrefix;
-        Settings.Current.SistemaInformatico.NombreSistemaInformatico = companyInfo.VeriFactuSystemName;
-        Settings.Current.SistemaInformatico.Version = companyInfo.VeriFactuSystemVersion;
-        Settings.Current.SistemaInformatico.NombreRazon = companyInfo.VeriFactuSystemAdministratorName;
-        Settings.Current.SistemaInformatico.NIF = companyInfo.VeriFactuSystemAdministratorFiscalNumber;
+        
+        if (!string.IsNullOrEmpty(companyInfo.VeriFactuCertificateSerial))
+            Settings.Current.CertificateSerial = companyInfo.VeriFactuCertificateSerial;
+            
+        if (!string.IsNullOrEmpty(companyInfo.VeriFactuEndPointPrefix))
+            Settings.Current.VeriFactuEndPointPrefix = companyInfo.VeriFactuEndPointPrefix;
+            
+        if (!string.IsNullOrEmpty(companyInfo.VeriFactuSystemName))
+            Settings.Current.SistemaInformatico.NombreSistemaInformatico = companyInfo.VeriFactuSystemName;
+            
+        if (!string.IsNullOrEmpty(companyInfo.VeriFactuSystemVersion))
+            Settings.Current.SistemaInformatico.Version = companyInfo.VeriFactuSystemVersion;
+            
+        if (!string.IsNullOrEmpty(companyInfo.VeriFactuSystemAdministratorName))
+            Settings.Current.SistemaInformatico.NombreRazon = companyInfo.VeriFactuSystemAdministratorName;
+            
+        if (!string.IsNullOrEmpty(companyInfo.VeriFactuSystemAdministratorFiscalNumber))
+            Settings.Current.SistemaInformatico.NIF = companyInfo.VeriFactuSystemAdministratorFiscalNumber;
+            
         Settings.Save();
     }
 
