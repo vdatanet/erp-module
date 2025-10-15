@@ -1,4 +1,4 @@
-namespace erp.Module.BusinessObjects.Helpers.Common
+namespace erp.Module.Helpers.Common
 {
     public static class MoneyMath
     {

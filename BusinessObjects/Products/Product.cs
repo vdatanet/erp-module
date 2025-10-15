@@ -7,9 +7,8 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Accounting;
 using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Common;
-using erp.Module.BusinessObjects.Helpers;
-using erp.Module.BusinessObjects.Helpers.Contacts;
 using erp.Module.BusinessObjects.Taxes;
+using erp.Module.Helpers.Contacts;
 using Task = erp.Module.BusinessObjects.Planning.Task;
 
 namespace erp.Module.BusinessObjects.Products;

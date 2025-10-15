@@ -10,7 +10,7 @@ public class SalesLineController : ViewController
     public SalesLineController()
     {
         TargetObjectType = typeof(SalesDocumentLine);
-        TargetViewType = ViewType.DetailView;
+        TargetViewType = ViewType.Any;
     }
 
     // [ActivatorUtilitiesConstructor]

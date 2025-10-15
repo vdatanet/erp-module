@@ -1,6 +1,4 @@
-using erp.Module.BusinessObjects.Common;
-
-namespace erp.Module.BusinessObjects.Helpers.Common;
+namespace erp.Module.Helpers.Common;
 
 public static class AmountCalculator
 {

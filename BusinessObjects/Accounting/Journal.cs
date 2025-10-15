@@ -3,7 +3,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Common;
-using erp.Module.BusinessObjects.Helpers.Contacts;
+using erp.Module.Helpers.Contacts;
 
 namespace erp.Module.BusinessObjects.Accounting;
 
