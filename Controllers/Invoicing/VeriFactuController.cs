@@ -24,6 +24,19 @@ public class VeriFactuController : ViewController
             ImageName = "Actions_Send",
             TargetViewType = ViewType.DetailView
         };
+        sendVeriFactuInvoice.Execute += SendVeriFactuInvoice_Execute;
+    }
+
+    private void SendVeriFactuInvoice_Execute(object sender, SimpleActionExecuteEventArgs e)
+    {
+        var invoice = View.CurrentObject as Invoice;
+        if (invoice == null) { return; }
+        SendInvoice(invoice);
+    }
+
+    private void SendInvoice(Invoice invoice)
+    {
+        throw new NotImplementedException();
     }
 
     protected override void OnActivated()
