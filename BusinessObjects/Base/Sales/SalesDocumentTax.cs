@@ -9,8 +9,6 @@ using VeriFactu.Xml.Factu.Alta;
 
 namespace erp.Module.BusinessObjects.Base.Sales;
 
-[DefaultClassOptions]
-[NavigationItem("Taxes")]
 [ImageName("Top10Percent")]
 [DefaultProperty(nameof(Sequence))]
 public class SalesDocumentTax(Session session): BaseEntity(session)

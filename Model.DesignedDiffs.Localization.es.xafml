@@ -107,6 +107,7 @@
         <Member Name="Rate" Caption="Tipo impositivo" />
         <Member Name="Sequence" Caption="Orden" />
         <Member Name="Tax" Caption="Tipo VeriFactu" />
+        <Member Name="TaxExemption" Caption="Operación Exenta" />
         <Member Name="TaxScheme" Caption="Esquema impositivo" />
         <Member Name="TaxType" Caption="Tipo operación" />
       </OwnMembers>
@@ -114,18 +115,18 @@
   </BOModel>
   <NavigationItems>
     <Items>
-      <Item Id="Accounting" Caption="Contabilidad" />
+      <Item Id="Settings" Caption="Ajustes" />
       <Item Id="Common" Caption="Comunes" />
+      <Item Id="Accounting" Caption="Contabilidad" />
       <Item Id="Contacts" Caption="Contactos" />
-      <Item Id="Default" Caption="Predeterminado" />
+      <Item Id="Time Tracking" Caption="Control horario" />
       <Item Id="Invoicing" Caption="Facturación" />
+      <Item Id="Taxes" Caption="Impuestos" />
+      <Item Id="Reports" Caption="Informes" />
+      <Item Id="Default" Caption="Predeterminado" />
       <Item Id="Products" Caption="Productos" />
       <Item Id="Projects" Caption="Proyectos" />
-      <Item Id="Reports" Caption="Informes" />
       <Item Id="Sales" Caption="Ventas" />
-      <Item Id="Settings" Caption="Ajustes" />
-      <Item Id="Taxes" Caption="Impuestos" />
-      <Item Id="Time Tracking" Caption="Control horario" />
     </Items>
   </NavigationItems>
   <Views>
@@ -179,5 +180,17 @@
     </DetailView>
     <ListView Id="Journal_ListView" Caption="Diarios" />
     <ListView Id="Journal_LookupListView" Caption="Diarios" />
+    <DetailView Id="TaxKind_DetailView">
+      <Layout>
+        <LayoutGroup Id="Main">
+          <LayoutGroup Id="SimpleEditors">
+            <LayoutGroup Id="TaxKind" Caption="Tipo de impuesto" />
+          </LayoutGroup>
+          <LayoutGroup Id="SizeableEditors" Caption="Notas" />
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="TaxKind_ListView" Caption="Tipos de Impuesto" />
+    <ListView Id="TaxKind_LookupListView" Caption="Tipos de Impuesto" />
   </Views>
 </Application>

@@ -29,10 +29,10 @@ public class TaxKind(Session session) : BaseEntity(session)
     private bool _isAvailableInSales;
     private bool _isAvailableInPurchases;
     private bool _isWithHolding;
-    private Impuesto _tax;
-    private ClaveRegimen _taxScheme;
-    private CalificacionOperacion _taxType;
-    private CausaExencion _taxExemption;
+    private Impuesto? _tax;
+    private ClaveRegimen? _taxScheme;
+    private CalificacionOperacion? _taxType;
+    private CausaExencion? _taxExemption;
 
     [RuleRequiredField]
     [RuleUniqueValue]
@@ -43,13 +43,14 @@ public class TaxKind(Session session) : BaseEntity(session)
     }
 
     [Size(255)]
+    [RuleRequiredField]
     public string Name
     {
         get => _name;
         set => SetPropertyValue(nameof(Name), ref _name, value);
     }
 
-    [Size(1000)]
+    [Size(SizeAttribute.Unlimited)]
     public string Notes
     {
         get => _notes;
@@ -99,24 +100,24 @@ public class TaxKind(Session session) : BaseEntity(session)
         get => _isWithHolding;
         set => SetPropertyValue(nameof(IsWithHolding), ref _isWithHolding, value);
     }
-    public Impuesto Tax
+    public Impuesto? Tax
     {
         get => _tax;
         set => SetPropertyValue(nameof(Tax), ref _tax, value);
     }
-    public ClaveRegimen TaxScheme
+    public ClaveRegimen? TaxScheme
     {
         get => _taxScheme;
         set => SetPropertyValue(nameof(TaxScheme), ref _taxScheme, value);
     }
     
-    public CalificacionOperacion TaxType
+    public CalificacionOperacion? TaxType
     {
         get => _taxType;
         set => SetPropertyValue(nameof(TaxType), ref _taxType, value);
     }
     
-    public CausaExencion TaxExemption
+    public CausaExencion? TaxExemption
     {
         get => _taxExemption;
         set => SetPropertyValue(nameof(TaxExemption), ref _taxExemption, value);

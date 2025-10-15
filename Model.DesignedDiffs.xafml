@@ -5,21 +5,33 @@
   </BOModel>
   <NavigationItems>
     <Items>
-      <Item Id="Default">
-        <Items>
-          <Item Id="Event_ListView" Removed="True" />
-        </Items>
-      </Item>
-      <Item Id="Planning">
-        <Items>
-          <Item Id="Event_ListView" ViewId="Event_ListView" ObjectKey="" IsNewNode="True" />
-        </Items>
-      </Item>
-      <Item Id="Settings">
+      <Item Id="Settings" Index="10">
         <Items>
           <Item Id="CompanyInfo_ListView" ViewId="CompanyInfo_ListView" />
         </Items>
       </Item>
+      <Item Id="Common" Index="20" />
+      <Item Id="Accounting" Index="30" />
+      <Item Id="Contacts" Index="40" />
+      <Item Id="Time Tracking" Index="50" />
+      <Item Id="Crm" Index="60" />
+      <Item Id="Invoicing" Index="70" />
+      <Item Id="Taxes" Index="80" />
+      <Item Id="Reports" Index="90" />
+      <Item Id="KPI" Index="100" />
+      <Item Id="Planning" Index="110">
+        <Items>
+          <Item Id="Event_ListView" ViewId="Event_ListView" ObjectKey="" IsNewNode="True" />
+        </Items>
+      </Item>
+      <Item Id="Default" Index="120">
+        <Items>
+          <Item Id="Event_ListView" Removed="True" />
+        </Items>
+      </Item>
+      <Item Id="Products" Index="130" />
+      <Item Id="Projects" Index="140" />
+      <Item Id="Sales" Index="150" />
     </Items>
   </NavigationItems>
   <Options DataAccessMode="Server">
@@ -232,6 +244,59 @@
     <ListView Id="Journal_LookupListView" FreezeColumnIndices="True">
       <Columns>
         <ColumnInfo Id="Name" Index="0" />
+      </Columns>
+    </ListView>
+    <DetailView Id="TaxKind_DetailView" FreezeLayout="True">
+      <Layout IsNewNode="True" Removed="True">
+        <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
+          <LayoutGroup Id="SimpleEditors" Index="0" ShowCaption="False" RelativeSize="22.73489932885906" IsNewNode="True">
+            <LayoutGroup Id="TaxKind" Index="0" Direction="Horizontal" ShowCaption="True" Caption="Tax Kind" RelativeSize="100" IsNewNode="True">
+              <LayoutGroup Id="TaxKind_col1" Index="0" ShowCaption="False" RelativeSize="49.95178399228544" IsNewNode="True">
+                <LayoutItem Id="Code" ViewItem="Code" ShowCaption="" Index="0" RelativeSize="13.793103448275861" IsNewNode="True" />
+                <LayoutItem Id="Name" ViewItem="Name" ShowCaption="" Index="1" RelativeSize="10.344827586206897" IsNewNode="True" />
+                <LayoutItem Id="Sequence" ViewItem="Sequence" ShowCaption="" Index="2" RelativeSize="10.344827586206897" IsNewNode="True" />
+                <LayoutItem Id="Account" ViewItem="Account" ShowCaption="" Index="3" RelativeSize="10.344827586206897" IsNewNode="True" />
+                <LayoutItem Id="Rate" ViewItem="Rate" ShowCaption="" Index="4" RelativeSize="10.344827586206897" IsNewNode="True" />
+                <LayoutItem Id="Tax" ViewItem="Tax" Index="5" RelativeSize="10.344827586206897" IsNewNode="True" />
+                <LayoutItem Id="TaxType" ViewItem="TaxType" Index="6" RelativeSize="10.344827586206897" IsNewNode="True" />
+                <LayoutItem Id="TaxScheme" ViewItem="TaxScheme" Index="7" RelativeSize="10.344827586206897" IsNewNode="True" />
+                <LayoutItem Id="TaxExemption" ViewItem="TaxExemption" Index="8" RelativeSize="13.793103448275861" IsNewNode="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="TaxKind_col2" Index="1" ShowCaption="False" RelativeSize="50.04821600771456" IsNewNode="True">
+                <LayoutItem Id="Notes" ViewItem="Notes" Index="0" RelativeSize="55.172413793103445" IsNewNode="True" />
+                <LayoutItem Id="IsActive" ViewItem="IsActive" Index="1" RelativeSize="10.344827586206897" IsNewNode="True" />
+                <LayoutItem Id="IsWithHolding" ViewItem="IsWithHolding" ShowCaption="" Index="2" RelativeSize="10.344827586206897" IsNewNode="True" />
+                <LayoutItem Id="IsAvailableInPurchases" ViewItem="IsAvailableInPurchases" ShowCaption="" Index="3" RelativeSize="10.344827586206897" IsNewNode="True" />
+                <LayoutItem Id="IsAvailableInSales" ViewItem="IsAvailableInSales" Index="4" RelativeSize="13.793103448275861" IsNewNode="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+          <LayoutGroup Id="SizeableEditors" Index="1" ShowCaption="False" RelativeSize="77.26510067114094" IsNewNode="True" />
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="TaxKind_ListView" FreezeColumnIndices="True">
+      <Columns>
+        <ColumnInfo Id="Account" Index="-1" />
+        <ColumnInfo Id="Notes" Index="-1" />
+        <ColumnInfo Id="Oid" Index="-1" />
+        <ColumnInfo Id="Sequence" Index="-1" />
+        <ColumnInfo Id="Tax" Index="-1" />
+        <ColumnInfo Id="TaxExemption" Index="-1" />
+        <ColumnInfo Id="TaxScheme" Index="-1" />
+        <ColumnInfo Id="TaxType" Index="-1" />
+        <ColumnInfo Id="Code" Index="0" />
+        <ColumnInfo Id="Name" Index="1" />
+        <ColumnInfo Id="Rate" Index="4" />
+        <ColumnInfo Id="IsActive" Index="5" />
+        <ColumnInfo Id="IsAvailableInSales" Index="6" />
+        <ColumnInfo Id="IsAvailableInPurchases" Index="7" />
+        <ColumnInfo Id="IsWithHolding" Index="8" />
+      </Columns>
+    </ListView>
+    <ListView Id="TaxKind_LookupListView" FreezeColumnIndices="True">
+      <Columns>
+        <ColumnInfo Id="Code" Index="0" />
       </Columns>
     </ListView>
   </Views>
