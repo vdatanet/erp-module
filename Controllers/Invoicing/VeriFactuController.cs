@@ -4,6 +4,7 @@ using DevExpress.Persistent.Base;
 using erp.Module.BusinessObjects.Invoicing;
 using erp.Module.BusinessObjects.Settings;
 using erp.Module.Helpers.Contacts;
+using VeriFactu.Config;
 
 namespace erp.Module.Controllers.Invoicing;
 
@@ -44,6 +45,15 @@ public class VeriFactuController : ViewController
         
         var companyInfo = ObjectSpace.FindObject<CompanyInfo>(null);
         if (companyInfo == null) return;
+
+        if (string.IsNullOrEmpty(companyInfo.VeriFactuConfigFileName)) return;
+        
+        var settingsFolder = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + 
+                             System.IO.Path.DirectorySeparatorChar + "VeriFactu";
+
+  ;
+        Settings.SetConfigFileName(companyInfo.VeriFactuConfigFileName);
+        Settings.Save();
 
         // if (configuracion != null && (!string.IsNullOrEmpty(configuracion.ConfigFileName)))
         // {
