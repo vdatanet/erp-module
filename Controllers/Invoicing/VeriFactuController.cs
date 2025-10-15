@@ -51,21 +51,22 @@ public class VeriFactuController : ViewController
                 BuyerID = invoice.Customer.VatNumber,
                 BuyerName = invoice.Customer.Name,
                 Text = invoice.Text,
-                TaxItems = new List<TaxItem>()
-                {
+                TaxItems =
+                [
                     new TaxItem()
                     {
                         TaxRate = 4,
                         TaxBase = 10,
                         TaxAmount = 0.4m
                     },
+
                     new TaxItem()
                     {
                         TaxRate = 21,
                         TaxBase = 100,
                         TaxAmount = 21
                     }
-                }
+                ]
             };
         
         var invoiceEntry = new InvoiceEntry(veriFactuInvoice);
