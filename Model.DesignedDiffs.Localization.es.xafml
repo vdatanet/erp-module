@@ -32,7 +32,7 @@
         <Member Name="Tax" Caption="Tipo VeriFactu" />
         <Member Name="TaxableAmount" Caption="Base imponible" />
         <Member Name="TaxAmount" Caption="Importe impuesto" />
-        <Member Name="TaxExemption" Caption="Operación exenta" />
+        <Member Name="TaxException" Caption="Operación exenta" />
         <Member Name="TaxKind" Caption="Tipo de impuesto" />
         <Member Name="TaxScheme" Caption="Esquema impositivo" />
         <Member Name="TaxType" Caption="Tipo operación" />
@@ -123,7 +123,7 @@
         <Member Name="Rate" Caption="Tipo impositivo" />
         <Member Name="Sequence" Caption="Orden" />
         <Member Name="Tax" Caption="Tipo VeriFactu" />
-        <Member Name="TaxExemption" Caption="Operación Exenta" />
+        <Member Name="TaxException" Caption="Operación exenta" />
         <Member Name="TaxScheme" Caption="Esquema impositivo" />
         <Member Name="TaxType" Caption="Tipo operación" />
       </OwnMembers>
