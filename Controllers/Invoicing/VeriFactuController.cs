@@ -50,25 +50,27 @@ public class VeriFactuController : ViewController
                 SellerName = companyInfo.Name,
                 BuyerID = invoice.Customer.VatNumber,
                 BuyerName = invoice.Customer.Name,
-                Text = invoice.Text,
-                TaxItems =
-                [
-                    new TaxItem
-                    {
-                        TaxRate = 4,
-                        TaxBase = 10,
-                        TaxAmount = 0.4m
-                    },
-
-                    new TaxItem
-                    {
-                        TaxRate = 21,
-                        TaxBase = 100,
-                        TaxAmount = 21
-                    }
-                ]
+                Text = invoice.Text
             };
 
+        foreach (var tax in invoice.Taxes)
+        {
+            if (tax.TaxKind == null) continue;
+
+            TaxItem taxItem = new TaxItem
+            {
+                TaxRate = tax.Rate,
+                TaxBase = tax.TaxableAmount,
+                TaxAmount = tax.TaxAmount,
+                Tax = (VeriFactu.Xml.Factu.Impuesto)tax.Tax,
+                TaxType = (VeriFactu.Xml.Factu.Alta.CalificacionOperacion)tax.TaxType,
+                TaxScheme = (VeriFactu.Xml.Factu.Alta.ClaveRegimen)tax.TaxScheme,
+                TaxException = (VeriFactu.Xml.Factu.Alta.CausaExencion)tax.TaxException
+            };
+
+            veriFactuInvoice.TaxItems.Add(taxItem);
+        }
+            
         var invoiceEntry = new InvoiceEntry(veriFactuInvoice);
         invoiceEntry.Save();
 

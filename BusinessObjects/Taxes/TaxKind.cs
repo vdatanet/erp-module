@@ -32,7 +32,7 @@ public class TaxKind(Session session) : BaseEntity(session)
     private Impuesto? _tax;
     private ClaveRegimen? _taxScheme;
     private CalificacionOperacion? _taxType;
-    private CausaExencion? _taxExemption;
+    private CausaExencion? _taxException;
 
     [RuleRequiredField]
     [RuleUniqueValue]
@@ -117,10 +117,10 @@ public class TaxKind(Session session) : BaseEntity(session)
         set => SetPropertyValue(nameof(TaxType), ref _taxType, value);
     }
     
-    public CausaExencion? TaxExemption
+    public CausaExencion? TaxException
     {
-        get => _taxExemption;
-        set => SetPropertyValue(nameof(TaxExemption), ref _taxExemption, value);
+        get => _taxException;
+        set => SetPropertyValue(nameof(TaxException), ref _taxException, value);
     }
     
     [Association("SalesDocumentLines-TaxKinds")]

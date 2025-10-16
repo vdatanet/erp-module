@@ -25,7 +25,7 @@ public class SalesDocumentTax(Session session): BaseEntity(session)
     private Impuesto? _tax;
     private ClaveRegimen? _taxScheme;
     private CalificacionOperacion? _taxType;
-    private CausaExencion? _taxExemption;
+    private CausaExencion? _taxException;
     
     private decimal _taxableAmount;
     private decimal _taxAmount;
@@ -66,7 +66,7 @@ public class SalesDocumentTax(Session session): BaseEntity(session)
             Tax = null;
             TaxScheme = null;
             TaxType = null;
-            TaxExemption = null;
+            TaxException = null;
             return;
         }
 
@@ -77,7 +77,7 @@ public class SalesDocumentTax(Session session): BaseEntity(session)
         Tax = TaxKind.Tax;
         TaxScheme = TaxKind.TaxScheme;
         TaxType = TaxKind.TaxType;
-        TaxExemption = TaxKind.TaxExemption;
+        TaxException = TaxKind.TaxException;
     }
 
     public Account Account
@@ -134,10 +134,10 @@ public class SalesDocumentTax(Session session): BaseEntity(session)
         set => SetPropertyValue(nameof(TaxType), ref _taxType, value);
     }
     
-    public CausaExencion? TaxExemption
+    public CausaExencion? TaxException
     {
-        get => _taxExemption;
-        set => SetPropertyValue(nameof(TaxExemption), ref _taxExemption, value);
+        get => _taxException;
+        set => SetPropertyValue(nameof(TaxException), ref _taxException, value);
     }
 
     [ImmediatePostData]
