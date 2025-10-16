@@ -272,7 +272,7 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
-    <ListView Id="SalesDocumentTax_ListView" AllowDelete="False" AllowEdit="True" AllowLink="False" AllowNew="False" FreezeColumnIndices="True">
+    <ListView Id="SalesDocumentTax_ListView" AllowDelete="False" AllowEdit="False" AllowLink="False" AllowNew="False" FreezeColumnIndices="True">
       <Columns>
         <ColumnInfo Id="Oid" Index="-1" />
         <ColumnInfo Id="Sequence" Index="0" />
