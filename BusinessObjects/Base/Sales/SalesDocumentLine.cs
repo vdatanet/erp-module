@@ -2,7 +2,6 @@ using DevExpress.ExpressApp.Editors;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
-using erp.Module.BusinessObjects.Accounting;
 using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Products;
 using erp.Module.BusinessObjects.Taxes;
