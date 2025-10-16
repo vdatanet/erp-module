@@ -1,10 +1,12 @@
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
+using DevExpress.XtraRichEdit.Import.Html;
 using erp.Module.BusinessObjects.Accounting;
 using erp.Module.BusinessObjects.Base.Common;
 using erp.Module.BusinessObjects.Products;
 using erp.Module.BusinessObjects.Taxes;
+using erp.Module.Helpers.Common;
 using System.ComponentModel;
 using VeriFactu.Xml.Factu;
 using VeriFactu.Xml.Factu.Alta;
@@ -21,6 +23,7 @@ public class SalesDocumentTax(Session session): BaseEntity(session)
     private TaxKind _taxKind;
     private Account _account;
     private decimal _rate;
+    private bool _isWithHolding;
     private Impuesto? _tax;
     private ClaveRegimen? _taxScheme;
     private CalificacionOperacion? _taxType;
@@ -61,17 +64,18 @@ public class SalesDocumentTax(Session session): BaseEntity(session)
             Sequence = 0;
             Account = null;
             Rate = 0;
+            IsWithHolding = false;
             Tax = null;
             TaxScheme = null;
             TaxType = null;
             TaxExemption = null;
-            TaxableAmount = 0;
             return;
         }
 
         Sequence = TaxKind.Sequence;
         Account = TaxKind.Account;
         Rate = TaxKind.Rate;
+        IsWithHolding = TaxKind.IsWithHolding;
         Tax = TaxKind.Tax;
         TaxScheme = TaxKind.TaxScheme;
         TaxType = TaxKind.TaxType;
@@ -86,10 +90,33 @@ public class SalesDocumentTax(Session session): BaseEntity(session)
 
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
+    [ImmediatePostData]
     public decimal Rate
     {
         get => _rate;
-        set => SetPropertyValue(nameof(Rate), ref _rate, value);
+        set
+        {
+            bool modified = SetPropertyValue(nameof(Rate), ref _rate, value); 
+            if (!modified || IsLoading || IsSaving || IsDeleted) return;
+            GetTaxAmount();
+        }
+    }
+
+    [ImmediatePostData]
+    public bool IsWithHolding
+    {
+        get => _isWithHolding;
+        set
+        {
+            bool modified = SetPropertyValue(nameof(IsWithHolding), ref _isWithHolding, value);
+            if (!modified || IsLoading || IsSaving || IsDeleted) return;
+            GetTaxAmount();
+        }
+    }
+
+    private void GetTaxAmount()
+    {
+        TaxAmount = AmountCalculator.GetTaxAmount(TaxableAmount, Rate, IsWithHolding);
     }
 
     public Impuesto? Tax
@@ -114,11 +141,17 @@ public class SalesDocumentTax(Session session): BaseEntity(session)
         get => _taxExemption;
         set => SetPropertyValue(nameof(TaxExemption), ref _taxExemption, value);
     }
-    
+
+    [ImmediatePostData]
     public decimal TaxableAmount
     {
         get => _taxableAmount;
-        set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
+        set
+        {
+            bool modified = SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
+            if (!modified || IsLoading || IsSaving || IsDeleted) return;
+            GetTaxAmount();
+        }
     }
     
     public decimal TaxAmount
