@@ -52,6 +52,6 @@
     <PackageReference Include="VeriFactu" Version="1.0.52" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controllers\Base\" />
+    <Folder Include="Images\" />
   </ItemGroup>
 </Project>
