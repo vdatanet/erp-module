@@ -57,7 +57,7 @@ public class VeriFactuController : ViewController
         foreach (var tax in invoice.Taxes)
         {
             if (tax.Tax == null) continue;
-            
+
             var taxItem = new TaxItem
             {
                 TaxRate = tax.Rate,
@@ -71,7 +71,7 @@ public class VeriFactuController : ViewController
 
             veriFactuInvoice.TaxItems.Add(taxItem);
         }
-            
+
         var invoiceEntry = new InvoiceEntry(veriFactuInvoice);
         invoiceEntry.Save();
 
@@ -90,7 +90,7 @@ public class VeriFactuController : ViewController
         var qrMedia = ObjectSpace.CreateObject<MediaDataObject>();
         qrMedia.MediaData = qr;
         invoice.Qr = qrMedia;
-        
+
         ObjectSpace.CommitChanges();
     }
 
