@@ -22,6 +22,22 @@
         <Member Name="Notes" Caption="Notas" />
       </OwnMembers>
     </Class>
+    <Class Name="erp.Module.BusinessObjects.Base.Sales.SalesDocumentTax" Caption="Impuestos sobre ventas">
+      <OwnMembers>
+        <Member Name="Account" Caption="Cuenta" />
+        <Member Name="IsWithHolding" Caption="Retención" />
+        <Member Name="Rate" Caption="Tipo impositivo" />
+        <Member Name="SalesDocument" Caption="Documento de venta" />
+        <Member Name="Sequence" Caption="Orden" />
+        <Member Name="Tax" Caption="Tipo VeriFactu" />
+        <Member Name="TaxableAmount" Caption="Base imponible" />
+        <Member Name="TaxAmount" Caption="Importe impuesto" />
+        <Member Name="TaxExemption" Caption="Operación exenta" />
+        <Member Name="TaxKind" Caption="Tipo de impuesto" />
+        <Member Name="TaxScheme" Caption="Esquema impositivo" />
+        <Member Name="TaxType" Caption="Tipo operación" />
+      </OwnMembers>
+    </Class>
     <Class Name="erp.Module.BusinessObjects.Contacts.Contact" Caption="Contacto">
       <OwnMembers>
         <Member Name="Address" Caption="Domicilio" />
@@ -180,6 +196,16 @@
     </DetailView>
     <ListView Id="Journal_ListView" Caption="Diarios" />
     <ListView Id="Journal_LookupListView" Caption="Diarios" />
+    <DetailView Id="SalesDocumentTax_DetailView">
+      <Layout>
+        <LayoutGroup Id="Main">
+          <LayoutGroup Id="SimpleEditors">
+            <LayoutGroup Id="SalesDocumentTax" Caption="Impuesto sobre ventas" />
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="SalesDocumentTax_ListView" Caption="Impuestos sobre ventas" />
     <DetailView Id="TaxKind_DetailView">
       <Layout>
         <LayoutGroup Id="Main">

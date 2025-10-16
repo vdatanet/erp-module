@@ -246,6 +246,49 @@
         <ColumnInfo Id="Name" Index="0" />
       </Columns>
     </ListView>
+    <DetailView Id="SalesDocumentTax_DetailView" AllowDelete="False" AllowEdit="False" AllowNew="False" FreezeLayout="True">
+      <Layout IsNewNode="True" Removed="True">
+        <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
+          <LayoutGroup Id="SimpleEditors" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
+            <LayoutGroup Id="SalesDocumentTax" Index="0" Direction="Horizontal" ShowCaption="True" Caption="Sales Document Tax" RelativeSize="18.20469798657718" IsNewNode="True">
+              <LayoutGroup Id="SalesDocumentTax_col1" Index="0" ShowCaption="False" RelativeSize="49.85535197685632" IsNewNode="True">
+                <LayoutItem Id="Sequence" ViewItem="Sequence" ShowCaption="" Index="0" RelativeSize="17.391304347826086" IsNewNode="True" />
+                <LayoutItem Id="TaxKind" ViewItem="TaxKind" ShowCaption="" Index="1" RelativeSize="13.043478260869565" IsNewNode="True" />
+                <LayoutItem Id="Account" ViewItem="Account" ShowCaption="" Index="2" RelativeSize="13.043478260869565" IsNewNode="True" />
+                <LayoutItem Id="Rate" ViewItem="Rate" ShowCaption="" Index="3" RelativeSize="13.043478260869565" IsNewNode="True" />
+                <LayoutItem Id="IsWithHolding" ViewItem="IsWithHolding" ShowCaption="" Index="4" RelativeSize="13.043478260869565" IsNewNode="True" />
+                <LayoutItem Id="TaxableAmount" ViewItem="TaxableAmount" Index="5" RelativeSize="13.043478260869565" IsNewNode="True" />
+                <LayoutItem Id="TaxAmount" ViewItem="TaxAmount" Index="6" RelativeSize="17.391304347826086" IsNewNode="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="SalesDocumentTax_col2" Index="1" ShowCaption="False" RelativeSize="50.14464802314368" IsNewNode="True">
+                <LayoutItem Id="Tax" ViewItem="Tax" Index="0" RelativeSize="17.391304347826086" IsNewNode="True" />
+                <LayoutItem Id="TaxScheme" ViewItem="TaxScheme" ShowCaption="" Index="1" RelativeSize="13.043478260869565" IsNewNode="True" />
+                <LayoutItem Id="TaxType" ViewItem="TaxType" ShowCaption="" Index="2" RelativeSize="13.043478260869565" IsNewNode="True" />
+                <LayoutItem Id="TaxExemption" ViewItem="TaxExemption" ShowCaption="" Index="3" RelativeSize="56.52173913043478" IsNewNode="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+            <LayoutItem Id="Item1" Index="1" RelativeSize="81.79530201342281" IsNewNode="True" />
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="SalesDocumentTax_ListView" AllowDelete="False" AllowEdit="True" AllowLink="False" AllowNew="False" FreezeColumnIndices="True">
+      <Columns>
+        <ColumnInfo Id="Oid" Index="-1" />
+        <ColumnInfo Id="Sequence" Index="0" />
+        <ColumnInfo Id="SalesDocument" Index="1" />
+        <ColumnInfo Id="TaxKind" Index="2" />
+        <ColumnInfo Id="Account" Index="3" />
+        <ColumnInfo Id="Rate" Index="4" />
+        <ColumnInfo Id="IsWithHolding" Index="5" />
+        <ColumnInfo Id="Tax" Index="6" />
+        <ColumnInfo Id="TaxScheme" Index="7" />
+        <ColumnInfo Id="TaxType" Index="8" />
+        <ColumnInfo Id="TaxExemption" Index="9" />
+        <ColumnInfo Id="TaxableAmount" Index="10" />
+        <ColumnInfo Id="TaxAmount" Index="11" />
+      </Columns>
+    </ListView>
     <DetailView Id="TaxKind_DetailView" FreezeLayout="True">
       <Layout IsNewNode="True" Removed="True">
         <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">

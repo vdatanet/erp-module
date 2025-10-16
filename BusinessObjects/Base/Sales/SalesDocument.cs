@@ -91,8 +91,7 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
             .Select(g => new
             {
                 TaxType = g.Key,
-                BaseSum = g.Sum(x => x.TaxableAmount),
-                AmountSum = g.Sum(x => x.TaxAmount)
+                BaseSum = g.Sum(x => x.TaxableAmount)
             })
             .OrderBy(x => x.TaxType.Sequence)
             .ToList();
@@ -102,8 +101,7 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
             SalesDocument = this,
             TaxKind = g.TaxType,
             Sequence = g.TaxType.Sequence,
-            TaxableAmount = g.BaseSum,
-            TaxAmount = g.AmountSum
+            TaxableAmount = g.BaseSum
         });
 
         Taxes.AddRange(newTaxes);
