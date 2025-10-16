@@ -246,6 +246,12 @@
         <ColumnInfo Id="Name" Index="0" />
       </Columns>
     </ListView>
+    <ListView Id="Product_LookupListView" FreezeColumnIndices="True">
+      <Columns>
+        <ColumnInfo Id="Code" Index="0" />
+        <ColumnInfo Id="Name" PropertyName="Name" Index="1" IsNewNode="True" />
+      </Columns>
+    </ListView>
     <DetailView Id="SalesDocumentTax_DetailView" AllowDelete="False" AllowEdit="False" AllowNew="False" FreezeLayout="True">
       <Layout IsNewNode="True" Removed="True">
         <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">

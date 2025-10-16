@@ -32,6 +32,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     }
 
     [ImmediatePostData]
+    [LookupEditorMode(LookupEditorMode.Search)]
     public Product Product
     {
         get => _product;

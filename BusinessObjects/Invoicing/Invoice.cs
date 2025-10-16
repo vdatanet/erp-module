@@ -30,6 +30,7 @@ public class Invoice(Session session) : SalesDocument(session)
     private Customer _customer;
     private VeriFactuStatusValues _veriFactuStatus;
     private string _invoiceEntryStatus;
+    private string _invoiceEntryErrorCode;
     private TipoFactura _invoiceType;
     private TipoRectificativa _rectificationType;
     private IDType _relatedPartyIdType;
@@ -80,6 +81,13 @@ public class Invoice(Session session) : SalesDocument(session)
     {
         get => _invoiceEntryStatus;
         set => SetPropertyValue(nameof(InvoiceEntryStatus), ref _invoiceEntryStatus, value);
+    }
+
+    [ModelDefault("AllowEdit", "False")]
+    public string InvoiceEntryErrorCode
+    {
+        get => _invoiceEntryErrorCode;
+        set => SetPropertyValue(nameof(InvoiceEntryErrorCode), ref _invoiceEntryErrorCode, value);
     }
 
     public TipoFactura InvoiceType

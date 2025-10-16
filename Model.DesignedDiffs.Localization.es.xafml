@@ -196,6 +196,7 @@
     </DetailView>
     <ListView Id="Journal_ListView" Caption="Diarios" />
     <ListView Id="Journal_LookupListView" Caption="Diarios" />
+    <ListView Id="Product_LookupListView" Caption="Productos" />
     <DetailView Id="SalesDocumentTax_DetailView">
       <Layout>
         <LayoutGroup Id="Main">

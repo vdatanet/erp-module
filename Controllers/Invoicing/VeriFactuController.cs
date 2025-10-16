@@ -27,6 +27,48 @@ public class VeriFactuController : ViewController
             TargetViewType = ViewType.DetailView
         };
         sendVeriFactuInvoice.Execute += SendVeriFactuInvoice_Execute;
+
+        //var cancelVeriFactuInvoice = new SimpleAction(this, "CancelVeriFactuInvoice", PredefinedCategory.View)
+        //{
+        //    //Specify the Action's button caption.
+        //    Caption = "Cancel VeriFactu",
+        //    //Specify the confirmation message that pops up when a user executes an Action.
+        //    ConfirmationMessage = "Are you sure you want to cancel the Invoice to the Tax Agency?",
+        //    //Specify the icon of the Action's button in the interface.
+        //    ImageName = "Cancel",
+        //    TargetViewType = ViewType.DetailView
+        //};
+        //cancelVeriFactuInvoice.Execute += CancelVeriFactuInvoice_Execute;
+    }
+
+    private void CancelVeriFactuInvoice_Execute(object sender, SimpleActionExecuteEventArgs e)
+    {
+        ObjectSpace.CommitChanges();
+
+        if (View.CurrentObject is not Invoice invoice) return;
+
+        if (invoice.VeriFactuStatus == Invoice.VeriFactuStatusValues.Send)
+            CancelInvoice(invoice);
+    }
+
+    private void CancelInvoice(Invoice invoice)
+    {
+        var companyInfo = ObjectSpace.FindObject<CompanyInfo>(null);
+
+        var veriFactuInvoice =
+            new VeriFactu.Business.Invoice(invoice.InvoiceNumber, invoice.InvoiceDate, companyInfo.VatNumber)
+            {
+                SellerName = companyInfo.Name
+            };
+        var invoiceCancellation = new InvoiceCancellation(veriFactuInvoice);
+        invoiceCancellation.Save();
+        invoice.TaxAgencyResponse = invoiceCancellation.Response;
+        invoice.VeriFactuStatus = Invoice.VeriFactuStatusValues.Draft;
+        invoice.InvoiceEntryStatus = invoiceCancellation.Status;
+        invoice.Csv = null;
+        invoice.ValidationUrl = null;
+        invoice.Qr = null;
+        ObjectSpace.CommitChanges();
     }
 
     private void SendVeriFactuInvoice_Execute(object sender, SimpleActionExecuteEventArgs e)
@@ -78,6 +120,8 @@ public class VeriFactuController : ViewController
         if (invoiceEntry.Status != "Correcto")
         {
             invoice.InvoiceEntryStatus = invoiceEntry.Status;
+            invoice.TaxAgencyResponse = invoiceEntry.Response;
+            invoice.InvoiceEntryErrorCode = invoiceEntry.ErrorCode;
             ObjectSpace.CommitChanges();
             return;
         }
