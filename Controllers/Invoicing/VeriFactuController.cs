@@ -76,7 +76,13 @@ public class VeriFactuController : ViewController
         invoiceEntry.Save();
 
         if (invoiceEntry.Status != "Correcto")
+        {
+            invoice.InvoiceEntryStatus = invoiceEntry.Status;
+            ObjectSpace.CommitChanges();
             return;
+        }
+
+        invoice.InvoiceEntryStatus = invoiceEntry.Status;
 
         var newRecord = veriFactuInvoice.GetRegistroAlta();
         var validationUrl = newRecord.GetUrlValidate();

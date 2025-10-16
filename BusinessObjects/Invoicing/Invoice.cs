@@ -29,6 +29,7 @@ public class Invoice(Session session) : SalesDocument(session)
     private DateTime _invoiceDate;
     private Customer _customer;
     private VeriFactuStatusValues _veriFactuStatus;
+    private string _invoiceEntryStatus;
     private TipoFactura _invoiceType;
     private TipoRectificativa _rectificationType;
     private IDType _relatedPartyIdType;
@@ -72,6 +73,13 @@ public class Invoice(Session session) : SalesDocument(session)
     {
         get => _veriFactuStatus;
         set => SetPropertyValue(nameof(VeriFactuStatus), ref _veriFactuStatus, value);
+    }
+
+    [ModelDefault("AllowEdit", "False")]
+    public string InvoiceEntryStatus
+    {
+        get => _invoiceEntryStatus;
+        set => SetPropertyValue(nameof(InvoiceEntryStatus), ref _invoiceEntryStatus, value);
     }
 
     public TipoFactura InvoiceType
