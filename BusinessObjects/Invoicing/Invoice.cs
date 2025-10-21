@@ -42,12 +42,14 @@ public class Invoice(Session session) : SalesDocument(session)
     private MediaDataObject _qr;
 
     [RuleRequiredField]
+    [NonCloneable]
     public string InvoicePrefix
     {
         get => _invoicePrefix;
         set => SetPropertyValue(nameof(InvoicePrefix), ref _invoicePrefix, value);
     }
 
+    [NonCloneable]
     public string InvoiceNumber
     {
         get => _invoiceNumber;
@@ -55,6 +57,7 @@ public class Invoice(Session session) : SalesDocument(session)
     }
 
     [RuleRequiredField]
+    [NonCloneable]
     public DateTime InvoiceDate
     {
         get => _invoiceDate;
@@ -70,6 +73,7 @@ public class Invoice(Session session) : SalesDocument(session)
     }
 
     [ModelDefault("AllowEdit", "False")]
+    [NonCloneable]
     public VeriFactuStatusValues VeriFactuStatus
     {
         get => _veriFactuStatus;
@@ -77,6 +81,7 @@ public class Invoice(Session session) : SalesDocument(session)
     }
 
     [ModelDefault("AllowEdit", "False")]
+    [NonCloneable]
     public string InvoiceEntryStatus
     {
         get => _invoiceEntryStatus;
@@ -84,30 +89,35 @@ public class Invoice(Session session) : SalesDocument(session)
     }
 
     [ModelDefault("AllowEdit", "False")]
+    [NonCloneable]
     public string InvoiceEntryErrorCode
     {
         get => _invoiceEntryErrorCode;
         set => SetPropertyValue(nameof(InvoiceEntryErrorCode), ref _invoiceEntryErrorCode, value);
     }
 
+    [NonCloneable]
     public TipoFactura InvoiceType
     {
         get => _invoiceType;
         set => SetPropertyValue(nameof(InvoiceType), ref _invoiceType, value);
     }
-    
+
+    [NonCloneable]
     public TipoRectificativa RectificationType
     {
         get => _rectificationType;
         set => SetPropertyValue(nameof(RectificationType), ref _rectificationType, value);
     }
-    
+
+    [NonCloneable]
     public bool IsInvoiceFix
     {
         get => _isInvoiceFix;
         set => SetPropertyValue(nameof(IsInvoiceFix), ref _isInvoiceFix, value);
     }
 
+    [NonCloneable]
     public IDType RelatedPartyIdType
     {
         get => _relatedPartyIdType;
@@ -123,6 +133,7 @@ public class Invoice(Session session) : SalesDocument(session)
 
     [Size(SizeAttribute.Unlimited)]
     [ModelDefault("AllowEdit","False")]
+    [NonCloneable]
     public string TaxAgencyResponse
     {
         get => _taxAgencyResponse;
@@ -130,6 +141,7 @@ public class Invoice(Session session) : SalesDocument(session)
     }
 
     [ModelDefault("AllowEdit", "False")]
+    [NonCloneable]
     public string Csv
     {
         get => _csv;
@@ -138,6 +150,7 @@ public class Invoice(Session session) : SalesDocument(session)
 
     [Size(255)]
     [ModelDefault("AllowEdit", "False")]
+    [NonCloneable]
     public string ValidationUrl
     {
         get => _validationUrl;
@@ -145,6 +158,7 @@ public class Invoice(Session session) : SalesDocument(session)
     }
 
     [ModelDefault("AllowEdit", "False")]
+    [NonCloneable]
     public MediaDataObject Qr
     {
         get => _qr;
@@ -165,6 +179,7 @@ public class Invoice(Session session) : SalesDocument(session)
 
     private void InitValues()
     {
+        InvoiceDate = DateTime.Now.Date;
         VeriFactuStatus = VeriFactuStatusValues.Draft;
         InvoiceType = TipoFactura.F1;
         RectificationType = TipoRectificativa.I;

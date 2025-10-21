@@ -40,6 +40,6 @@ public class SequenceService(Session session)
     private static string BuildSequenceString(Sequence generator)
     {
         var number = generator.CurrentValue.ToString().PadLeft(generator.Padding, '0');
-        return $"{generator.Prefix}/{number}";
+        return $"{generator.Prefix}-{number}";
     }
 }
