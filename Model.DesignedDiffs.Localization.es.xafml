@@ -223,6 +223,17 @@
     </DetailView>
     <ListView Id="Customer_ListView" Caption="Clientes" />
     <ListView Id="Customer_LookupListView" Caption="Clientes" />
+    <DetailView Id="Invoice_DetailView">
+      <Layout>
+        <LayoutGroup Id="Main">
+          <LayoutGroup Id="SimpleEditors">
+            <LayoutGroup Id="Invoice" Caption="Factura" />
+            <LayoutGroup Id="SalesDocument" Caption="SalesDocument" />
+          </LayoutGroup>
+          <LayoutGroup Id="SizeableEditors" Caption="SizeableEditors" />
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
     <DetailView Id="Journal_DetailView">
       <Layout>
         <LayoutGroup Id="Main">
@@ -238,13 +249,6 @@
     <ListView Id="Journal_ListView" Caption="Diarios" />
     <ListView Id="Journal_LookupListView" Caption="Diarios" />
     <ListView Id="Product_LookupListView" Caption="Productos" />
-    <DetailView Id="SalesDocumentLine_DetailView">
-      <Layout>
-        <LayoutGroup Id="Main">
-          <LayoutGroup Id="SizeableEditors" Caption="SizeableEditors" />
-        </LayoutGroup>
-      </Layout>
-    </DetailView>
     <DetailView Id="SalesDocumentTax_DetailView">
       <Layout>
         <LayoutGroup Id="Main">

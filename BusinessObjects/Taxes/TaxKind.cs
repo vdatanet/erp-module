@@ -122,19 +122,24 @@ public class TaxKind(Session session) : BaseEntity(session)
         get => _taxException;
         set => SetPropertyValue(nameof(TaxException), ref _taxException, value);
     }
-    
+
+    [NonCloneable]
     [Association("SalesDocumentLines-TaxKinds")]
     public XPCollection<SalesDocumentLine> SalesDocumentLines => GetCollection<SalesDocumentLine>(nameof(SalesDocumentLines));
 
+    [NonCloneable]
     [Association("Products-SalesTaxes")]
     public XPCollection<Product> ProductSalesTaxes => GetCollection<Product>(nameof(ProductSalesTaxes));
 
+    [NonCloneable]
     [Association("Products-PurchaseTaxes")]
     public XPCollection<Product> ProductPurchaseTaxes => GetCollection<Product>(nameof(ProductPurchaseTaxes));
-    
+
+    [NonCloneable]
     [Association("CompanyInfos-SalesTaxes")]
     public XPCollection<CompanyInfo> CompanyInfoSalesTaxes => GetCollection<CompanyInfo>(nameof(CompanyInfoSalesTaxes));
 
+    [NonCloneable]
     [Association("CompanyInfos-PurchaseTaxes")]
     public XPCollection<CompanyInfo> CompanyInfoPurchaseTaxes => GetCollection<CompanyInfo>(nameof(CompanyInfoPurchaseTaxes));
     
