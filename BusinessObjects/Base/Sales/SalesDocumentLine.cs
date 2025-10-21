@@ -151,6 +151,7 @@ public class SalesDocumentLine(Session session) : BaseEntity(session)
     }
 
     [Aggregated]
+    [VisibleInDetailView(false)]
     [Association("SalesDocumentLine-Taxes")]
     public XPCollection<SalesDocumentLineTax> Taxes => GetCollection<SalesDocumentLineTax>();
 

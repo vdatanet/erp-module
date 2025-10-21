@@ -312,6 +312,31 @@
         <ColumnInfo Id="Name" PropertyName="Name" Index="1" IsNewNode="True" />
       </Columns>
     </ListView>
+    <DetailView Id="SalesDocumentLine_DetailView" FreezeLayout="True">
+      <Layout IsNewNode="True" Removed="True">
+        <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
+          <LayoutGroup Id="SimpleEditors" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
+            <LayoutGroup Id="SalesDocumentLine" Index="0" Direction="Horizontal" ShowCaption="True" Caption="Sales Document Line" RelativeSize="24.769101595298068" IsNewNode="True">
+              <LayoutGroup Id="SalesDocumentLine_col1" Index="0" ShowCaption="False" RelativeSize="49.85700667302193" IsNewNode="True">
+                <LayoutItem Id="Product" ViewItem="Product" ShowCaption="" Index="0" RelativeSize="12.213740458015268" IsNewNode="True" />
+                <LayoutItem Id="ProductName" ViewItem="ProductName" Index="1" RelativeSize="57.25190839694657" IsNewNode="True" />
+                <LayoutItem Id="Quantity" ViewItem="Quantity" ShowCaption="" Index="2" RelativeSize="9.16030534351145" IsNewNode="True" />
+                <LayoutItem Id="UnitPrice" ViewItem="UnitPrice" ShowCaption="" Index="3" RelativeSize="9.16030534351145" IsNewNode="True" />
+                <LayoutItem Id="DiscountPercent" ViewItem="DiscountPercent" ShowCaption="" Index="4" RelativeSize="12.213740458015268" IsNewNode="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="SalesDocumentLine_col2" Index="1" ShowCaption="False" RelativeSize="50.14299332697807" IsNewNode="True">
+                <LayoutItem Id="TaxableAmount" ViewItem="TaxableAmount" ShowCaption="" Index="0" RelativeSize="12.213740458015268" IsNewNode="True" />
+                <LayoutItem Id="SalesTaxes" ViewItem="SalesTaxes" Index="1" RelativeSize="45.80152671755725" IsNewNode="True" />
+                <LayoutItem Id="TaxAmount" ViewItem="TaxAmount" ShowCaption="" Index="2" RelativeSize="9.16030534351145" IsNewNode="True" />
+                <LayoutItem Id="TotalAmount" ViewItem="TotalAmount" ShowCaption="" Index="3" RelativeSize="9.16030534351145" IsNewNode="True" />
+                <LayoutItem Id="Notes" ViewItem="Notes" Index="4" RelativeSize="23.66412213740458" IsNewNode="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+            <LayoutItem Id="Item1" Index="1" RelativeSize="75.23089840470193" IsNewNode="True" />
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
     <DetailView Id="SalesDocumentTax_DetailView" AllowDelete="False" AllowEdit="False" AllowNew="False" FreezeLayout="True">
       <Layout IsNewNode="True" Removed="True">
         <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
