@@ -22,6 +22,18 @@
         <Member Name="Notes" Caption="Notas" />
       </OwnMembers>
     </Class>
+    <Class Name="erp.Module.BusinessObjects.Base.Sales.SalesDocument">
+      <OwnMembers>
+        <Member Name="Attachments" Caption="Archivos" />
+        <Member Name="Lines" Caption="Líneas" />
+        <Member Name="Pictures" Caption="Imágenes" />
+        <Member Name="Tasks" Caption="Tareas" />
+        <Member Name="TaxableAmount" Caption="Base imponible" />
+        <Member Name="TaxAmount" Caption="Importe impuestos" />
+        <Member Name="Taxes" Caption="Impuestos" />
+        <Member Name="TotalAmount" Caption="Importe total" />
+      </OwnMembers>
+    </Class>
     <Class Name="erp.Module.BusinessObjects.Base.Sales.SalesDocumentTax" Caption="Impuestos sobre ventas">
       <OwnMembers>
         <Member Name="Account" Caption="Cuenta" />
