@@ -238,6 +238,13 @@
     <ListView Id="Journal_ListView" Caption="Diarios" />
     <ListView Id="Journal_LookupListView" Caption="Diarios" />
     <ListView Id="Product_LookupListView" Caption="Productos" />
+    <DetailView Id="SalesDocumentLine_DetailView">
+      <Layout>
+        <LayoutGroup Id="Main">
+          <LayoutGroup Id="SizeableEditors" Caption="SizeableEditors" />
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
     <DetailView Id="SalesDocumentTax_DetailView">
       <Layout>
         <LayoutGroup Id="Main">
