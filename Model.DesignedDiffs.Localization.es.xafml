@@ -22,7 +22,7 @@
         <Member Name="Notes" Caption="Notas" />
       </OwnMembers>
     </Class>
-    <Class Name="erp.Module.BusinessObjects.Base.Sales.SalesDocument">
+    <Class Name="erp.Module.BusinessObjects.Base.Sales.SalesDocument" Caption="Documento de venta">
       <OwnMembers>
         <Member Name="Attachments" Caption="Archivos" />
         <Member Name="Lines" Caption="Líneas" />
@@ -32,6 +32,22 @@
         <Member Name="TaxAmount" Caption="Importe impuestos" />
         <Member Name="Taxes" Caption="Impuestos" />
         <Member Name="TotalAmount" Caption="Importe total" />
+      </OwnMembers>
+    </Class>
+    <Class Name="erp.Module.BusinessObjects.Base.Sales.SalesDocumentLine">
+      <OwnMembers>
+        <Member Name="DiscountPercent" Caption="% Dto" />
+        <Member Name="Notes" Caption="Notas" />
+        <Member Name="Product" Caption="Producto" />
+        <Member Name="ProductName" Caption="Descripción" />
+        <Member Name="Quantity" Caption="Cantidad" />
+        <Member Name="SalesDocument" Caption="Documento de venta" />
+        <Member Name="SalesTaxes" Caption="Impuestos de venta" />
+        <Member Name="TaxableAmount" Caption="Base imponible" />
+        <Member Name="TaxAmount" Caption="Importe impuestos" />
+        <Member Name="Taxes" Caption="Impuestos" />
+        <Member Name="TotalAmount" Caption="Importe total" />
+        <Member Name="UnitPrice" Caption="Precio unitario" />
       </OwnMembers>
     </Class>
     <Class Name="erp.Module.BusinessObjects.Base.Sales.SalesDocumentTax" Caption="Impuestos sobre ventas">
