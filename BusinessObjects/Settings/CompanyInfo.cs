@@ -119,6 +119,7 @@ public class CompanyInfo(Session session) : Contact(session)
         set => SetPropertyValue(nameof(VeriFactuEndPointValidatePrefix), ref _veriFactuEndPointValidatePrefix, value);
     }
 
+    [Size(30)]
     public string VeriFactuSystemName
     {
         get => _veriFactuSystemName;
