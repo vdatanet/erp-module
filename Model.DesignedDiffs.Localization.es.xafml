@@ -69,9 +69,22 @@
     <Class Name="erp.Module.BusinessObjects.Contacts.Vendor" Caption="Proveedor" />
     <Class Name="erp.Module.BusinessObjects.Invoicing.Invoice" Caption="Factura">
       <OwnMembers>
+        <Member Name="Csv" Caption="CSV" />
         <Member Name="Customer" Caption="Cliente" />
-        <Member Name="InvoiceDate" Caption="Fecha Factura" />
+        <Member Name="InvoiceDate" Caption="Fecha factura" />
+        <Member Name="InvoiceEntryErrorCode" Caption="Código de error" />
+        <Member Name="InvoiceEntryStatus" Caption="Código de estado" />
+        <Member Name="InvoiceNumber" Caption="Número" />
+        <Member Name="InvoicePrefix" Caption="Serie" />
+        <Member Name="InvoiceType" Caption="Tipo Factura" />
+        <Member Name="IsInvoiceFix" Caption="Rectificativa" />
+        <Member Name="Qr" Caption="QR" />
+        <Member Name="RectificationType" Caption="Tipo rectificativa" />
+        <Member Name="RelatedPartyIdType" Caption="Tipo documento identificativo" />
+        <Member Name="TaxAgencyResponse" Caption="Respuesta agencia tributaria" />
         <Member Name="Text" Caption="Detalle operación" />
+        <Member Name="ValidationUrl" Caption="Url de validación" />
+        <Member Name="VeriFactuStatus" Caption="Estado VeriFactu" />
       </OwnMembers>
     </Class>
     <Class Name="erp.Module.BusinessObjects.Products.Category" Caption="Categoría">
