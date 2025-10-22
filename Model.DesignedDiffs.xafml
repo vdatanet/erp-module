@@ -222,7 +222,7 @@
         <LayoutGroup Id="Main" RelativeSize="100">
           <LayoutGroup Id="SimpleEditors" RelativeSize="19.211409395973153">
             <LayoutGroup Id="Invoice" RelativeSize="100">
-              <LayoutGroup Id="Invoice_col1" RelativeSize="49.952335557673976">
+              <LayoutGroup Id="Invoice_col1" RelativeSize="49.76167778836987">
                 <LayoutItem Id="InvoicePrefix" RelativeSize="16.842105263157894" />
                 <LayoutItem Id="InvoiceNumber" RelativeSize="12.631578947368421" />
                 <LayoutItem Id="InvoiceDate" RelativeSize="12.631578947368421" />
@@ -233,7 +233,7 @@
                 <LayoutItem Id="RelatedPartyIdType" ViewItem="RelatedPartyIdType" Index="6" RelativeSize="20" IsNewNode="True" />
                 <LayoutItem Id="InvoiceEntryStatus" RelativeSize="13.043478260869565" Removed="True" />
               </LayoutGroup>
-              <LayoutGroup Id="Invoice_col2" RelativeSize="50.047664442326024">
+              <LayoutGroup Id="Invoice_col2" RelativeSize="50.23832221163013">
                 <LayoutItem Id="IsInvoiceFix" ViewItem="IsInvoiceFix" Index="0" RelativeSize="16.842105263157894" IsNewNode="True" Removed="True" />
                 <LayoutItem Id="RectificationType" ViewItem="RectificationType" Index="1" RelativeSize="12.631578947368421" IsNewNode="True" Removed="True" />
                 <LayoutItem Id="Csv" RelativeSize="11.538461538461538" Index="2" Removed="True" />
@@ -268,6 +268,18 @@
             </LayoutGroup>
             <LayoutGroup Id="Attachments" RelativeSize="100">
               <LayoutItem Id="Attachments" RelativeSize="100" />
+            </LayoutGroup>
+            <LayoutGroup Id="VeriFactu" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="5" RelativeSize="100" IsNewNode="True">
+              <LayoutGroup Id="col1" ShowCaption="False" Index="0" RelativeSize="49.952335557673976" IsNewNode="True">
+                <LayoutItem Id="InvoiceEntryErrorCode" ViewItem="InvoiceEntryErrorCode" Index="0" RelativeSize="3.474484256243214" IsNewNode="True" />
+                <LayoutItem Id="InvoiceEntryStatus" ViewItem="InvoiceEntryStatus" Index="1" RelativeSize="2.6058631921824102" IsNewNode="True" />
+                <LayoutItem Id="Csv" ViewItem="Csv" Index="2" RelativeSize="2.6058631921824102" IsNewNode="True" />
+                <LayoutItem Id="ValidationUrl" ViewItem="ValidationUrl" Index="3" RelativeSize="2.6058631921824102" IsNewNode="True" />
+                <LayoutItem Id="Qr" ViewItem="Qr" Index="4" RelativeSize="88.70792616720955" IsNewNode="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="col2" RelativeSize="50.047664442326024" ShowCaption="False" Index="1" IsNewNode="True">
+                <LayoutItem Id="TaxAgencyResponse" ViewItem="TaxAgencyResponse" Index="0" RelativeSize="100" CaptionLocation="Top" IsNewNode="True" />
+              </LayoutGroup>
             </LayoutGroup>
           </TabbedGroup>
           <LayoutGroup Id="SizeableEditors" RelativeSize="38.33892617449664" Removed="True">

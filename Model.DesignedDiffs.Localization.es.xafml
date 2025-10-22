@@ -230,10 +230,16 @@
             <LayoutGroup Id="Invoice" Caption="Factura" />
             <LayoutGroup Id="SalesDocument" Caption="SalesDocument" />
           </LayoutGroup>
+          <TabbedGroup Id="Tabs">
+            <LayoutGroup Id="VeriFactu" Caption="VeriFactu">
+              <LayoutGroup Id="col1" Caption="col1(31)" />
+            </LayoutGroup>
+          </TabbedGroup>
           <LayoutGroup Id="SizeableEditors" Caption="SizeableEditors" />
         </LayoutGroup>
       </Layout>
     </DetailView>
+    <ListView Id="Invoice_ListView" Caption="Facturas" />
     <DetailView Id="Journal_DetailView">
       <Layout>
         <LayoutGroup Id="Main">
