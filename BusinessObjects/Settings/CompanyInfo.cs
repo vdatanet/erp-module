@@ -26,6 +26,7 @@ public class CompanyInfo(Session session) : Contact(session)
     private string _defaultInvoicePrefix;
     private string _defaultBillPrefix;
     private string _defaultDailyTimeSheetPrefix;
+    private string _veriFactuDefaultText;
     private string _veriFactuConfigFileName;
     private string _veriFactuCertificateSerial;
     private string _veriFactuEndPointPrefix;
@@ -93,6 +94,13 @@ public class CompanyInfo(Session session) : Contact(session)
     {
         get => _defaultDailyTimeSheetPrefix;
         set => SetPropertyValue(nameof(DefaultDailyTimeSheetPrefix), ref _defaultDailyTimeSheetPrefix, value);
+    }
+
+    [Size(500)]
+    public string VeriFactuDefaultText
+    {
+        get => _veriFactuDefaultText;
+        set => SetPropertyValue(nameof(VeriFactuDefaultText), ref _veriFactuDefaultText, value);
     }
 
     public string VeriFactuConfigFileName

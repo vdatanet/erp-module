@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
@@ -8,7 +9,6 @@ using erp.Module.BusinessObjects.Base.Sales;
 using erp.Module.BusinessObjects.Contacts;
 using erp.Module.Factories;
 using erp.Module.Helpers.Contacts;
-using System.ComponentModel;
 using VeriFactu.Xml.Factu;
 using VeriFactu.Xml.Factu.Alta;
 
@@ -188,9 +188,7 @@ public class Invoice(Session session) : SalesDocument(session)
         RelatedPartyIdType = IDType.NIF_IVA;
         var companyInfo = CompanyInfoHelper.GetCompanyInfo(Session);
         InvoicePrefix ??= companyInfo?.DefaultInvoicePrefix;
-        if (companyInfo?.DefaultInvoicePrefix != null) InvoicePrefix = companyInfo.DefaultInvoicePrefix;
-        //if (companyInfo.DefaultSalesAccount != null) SalesAccount = companyInfo.DefaultSalesAccount;
-        //if (companyInfo.DefaultPurchaseAccount != null) PurchaseAccount = companyInfo.DefaultPurchaseAccount;
+        Text ??= companyInfo?.VeriFactuDefaultText;
     }
 
     public void GetInvoiceNumber()
