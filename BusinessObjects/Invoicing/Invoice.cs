@@ -187,7 +187,8 @@ public class Invoice(Session session) : SalesDocument(session)
         IsInvoiceFix = false;
         RelatedPartyIdType = IDType.NIF_IVA;
         var companyInfo = CompanyInfoHelper.GetCompanyInfo(Session);
-        if (companyInfo == null) return;
+        InvoicePrefix ??= companyInfo?.DefaultInvoicePrefix;
+        if (companyInfo?.DefaultInvoicePrefix != null) InvoicePrefix = companyInfo.DefaultInvoicePrefix;
         //if (companyInfo.DefaultSalesAccount != null) SalesAccount = companyInfo.DefaultSalesAccount;
         //if (companyInfo.DefaultPurchaseAccount != null) PurchaseAccount = companyInfo.DefaultPurchaseAccount;
     }
