@@ -76,7 +76,8 @@ public class VeriFactuController : ViewController
         if (View.CurrentObject is not Invoice invoice) return;
         if (invoice.VeriFactuStatus == Invoice.VeriFactuStatusValues.Send) return;
         
-        invoice.GetInvoiceNumber();
+        invoice.InvoiceDate = DateTime.Now.Date;
+        if (string.IsNullOrEmpty(invoice.InvoiceNumber)) invoice.GetInvoiceNumber();
         ObjectSpace.CommitChanges();
         SendInvoice(invoice);
     }

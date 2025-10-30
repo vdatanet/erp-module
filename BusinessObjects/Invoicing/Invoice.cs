@@ -56,8 +56,7 @@ public class Invoice(Session session) : SalesDocument(session)
         get => _invoiceNumber;
         set => SetPropertyValue(nameof(InvoiceNumber), ref _invoiceNumber, value);
     }
-
-    [RuleRequiredField]
+    
     [NonCloneable]
     [ModelDefault("AllowEdit", "False")]
     public DateTime InvoiceDate
