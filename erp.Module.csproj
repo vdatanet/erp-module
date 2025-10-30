@@ -51,7 +51,4 @@
     <PackageReference Include="MySqlConnector" Version="2.4.0" />
     <PackageReference Include="VeriFactu" Version="1.0.54" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Images\" />
-  </ItemGroup>
 </Project>

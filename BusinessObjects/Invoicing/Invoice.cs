@@ -18,10 +18,10 @@ namespace erp.Module.BusinessObjects.Invoicing;
 [NavigationItem("Invoicing")]
 [ImageName("BO_Invoice")]
 [DefaultProperty(nameof(InvoiceNumber))]
-[Appearance("InvoicePrefixDisabled", AppearanceItemType = "ViewItem", TargetItems = nameof(InvoicePrefix),
-    Criteria = "This is not null and !IsNewObject(This)", Context = "DetailView", Enabled = false)]
-[Appearance("InvoiceNumberDisabled", AppearanceItemType = "ViewItem", TargetItems = nameof(InvoiceNumber),
-    Criteria = "This is not null and !IsNewObject(This)", Context = "DetailView", Enabled = false)]
+//[Appearance("InvoicePrefixDisabled", AppearanceItemType = "ViewItem", TargetItems = nameof(InvoicePrefix),
+    //Criteria = "This is not null and !IsNewObject(This)", Context = "DetailView", Enabled = false)]
+//[Appearance("InvoiceNumberDisabled", AppearanceItemType = "ViewItem", TargetItems = nameof(InvoiceNumber),
+    //Criteria = "This is not null and !IsNewObject(This)", Context = "DetailView", Enabled = false)]
 public class Invoice(Session session) : SalesDocument(session)
 {
     private string _invoicePrefix;
@@ -50,6 +50,7 @@ public class Invoice(Session session) : SalesDocument(session)
     }
 
     [NonCloneable]
+    [ModelDefault("AllowEdit", "False")]
     public string InvoiceNumber
     {
         get => _invoiceNumber;
@@ -58,6 +59,7 @@ public class Invoice(Session session) : SalesDocument(session)
 
     [RuleRequiredField]
     [NonCloneable]
+    [ModelDefault("AllowEdit", "False")]
     public DateTime InvoiceDate
     {
         get => _invoiceDate;
@@ -179,7 +181,7 @@ public class Invoice(Session session) : SalesDocument(session)
 
     private void InitValues()
     {
-        InvoiceDate = DateTime.Now.Date;
+        //InvoiceDate = DateTime.Now.Date;
         VeriFactuStatus = VeriFactuStatusValues.Draft;
         InvoiceType = TipoFactura.F1;
         RectificationType = TipoRectificativa.I;
@@ -192,11 +194,18 @@ public class Invoice(Session session) : SalesDocument(session)
         //if (companyInfo.DefaultPurchaseAccount != null) PurchaseAccount = companyInfo.DefaultPurchaseAccount;
     }
     
+    public void GetInvoiceNumber()
+    {
+        //if (!Session.IsNewObject(this) || !string.IsNullOrEmpty(InvoiceNumber) || Session is NestedUnitOfWork) return;
+        InvoiceNumber =
+            SequenceFactory.GetNextSequence(Session, $"{typeof(Invoice).FullName}.{InvoicePrefix}", InvoicePrefix, 5);
+    }
+    
     protected override void OnSaving()
     {
         base.OnSaving();
-        if (!Session.IsNewObject(this) || !string.IsNullOrEmpty(InvoiceNumber) || Session is NestedUnitOfWork) return;
-        InvoiceNumber =
-            SequenceFactory.GetNextSequence(Session, $"{typeof(Invoice).FullName}.{InvoicePrefix}", InvoicePrefix, 5);
+        //if (!Session.IsNewObject(this) || !string.IsNullOrEmpty(InvoiceNumber) || Session is NestedUnitOfWork) return;
+        //InvoiceNumber =
+            //SequenceFactory.GetNextSequence(Session, $"{typeof(Invoice).FullName}.{InvoicePrefix}", InvoicePrefix, 5);
     }
 }

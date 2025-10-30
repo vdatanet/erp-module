@@ -73,12 +73,12 @@ public class VeriFactuController : ViewController
 
     private void SendVeriFactuInvoice_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
-        ObjectSpace.CommitChanges();
-
         if (View.CurrentObject is not Invoice invoice) return;
-
-        if (invoice.VeriFactuStatus != Invoice.VeriFactuStatusValues.Send)
-            SendInvoice(invoice);
+        if (invoice.VeriFactuStatus == Invoice.VeriFactuStatusValues.Send) return;
+        
+        invoice.GetInvoiceNumber();
+        ObjectSpace.CommitChanges();
+        SendInvoice(invoice);
     }
 
     private void SendInvoice(Invoice invoice)
