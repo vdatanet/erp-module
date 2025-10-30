@@ -20,11 +20,10 @@ namespace erp.Module.BusinessObjects.Invoicing;
 [DefaultProperty(nameof(InvoiceNumber))]
 [Appearance("BlockEditingWhenSent", AppearanceItemType = "ViewItem", TargetItems = "*",
     Criteria = "VeriFactuStatus = 'Send'", Context = "Any", Enabled = false)]
-[Appearance("BlockDeletionWhenSent", AppearanceItemType = "Action", TargetItems = "Delete", 
+[Appearance("BlockDeletionWhenSent", AppearanceItemType = "Action", TargetItems = "Delete",
     Criteria = "VeriFactuStatus = 'Send'", Context = "Any", Enabled = false)]
-[Appearance("BlockSendActionWhenSent", AppearanceItemType = "Action", TargetItems = "ValidateInvoice", 
+[Appearance("BlockSendActionWhenSent", AppearanceItemType = "Action", TargetItems = "ValidateInvoice",
     Criteria = "VeriFactuStatus = 'Send'", Context = "Any", Enabled = false)]
-    
 public class Invoice(Session session) : SalesDocument(session)
 {
     private string _invoicePrefix;
@@ -45,7 +44,6 @@ public class Invoice(Session session) : SalesDocument(session)
     private MediaDataObject _qr;
 
     [RuleRequiredField]
-    [NonCloneable]
     public string InvoicePrefix
     {
         get => _invoicePrefix;
@@ -59,7 +57,7 @@ public class Invoice(Session session) : SalesDocument(session)
         get => _invoiceNumber;
         set => SetPropertyValue(nameof(InvoiceNumber), ref _invoiceNumber, value);
     }
-    
+
     [NonCloneable]
     [ModelDefault("AllowEdit", "False")]
     public DateTime InvoiceDate
@@ -67,7 +65,7 @@ public class Invoice(Session session) : SalesDocument(session)
         get => _invoiceDate;
         set => SetPropertyValue(nameof(InvoiceDate), ref _invoiceDate, value);
     }
-    
+
     [RuleRequiredField]
     [Association("Customer-Invoices")]
     public Customer Customer
@@ -127,7 +125,7 @@ public class Invoice(Session session) : SalesDocument(session)
         get => _relatedPartyIdType;
         set => SetPropertyValue(nameof(RelatedPartyIdType), ref _relatedPartyIdType, value);
     }
-    
+
     [Size(500)]
     public string Text
     {
@@ -136,7 +134,7 @@ public class Invoice(Session session) : SalesDocument(session)
     }
 
     [Size(SizeAttribute.Unlimited)]
-    [ModelDefault("AllowEdit","False")]
+    [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
     public string TaxAgencyResponse
     {
@@ -183,7 +181,6 @@ public class Invoice(Session session) : SalesDocument(session)
 
     private void InitValues()
     {
-        //InvoiceDate = DateTime.Now.Date;
         VeriFactuStatus = VeriFactuStatusValues.Draft;
         InvoiceType = TipoFactura.F1;
         RectificationType = TipoRectificativa.I;
@@ -195,19 +192,10 @@ public class Invoice(Session session) : SalesDocument(session)
         //if (companyInfo.DefaultSalesAccount != null) SalesAccount = companyInfo.DefaultSalesAccount;
         //if (companyInfo.DefaultPurchaseAccount != null) PurchaseAccount = companyInfo.DefaultPurchaseAccount;
     }
-    
+
     public void GetInvoiceNumber()
     {
-        //if (!Session.IsNewObject(this) || !string.IsNullOrEmpty(InvoiceNumber) || Session is NestedUnitOfWork) return;
         InvoiceNumber =
             SequenceFactory.GetNextSequence(Session, $"{typeof(Invoice).FullName}.{InvoicePrefix}", InvoicePrefix, 5);
-    }
-    
-    protected override void OnSaving()
-    {
-        base.OnSaving();
-        //if (!Session.IsNewObject(this) || !string.IsNullOrEmpty(InvoiceNumber) || Session is NestedUnitOfWork) return;
-        //InvoiceNumber =
-            //SequenceFactory.GetNextSequence(Session, $"{typeof(Invoice).FullName}.{InvoicePrefix}", InvoicePrefix, 5);
     }
 }
