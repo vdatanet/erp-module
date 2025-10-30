@@ -185,7 +185,6 @@ public class Invoice(Session session) : SalesDocument(session)
         InvoiceType = TipoFactura.F1;
         RectificationType = TipoRectificativa.I;
         IsInvoiceFix = false;
-        Text = "Descripción operación";
         RelatedPartyIdType = IDType.NIF_IVA;
         var companyInfo = CompanyInfoHelper.GetCompanyInfo(Session);
         if (companyInfo == null) return;
