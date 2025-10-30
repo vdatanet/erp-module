@@ -18,10 +18,13 @@ namespace erp.Module.BusinessObjects.Invoicing;
 [NavigationItem("Invoicing")]
 [ImageName("BO_Invoice")]
 [DefaultProperty(nameof(InvoiceNumber))]
-//[Appearance("InvoicePrefixDisabled", AppearanceItemType = "ViewItem", TargetItems = nameof(InvoicePrefix),
-    //Criteria = "This is not null and !IsNewObject(This)", Context = "DetailView", Enabled = false)]
-//[Appearance("InvoiceNumberDisabled", AppearanceItemType = "ViewItem", TargetItems = nameof(InvoiceNumber),
-    //Criteria = "This is not null and !IsNewObject(This)", Context = "DetailView", Enabled = false)]
+[Appearance("BlockEditingWhenSent", AppearanceItemType = "ViewItem", TargetItems = "*",
+    Criteria = "VeriFactuStatus = 'Send'", Context = "Any", Enabled = false)]
+[Appearance("BlockDeletionWhenSent", AppearanceItemType = "Action", TargetItems = "Delete", 
+    Criteria = "VeriFactuStatus = 'Send'", Context = "Any", Enabled = false)]
+[Appearance("BlockSendActionWhenSent", AppearanceItemType = "Action", TargetItems = "ValidateInvoice", 
+    Criteria = "VeriFactuStatus = 'Send'", Context = "Any", Enabled = false)]
+    
 public class Invoice(Session session) : SalesDocument(session)
 {
     private string _invoicePrefix;

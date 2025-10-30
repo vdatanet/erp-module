@@ -16,17 +16,17 @@ public class VeriFactuController : ViewController
         TargetObjectType = typeof(Invoice);
         TargetViewType = ViewType.Any;
 
-        var sendVeriFactuInvoice = new SimpleAction(this, "SendVeriFactuInvoice", PredefinedCategory.View)
+        var validateInvoice = new SimpleAction(this, "ValidateInvoice", PredefinedCategory.View)
         {
             //Specify the Action's button caption.
-            Caption = "Send VeriFactu",
+            Caption = "Validate",
             //Specify the confirmation message that pops up when a user executes an Action.
-            ConfirmationMessage = "Are you sure you want to send the Invoice to the Tax Agency?",
+            //ConfirmationMessage = "Are you sure you want to send the Invoice to the Tax Agency?",
             //Specify the icon of the Action's button in the interface.
-            ImageName = "Actions_Send",
+            ImageName = "Action_Validation_Validate",
             TargetViewType = ViewType.DetailView
         };
-        sendVeriFactuInvoice.Execute += SendVeriFactuInvoice_Execute;
+        validateInvoice.Execute += ValidateInvoice_Execute;
 
         //var cancelVeriFactuInvoice = new SimpleAction(this, "CancelVeriFactuInvoice", PredefinedCategory.View)
         //{
@@ -71,7 +71,7 @@ public class VeriFactuController : ViewController
         ObjectSpace.CommitChanges();
     }
 
-    private void SendVeriFactuInvoice_Execute(object sender, SimpleActionExecuteEventArgs e)
+    private void ValidateInvoice_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
         if (View.CurrentObject is not Invoice invoice) return;
         if (invoice.VeriFactuStatus == Invoice.VeriFactuStatusValues.Send) return;
