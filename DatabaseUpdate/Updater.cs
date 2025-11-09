@@ -1,13 +1,9 @@
 ﻿using DevExpress.ExpressApp;
-using DevExpress.Data.Filtering;
-using DevExpress.Persistent.Base;
-using DevExpress.ExpressApp.Updating;
+using DevExpress.ExpressApp.MultiTenancy;
 using DevExpress.ExpressApp.Security;
 using DevExpress.ExpressApp.SystemModule;
-using DevExpress.ExpressApp.MultiTenancy;
-using DevExpress.ExpressApp.Security.Strategy;
-using DevExpress.Xpo;
-using DevExpress.ExpressApp.Xpo;
+using DevExpress.ExpressApp.Updating;
+using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.BaseImpl.MultiTenancy;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
