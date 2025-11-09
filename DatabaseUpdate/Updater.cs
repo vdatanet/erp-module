@@ -44,7 +44,7 @@ public class Updater : ModuleUpdater {
         // The code below creates users and roles for testing purposes only.
         // In production code, you can create users and assign roles to them automatically, as described in the following help topic:
         // https://docs.devexpress.com/eXpressAppFramework/119064/data-security-and-safety/security-system/authentication
-#if !RELEASE
+//#if !RELEASE
         // If a role doesn't exist in the database, create this role
         var adminRole = CreateAdminRole();
 
@@ -76,7 +76,7 @@ public class Updater : ModuleUpdater {
         }
 
         ObjectSpace.CommitChanges(); //This line persists created object(s).
-#endif
+//#endif
     }
     public override void UpdateDatabaseBeforeUpdateSchema() {
         base.UpdateDatabaseBeforeUpdateSchema();
