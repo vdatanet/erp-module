@@ -110,6 +110,7 @@
         <Member Name="RectificationType" Caption="Tipo rectificativa" />
         <Member Name="RelatedPartyIdType" Caption="Tipo documento identificativo" />
         <Member Name="TaxAgencyResponse" Caption="Respuesta agencia tributaria" />
+        <Member Name="TaxAgencyXml" Caption="Xml agencia tributaria" />
         <Member Name="Text" Caption="Detalle operación" />
         <Member Name="ValidationUrl" Caption="Url de validación" />
         <Member Name="VeriFactuStatus" Caption="Estado VeriFactu" />
@@ -233,6 +234,7 @@
           <TabbedGroup Id="Tabs">
             <LayoutGroup Id="VeriFactu" Caption="VeriFactu">
               <LayoutGroup Id="col1" Caption="col1(31)" />
+              <LayoutGroup Id="col2" Caption="Respuesta agencia tributaria" />
             </LayoutGroup>
           </TabbedGroup>
           <LayoutGroup Id="SizeableEditors" Caption="SizeableEditors" />
