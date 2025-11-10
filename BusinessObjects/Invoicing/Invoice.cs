@@ -35,7 +35,6 @@ public class Invoice(Session session) : SalesDocument(session)
     private string _invoiceEntryErrorCode;
     private TipoFactura _invoiceType;
     private TipoRectificativa _rectificationType;
-    private IDType _relatedPartyIdType;
     private bool _isInvoiceFix;
     private string _text;
     private string _taxAgencyResponse;
@@ -119,14 +118,7 @@ public class Invoice(Session session) : SalesDocument(session)
         get => _isInvoiceFix;
         set => SetPropertyValue(nameof(IsInvoiceFix), ref _isInvoiceFix, value);
     }
-
-    [NonCloneable]
-    public IDType RelatedPartyIdType
-    {
-        get => _relatedPartyIdType;
-        set => SetPropertyValue(nameof(RelatedPartyIdType), ref _relatedPartyIdType, value);
-    }
-
+    
     [Size(500)]
     public string Text
     {
@@ -195,7 +187,6 @@ public class Invoice(Session session) : SalesDocument(session)
         InvoiceType = TipoFactura.F1;
         RectificationType = TipoRectificativa.I;
         IsInvoiceFix = false;
-        RelatedPartyIdType = IDType.NIF_IVA;
         var companyInfo = CompanyInfoHelper.GetCompanyInfo(Session);
         InvoicePrefix ??= companyInfo?.DefaultInvoicePrefix;
         Text ??= companyInfo?.VeriFactuDefaultText;
@@ -209,7 +200,8 @@ public class Invoice(Session session) : SalesDocument(session)
     
     public bool IsValid()
     {
-        return Customer != null
+        return VeriFactuStatus != VeriFactuStatusValues.Send
+               && Customer != null
                && !string.IsNullOrEmpty(Customer.Name)
                && !string.IsNullOrEmpty(Customer.VatNumber)
                && !string.IsNullOrEmpty(Text)

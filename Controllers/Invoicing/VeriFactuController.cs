@@ -56,33 +56,32 @@ public class VeriFactuController : ViewController
 
     private void CancelInvoice(Invoice invoice)
     {
-        var companyInfo = ObjectSpace.FindObject<CompanyInfo>(null);
-
-        var veriFactuInvoice =
-            new VeriFactu.Business.Invoice(invoice.InvoiceNumber, invoice.InvoiceDate, companyInfo.VatNumber)
-            {
-                SellerName = companyInfo.Name
-            };
-        var invoiceCancellation = new InvoiceCancellation(veriFactuInvoice);
-        invoiceCancellation.Save();
-        invoice.TaxAgencyResponse = invoiceCancellation.Response;
-        invoice.VeriFactuStatus = Invoice.VeriFactuStatusValues.Draft;
-        invoice.InvoiceEntryStatus = invoiceCancellation.Status;
-        invoice.Csv = null;
-        invoice.ValidationUrl = null;
-        invoice.Qr = null;
-        ObjectSpace.CommitChanges();
+        // var companyInfo = ObjectSpace.FindObject<CompanyInfo>(null);
+        //
+        // var veriFactuInvoice =
+        //     new VeriFactu.Business.Invoice(invoice.InvoiceNumber, invoice.InvoiceDate, companyInfo.VatNumber)
+        //     {
+        //         SellerName = companyInfo.Name
+        //     };
+        // var invoiceCancellation = new InvoiceCancellation(veriFactuInvoice);
+        // invoiceCancellation.Save();
+        // invoice.TaxAgencyResponse = invoiceCancellation.Response;
+        // invoice.VeriFactuStatus = Invoice.VeriFactuStatusValues.Draft;
+        // invoice.InvoiceEntryStatus = invoiceCancellation.Status;
+        // invoice.Csv = null;
+        // invoice.ValidationUrl = null;
+        // invoice.Qr = null;
+        // ObjectSpace.CommitChanges();
     }
 
     private void ValidateInvoice_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
         if (View.CurrentObject is not Invoice invoice) return;
-        if (invoice.VeriFactuStatus == Invoice.VeriFactuStatusValues.Send) return;
-        if (invoice.Customer?.VatNumber is null) return;
-        if (invoice.Taxes.Count == 0) return;
+        if (!invoice.IsValid()) return;
 
-        invoice.InvoiceDate = DateTime.Now.Date;
+        if (invoice.InvoiceDate == DateTime.MinValue) invoice.InvoiceDate = DateTime.Now.Date;
         if (string.IsNullOrEmpty(invoice.InvoiceNumber)) invoice.GetInvoiceNumber();
+        
         ObjectSpace.CommitChanges();
         SendInvoice(invoice);
     }
@@ -90,6 +89,8 @@ public class VeriFactuController : ViewController
     private void SendInvoice(Invoice invoice)
     {
         var companyInfo = ObjectSpace.FindObject<CompanyInfo>(null);
+
+        return;
 
         var veriFactuInvoice =
             new VeriFactu.Business.Invoice(invoice.InvoiceNumber, invoice.InvoiceDate, companyInfo.VatNumber)

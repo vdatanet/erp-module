@@ -3,6 +3,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Invoicing;
 using erp.Module.BusinessObjects.Sales;
+using VeriFactu.Xml.Factu;
 
 namespace erp.Module.BusinessObjects.Contacts;
 
@@ -11,6 +12,15 @@ namespace erp.Module.BusinessObjects.Contacts;
 [ImageName("BO_Customer")]
 public class Customer(Session session) : Partner(session)
 {
+    private IDType _relatedPartyIdType;
+    
+    [NonCloneable]
+    public IDType RelatedPartyIdType
+    {
+        get => _relatedPartyIdType;
+        set => SetPropertyValue(nameof(RelatedPartyIdType), ref _relatedPartyIdType, value);
+    }
+    
     [Association("Customer-Opportunities")]
     public XPCollection<Opportunity> Opportunities => GetCollection<Opportunity>();
     
@@ -19,4 +29,15 @@ public class Customer(Session session) : Partner(session)
 
     [Association("Customer-Invoices")]
     public XPCollection<Invoice> Invoices => GetCollection<Invoice>(nameof(Invoices));
+    
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        InitValues();
+    }
+
+    private void InitValues()
+    {
+        RelatedPartyIdType = IDType.NIF_IVA;
+    }
 }
