@@ -206,4 +206,13 @@ public class Invoice(Session session) : SalesDocument(session)
         InvoiceNumber =
             SequenceFactory.GetNextSequence(Session, $"{typeof(Invoice).FullName}.{InvoicePrefix}", InvoicePrefix, 5);
     }
+    
+    public bool IsValid()
+    {
+        return Customer != null
+               && !string.IsNullOrEmpty(Customer.Name)
+               && !string.IsNullOrEmpty(Customer.VatNumber)
+               && !string.IsNullOrEmpty(Text)
+               && Taxes.Count > 0;
+    }
 }
