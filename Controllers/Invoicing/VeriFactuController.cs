@@ -1,3 +1,5 @@
+using System.Text;
+using System.Xml.Linq;
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
 using DevExpress.Persistent.Base;
@@ -136,7 +138,44 @@ public class VeriFactuController : ViewController
         var validationUrl = newRecord.GetUrlValidate();
         var qr = newRecord.GetValidateQr();
 
-        invoice.TaxAgencyResponse = invoiceEntry.Response;
+        try
+        {
+            if (!string.IsNullOrEmpty(invoiceEntry.Response))
+            {
+                var response = XDocument.Parse(invoiceEntry.Response);
+                invoice.TaxAgencyResponse = response.ToString();
+            }
+            else
+            {
+                invoice.TaxAgencyResponse = "No response data available";
+            }
+
+            if (invoiceEntry.Xml is { Length: > 0 })
+            {
+                var xmlString = Encoding.UTF8.GetString(invoiceEntry.Xml);
+                var xml = XDocument.Parse(xmlString);
+                invoice.TaxAgencyXml = xml.ToString();
+            }
+            else
+            {
+                invoice.TaxAgencyXml = "No XML data available";
+            }
+        }
+        catch (System.Xml.XmlException ex)
+        {
+            invoice.TaxAgencyResponse = $"Error parsing response XML: {ex.Message}";
+            invoice.TaxAgencyXml = "XML parsing failed";
+        }
+        catch (ArgumentException ex) when (ex.ParamName == "bytes")
+        {
+            invoice.TaxAgencyXml = $"Error decoding XML data: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            invoice.TaxAgencyResponse = $"Unexpected error processing response: {ex.Message}";
+            invoice.TaxAgencyXml = "Processing failed";
+        }
+
         invoice.VeriFactuStatus = Invoice.VeriFactuStatusValues.Send;
         invoice.Csv = invoiceEntry.CSV;
         invoice.ValidationUrl = validationUrl;
