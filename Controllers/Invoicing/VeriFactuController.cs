@@ -89,9 +89,11 @@ public class VeriFactuController : ViewController
     private void SendInvoice(Invoice invoice)
     {
         var companyInfo = ObjectSpace.FindObject<CompanyInfo>(null);
-
-        return;
-
+        
+        if (companyInfo == null) return;
+        if (string.IsNullOrEmpty(companyInfo.Name)) return;
+        if (string.IsNullOrEmpty(companyInfo.VatNumber)) return;
+        
         var veriFactuInvoice =
             new VeriFactu.Business.Invoice(invoice.InvoiceNumber, invoice.InvoiceDate, companyInfo.VatNumber)
             {
