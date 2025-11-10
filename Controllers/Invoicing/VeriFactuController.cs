@@ -44,12 +44,12 @@ public class VeriFactuController : ViewController
 
     private void CancelVeriFactuInvoice_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
-        ObjectSpace.CommitChanges();
+        //ObjectSpace.CommitChanges();
 
-        if (View.CurrentObject is not Invoice invoice) return;
+        //if (View.CurrentObject is not Invoice invoice) return;
 
-        if (invoice.VeriFactuStatus == Invoice.VeriFactuStatusValues.Send)
-            CancelInvoice(invoice);
+        //if (invoice.VeriFactuStatus == Invoice.VeriFactuStatusValues.Send)
+        //    CancelInvoice(invoice);
     }
 
     private void CancelInvoice(Invoice invoice)
