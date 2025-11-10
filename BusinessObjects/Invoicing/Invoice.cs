@@ -39,6 +39,7 @@ public class Invoice(Session session) : SalesDocument(session)
     private bool _isInvoiceFix;
     private string _text;
     private string _taxAgencyResponse;
+    private string _taxAgencyXml;
     private string _csv;
     private string _validationUrl;
     private MediaDataObject _qr;
@@ -140,6 +141,15 @@ public class Invoice(Session session) : SalesDocument(session)
     {
         get => _taxAgencyResponse;
         set => SetPropertyValue(nameof(TaxAgencyResponse), ref _taxAgencyResponse, value);
+    }
+
+    [Size(SizeAttribute.Unlimited)]
+    [ModelDefault("AllowEdit", "False")]
+    [NonCloneable]
+    public string TaxAgencyXml
+    {
+        get => _taxAgencyXml;
+        set => SetPropertyValue(nameof(TaxAgencyXml), ref _taxAgencyXml, value);
     }
 
     [ModelDefault("AllowEdit", "False")]
