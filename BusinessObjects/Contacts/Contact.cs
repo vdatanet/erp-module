@@ -47,6 +47,7 @@ public class Contact(Session session) : BaseEntity(session)
     }
 
     [Size(50)]
+    [RuleRequiredField]
     public string VatNumber
     {
         get => _vatNumber;
