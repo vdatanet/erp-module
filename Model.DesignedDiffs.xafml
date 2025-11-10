@@ -268,28 +268,29 @@
     <DetailView Id="Customer_DetailView" FreezeLayout="True">
       <Layout IsNewNode="True" Removed="True">
         <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
-          <LayoutGroup Id="SimpleEditors" Index="0" ShowCaption="False" RelativeSize="19.211409395973153" IsNewNode="True">
+          <LayoutGroup Id="SimpleEditors" Index="0" ShowCaption="False" RelativeSize="20.721476510067113" IsNewNode="True">
             <LayoutGroup Id="Contact" Index="0" Direction="Horizontal" ShowCaption="True" RelativeSize="100" IsNewNode="True">
-              <LayoutGroup Id="Contact_col1" Index="0" ShowCaption="False" RelativeSize="49.95178399228544" IsNewNode="True">
-                <LayoutItem Id="Name" ViewItem="Name" ShowCaption="" Index="0" RelativeSize="16.842105263157894" IsNewNode="True" />
-                <LayoutItem Id="TradeName" ViewItem="TradeName" ShowCaption="" Index="1" RelativeSize="12.631578947368421" IsNewNode="True" />
-                <LayoutItem Id="VatNumber" ViewItem="VatNumber" ShowCaption="" Index="2" RelativeSize="12.631578947368421" IsNewNode="True" />
-                <LayoutItem Id="Address" ViewItem="Address" ShowCaption="" Index="3" RelativeSize="12.631578947368421" IsNewNode="True" />
-                <LayoutItem Id="Country" ViewItem="Country" ShowCaption="" Index="4" RelativeSize="12.631578947368421" IsNewNode="True" />
-                <LayoutItem Id="State" ViewItem="State" ShowCaption="" Index="5" RelativeSize="12.631578947368421" IsNewNode="True" />
-                <LayoutItem Id="City" ViewItem="City" Index="6" RelativeSize="20" IsNewNode="True" />
+              <LayoutGroup Id="Contact_col1" Index="0" ShowCaption="False" RelativeSize="49.87468671679198" IsNewNode="True">
+                <LayoutItem Id="Name" ViewItem="Name" ShowCaption="" Index="0" RelativeSize="15.384615384615385" IsNewNode="True" />
+                <LayoutItem Id="TradeName" ViewItem="TradeName" ShowCaption="" Index="1" RelativeSize="11.538461538461538" IsNewNode="True" />
+                <LayoutItem Id="VatNumber" ViewItem="VatNumber" ShowCaption="" Index="2" RelativeSize="11.538461538461538" IsNewNode="True" />
+                <LayoutItem Id="RelatedPartyIdType" ViewItem="RelatedPartyIdType" Index="3" RelativeSize="11.538461538461538" IsNewNode="True" />
+                <LayoutItem Id="Address" ViewItem="Address" ShowCaption="" Index="4" RelativeSize="11.538461538461538" IsNewNode="True" />
+                <LayoutItem Id="Country" ViewItem="Country" ShowCaption="" Index="5" RelativeSize="11.538461538461538" IsNewNode="True" />
+                <LayoutItem Id="State" ViewItem="State" ShowCaption="" Index="6" RelativeSize="11.538461538461538" IsNewNode="True" />
+                <LayoutItem Id="City" ViewItem="City" Index="7" RelativeSize="15.384615384615385" IsNewNode="True" />
               </LayoutGroup>
-              <LayoutGroup Id="Contact_col2" Index="1" ShowCaption="False" RelativeSize="50.04821600771456" IsNewNode="True">
-                <LayoutItem Id="Phone" ViewItem="Phone" ShowCaption="" Index="0" RelativeSize="16.842105263157894" IsNewNode="True" />
-                <LayoutItem Id="CellPhone" ViewItem="CellPhone" ShowCaption="" Index="1" RelativeSize="12.631578947368421" IsNewNode="True" />
-                <LayoutItem Id="Email" ViewItem="Email" ShowCaption="" Index="2" RelativeSize="12.631578947368421" IsNewNode="True" />
-                <LayoutItem Id="Website" ViewItem="Website" ShowCaption="" Index="3" RelativeSize="12.631578947368421" IsNewNode="True" />
-                <LayoutItem Id="Notes" ViewItem="Notes" Index="4" RelativeSize="28.42105263157895" IsNewNode="True" />
-                <LayoutItem Id="Picture" ViewItem="Picture" ShowCaption="" Index="5" RelativeSize="16.842105263157894" IsNewNode="True" />
+              <LayoutGroup Id="Contact_col2" Index="1" ShowCaption="False" RelativeSize="50.12531328320802" IsNewNode="True">
+                <LayoutItem Id="Phone" ViewItem="Phone" ShowCaption="" Index="0" RelativeSize="15.384615384615385" IsNewNode="True" />
+                <LayoutItem Id="CellPhone" ViewItem="CellPhone" ShowCaption="" Index="1" RelativeSize="11.538461538461538" IsNewNode="True" />
+                <LayoutItem Id="Email" ViewItem="Email" ShowCaption="" Index="2" RelativeSize="11.538461538461538" IsNewNode="True" />
+                <LayoutItem Id="Website" ViewItem="Website" ShowCaption="" Index="3" RelativeSize="11.538461538461538" IsNewNode="True" />
+                <LayoutItem Id="Notes" ViewItem="Notes" Index="4" RelativeSize="34.61538461538461" IsNewNode="True" />
+                <LayoutItem Id="Picture" ViewItem="Picture" ShowCaption="" Index="5" RelativeSize="15.384615384615385" IsNewNode="True" />
               </LayoutGroup>
             </LayoutGroup>
           </LayoutGroup>
-          <TabbedGroup Id="Tabs" Index="1" RelativeSize="80.78859060402685" IsNewNode="True">
+          <TabbedGroup Id="Tabs" Index="1" RelativeSize="79.27852348993288" IsNewNode="True">
             <LayoutGroup Id="Opportunities" Index="0" ShowCaption="True" RelativeSize="100" IsNewNode="True">
               <LayoutItem Id="Opportunities" ViewItem="Opportunities" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
             </LayoutGroup>
@@ -344,15 +345,13 @@
                 <LayoutItem Id="Customer" RelativeSize="12.631578947368421" />
                 <LayoutItem Id="VeriFactuStatus" RelativeSize="12.631578947368421" />
                 <LayoutItem Id="InvoiceEntryErrorCode" RelativeSize="20" Index="5" Removed="True" />
-                <LayoutItem Id="InvoiceType" ViewItem="InvoiceType" Index="5" RelativeSize="12.631578947368421" IsNewNode="True" />
-                <LayoutItem Id="RelatedPartyIdType" ViewItem="RelatedPartyIdType" Index="6" RelativeSize="20" IsNewNode="True" />
+                <LayoutItem Id="InvoiceType" ViewItem="InvoiceType" Index="5" RelativeSize="32.63157894736842" IsNewNode="True" />
                 <LayoutItem Id="InvoiceEntryStatus" RelativeSize="13.043478260869565" Removed="True" />
               </LayoutGroup>
               <LayoutGroup Id="Invoice_col2" RelativeSize="50.25062656641604">
                 <LayoutItem Id="IsInvoiceFix" ViewItem="IsInvoiceFix" Index="0" RelativeSize="16.842105263157894" IsNewNode="True" Removed="True" />
                 <LayoutItem Id="RectificationType" ViewItem="RectificationType" Index="1" RelativeSize="12.631578947368421" IsNewNode="True" Removed="True" />
                 <LayoutItem Id="Csv" RelativeSize="11.538461538461538" Index="2" Removed="True" />
-                <LayoutItem Id="RelatedPartyIdType" RelativeSize="15" Index="2" Removed="True" />
                 <LayoutItem Id="TaxableAmount" ViewItem="TaxableAmount" Index="2" RelativeSize="12.631578947368421" IsNewNode="True" />
                 <LayoutItem Id="ValidationUrl" RelativeSize="73.07692307692308" Index="2" Removed="True" />
                 <LayoutItem Id="TaxAmount" ViewItem="TaxAmount" Index="3" RelativeSize="12.631578947368421" IsNewNode="True" />
@@ -385,7 +384,7 @@
               <LayoutItem Id="Attachments" RelativeSize="100" />
             </LayoutGroup>
             <LayoutGroup Id="VeriFactu" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="5" RelativeSize="100" IsNewNode="True">
-              <LayoutGroup Id="col1" ShowCaption="False" Index="0" RelativeSize="49.87468671679198" IsNewNode="True">
+              <LayoutGroup Id="col1" ShowCaption="False" Index="0" RelativeSize="49.74937343358396" IsNewNode="True">
                 <LayoutItem Id="InvoiceEntryErrorCode" ViewItem="InvoiceEntryErrorCode" Index="0" RelativeSize="3.474484256243214" IsNewNode="True" />
                 <LayoutItem Id="InvoiceEntryStatus" ViewItem="InvoiceEntryStatus" Index="1" RelativeSize="2.6058631921824102" IsNewNode="True" />
                 <LayoutItem Id="Csv" ViewItem="Csv" Index="2" RelativeSize="2.6058631921824102" IsNewNode="True" />
@@ -393,7 +392,7 @@
                 <LayoutItem Id="Qr" ViewItem="Qr" Index="4" RelativeSize="2.6058631921824102" IsNewNode="True" />
                 <LayoutItem Id="TaxAgencyResponse" ViewItem="TaxAgencyResponse" CaptionLocation="Top" Index="5" RelativeSize="86.10206297502714" IsNewNode="True" />
               </LayoutGroup>
-              <LayoutGroup Id="col2" RelativeSize="50.12531328320802" ShowCaption="False" Index="1" IsNewNode="True">
+              <LayoutGroup Id="col2" RelativeSize="50.25062656641604" ShowCaption="False" Index="1" IsNewNode="True">
                 <LayoutItem Id="TaxAgencyXml" ViewItem="TaxAgencyXml" Index="0" RelativeSize="100" CaptionLocation="Top" IsNewNode="True" />
               </LayoutGroup>
             </LayoutGroup>

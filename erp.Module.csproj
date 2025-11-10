@@ -52,4 +52,9 @@
     <PackageReference Include="MySqlConnector" Version="2.4.0" />
     <PackageReference Include="VeriFactu" Version="1.0.62" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="UnusableNodes_es.xml">
+      <DependentUpon>Model.DesignedDiffs.xafml</DependentUpon>
+    </None>
+  </ItemGroup>
 </Project>

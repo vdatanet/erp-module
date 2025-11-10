@@ -90,6 +90,7 @@
       <OwnMembers>
         <Member Name="Invoices" Caption="Facturas" />
         <Member Name="Opportunities" Caption="Oportunidades" />
+        <Member Name="RelatedPartyIdType" Caption="Tipo documento identificativo" />
       </OwnMembers>
     </Class>
     <Class Name="erp.Module.BusinessObjects.Contacts.Employee" Caption="Empleado" />
@@ -108,7 +109,6 @@
         <Member Name="IsInvoiceFix" Caption="Rectificativa" />
         <Member Name="Qr" Caption="QR" />
         <Member Name="RectificationType" Caption="Tipo rectificativa" />
-        <Member Name="RelatedPartyIdType" Caption="Tipo documento identificativo" />
         <Member Name="TaxAgencyResponse" Caption="Respuesta agencia tributaria" />
         <Member Name="TaxAgencyXml" Caption="Xml agencia tributaria" />
         <Member Name="Text" Caption="Detalle operación" />
