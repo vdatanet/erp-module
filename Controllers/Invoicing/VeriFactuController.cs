@@ -3,6 +3,7 @@ using DevExpress.ExpressApp.Actions;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using erp.Module.BusinessObjects.Settings;
+using erp.Module.Helpers.Common;
 using VeriFactu.Business;
 using VeriFactu.Config;
 using Invoice = erp.Module.BusinessObjects.Invoicing.Invoice;
@@ -176,6 +177,8 @@ public class VeriFactuController : ViewController
 
         if (!string.IsNullOrEmpty(companyInfo.VeriFactuSystemAdministratorFiscalNumber))
             Settings.Current.SistemaInformatico.NIF = companyInfo.VeriFactuSystemAdministratorFiscalNumber;
+
+        Settings.Current.SistemaInformatico.NumeroInstalacion = MachineIdentifier.GetMachineId();
 
         Settings.Save();
     }
