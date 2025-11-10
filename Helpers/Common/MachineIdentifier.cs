@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Net.NetworkInformation;
+﻿using System.Net.NetworkInformation;
 
 namespace erp.Module.Helpers.Common;
 
@@ -12,7 +10,7 @@ public static class MachineIdentifier
         var mac = NetworkInterface
             .GetAllNetworkInterfaces()
             .Where(nic => nic.OperationalStatus == OperationalStatus.Up &&
-                         nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
+                          nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
             .Select(nic => nic.GetPhysicalAddress().ToString())
             .FirstOrDefault();
 
