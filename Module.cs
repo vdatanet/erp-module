@@ -27,7 +27,7 @@ public sealed class erpModule : ModuleBase {
         AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.BaseObject));
         AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.FileData));
         AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.FileAttachmentBase));
-        AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.Analysis));
+        //AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.Analysis));
         AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.Event));
         AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.Resource));
         AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.HCategory));
