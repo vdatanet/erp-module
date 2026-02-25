@@ -37,7 +37,7 @@
     <PackageReference Include="DevExpress.Persistent.BaseImpl.Xpo" Version="25.2.*" />
     <PackageReference Include="Azure.Identity" Version="1.17.1" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.16.0" />
     <PackageReference Include="MySqlConnector" Version="2.5.0" />
     <PackageReference Include="VeriFactu" Version="1.0.64" />
   </ItemGroup>
