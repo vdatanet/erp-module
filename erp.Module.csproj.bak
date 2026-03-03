@@ -26,7 +26,7 @@
     <PackageReference Include="DevExpress.ExpressApp.CloneObject" Version="25.2.*" />
     <PackageReference Include="DevExpress.ExpressApp.CodeAnalysis" Version="25.2.*" />
     <PackageReference Include="DevExpress.ExpressApp.ConditionalAppearance" Version="25.2.*" />
-    <PackageReference Include="DevExpress.ExpressApp.Core.All.es" Version="25.2.5" />
+    <PackageReference Include="DevExpress.ExpressApp.Core.All.es" Version="25.2.4" />
     <PackageReference Include="DevExpress.ExpressApp.Dashboards" Version="25.2.*" />
     <PackageReference Include="DevExpress.ExpressApp.MultiTenancy.Xpo" Version="25.2.*" />
     <PackageReference Include="DevExpress.ExpressApp.Notifications" Version="25.2.*" />
@@ -42,7 +42,7 @@
     <PackageReference Include="DevExpress.ExpressApp.Xpo" Version="25.2.*" />
     <PackageReference Include="DevExpress.Persistent.Base" Version="25.2.*" />
     <PackageReference Include="DevExpress.Persistent.BaseImpl.Xpo" Version="25.2.*" />
-    <PackageReference Include="Azure.Identity" Version="1.18.0" />
+    <PackageReference Include="Azure.Identity" Version="1.17.1" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.16.0" />
     <PackageReference Include="MySqlConnector" Version="2.5.0" />
