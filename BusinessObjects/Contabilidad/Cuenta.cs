@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Text;
+using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
@@ -25,6 +26,7 @@ public class Cuenta(Session session): EntidadBase(session)
     
     [RuleRequiredField]
     [RuleUniqueValue]
+    [XafDisplayName("Código")]
     public string Codigo
     {
         get => _codigo;
@@ -33,7 +35,7 @@ public class Cuenta(Session session): EntidadBase(session)
     
     [Size(255)]
     [RuleRequiredField]
-
+    [XafDisplayName("Nombre")]
     public string Nombre
     {
         get => _nombre;
@@ -41,6 +43,7 @@ public class Cuenta(Session session): EntidadBase(session)
     }
     
     [Size(SizeAttribute.Unlimited)]
+    [XafDisplayName("Notas")]
     public string Notas
     {
         get => _notas;
@@ -48,12 +51,14 @@ public class Cuenta(Session session): EntidadBase(session)
     }
         
     [Association("CuentaPadre-CuentasHijas")]
+    [XafDisplayName("Cuenta Padre")]
     public Cuenta CuentaPadre
     {
         get => _cuentaPadre;
         set => SetPropertyValue(nameof(CuentaPadre), ref _cuentaPadre, value);
     }
     
+    [XafDisplayName("Ruta Completa")]
     public string RutaCompleta {
         get {
             var sb = new StringBuilder();
@@ -68,24 +73,28 @@ public class Cuenta(Session session): EntidadBase(session)
         }
     }
     
+    [XafDisplayName("Activa")]
     public bool EstaActiva
     {
         get => _estaActiva;
         set => SetPropertyValue(nameof(EstaActiva), ref _estaActiva, value);
     }
     
+    [XafDisplayName("Asentable")]
     public bool EsAsentable
     {
         get => _esAsentable;
         set => SetPropertyValue(nameof(EsAsentable), ref _esAsentable, value);
     }
     
+    [XafDisplayName("Tipo")]
     public TipoCuenta Tipo
     {
         get => _tipo;
         set => SetPropertyValue(nameof(Tipo), ref _tipo, value);
     }
     
+    [XafDisplayName("Naturaleza")]
     public NaturalezaCuenta Naturaleza
     {
         get => _naturaleza;
@@ -93,6 +102,7 @@ public class Cuenta(Session session): EntidadBase(session)
     }
     
     [Association("CuentaPadre-CuentasHijas")]
+    [XafDisplayName("Cuentas Hijas")]
     public XPCollection<Cuenta> CuentasHijas => GetCollection<Cuenta>(nameof(CuentasHijas));
     
     public override void AfterConstruction()

@@ -1,3 +1,4 @@
+using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
@@ -32,6 +33,7 @@ public class Tarea(Session session) : EntidadBase(session)
     private string _notas;
 
     [Size(255)]
+    [XafDisplayName("Nombre")]
     public string Nombre
     {
         get => _nombre;
@@ -39,42 +41,49 @@ public class Tarea(Session session) : EntidadBase(session)
     }
 
     [Size(1000)]
+    [XafDisplayName("Descripción")]
     public string Descripcion
     {
         get => _descripcion;
         set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
     }
 
+    [XafDisplayName("Fecha Vencimiento")]
     public DateTime FechaVencimiento
     {
         get => _fechaVencimiento;
         set => SetPropertyValue(nameof(FechaVencimiento), ref _fechaVencimiento, value);
     }
 
+    [XafDisplayName("Fecha Inicio")]
     public DateTime FechaInicio
     {
         get => _fechaInicio;
         set => SetPropertyValue(nameof(FechaInicio), ref _fechaInicio, value);
     }
 
+    [XafDisplayName("Fecha Fin")]
     public DateTime FechaFin
     {
         get => _fechaFin;
         set => SetPropertyValue(nameof(FechaFin), ref _fechaFin, value);
     }
 
+    [XafDisplayName("Propietario")]
     public UsuarioAplicacion Propietario
     {
         get => _propietario;
         set => SetPropertyValue(nameof(Propietario), ref _propietario, value);
     }
 
+    [XafDisplayName("Asignada A")]
     public UsuarioAplicacion AsignadaA
     {
         get => _asignadaA;
         set => SetPropertyValue(nameof(AsignadaA), ref _asignadaA, value);
     }
 
+    [XafDisplayName("Completada Por")]
     public UsuarioAplicacion CompletadaPor
     {
         get => _completadaPor;
@@ -82,6 +91,7 @@ public class Tarea(Session session) : EntidadBase(session)
     }
     
     [Association("Tarea-Subtareas")]
+    [XafDisplayName("Tarea Padre")]
     public Tarea TareaPadre
     {
         get => _tareaPadre;
@@ -89,6 +99,7 @@ public class Tarea(Session session) : EntidadBase(session)
     }
 
     [Association("Contacto-Tareas")]
+    [XafDisplayName("Contacto")]
     public Contacto Contacto
     {
         get => _contacto;
@@ -96,6 +107,7 @@ public class Tarea(Session session) : EntidadBase(session)
     }
 
     [Association("Producto-Tareas")]
+    [XafDisplayName("Producto")]
     public Producto Producto
     {
         get => _producto;
@@ -103,6 +115,7 @@ public class Tarea(Session session) : EntidadBase(session)
     }
     
     [Association("DocumentoVenta-Tareas")]
+    [XafDisplayName("Documento Venta")]
     public DocumentoVenta DocumentoVenta
     {
         get => _documentoVenta;
@@ -110,21 +123,25 @@ public class Tarea(Session session) : EntidadBase(session)
     }
 
     [Size(1000)]
+    [XafDisplayName("Notas")]
     public string Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
-    [Aggregated]
+    [DevExpress.Xpo.Aggregated]
     [Association("Tarea-Subtareas")]
+    [XafDisplayName("Subtareas")]
     public XPCollection<Tarea> Subtareas => GetCollection<Tarea>(nameof(Subtareas));
 
-    [Aggregated]
+    [DevExpress.Xpo.Aggregated]
     [Association("Tarea-Fotos")]
+    [XafDisplayName("Imágenes")]
     public XPCollection<Imagen> Imagenes => GetCollection<Imagen>(nameof(Imagenes));
     
-    [Aggregated]
+    [DevExpress.Xpo.Aggregated]
     [Association("Tarea-Adjuntos")]
+    [XafDisplayName("Adjuntos")]
     public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>(nameof(Adjuntos));
 }

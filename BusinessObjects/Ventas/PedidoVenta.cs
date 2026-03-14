@@ -1,3 +1,4 @@
+using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Ventas;
@@ -13,6 +14,7 @@ public class PedidoVenta(Session session): DocumentoVenta(session)
     private Oportunidad _oportunidad;
 
     [Association("Oportunidad-PedidoVentas")]
+    [XafDisplayName("Oportunidad")]
     public Oportunidad Oportunidad
     {
         get => _oportunidad;

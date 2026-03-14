@@ -1,3 +1,4 @@
+using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
@@ -14,6 +15,7 @@ public class Provincia(Session session) : EntidadBase(session)
 
     [RuleRequiredField]
     [Association("Pais-Provincias")]
+    [XafDisplayName("País")]
     public Pais Pais
     {
         get => _pais;
@@ -22,12 +24,14 @@ public class Provincia(Session session) : EntidadBase(session)
 
     [RuleRequiredField]
     [RuleUniqueValue]
+    [XafDisplayName("Nombre")]
     public string Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
     
-    [Association("Provincia-Poblaciones")] 
+    [Association("Provincia-Poblaciones")]
+    [XafDisplayName("Poblaciones")]
     public XPCollection<Poblacion> Poblaciones => GetCollection<Poblacion>(nameof(Poblaciones));
 }

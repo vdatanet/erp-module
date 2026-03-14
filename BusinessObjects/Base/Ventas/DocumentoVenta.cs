@@ -1,3 +1,4 @@
+using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
@@ -15,6 +16,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     [ModelDefault("AllowEdit","False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
+    [XafDisplayName("Base Imponible")]
     public decimal BaseImponible
     {
         get => _baseImponible;
@@ -24,6 +26,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     [ModelDefault("AllowEdit", "False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
+    [XafDisplayName("Impuestos")]
     public decimal ImporteImpuestos
     {
         get => _importeImpuestos;
@@ -33,14 +36,16 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     [ModelDefault("AllowEdit", "False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
+    [XafDisplayName("Total")]
     public decimal ImporteTotal
     {
         get => _importeTotal;
         set => SetPropertyValue(nameof(ImporteTotal), ref _importeTotal, value);
     }
 
-    [Aggregated]
+    [DevExpress.Xpo.Aggregated]
     [Association("DocumentoVenta-Lineas")]
+    [XafDisplayName("Líneas")]
     public XPCollection<LineaDocumentoVenta> Lineas
     {
         get
@@ -54,8 +59,9 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         }
     }
     
-    [Aggregated]
+    [DevExpress.Xpo.Aggregated]
     [Association("DocumentoVenta-Impuestos")]
+    [XafDisplayName("Impuestos")]
     public XPCollection<ImpuestoDocumentoVenta> Impuestos => GetCollection<ImpuestoDocumentoVenta>();
     
     private void Lineas_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
@@ -66,16 +72,19 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         ReconstruirResumenImpuestos();
     }
 
-    [Aggregated]
+    [DevExpress.Xpo.Aggregated]
     [Association("DocumentoVenta-Tareas")]
+    [XafDisplayName("Tareas")]
     public XPCollection<Tarea> Tareas => GetCollection<Tarea>();
 
-    [Aggregated]
+    [DevExpress.Xpo.Aggregated]
     [Association("DocumentoVenta-Fotos")]
+    [XafDisplayName("Imágenes")]
     public XPCollection<Imagen> Imagenes => GetCollection<Imagen>();
 
-    [Aggregated]
+    [DevExpress.Xpo.Aggregated]
     [Association("DocumentoVenta-Adjuntos")]
+    [XafDisplayName("Adjuntos")]
     public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
 
     public void BorrarResumenImpuestos()

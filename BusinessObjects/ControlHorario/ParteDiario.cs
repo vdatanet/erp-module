@@ -32,6 +32,7 @@ public class ParteDiario(Session session) : EntidadBase(session)
     [Association("Empleado-ParteDiarios")]
     [ModelDefault("AllowEdit", "False")]
     [RuleRequiredField]
+    [XafDisplayName("Empleado")]
     public Empleado Empleado
     {
         get => _empleado;
@@ -39,12 +40,14 @@ public class ParteDiario(Session session) : EntidadBase(session)
     }
 
     [RuleRequiredField]
+    [XafDisplayName("Prefijo")]
     public string PrefijoParteDiario
     {
         get => _prefijoParteDiario;
         set => SetPropertyValue(nameof(PrefijoParteDiario), ref _prefijoParteDiario, value);
     }
 
+    [XafDisplayName("Número")]
     public string SecuenciaParteDiario
     {
         get => _secuenciaParteDiario;
@@ -53,6 +56,7 @@ public class ParteDiario(Session session) : EntidadBase(session)
 
     [RuleRequiredField]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "d")]
+    [XafDisplayName("Fecha")]
     public DateTime Fecha
     {
         get => _fecha.Date;
@@ -61,6 +65,7 @@ public class ParteDiario(Session session) : EntidadBase(session)
 
     //[ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
     [ModelDefault("AllowEdit", "False")]
+    [XafDisplayName("Total Trabajo")]
     public TimeSpan TotalTrabajo
     {
         get => _totalTrabajo;
@@ -68,6 +73,7 @@ public class ParteDiario(Session session) : EntidadBase(session)
     }
 
     [ModelDefault("AllowEdit", "False")]
+    [XafDisplayName("Entrada Tarde")]
     public bool EsEntradaTarde
     {
         get => _esEntradaTarde;
@@ -75,6 +81,7 @@ public class ParteDiario(Session session) : EntidadBase(session)
     }
 
     [ModelDefault("AllowEdit", "False")]
+    [XafDisplayName("Salida Temprana")]
     public bool EsSalidaTemprana
     {
         get => _esSalidaTemprana;
@@ -92,6 +99,7 @@ public class ParteDiario(Session session) : EntidadBase(session)
 
     [Association("ParteDiario-Entradas")]
     [DevExpress.Xpo.Aggregated]
+    [XafDisplayName("Registros")]
     public XPCollection<EntradaParte> Registros => GetCollection<EntradaParte>(nameof(Registros));
 
     public void Recalcular(ReglaJornada regla)

@@ -1,3 +1,4 @@
+using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Contactos;
@@ -17,6 +18,7 @@ public class Oportunidad(Session session) : Contacto(session)
     private Origen _fuente;
 
     [Size(1000)]
+    [XafDisplayName("Descripción")]
     public string Descripcion
     {
         get => _descripcion;
@@ -24,24 +26,28 @@ public class Oportunidad(Session session) : Contacto(session)
     }
 
     [Association("Cliente-Oportunidades")]
+    [XafDisplayName("Cliente")]
     public Cliente Cliente
     {
         get => _cliente;
         set => SetPropertyValue(nameof(Cliente), ref _cliente, value);
     }
     
+    [XafDisplayName("Campaña")]
     public Campana Campana
     {
         get => _campana;
         set => SetPropertyValue(nameof(Campana), ref _campana, value);
     }
     
+    [XafDisplayName("Medio")]
     public Medio Medio
     {
         get => _medio;
         set => SetPropertyValue(nameof(Medio), ref _medio, value);
     }
     
+    [XafDisplayName("Fuente")]
     public Origen Fuente
     {
         get => _fuente;
@@ -49,5 +55,6 @@ public class Oportunidad(Session session) : Contacto(session)
     }
     
     [Association("Oportunidad-PedidoVentas")]
+    [XafDisplayName("Pedidos de Venta")]
     public XPCollection<PedidoVenta> PedidoVentas => GetCollection<PedidoVenta>(nameof(PedidoVentas));
 }

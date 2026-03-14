@@ -1,3 +1,4 @@
+using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Editors;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
@@ -24,6 +25,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     private decimal _importeTotal;
 
     [Association("DocumentoVenta-Lineas")]
+    [XafDisplayName("Documento Venta")]
     public DocumentoVenta DocumentoVenta
     {
         get => _documentoVenta;
@@ -32,6 +34,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
 
     [ImmediatePostData]
     [LookupEditorMode(LookupEditorMode.Search)]
+    [XafDisplayName("Producto")]
     public Producto Producto
     {
         get => _producto;
@@ -46,6 +49,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [Size(SizeAttribute.Unlimited)]
+    [XafDisplayName("Nombre Producto")]
     public string NombreProducto
     {
         get => _nombreProducto;
@@ -53,6 +57,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [Size(SizeAttribute.Unlimited)]
+    [XafDisplayName("Notas")]
     public string Notas
     {
         get => _notas;
@@ -62,6 +67,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     [ImmediatePostData]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
+    [XafDisplayName("Cantidad")]
     public decimal Cantidad
     {
         get => _cantidad;
@@ -76,6 +82,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     [ImmediatePostData]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
+    [XafDisplayName("Precio Unitario")]
     public decimal PrecioUnitario
     {
         get => _precioUnitario;
@@ -90,6 +97,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     [ImmediatePostData]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
+    [XafDisplayName("% Descuento")]
     public decimal PorcentajeDescuento
     {
         get => _porcentajeDescuento;
@@ -104,6 +112,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     [Persistent(nameof(BaseImponible))]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
+    [XafDisplayName("Base Imponible")]
     public decimal BaseImponible
     {
         get => _baseImponible;
@@ -113,6 +122,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     [Persistent(nameof(ImporteImpuestos))]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
+    [XafDisplayName("Impuestos")]
     public decimal ImporteImpuestos
     {
         get => _importeImpuestos;
@@ -122,6 +132,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     [Persistent(nameof(ImporteTotal))]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
+    [XafDisplayName("Total")]
     public decimal ImporteTotal
     {
         get => _importeTotal;
@@ -131,6 +142,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
     [Association("LineaDocumentoVenta-TipoImpuestos")]
     [DataSourceCriteria("DisponibleEnVentas = True AND EstaActivo = True")]
+    [XafDisplayName("Impuestos")]
     public XPCollection<TipoImpuesto> TiposImpuestoVenta
     {
         get
@@ -150,9 +162,10 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
         ReconstruirImpuestos();
     }
 
-    [Aggregated]
+    [DevExpress.Xpo.Aggregated]
     [VisibleInDetailView(false)]
     [Association("LineaDocumentoVenta-Impuestos")]
+    [XafDisplayName("Detalle Impuestos")]
     public XPCollection<ImpuestoLineaDocumentoVenta> Impuestos => GetCollection<ImpuestoLineaDocumentoVenta>();
 
     private void AplicarInstantaneaProducto()

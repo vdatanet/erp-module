@@ -31,6 +31,7 @@ public class EntradaParte(Session session) : EntidadBase(session)
     [Association("Empleado-EntradasParte")]
     [RuleRequiredField]
     [ModelDefault("AllowEdit", "False")]
+    [XafDisplayName("Empleado")]
     public Empleado Empleado
     {
         get => _empleado;
@@ -41,7 +42,7 @@ public class EntradaParte(Session session) : EntidadBase(session)
     [ImmediatePostData]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
     [ModelDefault(nameof(IModelCommonMemberViewItem.EditMask), "g")]
-
+    [XafDisplayName("Fecha Inicio")]
     public DateTime FechaInicio
     {
         get => _fechaInicio;
@@ -54,6 +55,7 @@ public class EntradaParte(Session session) : EntidadBase(session)
     [ImmediatePostData]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
     [ModelDefault(nameof(IModelCommonMemberViewItem.EditMask), "g")]
+    [XafDisplayName("Fecha Fin")]
     public DateTime? FechaFin
     {
         get => _fechaFin;
@@ -65,6 +67,7 @@ public class EntradaParte(Session session) : EntidadBase(session)
 
     [Association("Proyecto-EntradasParte")]
     [ImmediatePostData]
+    [XafDisplayName("Proyecto")]
     public Proyecto Proyecto
     {
         get => _proyecto;
@@ -73,6 +76,7 @@ public class EntradaParte(Session session) : EntidadBase(session)
 
     [Association("ActividadProyecto-EntradasParte")]
     [DataSourceProperty("Proyecto.Actividades")]
+    [XafDisplayName("Actividad")]
     public ActividadProyecto Actividad
     {
         get => _actividad;
@@ -97,6 +101,7 @@ public class EntradaParte(Session session) : EntidadBase(session)
     }
 
     [Association("ParteDiario-Entradas")]
+    [XafDisplayName("Parte Diario")]
     public ParteDiario ParteDiario
     {
         get => _parteDiario;

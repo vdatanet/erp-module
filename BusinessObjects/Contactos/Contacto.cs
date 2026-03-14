@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.Validation;
@@ -22,15 +23,17 @@ public class Contacto(Session session) : EntidadBase(session)
     private Pais _pais;
     private Provincia _provincia;
     private Poblacion _poblacion;
+    private string _codigoPostal;
     private string _telefono;
     private string _movil;
     private string _correoElectronico;
     private string _sitioWeb;
     private MediaDataObject _foto;
     private string _notas;
-
+    
     [Size(255)]
     [RuleRequiredField]
+    [XafDisplayName("Nombre")]
     public string Nombre
     {
         get => _nombre;
@@ -38,6 +41,7 @@ public class Contacto(Session session) : EntidadBase(session)
     }
 
     [Size(255)]
+    [XafDisplayName("Nombre Comercial")]
     public string NombreComercial
     {
         get => _nombreComercial;
@@ -46,6 +50,7 @@ public class Contacto(Session session) : EntidadBase(session)
 
     [Size(50)]
     [RuleRequiredField]
+    [XafDisplayName("NIF")]
     public string Nif
     {
         get => _nif;
@@ -53,12 +58,14 @@ public class Contacto(Session session) : EntidadBase(session)
     }
 
     [Size(255)]
+    [XafDisplayName("Dirección")]
     public string Direccion
     {
         get => _direccion;
         set => SetPropertyValue(nameof(Direccion), ref _direccion, value);
     }
 
+    [XafDisplayName("País")]
     public Pais Pais
     {
         get => _pais;
@@ -66,6 +73,7 @@ public class Contacto(Session session) : EntidadBase(session)
     }
 
     [DataSourceProperty("Pais.Provincias")]
+    [XafDisplayName("Provincia")]
     public Provincia Provincia
     {
         get => _provincia;
@@ -73,36 +81,50 @@ public class Contacto(Session session) : EntidadBase(session)
     }
 
     [DataSourceProperty("Provincia.Poblaciones")]
+    [XafDisplayName("Población")]
     public Poblacion Poblacion
     {
         get => _poblacion;
         set => SetPropertyValue(nameof(Poblacion), ref _poblacion, value);
     }
+    
+    [Size(10)]
+    [XafDisplayName("Código Postal")]
+    public string CodigoPostal
+    {
+        get => _codigoPostal;
+        set => SetPropertyValue(nameof(CodigoPostal), ref _codigoPostal, value);
+    }
 
+    [XafDisplayName("Teléfono")]
     public string Telefono
     {
         get => _telefono;
         set => SetPropertyValue(nameof(Telefono), ref _telefono, value);
     }
 
+    [XafDisplayName("Móvil")]
     public string Movil
     {
         get => _movil;
         set => SetPropertyValue(nameof(Movil), ref _movil, value);
     }
 
+    [XafDisplayName("Correo Electrónico")]
     public string CorreoElectronico
     {
         get => _correoElectronico;
         set => SetPropertyValue(nameof(CorreoElectronico), ref _correoElectronico, value);
     }
 
+    [XafDisplayName("Sitio Web")]
     public string SitioWeb
     {
         get => _sitioWeb;
         set => SetPropertyValue(nameof(SitioWeb), ref _sitioWeb, value);
     }
     
+    [XafDisplayName("Foto")]
     public MediaDataObject Foto
     {
         get => _foto;
@@ -110,21 +132,25 @@ public class Contacto(Session session) : EntidadBase(session)
     }
     
     [Size(SizeAttribute.Unlimited)]
+    [XafDisplayName("Notas")]
     public string Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
     
-    [Aggregated]
+    [DevExpress.Xpo.Aggregated]
     [Association("Contacto-Tareas")]
+    [XafDisplayName("Tareas")]
     public XPCollection<Tarea> Tareas => GetCollection<Tarea>(nameof(Tareas));
     
-    [Aggregated]
+    [DevExpress.Xpo.Aggregated]
     [Association("Contacto-Fotos")]
+    [XafDisplayName("Imágenes")]
     public XPCollection<Imagen> Imagenes => GetCollection<Imagen>(nameof(Imagenes));
     
-    [Aggregated]
+    [DevExpress.Xpo.Aggregated]
     [Association("Contacto-Adjuntos")]
+    [XafDisplayName("Adjuntos")]
     public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>(nameof(Adjuntos));
 }

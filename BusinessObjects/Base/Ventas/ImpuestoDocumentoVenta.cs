@@ -1,3 +1,4 @@
+using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
@@ -31,12 +32,14 @@ public class ImpuestoDocumentoVenta(Session session): EntidadBase(session)
     private decimal _importeImpuestos;
     
     [Association("DocumentoVenta-Impuestos")]
+    [XafDisplayName("Documento Venta")]
     public DocumentoVenta DocumentoVenta
     {
         get => _documentoVenta;
         set => SetPropertyValue(nameof(DocumentoVenta), ref _documentoVenta, value);
     }
     
+    [XafDisplayName("Secuencia")]
     public int Secuencia
     {
         get => _secuencia;
@@ -44,6 +47,7 @@ public class ImpuestoDocumentoVenta(Session session): EntidadBase(session)
     }
 
     [ImmediatePostData]
+    [XafDisplayName("Tipo Impuesto")]
     public TipoImpuesto TipoImpuesto
     {
         get => _tipoImpuesto;
@@ -80,6 +84,7 @@ public class ImpuestoDocumentoVenta(Session session): EntidadBase(session)
         CausaExencion = TipoImpuesto.CausaExencion;
     }
 
+    [XafDisplayName("Cuenta")]
     public Cuenta Cuenta
     {
         get => _cuenta;
@@ -89,6 +94,7 @@ public class ImpuestoDocumentoVenta(Session session): EntidadBase(session)
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     [ImmediatePostData]
+    [XafDisplayName("Tipo %")]
     public decimal Tipo
     {
         get => _tipo;
@@ -101,6 +107,7 @@ public class ImpuestoDocumentoVenta(Session session): EntidadBase(session)
     }
 
     [ImmediatePostData]
+    [XafDisplayName("Es Retención")]
     public bool EsRetencion
     {
         get => _esRetencion;
@@ -117,23 +124,27 @@ public class ImpuestoDocumentoVenta(Session session): EntidadBase(session)
         ImporteImpuestos = AmountCalculator.GetTaxAmount(BaseImponible, Tipo, EsRetencion);
     }
 
+    [XafDisplayName("Impuesto VeriFactu")]
     public Impuesto? Impuesto
     {
         get => _impuesto;
         set => SetPropertyValue(nameof(Impuesto), ref _impuesto, value);
     }
+    [XafDisplayName("Régimen Fiscal")]
     public ClaveRegimen? RegimenFiscal
     {
         get => _regimenFiscal;
         set => SetPropertyValue(nameof(RegimenFiscal), ref _regimenFiscal, value);
     }
     
+    [XafDisplayName("Tipo Operación")]
     public CalificacionOperacion? TipoOperacion
     {
         get => _tipoOperacion;
         set => SetPropertyValue(nameof(TipoOperacion), ref _tipoOperacion, value);
     }
     
+    [XafDisplayName("Causa Exención")]
     public CausaExencion? CausaExencion
     {
         get => _causaExencion;
@@ -141,6 +152,7 @@ public class ImpuestoDocumentoVenta(Session session): EntidadBase(session)
     }
 
     [ImmediatePostData]
+    [XafDisplayName("Base Imponible")]
     public decimal BaseImponible
     {
         get => _baseImponible;
@@ -152,6 +164,7 @@ public class ImpuestoDocumentoVenta(Session session): EntidadBase(session)
         }
     }
     
+    [XafDisplayName("Impuesto")]
     public decimal ImporteImpuestos
     {
         get => _importeImpuestos;

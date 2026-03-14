@@ -27,6 +27,7 @@ public class ReglaJornada(Session session) : EntidadBase(session)
 
     [Size(255)]
     [RuleRequiredField]
+    [XafDisplayName("Nombre")]
     public string Nombre
     {
         get => _nombre;
@@ -35,6 +36,7 @@ public class ReglaJornada(Session session) : EntidadBase(session)
 
     //[ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
     [ImmediatePostData]
+    [XafDisplayName("Inicio Jornada")]
     public TimeSpan InicioJornada
     {
         get => _inicioJornada;
@@ -47,6 +49,7 @@ public class ReglaJornada(Session session) : EntidadBase(session)
 
     //[ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
     [ImmediatePostData]
+    [XafDisplayName("Fin Jornada")]
     public TimeSpan FinJornada
     {
         get => _finJornada;
@@ -59,6 +62,7 @@ public class ReglaJornada(Session session) : EntidadBase(session)
 
     //[ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
     [ModelDefault("AllowEdit", "False")]
+    [XafDisplayName("Objetivo Diario")]
     public TimeSpan ObjetivoDiario
     {
         get => _objetivoDiario;
@@ -66,6 +70,7 @@ public class ReglaJornada(Session session) : EntidadBase(session)
     }
 
     //[ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
+    [XafDisplayName("Tolerancia Entrada Temprana")]
     public TimeSpan ToleranciaEntradaTemprana
     {
         get => _toleranciaEntradaTemprana;
@@ -73,6 +78,7 @@ public class ReglaJornada(Session session) : EntidadBase(session)
     }
 
     //[ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
+    [XafDisplayName("Tolerancia Entrada Tarde")]
     public TimeSpan ToleranciaEntradaTarde
     {
         get => _toleranciaEntradaTarde;
@@ -80,6 +86,7 @@ public class ReglaJornada(Session session) : EntidadBase(session)
     }
 
     //[ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
+    [XafDisplayName("Tolerancia Salida Temprana")]
     public TimeSpan ToleranciaSalidaTemprana
     {
         get => _toleranciaSalidaTemprana;
@@ -87,6 +94,7 @@ public class ReglaJornada(Session session) : EntidadBase(session)
     }
 
     //[ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
+    [XafDisplayName("Tolerancia Salida Tarde")]
     public TimeSpan ToleranciaSalidaTarde
     {
         get => _toleranciaSalidaTarde;
@@ -94,6 +102,7 @@ public class ReglaJornada(Session session) : EntidadBase(session)
     }
     
     [Association("ReglaJornada-Empleados")]
+    [XafDisplayName("Empleados")]
     public XPCollection<Empleado> Empleados => GetCollection<Empleado>(nameof(Empleados));
     
     protected override void OnSaving()

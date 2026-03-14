@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
@@ -25,12 +26,14 @@ public class ImpuestoLineaDocumentoVenta(Session session) : EntidadBase(session)
     private decimal _importeImpuestos;
 
     [Association("LineaDocumentoVenta-Impuestos")]
+    [XafDisplayName("Línea Documento Venta")]
     public LineaDocumentoVenta LineaDocumentoVenta
     {
         get => _lineaDocumentoVenta;
         set => SetPropertyValue(nameof(LineaDocumentoVenta), ref _lineaDocumentoVenta, value);
     }
 
+    [XafDisplayName("Tipo Impuesto")]
     public TipoImpuesto TipoImpuesto
     {
         get => _tipoImpuesto;
@@ -66,6 +69,7 @@ public class ImpuestoLineaDocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [Size(255)]
+    [XafDisplayName("Nombre")]
     public string Nombre
     {
         get => _nombre;
@@ -73,18 +77,21 @@ public class ImpuestoLineaDocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [Size(1000)]
+    [XafDisplayName("Notas")]
     public string Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
+    [XafDisplayName("Secuencia")]
     public int Secuencia
     {
         get => _secuencia;
         set => SetPropertyValue(nameof(Secuencia), ref _secuencia, value);
     }
 
+    [XafDisplayName("Cuenta")]
     public Cuenta Cuenta
     {
         get => _cuenta;
@@ -93,6 +100,7 @@ public class ImpuestoLineaDocumentoVenta(Session session) : EntidadBase(session)
 
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
+    [XafDisplayName("Tipo %")]
     public decimal Tipo
     {
         get => _tipo;
@@ -105,6 +113,7 @@ public class ImpuestoLineaDocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(EsCompuesto), ref _esCompuesto, value);
     }
 
+    [XafDisplayName("Es Retención")]
     public bool EsRetencion
     {
         get => _esRetencion;
@@ -114,6 +123,7 @@ public class ImpuestoLineaDocumentoVenta(Session session) : EntidadBase(session)
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     [ModelDefault("AllowEdit", "False")]
+    [XafDisplayName("Base Imponible")]
     public decimal BaseImponible
     {
         get => _baseImponible;
@@ -123,6 +133,7 @@ public class ImpuestoLineaDocumentoVenta(Session session) : EntidadBase(session)
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     [ModelDefault("AllowEdit", "False")]
+    [XafDisplayName("Impuesto")]
     public decimal ImporteImpuestos
     {
         get => _importeImpuestos;

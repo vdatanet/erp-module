@@ -1,3 +1,4 @@
+using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.ExpressApp.Security;
 using DevExpress.ExpressApp.Xpo;
@@ -19,6 +20,7 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
 
     [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
+    [XafDisplayName("Creado por")]
     public UsuarioAplicacion CreadoPor
     {
         get => _creadoPor;
@@ -27,6 +29,7 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
 
     [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
+    [XafDisplayName("Modificado por")]
     public UsuarioAplicacion ModificadoPor
     {
         get => _modificadoPor;
@@ -36,6 +39,7 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
     [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
+    [XafDisplayName("Creado el")]
     public DateTime? CreadoEl
     {
         get => _creadoEl;
@@ -45,6 +49,7 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
     [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
+    [XafDisplayName("Modificado el")]
     public DateTime? ModificadoEl
     {
         get => _modificadoEl;

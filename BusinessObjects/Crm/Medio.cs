@@ -1,3 +1,4 @@
+using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
@@ -13,6 +14,7 @@ public class Medio(Session session) : EntidadBase(session)
     private string _descripcion;
 
     [Size(255)]
+    [XafDisplayName("Nombre")]
     public string Nombre
     {
         get => _nombre;
@@ -20,6 +22,7 @@ public class Medio(Session session) : EntidadBase(session)
     }
 
     [Size(1000)]
+    [XafDisplayName("Descripción")]
     public string Descripcion
     {
         get => _descripcion;

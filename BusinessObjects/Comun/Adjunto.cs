@@ -1,3 +1,4 @@
+using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
@@ -21,6 +22,7 @@ public class Adjunto(Session session) : EntidadBase(session)
     private string _description;
 
     [Association("Contacto-Adjuntos")]
+    [XafDisplayName("Contacto")]
     public Contacto Contacto
     {
         get => _contact;
@@ -28,6 +30,7 @@ public class Adjunto(Session session) : EntidadBase(session)
     }
 
     [Association("Producto-Adjuntos")]
+    [XafDisplayName("Producto")]
     public Producto Producto
     {
         get => _product;
@@ -35,6 +38,7 @@ public class Adjunto(Session session) : EntidadBase(session)
     }
     
     [Association("DocumentoVenta-Adjuntos")]
+    [XafDisplayName("Documento Venta")]
     public DocumentoVenta DocumentoVenta
     {
         get => _salesDocument;
@@ -42,12 +46,14 @@ public class Adjunto(Session session) : EntidadBase(session)
     }
 
     [Association("Tarea-Adjuntos")]
+    [XafDisplayName("Tarea")]
     public Tarea Tarea
     {
         get => _task;
         set => SetPropertyValue(nameof(Tarea), ref _task, value);
     }
 
+    [XafDisplayName("Archivo")]
     public FileData FileData
     {
         get => _fileData;
@@ -55,6 +61,7 @@ public class Adjunto(Session session) : EntidadBase(session)
     }
 
     [Size(1000)]
+    [XafDisplayName("Descripción")]
     public string Description
     {
         get => _description;

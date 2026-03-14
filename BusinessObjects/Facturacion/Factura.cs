@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
@@ -44,6 +45,7 @@ public class Factura(Session session) : DocumentoVenta(session)
     private MediaDataObject _qr;
 
     [RuleRequiredField]
+    [XafDisplayName("Prefijo Factura")]
     public string PrefijoFactura
     {
         get => _prefijoFactura;
@@ -52,6 +54,7 @@ public class Factura(Session session) : DocumentoVenta(session)
 
     [NonCloneable]
     [ModelDefault("AllowEdit", "False")]
+    [XafDisplayName("Número Factura")]
     public string NumeroFactura
     {
         get => _numeroFactura;
@@ -60,6 +63,7 @@ public class Factura(Session session) : DocumentoVenta(session)
 
     [NonCloneable]
     [ModelDefault("AllowEdit", "False")]
+    [XafDisplayName("Fecha Factura")]
     public DateTime FechaFactura
     {
         get => _fechaFactura;
@@ -68,6 +72,7 @@ public class Factura(Session session) : DocumentoVenta(session)
 
     [RuleRequiredField]
     [Association("Cliente-Facturas")]
+    [XafDisplayName("Cliente")]
     public Cliente Cliente
     {
         get => _cliente;
@@ -76,6 +81,7 @@ public class Factura(Session session) : DocumentoVenta(session)
 
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
+    [XafDisplayName("Estado VeriFactu")]
     public ValoresEstadoVeriFactu EstadoVeriFactu
     {
         get => _estadoVeriFactu;
@@ -84,6 +90,7 @@ public class Factura(Session session) : DocumentoVenta(session)
 
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
+    [XafDisplayName("Estado Entrada Factura")]
     public string EstadoEntradaFactura
     {
         get => _estadoEntradaFactura;
@@ -92,6 +99,7 @@ public class Factura(Session session) : DocumentoVenta(session)
 
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
+    [XafDisplayName("Código Error Entrada Factura")]
     public string CodigoErrorEntradaFactura
     {
         get => _codigoErrorEntradaFactura;
@@ -99,6 +107,7 @@ public class Factura(Session session) : DocumentoVenta(session)
     }
 
     [NonCloneable]
+    [XafDisplayName("Tipo Factura")]
     public TipoFactura TipoFactura
     {
         get => _tipoFactura;
@@ -106,6 +115,7 @@ public class Factura(Session session) : DocumentoVenta(session)
     }
 
     [NonCloneable]
+    [XafDisplayName("Tipo Rectificativa")]
     public TipoRectificativa TipoRectificativa
     {
         get => _tipoRectificativa;
@@ -113,6 +123,7 @@ public class Factura(Session session) : DocumentoVenta(session)
     }
 
     [NonCloneable]
+    [XafDisplayName("Es Subsanación")]
     public bool EsSubsanacion
     {
         get => _esSubsanacion;
@@ -120,6 +131,7 @@ public class Factura(Session session) : DocumentoVenta(session)
     }
     
     [Size(500)]
+    [XafDisplayName("Texto")]
     public string Texto
     {
         get => _texto;
@@ -129,6 +141,7 @@ public class Factura(Session session) : DocumentoVenta(session)
     [Size(SizeAttribute.Unlimited)]
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
+    [XafDisplayName("Respuesta Agencia Tributaria")]
     public string RespuestaAgenciaTributaria
     {
         get => _respuestaAgenciaTributaria;
@@ -138,6 +151,7 @@ public class Factura(Session session) : DocumentoVenta(session)
     [Size(SizeAttribute.Unlimited)]
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
+    [XafDisplayName("XML Agencia Tributaria")]
     public string XmlAgenciaTributaria
     {
         get => _xmlAgenciaTributaria;
@@ -146,6 +160,7 @@ public class Factura(Session session) : DocumentoVenta(session)
 
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
+    [XafDisplayName("CSV")]
     public string Csv
     {
         get => _csv;
@@ -155,6 +170,7 @@ public class Factura(Session session) : DocumentoVenta(session)
     [Size(255)]
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
+    [XafDisplayName("URL Validación")]
     public string UrlValidacion
     {
         get => _urlValidacion;
@@ -163,6 +179,7 @@ public class Factura(Session session) : DocumentoVenta(session)
 
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
+    [XafDisplayName("QR")]
     public MediaDataObject Qr
     {
         get => _qr;

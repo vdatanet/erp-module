@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
@@ -36,6 +37,7 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
 
     [RuleRequiredField]
     [RuleUniqueValue]
+    [XafDisplayName("Código")]
     public string Codigo
     {
         get => _codigo;
@@ -44,6 +46,7 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
 
     [Size(255)]
     [RuleRequiredField]
+    [XafDisplayName("Nombre")]
     public string Nombre
     {
         get => _nombre;
@@ -51,18 +54,21 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
     }
 
     [Size(SizeAttribute.Unlimited)]
+    [XafDisplayName("Notas")]
     public string Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
     
+    [XafDisplayName("Secuencia")]
     public int Secuencia
     {
         get => _secuencia;
         set => SetPropertyValue(nameof(Secuencia), ref _secuencia, value);
     }
 
+    [XafDisplayName("Cuenta")]
     public Cuenta Cuenta
     {
         get => _cuenta;
@@ -71,52 +77,61 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
 
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
+    [XafDisplayName("Tipo %")]
     public decimal Tipo
     {
         get => _tipo;
         set => SetPropertyValue(nameof(Tipo), ref _tipo, value);
     }
 
+    [XafDisplayName("Activo")]
     public bool EstaActivo
     {
         get => _estaActivo;
         set => SetPropertyValue(nameof(EstaActivo), ref _estaActivo, value);
     }
 
+    [XafDisplayName("Disponible en Ventas")]
     public bool DisponibleEnVentas
     {
         get => _disponibleEnVentas;
         set => SetPropertyValue(nameof(DisponibleEnVentas), ref _disponibleEnVentas, value);
     }
 
+    [XafDisplayName("Disponible en Compras")]
     public bool DisponibleEnCompras
     {
         get => _disponibleEnCompras;
         set => SetPropertyValue(nameof(DisponibleEnCompras), ref _disponibleEnCompras, value);
     }
 
+    [XafDisplayName("Es Retención")]
     public bool EsRetencion
     {
         get => _esRetencion;
         set => SetPropertyValue(nameof(EsRetencion), ref _esRetencion, value);
     }
+    [XafDisplayName("Impuesto VeriFactu")]
     public Impuesto? Impuesto
     {
         get => _impuesto;
         set => SetPropertyValue(nameof(Impuesto), ref _impuesto, value);
     }
+    [XafDisplayName("Régimen Fiscal")]
     public ClaveRegimen? RegimenFiscal
     {
         get => _regimenFiscal;
         set => SetPropertyValue(nameof(RegimenFiscal), ref _regimenFiscal, value);
     }
     
+    [XafDisplayName("Tipo Operación")]
     public CalificacionOperacion? TipoOperacion
     {
         get => _tipoOperacion;
         set => SetPropertyValue(nameof(TipoOperacion), ref _tipoOperacion, value);
     }
     
+    [XafDisplayName("Causa Exención")]
     public CausaExencion? CausaExencion
     {
         get => _causaExencion;

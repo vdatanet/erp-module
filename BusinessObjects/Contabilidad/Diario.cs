@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
@@ -20,6 +21,7 @@ public class Diario(Session session) : EntidadBase(session)
     [RuleRequiredField]
     [RuleUniqueValue]
     [Size(255)]
+    [XafDisplayName("Nombre")]
     public string Nombre
     {
         get => _nombre;
@@ -27,6 +29,7 @@ public class Diario(Session session) : EntidadBase(session)
     }
 
     [Size(SizeAttribute.Unlimited)]
+    [XafDisplayName("Notas")]
     public string Notas
     {
         get => _notas;
@@ -39,6 +42,7 @@ public class Diario(Session session) : EntidadBase(session)
         InitValues();
     }
 
+    [XafDisplayName("Activo")]
     public bool EstaActivo
     {
         get => _estaActivo;

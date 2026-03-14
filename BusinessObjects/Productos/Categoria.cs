@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
@@ -21,6 +22,7 @@ public class Categoria(Session session) : EntidadBase(session)
     [Size(255)]
     [RuleRequiredField]
     [RuleUniqueValue]
+    [XafDisplayName("Nombre")]
     public string Nombre
     {
         get => _nombre;
@@ -28,18 +30,21 @@ public class Categoria(Session session) : EntidadBase(session)
     }
 
     [Association("Categoria-Subcategorias")]
+    [XafDisplayName("Categoría Padre")]
     public Categoria CategoriaPadre
     {
         get => _categoriaPadre;
         set => SetPropertyValue(nameof(CategoriaPadre), ref _categoriaPadre, value);
     }
 
+    [XafDisplayName("Activo")]
     public bool EstaActivo
     {
         get => _estaActivo;
         set => SetPropertyValue(nameof(EstaActivo), ref _estaActivo, value);
     }
 
+    [XafDisplayName("Disponible en TPV")]
     public bool DisponibleEnTpv
     {
         get => _disponibleEnTpV;
@@ -47,12 +52,14 @@ public class Categoria(Session session) : EntidadBase(session)
     }
 
     [Size(1000)]
+    [XafDisplayName("Notas")]
     public string Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
+    [XafDisplayName("Ruta Completa")]
     public string RutaCompleta
     {
         get
@@ -72,9 +79,11 @@ public class Categoria(Session session) : EntidadBase(session)
     }
 
     [Association("Categoria-Subcategorias")]
+    [XafDisplayName("Subcategorías")]
     public XPCollection<Categoria> Subcategorias => GetCollection<Categoria>(nameof(Subcategorias));
 
     [Association("Categoria-Productos")] 
+    [XafDisplayName("Productos")]
     public XPCollection<Producto> Productos => GetCollection<Producto>(nameof(Productos));
 
     public override void AfterConstruction()
