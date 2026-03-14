@@ -1,11 +1,11 @@
-using erp.Module.BusinessObjects.Base.Sales;
+using erp.Module.BusinessObjects.Base.Ventas;
 
 namespace erp.Module.Services.Interfaces.Base.Sales;
 
 public interface ISalesLineService
 {
-    void ApplyProductSnapshot(SalesDocumentLine line);
-    void SetTaxableAmount(SalesDocumentLine line);
-    void RebuildTaxes(SalesDocumentLine line);
-    void DeleteTaxes(SalesDocumentLine line);
+    void ApplyProductSnapshot(LineaDocumentoVenta line);
+    void SetTaxableAmount(LineaDocumentoVenta line);
+    void RebuildTaxes(LineaDocumentoVenta line);
+    void DeleteTaxes(LineaDocumentoVenta line);
 }

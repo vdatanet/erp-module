@@ -1,6 +1,6 @@
 using DevExpress.Xpo;
 using DevExpress.Xpo.DB.Exceptions;
-using erp.Module.BusinessObjects.Common;
+using erp.Module.BusinessObjects.Comun;
 
 namespace erp.Module.Services;
 
@@ -12,7 +12,7 @@ public class SequenceService(Session session)
         for (var attempt = 0; attempt < maxRetries; attempt++)
         {
             using var uow = new UnitOfWork(session.DataLayer);
-            var generator = uow.Query<Sequence>().FirstOrDefault(s => s.Nombre == sequenceName) ?? new Sequence(uow)
+            var generator = uow.Query<Secuencia>().FirstOrDefault(s => s.Nombre == sequenceName) ?? new Secuencia(uow)
             {
                 Nombre = sequenceName,
                 ValorActual = 0,
@@ -37,7 +37,7 @@ public class SequenceService(Session session)
         throw new Exception("No se pudo obtener la secuencia por concurrencia.");
     }
 
-    private static string BuildSequenceString(Sequence generator)
+    private static string BuildSequenceString(Secuencia generator)
     {
         var number = generator.ValorActual.ToString().PadLeft(generator.Relleno, '0');
         return $"{generator.Prefijo}-{number}";

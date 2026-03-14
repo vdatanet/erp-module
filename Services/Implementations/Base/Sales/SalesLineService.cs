@@ -1,12 +1,12 @@
-// using erp.Module.BusinessObjects.Base.Sales;
-// using erp.Module.BusinessObjects.Helpers.Common;
+// using erp.Module.BusinessObjects.Base.Ventas;
+// using erp.Module.BusinessObjects.Helpers.Comun;
 // using erp.Module.Services.Interfaces.Base.Sales;
 //
 // namespace erp.Module.Services.Implementations.Base.Sales;
 //
 // public class SalesLineService : ISalesLineService
 // {
-//     public void ApplyProductSnapshot(SalesDocumentLine line)
+//     public void ApplyProductSnapshot(LineaDocumentoVenta line)
 //     {
 //         if (line.Product is null)
 //         {
@@ -27,33 +27,33 @@
 //
 //         foreach (var tax in line.Product.SalesTaxes.OrderBy(t => t.Sequence))
 //         {
-//             _ = new SalesDocumentLineTax(line.Session)
+//             _ = new LineaImpuestoDocumentoVenta(line.Session)
 //             {
-//                 SalesDocumentLine = line,
-//                 TaxKind = tax
+//                 LineaDocumentoVenta = line,
+//                 TipoImpuesto = tax
 //             };
 //         }
 //     }
 //
-//     public void SetTaxableAmount(SalesDocumentLine line)
+//     public void SetTaxableAmount(LineaDocumentoVenta line)
 //     {
 //         line.TaxableAmount = AmountCalculator.GetTaxableAmount(line.Quantity, line.UnitPrice, line.DiscountPercent);
 //     }
 //
-//     public void RebuildTaxes(SalesDocumentLine line)
+//     public void RebuildTaxes(LineaDocumentoVenta line)
 //     {
 //         foreach (var tax in line.Taxes)
 //         {
 //             tax.TaxableAmount = line.TaxableAmount;
 //             tax.TaxAmount =
-//                 AmountCalculator.GetTaxAmount(tax.TaxableAmount, tax.TaxKind.Rate, tax.TaxKind.IsWithHolding);
+//                 AmountCalculator.GetTaxAmount(tax.TaxableAmount, tax.TipoImpuesto.Rate, tax.TipoImpuesto.IsWithHolding);
 //         }
 //
 //         line.TaxAmount = line.Taxes.Sum(t => t.TaxAmount);
 //         line.TotalAmount = line.TaxableAmount + line.TaxAmount;
 //     }
 //
-//     public void DeleteTaxes(SalesDocumentLine line)
+//     public void DeleteTaxes(LineaDocumentoVenta line)
 //     {
 //         for (var i = line.Taxes.Count - 1; i >= 0; i--)
 //             line.Taxes[i].Delete();

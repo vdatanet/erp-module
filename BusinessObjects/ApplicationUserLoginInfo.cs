@@ -6,7 +6,6 @@ using DevExpress.Xpo;
 namespace erp.Module.BusinessObjects;
 
 [DeferredDeletion(false)]
-[Persistent("PermissionPolicyUserLoginInfo")]
 public class ApplicationUserLoginInfo : BaseObject, ISecurityUserLoginInfo {
     string loginProviderName;
     ApplicationUser user;

@@ -1,9 +1,9 @@
-using erp.Module.BusinessObjects.Base.Sales;
+using erp.Module.BusinessObjects.Base.Ventas;
 
 namespace erp.Module.Services.Interfaces.Base.Sales;
 
-public interface ISalesDocumentService
+public interface IDocumentoVentaService
 { 
-    void DeleteTaxes(SalesDocument salesDocument);
-    void RebuildTaxSummary(SalesDocument salesDocument);
+    void DeleteTaxes(DocumentoVenta salesDocument);
+    void RebuildTaxSummary(DocumentoVenta salesDocument);
 }

@@ -1,0 +1,168 @@
+using System.ComponentModel;
+using DevExpress.ExpressApp.Editors;
+using DevExpress.Persistent.Base;
+using DevExpress.Persistent.BaseImpl;
+using DevExpress.Persistent.Validation;
+using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Contabilidad;
+using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Comun;
+using erp.Module.BusinessObjects.Impuestos;
+using erp.Module.Helpers.Contactos;
+using Tarea = erp.Module.BusinessObjects.Planificacion.Tarea;
+
+namespace erp.Module.BusinessObjects.Productos;
+
+[DefaultClassOptions]
+[NavigationItem("Productos")]
+[ImageName("BO_Product")]
+[DefaultProperty(nameof(Codigo))]
+public class Producto(Session session) : EntidadBase(session)
+{
+    private string _codigo;
+    private string _codigoBarras;
+    private string _nombre;
+    private Categoria _categoria;
+    private decimal _costeEstandar;
+    private decimal _precioVenta;
+    private Cuenta _cuentaVentas;
+    private Cuenta _cuentaCompras;
+    private bool _estaActivo;
+    private bool _disponibleEnVentas;
+    private bool _disponibleEnCompras;
+    private bool _disponibleEnTpv;
+    private string _notas;
+    private MediaDataObject _foto;
+    
+    [RuleUniqueValue]
+    public string Codigo
+    {
+        get => _codigo;
+        set => SetPropertyValue(nameof(Codigo), ref _codigo, value);
+    }
+
+    [RuleUniqueValue]
+    public string CodigoBarras
+    {
+        get => _codigoBarras;
+        set => SetPropertyValue(nameof(CodigoBarras), ref _codigoBarras, value);
+    }
+
+    [RuleUniqueValue]
+    [RuleRequiredField]
+    [Size(SizeAttribute.Unlimited)]
+    public string Nombre
+    {
+        get => _nombre;
+        set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
+    }
+    
+    [Association("Category-Products")]
+    [DataSourceCriteria("EstaActivo = True")]
+    public Categoria Categoria
+    {
+        get => _categoria;
+        set => SetPropertyValue(nameof(Categoria), ref _categoria, value);
+    }
+
+    public decimal CosteEstandar
+    {
+        get => _costeEstandar;
+        set => SetPropertyValue(nameof(CosteEstandar), ref _costeEstandar, value);
+    }
+
+    public decimal PrecioVenta
+    {
+        get => _precioVenta;
+        set => SetPropertyValue(nameof(PrecioVenta), ref _precioVenta, value);
+    }
+
+    public Cuenta CuentaVentas
+    {
+        get => _cuentaVentas;
+        set => SetPropertyValue(nameof(CuentaVentas), ref _cuentaVentas, value);
+    }
+
+    public Cuenta CuentaCompras
+    {
+        get => _cuentaCompras;
+        set => SetPropertyValue(nameof(CuentaCompras), ref _cuentaCompras, value);
+    }
+
+    public bool EstaActivo
+    {
+        get => _estaActivo;
+        set => SetPropertyValue(nameof(EstaActivo), ref _estaActivo, value);
+    }
+
+    public bool DisponibleEnVentas
+    {
+        get => _disponibleEnVentas;
+        set => SetPropertyValue(nameof(DisponibleEnVentas), ref _disponibleEnVentas, value);
+    }
+    
+    public bool DisponibleEnCompras
+    {
+        get => _disponibleEnCompras;
+        set => SetPropertyValue(nameof(DisponibleEnCompras), ref _disponibleEnCompras, value);
+    }
+
+    public bool DisponibleEnTpv
+    {
+        get => _disponibleEnTpv;
+        set => SetPropertyValue(nameof(DisponibleEnTpv), ref _disponibleEnTpv, value);
+    }
+
+    [Size(SizeAttribute.Unlimited)]
+    public string Notas
+    {
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
+    }
+
+    public MediaDataObject Foto
+    {
+        get => _foto;
+        set => SetPropertyValue(nameof(Foto), ref _foto, value);
+    }
+    
+    [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
+    [Association("Products-SalesTaxes")]
+    [DataSourceCriteria("IsAvailableInSales = True AND EstaActivo = True")]
+    public XPCollection<TipoImpuesto> SalesTaxes => GetCollection<TipoImpuesto>(nameof(SalesTaxes));
+    
+    [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
+    [Association("Products-PurchaseTaxes")]
+    [DataSourceCriteria("IsAvailableInPurchases = True AND EstaActivo = True")]
+    public XPCollection<TipoImpuesto> PurchaseTaxes => GetCollection<TipoImpuesto>(nameof(PurchaseTaxes));
+    
+    [Aggregated]
+    [Association("Product-Tasks")]
+    public XPCollection<Tarea> Tareas => GetCollection<Tarea>(nameof(Tareas)); 
+    
+    [Aggregated]
+    [Association("Product-Pictures")]
+    public XPCollection<Imagen> Imagenes => GetCollection<Imagen>(nameof(Imagenes));
+    
+    [Aggregated]
+    [Association("Product-Attachments")]
+    public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>(nameof(Adjuntos));
+    
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        InitValues();
+    }
+
+    private void InitValues()
+    {
+        EstaActivo = true;
+        DisponibleEnVentas = false;
+        DisponibleEnCompras = false;
+        DisponibleEnTpv = false;
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        if (companyInfo == null) return;
+        if (companyInfo.CuentaVentasPorDefecto != null) CuentaVentas = companyInfo.CuentaVentasPorDefecto;
+        if (companyInfo.CuentaComprasPorDefecto != null) CuentaCompras = companyInfo.CuentaComprasPorDefecto;
+    }
+}
