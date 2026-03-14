@@ -1,3 +1,4 @@
+using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
@@ -21,6 +22,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     
     [XafDisplayName("Serie")]
     [RuleRequiredField]
+    [Appearance("BlockSerieWhenNumeroIsSet", Enabled = false, Criteria = "!IsNewObject(this) and !IsNullOrEmpty(Numero)", Context = "Any")]
     public string Serie
     {
         get => _serie;
