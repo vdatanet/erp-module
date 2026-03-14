@@ -4,11 +4,11 @@ using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
-using erp.Module.BusinessObjects.Settings;
-using erp.Module.Helpers.Common;
+using erp.Module.BusinessObjects.Configuracion;
+using erp.Module.Helpers.Comun;
 using VeriFactu.Business;
 using VeriFactu.Config;
-using Invoice = erp.Module.BusinessObjects.Invoicing.Invoice;
+using Factura = erp.Module.BusinessObjects.Facturacion.Factura;
 
 namespace erp.Module.Controllers.Invoicing;
 
@@ -16,85 +16,85 @@ public class VeriFactuController : ViewController
 {
     public VeriFactuController()
     {
-        TargetObjectType = typeof(Invoice);
+        TargetObjectType = typeof(Factura);
         TargetViewType = ViewType.Any;
 
-        var validateInvoice = new SimpleAction(this, "ValidateInvoice", PredefinedCategory.View)
+        var validateFactura = new SimpleAction(this, "ValidateFactura", PredefinedCategory.View)
         {
             //Specify the Action's button caption.
             Caption = "Validate",
             //Specify the confirmation message that pops up when a user executes an Action.
-            //ConfirmationMessage = "Are you sure you want to send the Invoice to the Tax Agency?",
+            //ConfirmationMessage = "Are you sure you want to send the Factura to the Tax Agency?",
             //Specify the icon of the Action's button in the interface.
             ImageName = "Action_Validation_Validate",
             TargetViewType = ViewType.DetailView
         };
-        validateInvoice.Execute += ValidateInvoice_Execute;
+        validateFactura.Execute += ValidateFactura_Execute;
 
-        //var cancelVeriFactuInvoice = new SimpleAction(this, "CancelVeriFactuInvoice", PredefinedCategory.View)
+        //var cancelVeriFactuFactura = new SimpleAction(this, "CancelVeriFactuFactura", PredefinedCategory.View)
         //{
         //    //Specify the Action's button caption.
         //    Caption = "Cancel VeriFactu",
         //    //Specify the confirmation message that pops up when a user executes an Action.
-        //    ConfirmationMessage = "Are you sure you want to cancel the Invoice to the Tax Agency?",
+        //    ConfirmationMessage = "Are you sure you want to cancel the Factura to the Tax Agency?",
         //    //Specify the icon of the Action's button in the interface.
         //    ImageName = "Cancel",
         //    TargetViewType = ViewType.DetailView
         //};
-        //cancelVeriFactuInvoice.Execute += CancelVeriFactuInvoice_Execute;
+        //cancelVeriFactuFactura.Execute += CancelVeriFactuFactura_Execute;
     }
 
-    private void CancelVeriFactuInvoice_Execute(object sender, SimpleActionExecuteEventArgs e)
+    private void CancelVeriFactuFactura_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
         //ObjectSpace.CommitChanges();
 
-        //if (View.CurrentObject is not Invoice invoice) return;
+        //if (View.CurrentObject is not Factura invoice) return;
 
-        //if (invoice.VeriFactuStatus == Invoice.VeriFactuStatusValues.Send)
-        //    CancelInvoice(invoice);
+        //if (invoice.VeriFactuStatus == Factura.VeriFactuStatusValues.Send)
+        //    CancelFactura(invoice);
     }
 
-    private void CancelInvoice(Invoice invoice)
+    private void CancelFactura(Factura invoice)
     {
-        // var companyInfo = ObjectSpace.FindObject<CompanyInfo>(null);
+        // var companyInfo = ObjectSpace.FindObject<InformacionEmpresa>(null);
         //
-        // var veriFactuInvoice =
-        //     new VeriFactu.Business.Invoice(invoice.InvoiceNumber, invoice.InvoiceDate, companyInfo.VatNumber)
+        // var veriFactuFactura =
+        //     new VeriFactu.Business.Factura(invoice.FacturaNumber, invoice.FacturaDate, companyInfo.VatNumber)
         //     {
         //         SellerName = companyInfo.Name
         //     };
-        // var invoiceCancellation = new InvoiceCancellation(veriFactuInvoice);
+        // var invoiceCancellation = new FacturaCancellation(veriFactuFactura);
         // invoiceCancellation.Save();
         // invoice.TaxAgencyResponse = invoiceCancellation.Response;
-        // invoice.VeriFactuStatus = Invoice.VeriFactuStatusValues.Draft;
-        // invoice.InvoiceEntryStatus = invoiceCancellation.Status;
+        // invoice.VeriFactuStatus = Factura.VeriFactuStatusValues.Draft;
+        // invoice.FacturaEntryStatus = invoiceCancellation.Status;
         // invoice.Csv = null;
         // invoice.ValidationUrl = null;
         // invoice.Qr = null;
         // ObjectSpace.CommitChanges();
     }
 
-    private void ValidateInvoice_Execute(object sender, SimpleActionExecuteEventArgs e)
+    private void ValidateFactura_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
-        if (View.CurrentObject is not Invoice invoice) return;
+        if (View.CurrentObject is not Factura invoice) return;
         if (!invoice.EsValida()) return;
 
         if (invoice.FechaFactura == DateTime.MinValue) invoice.FechaFactura = DateTime.Now.Date;
         if (string.IsNullOrEmpty(invoice.NumeroFactura)) invoice.ObtenerNumeroFactura();
         
         ObjectSpace.CommitChanges();
-        SendInvoice(invoice);
+        SendFactura(invoice);
     }
 
-    private void SendInvoice(Invoice invoice)
+    private void SendFactura(Factura invoice)
     {
-        var companyInfo = ObjectSpace.FindObject<CompanyInfo>(null);
+        var companyInfo = ObjectSpace.FindObject<InformacionEmpresa>(null);
         
         if (companyInfo == null) return;
         if (string.IsNullOrEmpty(companyInfo.Nombre)) return;
         if (string.IsNullOrEmpty(companyInfo.Nif)) return;
         
-        var veriFactuInvoice =
+        var veriFactuFactura =
             new VeriFactu.Business.Invoice(invoice.NumeroFactura, invoice.FechaFactura, companyInfo.Nif)
             {
                 InvoiceType = invoice.TipoFactura,
@@ -120,10 +120,10 @@ public class VeriFactuController : ViewController
                 TaxException = tax.CausaExencion ?? default
             };
 
-            veriFactuInvoice.TaxItems.Add(taxItem);
+            veriFactuFactura.TaxItems.Add(taxItem);
         }
 
-        var invoiceEntry = new InvoiceEntry(veriFactuInvoice);
+        var invoiceEntry = new InvoiceEntry(veriFactuFactura);
         invoiceEntry.Save();
 
         if (invoiceEntry.Status != "Correcto")
@@ -137,7 +137,7 @@ public class VeriFactuController : ViewController
 
         invoice.EstadoEntradaFactura = invoiceEntry.Status;
 
-        var newRecord = veriFactuInvoice.GetRegistroAlta();
+        var newRecord = veriFactuFactura.GetRegistroAlta();
         var validationUrl = newRecord.GetUrlValidate();
         var qr = newRecord.GetValidateQr();
 
@@ -179,7 +179,7 @@ public class VeriFactuController : ViewController
             invoice.XmlAgenciaTributaria = "Processing failed";
         }
 
-        invoice.EstadoVeriFactu = Invoice.ValoresEstadoVeriFactu.Enviado;
+        invoice.EstadoVeriFactu = Factura.ValoresEstadoVeriFactu.Enviado;
         invoice.Csv = invoiceEntry.CSV;
         invoice.UrlValidacion = validationUrl;
 
@@ -194,7 +194,7 @@ public class VeriFactuController : ViewController
     {
         base.OnActivated();
 
-        var companyInfo = ObjectSpace.FindObject<CompanyInfo>(null);
+        var companyInfo = ObjectSpace.FindObject<InformacionEmpresa>(null);
 
         if (companyInfo == null) return;
 

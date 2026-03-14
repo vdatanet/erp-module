@@ -1,0 +1,63 @@
+using DevExpress.Persistent.Base;
+using DevExpress.Persistent.BaseImpl;
+using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Base.Ventas;
+using erp.Module.BusinessObjects.Contactos;
+using erp.Module.BusinessObjects.Productos;
+
+using erp.Module.BusinessObjects.Planificacion;
+
+namespace erp.Module.BusinessObjects.Comun;
+
+[ImageName("Images")]
+public class Imagen(Session session): EntidadBase(session)
+{
+    private Contacto _contact;
+    private Producto _product;
+    private DocumentoVenta _salesDocument;
+    private Tarea _task;
+    private MediaDataObject _mediaDataObject;
+    private string _notes;
+    
+    [Association("Contacto-Fotos")]
+    public Contacto Contacto
+    {
+        get => _contact;
+        set => SetPropertyValue(nameof(Contacto), ref _contact, value);
+    }
+
+    [Association("Producto-Fotos")]
+    public Producto Producto
+    {
+        get => _product;
+        set => SetPropertyValue(nameof(Producto), ref _product, value);
+    }
+    
+    [Association("DocumentoVenta-Fotos")]
+    public DocumentoVenta DocumentoVenta
+    {
+        get => _salesDocument;
+        set => SetPropertyValue(nameof(DocumentoVenta), ref _salesDocument, value);
+    }
+    
+    [Association("Tarea-Fotos")]
+    public Tarea Tarea
+    {
+        get => _task;
+        set => SetPropertyValue(nameof(Tarea), ref _task, value);
+    }
+    
+    public MediaDataObject MediaDataObject
+    {
+        get => _mediaDataObject;
+        set => SetPropertyValue(nameof(MediaDataObject), ref _mediaDataObject, value);
+    }
+    
+    [Size(1000)]
+    public string Notes
+    {
+        get => _notes;
+        set => SetPropertyValue(nameof(Notes), ref _notes, value);
+    }
+}

@@ -1,20 +1,20 @@
-// using erp.Module.BusinessObjects.Base.Sales;
+// using erp.Module.BusinessObjects.Base.Ventas;
 // using erp.Module.Services.Interfaces.Base.Sales;
 //
 // namespace erp.Module.Services.Implementations.Base.Sales;
 //
-// public class SalesDocumentService : ISalesDocumentService
+// public class DocumentoVentaService : IDocumentoVentaService
 // {
-//     public void DeleteTaxes(SalesDocument salesDocument)
+//     public void DeleteTaxes(DocumentoVenta salesDocument)
 //     {
 //         for (var i = salesDocument.Taxes.Count - 1; i >= 0; i--)
 //             salesDocument.Taxes[i].Delete();
 //     }
 //     
-//     public void RebuildTaxSummary(SalesDocument salesDocument)
+//     public void RebuildTaxSummary(DocumentoVenta salesDocument)
 //     {
 //         var groups = salesDocument.Lines.SelectMany(l => l.Taxes)
-//             .GroupBy(t => t.TaxKind)
+//             .GroupBy(t => t.TipoImpuesto)
 //             .Select(g => new
 //             {
 //                 TaxType = g.Key,
@@ -24,10 +24,10 @@
 //             .OrderBy(x => x.TaxType.Sequence)
 //             .ToList();
 //     
-//         var newTaxes = groups.Select(g => new SalesDocumentTax(salesDocument.Session)
+//         var newTaxes = groups.Select(g => new ImpuestoDocumentoVenta(salesDocument.Session)
 //         {
-//             SalesDocument = salesDocument,
-//             TaxKind = g.TaxType,
+//             DocumentoVenta = salesDocument,
+//             TipoImpuesto = g.TaxType,
 //             Sequence = g.TaxType.Sequence,
 //             TaxableAmount = g.BaseSum,
 //             TaxAmount = g.AmountSum
