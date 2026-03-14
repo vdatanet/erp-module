@@ -10,6 +10,7 @@ public class Secuencia(Session session) : BaseObject(session)
     private int _valorActual;
     private int _relleno;
 
+    [Indexed(Unique = true)]
     public string Nombre
     {
         get => _nombre;

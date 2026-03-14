@@ -27,9 +27,6 @@ namespace erp.Module.BusinessObjects.Facturacion;
     Criteria = "EstadoVeriFactu = 'Enviado'", Context = "Any", Enabled = false)]
 public class Factura(Session session) : DocumentoVenta(session)
 {
-    private string _prefijoFactura;
-    private string _numeroFactura;
-    private DateTime _fechaFactura;
     private Cliente _cliente;
     private ValoresEstadoVeriFactu _estadoVeriFactu;
     private string _estadoEntradaFactura;
@@ -43,32 +40,6 @@ public class Factura(Session session) : DocumentoVenta(session)
     private string _csv;
     private string _urlValidacion;
     private MediaDataObject _qr;
-
-    [RuleRequiredField]
-    [XafDisplayName("Prefijo Factura")]
-    public string PrefijoFactura
-    {
-        get => _prefijoFactura;
-        set => SetPropertyValue(nameof(PrefijoFactura), ref _prefijoFactura, value);
-    }
-
-    [NonCloneable]
-    [ModelDefault("AllowEdit", "False")]
-    [XafDisplayName("Número Factura")]
-    public string NumeroFactura
-    {
-        get => _numeroFactura;
-        set => SetPropertyValue(nameof(NumeroFactura), ref _numeroFactura, value);
-    }
-
-    [NonCloneable]
-    [ModelDefault("AllowEdit", "False")]
-    [XafDisplayName("Fecha Factura")]
-    public DateTime FechaFactura
-    {
-        get => _fechaFactura;
-        set => SetPropertyValue(nameof(FechaFactura), ref _fechaFactura, value);
-    }
 
     [RuleRequiredField]
     [Association("Cliente-Facturas")]
@@ -192,6 +163,29 @@ public class Factura(Session session) : DocumentoVenta(session)
         Enviado
     }
 
+    [PersistentAlias(nameof(Serie))]
+    public string PrefijoFactura
+    {
+        get => Serie;
+        set => Serie = value;
+    }
+
+    [PersistentAlias(nameof(Numero))]
+    public string NumeroFactura
+    {
+        get => Numero;
+        set => Numero = value;
+    }
+
+    [PersistentAlias(nameof(Fecha))]
+    public DateTime FechaFactura
+    {
+        get => Fecha;
+        set => Fecha = value;
+    }
+
+    public override bool GetAsignarNumeroAlGuardar() => false;
+
     public override void AfterConstruction()
     {
         base.AfterConstruction();
@@ -205,14 +199,13 @@ public class Factura(Session session) : DocumentoVenta(session)
         TipoRectificativa = TipoRectificativa.I;
         EsSubsanacion = false;
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        PrefijoFactura ??= companyInfo?.PrefijoFacturasVentaPorDefecto;
+        Serie ??= companyInfo?.PrefijoFacturasVentaPorDefecto;
         Texto ??= companyInfo?.TextoDefectoVeriFactu;
     }
 
     public void ObtenerNumeroFactura()
     {
-        NumeroFactura =
-            SequenceFactory.GetNextSequence(Session, $"{typeof(Factura).FullName}.{PrefijoFactura}", PrefijoFactura, 5);
+        AsignarNumero();
     }
     
     public bool EsValida()

@@ -1,8 +1,11 @@
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
+using DevExpress.Persistent.Base;
+using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Comun;
+using erp.Module.Factories;
 using Tarea = erp.Module.BusinessObjects.Planificacion.Tarea;
 
 namespace erp.Module.BusinessObjects.Base.Ventas;
@@ -12,7 +15,34 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private decimal _baseImponible;
     private decimal _importeImpuestos;
     private decimal _importeTotal;
+    private string _serie;
+    private string _numero;
+    private DateTime _fecha;
     
+    [XafDisplayName("Serie")]
+    [RuleRequiredField]
+    public string Serie
+    {
+        get => _serie;
+        set => SetPropertyValue(nameof(Serie), ref _serie, value);
+    }
+
+    [NonCloneable]
+    [ModelDefault("AllowEdit", "False")]
+    [XafDisplayName("Número")]
+    public string Numero
+    {
+        get => _numero;
+        set => SetPropertyValue(nameof(Numero), ref _numero, value);
+    }
+
+    [XafDisplayName("Fecha")]
+    public DateTime Fecha
+    {
+        get => _fecha;
+        set => SetPropertyValue(nameof(Fecha), ref _fecha, value);
+    }
+
     [ModelDefault("AllowEdit","False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
@@ -119,5 +149,26 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         ImporteImpuestos = Lineas.Sum(t => t.ImporteImpuestos);
         ImporteTotal = BaseImponible + ImporteImpuestos;
     }
-    
+
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        Fecha = DateTime.Today;
+    }
+
+    public virtual bool GetAsignarNumeroAlGuardar() => true;
+
+    protected override void OnSaving()
+    {
+        base.OnSaving();
+        if (GetAsignarNumeroAlGuardar() && string.IsNullOrEmpty(Numero) && !string.IsNullOrEmpty(Serie))
+        {
+            AsignarNumero();
+        }
+    }
+
+    public virtual void AsignarNumero()
+    {
+        Numero = SequenceFactory.GetNextSequence(Session, $"{this.GetType().FullName}.{Serie}", Serie, 5);
+    }
 }
