@@ -72,6 +72,6 @@ public class SequenceService(Session session)
     private static string BuildSequenceString(Secuencia generator)
     {
         var number = generator.ValorActual.ToString().PadLeft(generator.Relleno, '0');
-        return $"{generator.Prefijo}-{number}";
+        return $"{generator.Prefijo}/{number}";
     }
 }
