@@ -11,86 +11,86 @@ namespace erp.Module.BusinessObjects.TimeTracking;
 [DefaultClassOptions]
 [NavigationItem("Time Tracking")]
 [ImageName("BO_Rules")]
-[XafDefaultProperty(nameof(Name))]
+[XafDefaultProperty(nameof(Nombre))]
 public class WorkdayRule(Session session) : BaseEntity(session)
 {
-    private string _name;
+    private string _nombre;
 
-    private TimeSpan _workdayStart = new(10, 0, 0);
-    private TimeSpan _workdayEnd = new(18, 0, 0);
-    private TimeSpan _dailyTarget = new(8, 0, 0);
+    private TimeSpan _inicioJornada = new(10, 0, 0);
+    private TimeSpan _finJornada = new(18, 0, 0);
+    private TimeSpan _objetivoDiario = new(8, 0, 0);
 
-    private TimeSpan _toleranceEarlyIn = TimeSpan.Zero;
-    private TimeSpan _toleranceLateIn = TimeSpan.Zero;
-    private TimeSpan _toleranceEarlyOut = TimeSpan.Zero;
-    private TimeSpan _toleranceLateOut = TimeSpan.Zero;
+    private TimeSpan _toleranciaEntradaTemprana = TimeSpan.Zero;
+    private TimeSpan _toleranciaEntradaTarde = TimeSpan.Zero;
+    private TimeSpan _toleranciaSalidaTemprana = TimeSpan.Zero;
+    private TimeSpan _toleranciaSalidaTarde = TimeSpan.Zero;
 
     [Size(255)]
     [RuleRequiredField]
-    public string Name
+    public string Nombre
     {
-        get => _name;
-        set => SetPropertyValue(nameof(Name), ref _name, value);
+        get => _nombre;
+        set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
     //[ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
     [ImmediatePostData]
-    public TimeSpan WorkdayStart
+    public TimeSpan InicioJornada
     {
-        get => _workdayStart;
+        get => _inicioJornada;
         set
         {
-            SetPropertyValue(nameof(WorkdayStart), ref _workdayStart, value);
-            RecalculateDailyTarget();
+            SetPropertyValue(nameof(InicioJornada), ref _inicioJornada, value);
+            RecalcularObjetivoDiario();
         }
     }
 
     //[ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "hh\\:mm")]
     [ImmediatePostData]
-    public TimeSpan WorkdayEnd
+    public TimeSpan FinJornada
     {
-        get => _workdayEnd;
+        get => _finJornada;
         set
         {
-            SetPropertyValue(nameof(WorkdayEnd), ref _workdayEnd, value);
-            RecalculateDailyTarget();
+            SetPropertyValue(nameof(FinJornada), ref _finJornada, value);
+            RecalcularObjetivoDiario();
         }
     }
 
     //[ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
     [ModelDefault("AllowEdit", "False")]
-    public TimeSpan DailyTarget
+    public TimeSpan ObjetivoDiario
     {
-        get => _dailyTarget;
-        set => SetPropertyValue(nameof(DailyTarget), ref _dailyTarget, value);
+        get => _objetivoDiario;
+        set => SetPropertyValue(nameof(ObjetivoDiario), ref _objetivoDiario, value);
     }
 
     //[ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
-    public TimeSpan ToleranceEarlyIn
+    public TimeSpan ToleranciaEntradaTemprana
     {
-        get => _toleranceEarlyIn;
-        set => SetPropertyValue(nameof(ToleranceEarlyIn), ref _toleranceEarlyIn, value);
+        get => _toleranciaEntradaTemprana;
+        set => SetPropertyValue(nameof(ToleranciaEntradaTemprana), ref _toleranciaEntradaTemprana, value);
     }
 
     //[ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
-    public TimeSpan ToleranceLateIn
+    public TimeSpan ToleranciaEntradaTarde
     {
-        get => _toleranceLateIn;
-        set => SetPropertyValue(nameof(ToleranceLateIn), ref _toleranceLateIn, value);
+        get => _toleranciaEntradaTarde;
+        set => SetPropertyValue(nameof(ToleranciaEntradaTarde), ref _toleranciaEntradaTarde, value);
     }
 
     //[ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
-    public TimeSpan ToleranceEarlyOut
+    public TimeSpan ToleranciaSalidaTemprana
     {
-        get => _toleranceEarlyOut;
-        set => SetPropertyValue(nameof(ToleranceEarlyOut), ref _toleranceEarlyOut, value);
+        get => _toleranciaSalidaTemprana;
+        set => SetPropertyValue(nameof(ToleranciaSalidaTemprana), ref _toleranciaSalidaTemprana, value);
     }
 
     //[ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
-    public TimeSpan ToleranceLateOut
+    public TimeSpan ToleranciaSalidaTarde
     {
-        get => _toleranceLateOut;
-        set => SetPropertyValue(nameof(ToleranceLateOut), ref _toleranceLateOut, value);
+        get => _toleranciaSalidaTarde;
+        set => SetPropertyValue(nameof(ToleranciaSalidaTarde), ref _toleranciaSalidaTarde, value);
     }
     
     [Association("WorkdayRule-Employees")]
@@ -99,14 +99,14 @@ public class WorkdayRule(Session session) : BaseEntity(session)
     protected override void OnSaving()
     {
         base.OnSaving();
-        RecalculateDailyTarget();
+        RecalcularObjetivoDiario();
     }
 
-    private void RecalculateDailyTarget()
+    private void RecalcularObjetivoDiario()
     {
-        if (WorkdayEnd >= WorkdayStart)
-            DailyTarget = WorkdayEnd - WorkdayStart;
+        if (FinJornada >= InicioJornada)
+            ObjetivoDiario = FinJornada - InicioJornada;
         else
-            DailyTarget = TimeSpan.FromHours(24) - WorkdayStart + WorkdayEnd;
+            ObjetivoDiario = TimeSpan.FromHours(24) - InicioJornada + FinJornada;
     }
 }

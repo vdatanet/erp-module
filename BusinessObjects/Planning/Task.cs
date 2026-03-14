@@ -13,111 +13,111 @@ namespace erp.Module.BusinessObjects.Planning;
 [ImageName("BO_Task")]
 public class Task(Session session) : BaseEntity(session)
 {
-    private string _name;
-    private string _description;
+    private string _nombre;
+    private string _descripcion;
     //private string _status;
     //private string _priority;
     //private string _type;
-    private DateTime _dueDate;
-    private DateTime _startDate;
-    private DateTime _endDate;
-    private ApplicationUser _owner;
-    private ApplicationUser _assignedTo;
-    private ApplicationUser _completedBy;
-    private Task _parentTask;
-    private Contact _contact;
-    private Product _product;
-    private SalesDocument _salesDocument;
-    private string _notes;
+    private DateTime _fechaVencimiento;
+    private DateTime _fechaInicio;
+    private DateTime _fechaFin;
+    private ApplicationUser _propietario;
+    private ApplicationUser _asignadaA;
+    private ApplicationUser _completadaPor;
+    private Task _tareaPadre;
+    private Contact _contacto;
+    private Product _producto;
+    private SalesDocument _documentoVenta;
+    private string _notas;
 
     [Size(255)]
-    public string Name
+    public string Nombre
     {
-        get => _name;
-        set => SetPropertyValue(nameof(Name), ref _name, value);
+        get => _nombre;
+        set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
     [Size(1000)]
-    public string Description
+    public string Descripcion
     {
-        get => _description;
-        set => SetPropertyValue(nameof(Description), ref _description, value);
+        get => _descripcion;
+        set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
     }
 
-    public DateTime DueDate
+    public DateTime FechaVencimiento
     {
-        get => _dueDate;
-        set => SetPropertyValue(nameof(DueDate), ref _dueDate, value);
+        get => _fechaVencimiento;
+        set => SetPropertyValue(nameof(FechaVencimiento), ref _fechaVencimiento, value);
     }
 
-    public DateTime StartDate
+    public DateTime FechaInicio
     {
-        get => _startDate;
-        set => SetPropertyValue(nameof(StartDate), ref _startDate, value);
+        get => _fechaInicio;
+        set => SetPropertyValue(nameof(FechaInicio), ref _fechaInicio, value);
     }
 
-    public DateTime EndDate
+    public DateTime FechaFin
     {
-        get => _endDate;
-        set => SetPropertyValue(nameof(EndDate), ref _endDate, value);
+        get => _fechaFin;
+        set => SetPropertyValue(nameof(FechaFin), ref _fechaFin, value);
     }
 
-    public ApplicationUser Owner
+    public ApplicationUser Propietario
     {
-        get => _owner;
-        set => SetPropertyValue(nameof(Owner), ref _owner, value);
+        get => _propietario;
+        set => SetPropertyValue(nameof(Propietario), ref _propietario, value);
     }
 
-    public ApplicationUser AssignedTo
+    public ApplicationUser AsignadaA
     {
-        get => _assignedTo;
-        set => SetPropertyValue(nameof(AssignedTo), ref _assignedTo, value);
+        get => _asignadaA;
+        set => SetPropertyValue(nameof(AsignadaA), ref _asignadaA, value);
     }
 
-    public ApplicationUser CompletedBy
+    public ApplicationUser CompletadaPor
     {
-        get => _completedBy;
-        set => SetPropertyValue(nameof(CompletedBy), ref _completedBy, value);
+        get => _completadaPor;
+        set => SetPropertyValue(nameof(CompletadaPor), ref _completadaPor, value);
     }
     
     [Association("Task-Subtasks")]
-    public Task ParentTask
+    public Task TareaPadre
     {
-        get => _parentTask;
-        set => SetPropertyValue(nameof(ParentTask), ref _parentTask, value);
+        get => _tareaPadre;
+        set => SetPropertyValue(nameof(TareaPadre), ref _tareaPadre, value);
     }
 
     [Association("Contact-Tasks")]
-    public Contact Contact
+    public Contact Contacto
     {
-        get => _contact;
-        set => SetPropertyValue(nameof(Contact), ref _contact, value);
+        get => _contacto;
+        set => SetPropertyValue(nameof(Contacto), ref _contacto, value);
     }
 
     [Association("Product-Tasks")]
-    public Product Product
+    public Product Producto
     {
-        get => _product;
-        set => SetPropertyValue(nameof(Product), ref _product, value);
+        get => _producto;
+        set => SetPropertyValue(nameof(Producto), ref _producto, value);
     }
     
     [Association("SalesDocument-Tasks")]
-    public SalesDocument SalesDocument
+    public SalesDocument DocumentoVenta
     {
-        get => _salesDocument;
-        set => SetPropertyValue(nameof(SalesDocument), ref _salesDocument, value);
+        get => _documentoVenta;
+        set => SetPropertyValue(nameof(DocumentoVenta), ref _documentoVenta, value);
     }
 
     [Size(1000)]
-    public string Notes
+    public string Notas
     {
-        get => _notes;
-        set => SetPropertyValue(nameof(Notes), ref _notes, value);
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
     [Aggregated]
     [Association("Task-Subtasks")] 
-    public XPCollection<Task> Subtasks => GetCollection<Task>(nameof(Subtasks));
+    public XPCollection<Task> Subtareas => GetCollection<Task>(nameof(Subtareas));
 
     [Aggregated]
     [Association("Task-Pictures")]

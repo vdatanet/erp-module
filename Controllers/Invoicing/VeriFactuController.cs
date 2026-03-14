@@ -77,10 +77,10 @@ public class VeriFactuController : ViewController
     private void ValidateInvoice_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
         if (View.CurrentObject is not Invoice invoice) return;
-        if (!invoice.IsValid()) return;
+        if (!invoice.EsValida()) return;
 
-        if (invoice.InvoiceDate == DateTime.MinValue) invoice.InvoiceDate = DateTime.Now.Date;
-        if (string.IsNullOrEmpty(invoice.InvoiceNumber)) invoice.GetInvoiceNumber();
+        if (invoice.FechaFactura == DateTime.MinValue) invoice.FechaFactura = DateTime.Now.Date;
+        if (string.IsNullOrEmpty(invoice.NumeroFactura)) invoice.ObtenerNumeroFactura();
         
         ObjectSpace.CommitChanges();
         SendInvoice(invoice);
@@ -91,33 +91,33 @@ public class VeriFactuController : ViewController
         var companyInfo = ObjectSpace.FindObject<CompanyInfo>(null);
         
         if (companyInfo == null) return;
-        if (string.IsNullOrEmpty(companyInfo.Name)) return;
-        if (string.IsNullOrEmpty(companyInfo.VatNumber)) return;
+        if (string.IsNullOrEmpty(companyInfo.Nombre)) return;
+        if (string.IsNullOrEmpty(companyInfo.Nif)) return;
         
         var veriFactuInvoice =
-            new VeriFactu.Business.Invoice(invoice.InvoiceNumber, invoice.InvoiceDate, companyInfo.VatNumber)
+            new VeriFactu.Business.Invoice(invoice.NumeroFactura, invoice.FechaFactura, companyInfo.Nif)
             {
-                InvoiceType = invoice.InvoiceType,
-                SellerName = companyInfo.Name,
-                BuyerID = invoice.Customer.VatNumber,
-                BuyerName = invoice.Customer.Name,
-                Text = invoice.Text,
+                InvoiceType = invoice.TipoFactura,
+                SellerName = companyInfo.Nombre,
+                BuyerID = invoice.Cliente.Nif,
+                BuyerName = invoice.Cliente.Nombre,
+                Text = invoice.Texto,
                 TaxItems = []
             };
 
-        foreach (var tax in invoice.Taxes)
+        foreach (var tax in invoice.Impuestos)
         {
-            if (tax.Tax == null) continue;
+            if (tax.Impuesto == null) continue;
 
             var taxItem = new TaxItem
             {
-                TaxRate = tax.Rate,
-                TaxBase = tax.TaxableAmount,
-                TaxAmount = tax.TaxAmount,
-                Tax = tax.Tax ?? default,
-                TaxType = tax.TaxType ?? default,
-                TaxScheme = tax.TaxScheme ?? default,
-                TaxException = tax.TaxException ?? default
+                TaxRate = tax.Tipo,
+                TaxBase = tax.BaseImponible,
+                TaxAmount = tax.ImporteImpuestos,
+                Tax = tax.Impuesto ?? default,
+                TaxType = tax.TipoOperacion ?? default,
+                TaxScheme = tax.RegimenFiscal ?? default,
+                TaxException = tax.CausaExencion ?? default
             };
 
             veriFactuInvoice.TaxItems.Add(taxItem);
@@ -128,14 +128,14 @@ public class VeriFactuController : ViewController
 
         if (invoiceEntry.Status != "Correcto")
         {
-            invoice.InvoiceEntryStatus = invoiceEntry.Status;
-            invoice.TaxAgencyResponse = invoiceEntry.Response;
-            invoice.InvoiceEntryErrorCode = invoiceEntry.ErrorCode;
+            invoice.EstadoEntradaFactura = invoiceEntry.Status;
+            invoice.RespuestaAgenciaTributaria = invoiceEntry.Response;
+            invoice.CodigoErrorEntradaFactura = invoiceEntry.ErrorCode;
             ObjectSpace.CommitChanges();
             return;
         }
 
-        invoice.InvoiceEntryStatus = invoiceEntry.Status;
+        invoice.EstadoEntradaFactura = invoiceEntry.Status;
 
         var newRecord = veriFactuInvoice.GetRegistroAlta();
         var validationUrl = newRecord.GetUrlValidate();
@@ -146,42 +146,42 @@ public class VeriFactuController : ViewController
             if (!string.IsNullOrEmpty(invoiceEntry.Response))
             {
                 var response = XDocument.Parse(invoiceEntry.Response);
-                invoice.TaxAgencyResponse = response.ToString();
+                invoice.RespuestaAgenciaTributaria = response.ToString();
             }
             else
             {
-                invoice.TaxAgencyResponse = "No response data available";
+                invoice.RespuestaAgenciaTributaria = "No response data available";
             }
 
             if (invoiceEntry.Xml is { Length: > 0 })
             {
                 var xmlString = Encoding.UTF8.GetString(invoiceEntry.Xml);
                 var xml = XDocument.Parse(xmlString);
-                invoice.TaxAgencyXml = xml.ToString();
+                invoice.XmlAgenciaTributaria = xml.ToString();
             }
             else
             {
-                invoice.TaxAgencyXml = "No XML data available";
+                invoice.XmlAgenciaTributaria = "No XML data available";
             }
         }
         catch (System.Xml.XmlException ex)
         {
-            invoice.TaxAgencyResponse = $"Error parsing response XML: {ex.Message}";
-            invoice.TaxAgencyXml = "XML parsing failed";
+            invoice.RespuestaAgenciaTributaria = $"Error parsing response XML: {ex.Message}";
+            invoice.XmlAgenciaTributaria = "XML parsing failed";
         }
         catch (ArgumentException ex) when (ex.ParamName == "bytes")
         {
-            invoice.TaxAgencyXml = $"Error decoding XML data: {ex.Message}";
+            invoice.XmlAgenciaTributaria = $"Error decoding XML data: {ex.Message}";
         }
         catch (Exception ex)
         {
-            invoice.TaxAgencyResponse = $"Unexpected error processing response: {ex.Message}";
-            invoice.TaxAgencyXml = "Processing failed";
+            invoice.RespuestaAgenciaTributaria = $"Unexpected error processing response: {ex.Message}";
+            invoice.XmlAgenciaTributaria = "Processing failed";
         }
 
-        invoice.VeriFactuStatus = Invoice.VeriFactuStatusValues.Send;
+        invoice.EstadoVeriFactu = Invoice.ValoresEstadoVeriFactu.Enviado;
         invoice.Csv = invoiceEntry.CSV;
-        invoice.ValidationUrl = validationUrl;
+        invoice.UrlValidacion = validationUrl;
 
         var qrMedia = ObjectSpace.CreateObject<MediaDataObject>();
         qrMedia.MediaData = qr;
@@ -198,27 +198,27 @@ public class VeriFactuController : ViewController
 
         if (companyInfo == null) return;
 
-        if (string.IsNullOrEmpty(companyInfo.VeriFactuConfigFileName)) return;
+        if (string.IsNullOrEmpty(companyInfo.NombreArchivoConfigVeriFactu)) return;
 
-        Settings.SetConfigFileName(companyInfo.VeriFactuConfigFileName);
+        Settings.SetConfigFileName(companyInfo.NombreArchivoConfigVeriFactu);
 
-        if (!string.IsNullOrEmpty(companyInfo.VeriFactuCertificateSerial))
-            Settings.Current.CertificateSerial = companyInfo.VeriFactuCertificateSerial;
+        if (!string.IsNullOrEmpty(companyInfo.SerieCertificadoVeriFactu))
+            Settings.Current.CertificateSerial = companyInfo.SerieCertificadoVeriFactu;
 
-        if (!string.IsNullOrEmpty(companyInfo.VeriFactuEndPointPrefix))
-            Settings.Current.VeriFactuEndPointPrefix = companyInfo.VeriFactuEndPointPrefix;
+        if (!string.IsNullOrEmpty(companyInfo.PrefijoUrlVeriFactu))
+            Settings.Current.VeriFactuEndPointPrefix = companyInfo.PrefijoUrlVeriFactu;
 
-        if (!string.IsNullOrEmpty(companyInfo.VeriFactuSystemName))
-            Settings.Current.SistemaInformatico.NombreSistemaInformatico = companyInfo.VeriFactuSystemName;
+        if (!string.IsNullOrEmpty(companyInfo.NombreSistemaVeriFactu))
+            Settings.Current.SistemaInformatico.NombreSistemaInformatico = companyInfo.NombreSistemaVeriFactu;
 
-        if (!string.IsNullOrEmpty(companyInfo.VeriFactuSystemVersion))
-            Settings.Current.SistemaInformatico.Version = companyInfo.VeriFactuSystemVersion;
+        if (!string.IsNullOrEmpty(companyInfo.VersionSistemaVeriFactu))
+            Settings.Current.SistemaInformatico.Version = companyInfo.VersionSistemaVeriFactu;
 
-        if (!string.IsNullOrEmpty(companyInfo.VeriFactuSystemAdministratorName))
-            Settings.Current.SistemaInformatico.NombreRazon = companyInfo.VeriFactuSystemAdministratorName;
+        if (!string.IsNullOrEmpty(companyInfo.NombreAdministradorSistemaVeriFactu))
+            Settings.Current.SistemaInformatico.NombreRazon = companyInfo.NombreAdministradorSistemaVeriFactu;
 
-        if (!string.IsNullOrEmpty(companyInfo.VeriFactuSystemAdministratorFiscalNumber))
-            Settings.Current.SistemaInformatico.NIF = companyInfo.VeriFactuSystemAdministratorFiscalNumber;
+        if (!string.IsNullOrEmpty(companyInfo.NifAdministradorSistemaVeriFactu))
+            Settings.Current.SistemaInformatico.NIF = companyInfo.NifAdministradorSistemaVeriFactu;
 
         Settings.Current.SistemaInformatico.NumeroInstalacion = MachineIdentifier.GetMachineId();
 

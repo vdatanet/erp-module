@@ -9,20 +9,20 @@ namespace erp.Module.BusinessObjects.Crm;
 [ImageName("Shopping_Wallet")]
 public class Campaign(Session session) : BaseEntity(session)
 {
-    private string _name;
-    private string _description;
+    private string _nombre;
+    private string _descripcion;
 
     [Size(255)]
-    public string Name
+    public string Nombre
     {
-        get => _name;
-        set => SetPropertyValue(nameof(Name), ref _name, value);
+        get => _nombre;
+        set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
     [Size(1000)]
-    public string Description
+    public string Descripcion
     {
-        get => _description;
-        set => SetPropertyValue(nameof(Description), ref _description, value);
+        get => _descripcion;
+        set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
     }
 }

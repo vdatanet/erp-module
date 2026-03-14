@@ -10,6 +10,8 @@ public static class CompanyInfoHelper
         var info = session.Query<CompanyInfo>().FirstOrDefault();
         if (info != null) return info;
         info = new CompanyInfo(session);
+        info.Nombre = "Mi Empresa";
+        info.Nif = "B00000000";
         info.Save();
         return info;
     }

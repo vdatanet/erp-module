@@ -8,47 +8,47 @@ namespace erp.Module.BusinessObjects.Base.Sales;
 
 public abstract class SalesDocument(Session session) : BaseEntity(session)
 {
-    private decimal _taxableAmount;
-    private decimal _taxAmount;
-    private decimal _totalAmount;
+    private decimal _baseImponible;
+    private decimal _importeImpuestos;
+    private decimal _importeTotal;
     
     [ModelDefault("AllowEdit","False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
-    public decimal TaxableAmount
+    public decimal BaseImponible
     {
-        get => _taxableAmount;
-        set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
+        get => _baseImponible;
+        set => SetPropertyValue(nameof(BaseImponible), ref _baseImponible, value);
     }
 
     [ModelDefault("AllowEdit", "False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
-    public decimal TaxAmount
+    public decimal ImporteImpuestos
     {
-        get => _taxAmount;
-        set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);
+        get => _importeImpuestos;
+        set => SetPropertyValue(nameof(ImporteImpuestos), ref _importeImpuestos, value);
     }
 
     [ModelDefault("AllowEdit", "False")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
-    public decimal TotalAmount
+    public decimal ImporteTotal
     {
-        get => _totalAmount;
-        set => SetPropertyValue(nameof(TotalAmount), ref _totalAmount, value);
+        get => _importeTotal;
+        set => SetPropertyValue(nameof(ImporteTotal), ref _importeTotal, value);
     }
 
     [Aggregated]
     [Association("SalesDocument-Lines")]
-    public XPCollection<SalesDocumentLine> Lines
+    public XPCollection<SalesDocumentLine> Lineas
     {
         get
         {
-            var collection = GetCollection<SalesDocumentLine>(nameof(Lines));
+            var collection = GetCollection<SalesDocumentLine>(nameof(Lineas));
             if (!collection.IsLoaded)
             {
-                collection.CollectionChanged += Lines_CollectionChanged;
+                collection.CollectionChanged += Lineas_CollectionChanged;
             }
             return collection;
         }
@@ -56,14 +56,14 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     
     [Aggregated]
     [Association("SalesDocument-Taxes")]
-    public XPCollection<SalesDocumentTax> Taxes => GetCollection<SalesDocumentTax>();
+    public XPCollection<SalesDocumentTax> Impuestos => GetCollection<SalesDocumentTax>();
     
-    private void Lines_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
+    private void Lineas_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
     {
         if (IsLoading || IsSaving || IsDeleted) return;
         if (e.CollectionChangedType != XPCollectionChangedType.AfterRemove) return;
-        DeleteTaxesSummary();
-        RebuildTaxSummary();
+        BorrarResumenImpuestos();
+        ReconstruirResumenImpuestos();
     }
 
     [Aggregated]
@@ -78,37 +78,37 @@ public abstract class SalesDocument(Session session) : BaseEntity(session)
     [Association("SalesDocument-Attachments")]
     public XPCollection<Attachment> Attachments => GetCollection<Attachment>();
 
-    public void DeleteTaxesSummary()
+    public void BorrarResumenImpuestos()
     {
-        for (var i = Taxes.Count - 1; i >= 0; i--)
-            Taxes[i].Delete();
+        for (var i = Impuestos.Count - 1; i >= 0; i--)
+            Impuestos[i].Delete();
     }
 
-    public void RebuildTaxSummary()
+    public void ReconstruirResumenImpuestos()
     {
-        var groups = Lines.SelectMany(l => l.Taxes)
-            .GroupBy(t => t.TaxKind)
+        var groups = Lineas.SelectMany(l => l.Impuestos)
+            .GroupBy(t => t.TipoImpuesto)
             .Select(g => new
             {
                 TaxType = g.Key,
-                BaseSum = g.Sum(x => x.TaxableAmount)
+                BaseSum = g.Sum(x => x.BaseImponible)
             })
-            .OrderBy(x => x.TaxType.Sequence)
+            .OrderBy(x => x.TaxType.Secuencia)
             .ToList();
 
         var newTaxes = groups.Select(g => new SalesDocumentTax(this.Session)
         {
-            SalesDocument = this,
-            TaxKind = g.TaxType,
-            Sequence = g.TaxType.Sequence,
-            TaxableAmount = g.BaseSum
+            DocumentoVenta = this,
+            TipoImpuesto = g.TaxType,
+            Secuencia = g.TaxType.Secuencia,
+            BaseImponible = g.BaseSum
         });
 
-        Taxes.AddRange(newTaxes);
+        Impuestos.AddRange(newTaxes);
 
-        TaxableAmount = Lines.Sum(t => t.TaxableAmount);
-        TaxAmount = Lines.Sum(t => t.TaxAmount);
-        TotalAmount = TaxableAmount + TaxAmount;
+        BaseImponible = Lineas.Sum(t => t.BaseImponible);
+        ImporteImpuestos = Lineas.Sum(t => t.ImporteImpuestos);
+        ImporteTotal = BaseImponible + ImporteImpuestos;
     }
     
 }

@@ -12,15 +12,15 @@ public class SequenceService(Session session)
         for (var attempt = 0; attempt < maxRetries; attempt++)
         {
             using var uow = new UnitOfWork(session.DataLayer);
-            var generator = uow.Query<Sequence>().FirstOrDefault(s => s.Name == sequenceName) ?? new Sequence(uow)
+            var generator = uow.Query<Sequence>().FirstOrDefault(s => s.Nombre == sequenceName) ?? new Sequence(uow)
             {
-                Name = sequenceName,
-                CurrentValue = 0,
-                Prefix = prefix,
-                Padding = padding
+                Nombre = sequenceName,
+                ValorActual = 0,
+                Prefijo = prefix,
+                Relleno = padding
             };
 
-            generator.CurrentValue++;
+            generator.ValorActual++;
             try
             {
                 uow.CommitChanges();
@@ -39,7 +39,7 @@ public class SequenceService(Session session)
 
     private static string BuildSequenceString(Sequence generator)
     {
-        var number = generator.CurrentValue.ToString().PadLeft(generator.Padding, '0');
-        return $"{generator.Prefix}-{number}";
+        var number = generator.ValorActual.ToString().PadLeft(generator.Relleno, '0');
+        return $"{generator.Prefijo}-{number}";
     }
 }

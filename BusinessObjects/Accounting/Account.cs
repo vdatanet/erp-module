@@ -10,90 +10,90 @@ namespace erp.Module.BusinessObjects.Accounting;
 [DefaultClassOptions]
 [NavigationItem("Accounting")]
 [ImageName("CustomerContactDirectory")]
-[DefaultProperty(nameof(Code))]
+[DefaultProperty(nameof(Codigo))]
 public class Account(Session session): BaseEntity(session)
 {
     
-    private string _code;
-    private string _name;
-    private string _notes;
-    private Account _parentAccount;
-    private bool _isActive;
-    private bool _isPostable;
-    private AccountType _type;
-    private AccountNature _nature;
+    private string _codigo;
+    private string _nombre;
+    private string _notas;
+    private Account _cuentaPadre;
+    private bool _estaActiva;
+    private bool _esAsentable;
+    private TipoCuenta _tipo;
+    private NaturalezaCuenta _naturaleza;
     
     [RuleRequiredField]
     [RuleUniqueValue]
-    public string Code
+    public string Codigo
     {
-        get => _code;
-        set => SetPropertyValue(nameof(Code), ref _code, value);
+        get => _codigo;
+        set => SetPropertyValue(nameof(Codigo), ref _codigo, value);
     }
     
     [Size(255)]
     [RuleRequiredField]
 
-    public string Name
+    public string Nombre
     {
-        get => _name;
-        set => SetPropertyValue(nameof(Name), ref _name, value);    
+        get => _nombre;
+        set => SetPropertyValue(nameof(Nombre), ref _nombre, value);    
     }
     
     [Size(SizeAttribute.Unlimited)]
-    public string Notes
+    public string Notas
     {
-        get => _notes;
-        set => SetPropertyValue(nameof(Notes), ref _notes, value);
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
         
     [Association("Parent-ChildrenAccounts")]
-    public Account ParentAccount
+    public Account CuentaPadre
     {
-        get => _parentAccount;
-        set => SetPropertyValue(nameof(ParentAccount), ref _parentAccount, value);
+        get => _cuentaPadre;
+        set => SetPropertyValue(nameof(CuentaPadre), ref _cuentaPadre, value);
     }
     
-    public string FullPath {
+    public string RutaCompleta {
         get {
             var sb = new StringBuilder();
             Account current = this;
             while (current != null) {
                 if (sb.Length > 0)
                     sb.Insert(0, " > ");
-                sb.Insert(0, current.Code);
-                current = current.ParentAccount;
+                sb.Insert(0, current.Codigo);
+                current = current.CuentaPadre;
             }
             return sb.ToString();
         }
     }
     
-    public bool IsActive
+    public bool EstaActiva
     {
-        get => _isActive;
-        set => SetPropertyValue(nameof(IsActive), ref _isActive, value);
+        get => _estaActiva;
+        set => SetPropertyValue(nameof(EstaActiva), ref _estaActiva, value);
     }
     
-    public bool IsPostable
+    public bool EsAsentable
     {
-        get => _isPostable;
-        set => SetPropertyValue(nameof(IsPostable), ref _isPostable, value);
+        get => _esAsentable;
+        set => SetPropertyValue(nameof(EsAsentable), ref _esAsentable, value);
     }
     
-    public AccountType Type
+    public TipoCuenta Tipo
     {
-        get => _type;
-        set => SetPropertyValue(nameof(Type), ref _type, value);
+        get => _tipo;
+        set => SetPropertyValue(nameof(Tipo), ref _tipo, value);
     }
     
-    public AccountNature Nature
+    public NaturalezaCuenta Naturaleza
     {
-        get => _nature;
-        set => SetPropertyValue(nameof(Nature), ref _nature, value);
+        get => _naturaleza;
+        set => SetPropertyValue(nameof(Naturaleza), ref _naturaleza, value);
     }
     
     [Association("Parent-ChildrenAccounts")]
-    public XPCollection<Account> ChildrenAccounts => GetCollection<Account>();
+    public XPCollection<Account> CuentasHijas => GetCollection<Account>();
     
     public override void AfterConstruction()
     {
@@ -103,25 +103,25 @@ public class Account(Session session): BaseEntity(session)
 
     private void InitValues()
     {
-        IsActive = true;
-        IsPostable = false;
-        Type = AccountType.Asset;
-        Nature = AccountNature.Debit;
+        EstaActiva = true;
+        EsAsentable = false;
+        Tipo = TipoCuenta.Activo;
+        Naturaleza = NaturalezaCuenta.Deudora;
     }
     
-    public enum AccountType
+    public enum TipoCuenta
     {
-        Asset,
-        Liability,
-        Equity,
-        Revenue,
-        Expense,
-        Result
+        Activo,
+        Pasivo,
+        PatrimonioNeto,
+        Ingresos,
+        Gastos,
+        Resultados
     }
 
-    public enum AccountNature
+    public enum NaturalezaCuenta
     {
-        Debit,
-        Credit
+        Deudora,
+        Acreedora
     }
 }

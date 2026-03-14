@@ -12,48 +12,48 @@ namespace erp.Module.BusinessObjects.Products;
 [ImageName("BO_Product_Group")]
 public class Category(Session session) : BaseEntity(session)
 {
-    private string _name;
-    private Category _parentCategory;
-    private bool _isActive;
-    private bool _isAvailableInPos;
-    private string _notes;
+    private string _nombre;
+    private Category _categoriaPadre;
+    private bool _estaActivo;
+    private bool _disponibleEnTpV;
+    private string _notas;
 
     [Size(255)]
     [RuleRequiredField]
     [RuleUniqueValue]
-    public string Name
+    public string Nombre
     {
-        get => _name;
-        set => SetPropertyValue(nameof(Name), ref _name, value);
+        get => _nombre;
+        set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
     [Association("Category-Subcategories")]
-    public Category ParentCategory
+    public Category CategoriaPadre
     {
-        get => _parentCategory;
-        set => SetPropertyValue(nameof(ParentCategory), ref _parentCategory, value);
+        get => _categoriaPadre;
+        set => SetPropertyValue(nameof(CategoriaPadre), ref _categoriaPadre, value);
     }
 
-    public bool IsActive
+    public bool EstaActivo
     {
-        get => _isActive;
-        set => SetPropertyValue(nameof(IsActive), ref _isActive, value);
+        get => _estaActivo;
+        set => SetPropertyValue(nameof(EstaActivo), ref _estaActivo, value);
     }
 
-    public bool IsAvailableInPos
+    public bool DisponibleEnTpv
     {
-        get => _isAvailableInPos;
-        set => SetPropertyValue(nameof(IsAvailableInPos), ref _isAvailableInPos, value);
+        get => _disponibleEnTpV;
+        set => SetPropertyValue(nameof(DisponibleEnTpv), ref _disponibleEnTpV, value);
     }
 
     [Size(1000)]
-    public string Notes
+    public string Notas
     {
-        get => _notes;
-        set => SetPropertyValue(nameof(Notes), ref _notes, value);
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
-    public string FullPath
+    public string RutaCompleta
     {
         get
         {
@@ -63,8 +63,8 @@ public class Category(Session session) : BaseEntity(session)
             {
                 if (sb.Length > 0)
                     sb.Insert(0, " > ");
-                sb.Insert(0, current.Name);
-                current = current.ParentCategory;
+                sb.Insert(0, current.Nombre);
+                current = current.CategoriaPadre;
             }
 
             return sb.ToString();
@@ -84,8 +84,8 @@ public class Category(Session session) : BaseEntity(session)
 
     private void InitValues()
     {
-        IsActive = true;
-        IsAvailableInPos = false;
+        EstaActivo = true;
+        DisponibleEnTpv = false;
         var companyInfo = CompanyInfoHelper.GetCompanyInfo(Session);
         if (companyInfo == null) return;
     }

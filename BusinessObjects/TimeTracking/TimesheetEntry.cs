@@ -17,24 +17,24 @@ namespace erp.Module.BusinessObjects.TimeTracking;
 [ImageName("Time")]
 public class TimesheetEntry(Session session) : BaseEntity(session)
 {
-    private Employee _employee;
-    private DateTime _startOn;
-    private DateTime? _endOn;
-    private Project _project;
-    private ProjectActivity _activity;
-    private string _notes;
-    private TimeSpan _duration;
-    private DailyTimesheet _dailyTimesheet;
-    private DailyTimesheet _previousDailyTimesheet;
-    private WorkdayRule _previousWorkdayRuleEmployee;
+    private Employee _empleado;
+    private DateTime _fechaInicio;
+    private DateTime? _fechaFin;
+    private Project _proyecto;
+    private ProjectActivity _actividad;
+    private string _notas;
+    private TimeSpan _duracion;
+    private DailyTimesheet _parteDiario;
+    private DailyTimesheet _parteDiarioAnterior;
+    private WorkdayRule _reglaJornadaAnteriorEmpleado;
 
     [Association("Employee-TimesheetEntries")]
     [RuleRequiredField]
     [ModelDefault("AllowEdit", "False")]
-    public Employee Employee
+    public Employee Empleado
     {
-        get => _employee;
-        set => SetPropertyValue(nameof(Employee), ref _employee, value);
+        get => _empleado;
+        set => SetPropertyValue(nameof(Empleado), ref _empleado, value);
     }
 
     [RuleRequiredField]
@@ -42,65 +42,65 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
     [ModelDefault(nameof(IModelCommonMemberViewItem.EditMask), "g")]
 
-    public DateTime StartOn
+    public DateTime FechaInicio
     {
-        get => _startOn;
+        get => _fechaInicio;
         set
         {
-            if (SetPropertyValue(nameof(StartOn), ref _startOn, value)) RecalculateDuration();
+            if (SetPropertyValue(nameof(FechaInicio), ref _fechaInicio, value)) RecalcularDuracion();
         }
     }
 
     [ImmediatePostData]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
     [ModelDefault(nameof(IModelCommonMemberViewItem.EditMask), "g")]
-    public DateTime? EndOn
+    public DateTime? FechaFin
     {
-        get => _endOn;
+        get => _fechaFin;
         set
         {
-            if (SetPropertyValue(nameof(EndOn), ref _endOn, value)) RecalculateDuration();
+            if (SetPropertyValue(nameof(FechaFin), ref _fechaFin, value)) RecalcularDuracion();
         }
     }
 
     [Association("Project-TimesheetEntries")]
     [ImmediatePostData]
-    public Project Project
+    public Project Proyecto
     {
-        get => _project;
-        set => SetPropertyValue(nameof(Project), ref _project, value);
+        get => _proyecto;
+        set => SetPropertyValue(nameof(Proyecto), ref _proyecto, value);
     }
 
     [Association("ProjectActivity-TimesheetEntries")]
-    [DataSourceProperty("Project.Activities")]
-    public ProjectActivity Activity
+    [DataSourceProperty("Proyecto.Activities")]
+    public ProjectActivity Actividad
     {
-        get => _activity;
-        set => SetPropertyValue(nameof(Activity), ref _activity, value);
+        get => _actividad;
+        set => SetPropertyValue(nameof(Actividad), ref _actividad, value);
     }
 
     [Size(SizeAttribute.Unlimited)]
     [ModelDefault("RowCount", "3")]
-    [XafDisplayName("Notes")]
-    public string Notes
+    [XafDisplayName("Notas")]
+    public string Notas
     {
-        get => _notes;
-        set => SetPropertyValue(nameof(Notes), ref _notes, value);
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
     [ModelDefault("AllowEdit", "False")]
-    [XafDisplayName("Duration")]
-    public TimeSpan Duration
+    [XafDisplayName("Duración")]
+    public TimeSpan Duracion
     {
-        get => _duration;
-        set => SetPropertyValue(nameof(Duration), ref _duration, value);
+        get => _duracion;
+        set => SetPropertyValue(nameof(Duracion), ref _duracion, value);
     }
 
     [Association("DailyTimesheet-Entries")]
-    public DailyTimesheet DailyTimesheet
+    public DailyTimesheet ParteDiario
     {
-        get => _dailyTimesheet;
-        set => SetPropertyValue(nameof(DailyTimesheet), ref _dailyTimesheet, value);
+        get => _parteDiario;
+        set => SetPropertyValue(nameof(ParteDiario), ref _parteDiario, value);
     }
 
     public override void AfterConstruction()
@@ -111,19 +111,19 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
 
     private void InitValues()
     {
-        SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(Employee), GetCurrentUser());
+        SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(Empleado), GetCurrentUser());
     }
 
     protected override void OnSaving()
     {
         base.OnSaving();
-        RecalculateDuration();
+        RecalcularDuracion();
     }
 
     protected override void OnDeleting()
     {
-        if (DailyTimesheet is not null) _previousDailyTimesheet = DailyTimesheet;
-        _previousWorkdayRuleEmployee = Employee?.WorkdayRule ?? _previousWorkdayRuleEmployee;
+        if (ParteDiario is not null) _parteDiarioAnterior = ParteDiario;
+        _reglaJornadaAnteriorEmpleado = Empleado?.ReglaJornadaLaboral ?? _reglaJornadaAnteriorEmpleado;
         base.OnDeleting();
     }
 
@@ -131,22 +131,22 @@ public class TimesheetEntry(Session session) : BaseEntity(session)
     {
         base.OnDeleted();
 
-        if (_previousDailyTimesheet is { } ts && _previousWorkdayRuleEmployee is { } rule)
-            ts.Recalculate(rule);
+        if (_parteDiarioAnterior is { } ts && _reglaJornadaAnteriorEmpleado is { } regla)
+            ts.Recalcular(regla);
 
-        _previousDailyTimesheet = null;
-        _previousWorkdayRuleEmployee = null;
+        _parteDiarioAnterior = null;
+        _reglaJornadaAnteriorEmpleado = null;
     }
 
-    private void RecalculateDuration()
+    private void RecalcularDuracion()
     {
-        if (EndOn.HasValue && EndOn.Value >= StartOn)
-            Duration = EndOn.Value - StartOn;
+        if (FechaFin.HasValue && FechaFin.Value >= FechaInicio)
+            Duracion = FechaFin.Value - FechaInicio;
         else
-            Duration = TimeSpan.Zero;
+            Duracion = TimeSpan.Zero;
 
-        if (DailyTimesheet is { } ts && Employee?.WorkdayRule is { } rule)
-            ts.Recalculate(rule);
+        if (ParteDiario is { } ts && Empleado?.ReglaJornadaLaboral is { } regla)
+            ts.Recalcular(regla);
     }
 
     private ApplicationUser GetCurrentUser()

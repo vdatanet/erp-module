@@ -12,43 +12,43 @@ namespace erp.Module.BusinessObjects.Base.Common;
 [ModelDefault("IsCloneable", "True")]
 public abstract class BaseEntity(Session session) : BaseObject(session)
 {
-    private ApplicationUser _createdBy;
-    private ApplicationUser _modifiedBy;
-    private DateTime? _createdOn;
-    private DateTime? _modifiedOn;
+    private ApplicationUser _creadoPor;
+    private ApplicationUser _modificadoPor;
+    private DateTime? _creadoEl;
+    private DateTime? _modificadoEl;
 
     [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
-    public ApplicationUser CreatedBy
+    public ApplicationUser CreadoPor
     {
-        get => _createdBy;
-        set => SetPropertyValue(nameof(CreatedBy), ref _createdBy, value);
+        get => _creadoPor;
+        set => SetPropertyValue(nameof(CreadoPor), ref _creadoPor, value);
     }
 
     [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
-    public ApplicationUser ModifiedBy
+    public ApplicationUser ModificadoPor
     {
-        get => _modifiedBy;
-        set => SetPropertyValue(nameof(ModifiedBy), ref _modifiedBy, value);
-    }
-
-    [HideInUI(HideInUI.All)]
-    [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
-    [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
-    public DateTime? CreatedOn
-    {
-        get => _createdOn;
-        set => SetPropertyValue(nameof(CreatedOn), ref _createdOn, value);
+        get => _modificadoPor;
+        set => SetPropertyValue(nameof(ModificadoPor), ref _modificadoPor, value);
     }
 
     [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
-    public DateTime? ModifiedOn
+    public DateTime? CreadoEl
     {
-        get => _modifiedOn;
-        set => SetPropertyValue(nameof(ModifiedOn), ref _modifiedOn, value);
+        get => _creadoEl;
+        set => SetPropertyValue(nameof(CreadoEl), ref _creadoEl, value);
+    }
+
+    [HideInUI(HideInUI.All)]
+    [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
+    [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
+    public DateTime? ModificadoEl
+    {
+        get => _modificadoEl;
+        set => SetPropertyValue(nameof(ModificadoEl), ref _modificadoEl, value);
     }
 
     protected override void OnSaving()
@@ -56,13 +56,13 @@ public abstract class BaseEntity(Session session) : BaseObject(session)
         base.OnSaving();
         if (Session.IsNewObject(this))
         {
-            SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(CreatedOn), DateTime.Now);
-            SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(CreatedBy), GetCurrentUser());
+            SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(CreadoEl), DateTime.Now);
+            SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(CreadoPor), GetCurrentUser());
         }
         else
         {
-            SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(ModifiedOn), DateTime.Now);
-            SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(ModifiedBy), GetCurrentUser());
+            SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(ModificadoEl), DateTime.Now);
+            SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(ModificadoPor), GetCurrentUser());
         }
     }
 

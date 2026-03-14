@@ -14,44 +14,44 @@ namespace erp.Module.BusinessObjects.Projects;
 [XafDisplayName("Project")]
 public class Project(Session session) : BaseEntity(session)
 {
-    private string _code;
-    private string _name;
-    private string _description;
-    private bool _isActive = true;
+    private string _codigo;
+    private string _nombre;
+    private string _descripcion;
+    private bool _estaActivo = true;
 
     [Size(64)]
     [RuleRequiredField]
     [RuleUniqueValue]
-    [XafDisplayName("Code")]
-    public string Code
+    [XafDisplayName("Código")]
+    public string Codigo
     {
-        get => _code;
-        set => SetPropertyValue(nameof(Code), ref _code, value);
+        get => _codigo;
+        set => SetPropertyValue(nameof(Codigo), ref _codigo, value);
     }
 
     [Size(255)]
     [RuleRequiredField]
-    [XafDisplayName("Name")]
-    public string Name
+    [XafDisplayName("Nombre")]
+    public string Nombre
     {
-        get => _name;
-        set => SetPropertyValue(nameof(Name), ref _name, value);
+        get => _nombre;
+        set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
     [Size(SizeAttribute.Unlimited)]
     [ModelDefault("RowCount", "4")]
-    [XafDisplayName("Description")]
-    public string Description
+    [XafDisplayName("Descripción")]
+    public string Descripcion
     {
-        get => _description;
-        set => SetPropertyValue(nameof(Description), ref _description, value);
+        get => _descripcion;
+        set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
     }
 
-    [XafDisplayName("Active")]
-    public bool IsActive
+    [XafDisplayName("Activo")]
+    public bool EstaActivo
     {
-        get => _isActive;
-        set => SetPropertyValue(nameof(IsActive), ref _isActive, value);
+        get => _estaActivo;
+        set => SetPropertyValue(nameof(EstaActivo), ref _estaActivo, value);
     }
 
     [Association("Project-Activities")]

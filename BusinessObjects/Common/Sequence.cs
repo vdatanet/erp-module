@@ -5,32 +5,32 @@ namespace erp.Module.BusinessObjects.Common;
 
 public class Sequence(Session session) : BaseObject(session)
 {
-    private string _name;
-    private string _prefix;
-    private int _currentValue;
-    private int _padding;
+    private string _nombre;
+    private string _prefijo;
+    private int _valorActual;
+    private int _relleno;
 
-    public string Name
+    public string Nombre
     {
-        get => _name;
-        set => SetPropertyValue(nameof(Name), ref _name, value);
+        get => _nombre;
+        set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
-    public string Prefix
+    public string Prefijo
     {
-        get => _prefix;
-        set => SetPropertyValue(nameof(Prefix), ref _prefix, value);
+        get => _prefijo;
+        set => SetPropertyValue(nameof(Prefijo), ref _prefijo, value);
     }
 
-    public int CurrentValue
+    public int ValorActual
     {
-        get => _currentValue;
-        set => SetPropertyValue(nameof(CurrentValue), ref _currentValue, value);
+        get => _valorActual;
+        set => SetPropertyValue(nameof(ValorActual), ref _valorActual, value);
     }
 
-    public int Padding
+    public int Relleno
     {
-        get => _padding;
-        set => SetPropertyValue(nameof(Padding), ref _padding, value);
+        get => _relleno;
+        set => SetPropertyValue(nameof(Relleno), ref _relleno, value);
     }
 }

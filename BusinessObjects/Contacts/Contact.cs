@@ -14,108 +14,108 @@ namespace erp.Module.BusinessObjects.Contacts;
 [DefaultClassOptions]
 [NavigationItem("Contacts")]
 [ImageName("BO_Contact")]
-[DefaultProperty(nameof(Name))]
+[DefaultProperty(nameof(Nombre))]
 public class Contact(Session session) : BaseEntity(session)
 {
-    private string _name;
-    private string _tradeName;
-    private string _vatNumber;
-    private string _address;
-    private Country _country;
-    private State _state;
-    private City _city;
-    private string _phone;
-    private string _cellPhone;
-    private string _email;
-    private string _website;
-    private MediaDataObject _picture;
-    private string _notes;
+    private string _nombre;
+    private string _nombreComercial;
+    private string _nif;
+    private string _direccion;
+    private Country _pais;
+    private State _provincia;
+    private City _poblacion;
+    private string _telefono;
+    private string _movil;
+    private string _correoElectronico;
+    private string _sitioWeb;
+    private MediaDataObject _foto;
+    private string _notas;
 
     [Size(255)]
     [RuleRequiredField]
-    public string Name
+    public string Nombre
     {
-        get => _name;
-        set => SetPropertyValue(nameof(Name), ref _name, value);
+        get => _nombre;
+        set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
     [Size(255)]
-    public string TradeName
+    public string NombreComercial
     {
-        get => _tradeName;
-        set => SetPropertyValue(nameof(TradeName), ref _tradeName, value);
+        get => _nombreComercial;
+        set => SetPropertyValue(nameof(NombreComercial), ref _nombreComercial, value);
     }
 
     [Size(50)]
     [RuleRequiredField]
-    public string VatNumber
+    public string Nif
     {
-        get => _vatNumber;
-        set => SetPropertyValue(nameof(VatNumber), ref _vatNumber, value);
+        get => _nif;
+        set => SetPropertyValue(nameof(Nif), ref _nif, value);
     }
 
     [Size(255)]
-    public string Address
+    public string Direccion
     {
-        get => _address;
-        set => SetPropertyValue(nameof(Address), ref _address, value);
+        get => _direccion;
+        set => SetPropertyValue(nameof(Direccion), ref _direccion, value);
     }
 
-    public Country Country
+    public Country Pais
     {
-        get => _country;
-        set => SetPropertyValue(nameof(Country), ref _country, value);
+        get => _pais;
+        set => SetPropertyValue(nameof(Pais), ref _pais, value);
     }
 
-    [DataSourceProperty("Country.States")]
-    public State State
+    [DataSourceProperty("Pais.States")]
+    public State Provincia
     {
-        get => _state;
-        set => SetPropertyValue(nameof(State), ref _state, value);
+        get => _provincia;
+        set => SetPropertyValue(nameof(Provincia), ref _provincia, value);
     }
 
-    [DataSourceProperty("State.Cities")]
-    public City City
+    [DataSourceProperty("Provincia.Cities")]
+    public City Poblacion
     {
-        get => _city;
-        set => SetPropertyValue(nameof(City), ref _city, value);
+        get => _poblacion;
+        set => SetPropertyValue(nameof(Poblacion), ref _poblacion, value);
     }
 
-    public string Phone
+    public string Telefono
     {
-        get => _phone;
-        set => SetPropertyValue(nameof(Phone), ref _phone, value);
+        get => _telefono;
+        set => SetPropertyValue(nameof(Telefono), ref _telefono, value);
     }
 
-    public string CellPhone
+    public string Movil
     {
-        get => _cellPhone;
-        set => SetPropertyValue(nameof(CellPhone), ref _cellPhone, value);
+        get => _movil;
+        set => SetPropertyValue(nameof(Movil), ref _movil, value);
     }
 
-    public string Email
+    public string CorreoElectronico
     {
-        get => _email;
-        set => SetPropertyValue(nameof(Email), ref _email, value);
+        get => _correoElectronico;
+        set => SetPropertyValue(nameof(CorreoElectronico), ref _correoElectronico, value);
     }
 
-    public string Website
+    public string SitioWeb
     {
-        get => _website;
-        set => SetPropertyValue(nameof(Website), ref _website, value);
+        get => _sitioWeb;
+        set => SetPropertyValue(nameof(SitioWeb), ref _sitioWeb, value);
     }
     
-    public MediaDataObject Picture
+    public MediaDataObject Foto
     {
-        get => _picture;
-        set => SetPropertyValue(nameof(Picture), ref _picture, value);
+        get => _foto;
+        set => SetPropertyValue(nameof(Foto), ref _foto, value);
     }
     
     [Size(SizeAttribute.Unlimited)]
-    public string Notes
+    public string Notas
     {
-        get => _notes;
-        set => SetPropertyValue(nameof(Notes), ref _notes, value);
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
     
     [Aggregated]

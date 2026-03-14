@@ -9,14 +9,14 @@ namespace erp.Module.BusinessObjects.Common;
 [NavigationItem("Common")]
 public class Country(Session session) : BaseEntity(session)
 {
-    private string _name;
+    private string _nombre;
 
     [RuleRequiredField]
     [RuleUniqueValue]
-    public string Name
+    public string Nombre
     {
-        get => _name;
-        set => SetPropertyValue(nameof(Name), ref _name, value);
+        get => _nombre;
+        set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
     [Association("Country-States")] public XPCollection<State> States => GetCollection<State>(nameof(States));

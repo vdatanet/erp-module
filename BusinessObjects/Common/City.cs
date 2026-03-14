@@ -9,22 +9,22 @@ namespace erp.Module.BusinessObjects.Common;
 [NavigationItem("Common")]
 public class City(Session session): BaseEntity(session)
 {
-    private State _state;
-    private string _name;
+    private State _provincia;
+    private string _nombre;
 
     [RuleRequiredField]
     [Association("State-Cities")]
-    public State State
+    public State Provincia
     {
-        get => _state;
-        set => SetPropertyValue(nameof(State), ref _state, value);
+        get => _provincia;
+        set => SetPropertyValue(nameof(Provincia), ref _provincia, value);
     }
     
     [RuleRequiredField]
     [RuleUniqueValue]
-    public string Name
+    public string Nombre
     {
-        get => _name;
-        set => SetPropertyValue(nameof(Name), ref _name, value);
+        get => _nombre;
+        set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 }

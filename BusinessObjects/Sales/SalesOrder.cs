@@ -10,13 +10,13 @@ namespace erp.Module.BusinessObjects.Sales;
 [ImageName("BO_Order")]
 public class SalesOrder(Session session): SalesDocument(session)
 {
-    private Opportunity _opportunity;
+    private Opportunity _oportunidad;
 
     [Association("Opportunity-SalesOrders")]
-    public Opportunity Opportunity
+    public Opportunity Oportunidad
     {
-        get => _opportunity;
-        set => SetPropertyValue(nameof(Opportunity), ref _opportunity, value);
+        get => _oportunidad;
+        set => SetPropertyValue(nameof(Oportunidad), ref _oportunidad, value);
     }
     
 }

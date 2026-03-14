@@ -10,27 +10,27 @@ namespace erp.Module.BusinessObjects.Accounting;
 [DefaultClassOptions]
 [NavigationItem("Accounting")]
 [ImageName("Actions_Book")]
-[DefaultProperty(nameof(Name))]
+[DefaultProperty(nameof(Nombre))]
 public class Journal(Session session) : BaseEntity(session)
 {
-    private string _name;
-    private string _notes;
-    private bool _isActive;
+    private string _nombre;
+    private string _notas;
+    private bool _estaActivo;
 
     [RuleRequiredField]
     [RuleUniqueValue]
     [Size(255)]
-    public string Name
+    public string Nombre
     {
-        get => _name;
-        set => SetPropertyValue(nameof(Name), ref _name, value);
+        get => _nombre;
+        set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
     [Size(SizeAttribute.Unlimited)]
-    public string Notes
+    public string Notas
     {
-        get => _notes;
-        set => SetPropertyValue(nameof(Notes), ref _notes, value);
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
     public override void AfterConstruction()
@@ -39,15 +39,15 @@ public class Journal(Session session) : BaseEntity(session)
         InitValues();
     }
 
-    public bool IsActive
+    public bool EstaActivo
     {
-        get => _isActive;
-        set => SetPropertyValue(nameof(IsActive), ref _isActive, value);
+        get => _estaActivo;
+        set => SetPropertyValue(nameof(EstaActivo), ref _estaActivo, value);
     }
 
     private void InitValues()
     {
-        IsActive = true;
+        EstaActivo = true;
         var companyInfo = CompanyInfoHelper.GetCompanyInfo(Session);
         if (companyInfo == null) return;
     }

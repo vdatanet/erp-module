@@ -12,23 +12,23 @@ namespace erp.Module.BusinessObjects.Contacts;
 [ImageName("BO_Customer")]
 public class Customer(Session session) : Partner(session)
 {
-    private IDType _relatedPartyIdType;
+    private IDType _tipoIdentificacion;
     
     [NonCloneable]
-    public IDType RelatedPartyIdType
+    public IDType TipoIdentificacion
     {
-        get => _relatedPartyIdType;
-        set => SetPropertyValue(nameof(RelatedPartyIdType), ref _relatedPartyIdType, value);
+        get => _tipoIdentificacion;
+        set => SetPropertyValue(nameof(TipoIdentificacion), ref _tipoIdentificacion, value);
     }
     
     [Association("Customer-Opportunities")]
-    public XPCollection<Opportunity> Opportunities => GetCollection<Opportunity>();
+    public XPCollection<Opportunity> Oportunidades => GetCollection<Opportunity>();
     
     //[Association("Customer-SalesOrders")]
     //public XPCollection<SalesOrder> SalesOrders => GetCollection<SalesOrder>(nameof(SalesOrders));
 
     [Association("Customer-Invoices")]
-    public XPCollection<Invoice> Invoices => GetCollection<Invoice>(nameof(Invoices));
+    public XPCollection<Invoice> Facturas => GetCollection<Invoice>(nameof(Facturas));
     
     public override void AfterConstruction()
     {
@@ -38,6 +38,6 @@ public class Customer(Session session) : Partner(session)
 
     private void InitValues()
     {
-        RelatedPartyIdType = IDType.NIF_IVA;
+        TipoIdentificacion = IDType.NIF_IVA;
     }
 }

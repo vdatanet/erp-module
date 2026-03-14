@@ -30,13 +30,13 @@ public static class TimesheetHelper
             // Clock In
             var entry = new TimesheetEntry(session)
             {
-                Employee = employee,
-                StartOn = now,
-                Project = project,
-                Activity = activity,
-                DailyTimesheet = daily
+                Empleado = employee,
+                FechaInicio = now,
+                Proyecto = project,
+                Actividad = activity,
+                ParteDiario = daily
             };
-            EnsureNoOverlap(session, employee, entry.StartOn, entry.EndOn, null);
+            EnsureNoOverlap(session, employee, entry.FechaInicio, entry.FechaFin, null);
             entry.Save();
             Recalc(daily);
             return new ToggleResult(ToggleResultType.ClockIn, entry, daily);
@@ -44,10 +44,10 @@ public static class TimesheetHelper
         else
         {
             // Clock Out
-            open.EndOn = now;
-            if (open.EndOn < open.StartOn)
+            open.FechaFin = now;
+            if (open.FechaFin < open.FechaInicio)
                 throw new UserFriendlyException("La hora de salida no puede ser anterior a la de entrada.");
-            EnsureNoOverlap(session, employee, open.StartOn, open.EndOn, open);
+            EnsureNoOverlap(session, employee, open.FechaInicio, open.FechaFin, open);
             open.Save();
             Recalc(daily);
             return new ToggleResult(ToggleResultType.ClockOut, open, daily);
@@ -57,33 +57,33 @@ public static class TimesheetHelper
     private static DailyTimesheet GetOrCreateDaily(Session session, Employee employee, DateTime date, string? prefix)
     {
         var q = new XPQuery<DailyTimesheet>(session);
-        var daily = q.FirstOrDefault(t => t.Employee == employee && t.Date == date);
+        var daily = q.FirstOrDefault(t => t.Empleado == employee && t.Fecha == date);
         if (daily != null) return daily;
 
         daily = new DailyTimesheet(session)
         {
-            Employee = employee,
-            Date = date
+            Empleado = employee,
+            Fecha = date
         };
         if (!string.IsNullOrWhiteSpace(prefix))
-            daily.DailyTimesheetPrefix = prefix;
+            daily.PrefijoParteDiario = prefix;
 
         daily.Save();
         return daily;
     }
 
     private static TimesheetEntry? GetOpenEntry(DailyTimesheet daily) =>
-        daily.Entries.FirstOrDefault(e => !e.EndOn.HasValue);
+        daily.Registros.FirstOrDefault(e => !e.FechaFin.HasValue);
 
     private static void EnsureNoOverlap(Session session, Employee employee, DateTime start, DateTime? end, TimesheetEntry? exclude)
     {
         var q = new XPQuery<TimesheetEntry>(session);
         var overlaps = q.Any(e =>
             e != exclude &&
-            e.Employee == employee &&
-            e.StartOn.Date == start.Date &&
-            start < (e.EndOn ?? DateTime.MaxValue) &&
-            (end ?? DateTime.MaxValue) > e.StartOn);
+            e.Empleado == employee &&
+            e.FechaInicio.Date == start.Date &&
+            start < (e.FechaFin ?? DateTime.MaxValue) &&
+            (end ?? DateTime.MaxValue) > e.FechaInicio);
 
         if (overlaps)
             throw new UserFriendlyException("El rango de tiempo se solapa con otra entrada del día.");
@@ -91,10 +91,10 @@ public static class TimesheetHelper
 
     private static void Recalc(DailyTimesheet daily)
     {
-        var rule = daily.Employee?.WorkdayRule;
+        var rule = daily.Empleado?.ReglaJornadaLaboral;
         if (rule != null)
         {
-            daily.Recalculate(rule);
+            daily.Recalcular(rule);
             daily.Save();
         }
     }

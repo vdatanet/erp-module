@@ -17,131 +17,131 @@ namespace erp.Module.BusinessObjects.Invoicing;
 [DefaultClassOptions]
 [NavigationItem("Invoicing")]
 [ImageName("BO_Invoice")]
-[DefaultProperty(nameof(InvoiceNumber))]
+[DefaultProperty(nameof(NumeroFactura))]
 [Appearance("BlockEditingWhenSent", AppearanceItemType = "ViewItem", TargetItems = "*",
-    Criteria = "VeriFactuStatus = 'Send'", Context = "Any", Enabled = false)]
+    Criteria = "EstadoVeriFactu = 'Enviado'", Context = "Any", Enabled = false)]
 [Appearance("BlockDeletionWhenSent", AppearanceItemType = "Action", TargetItems = "Delete",
-    Criteria = "VeriFactuStatus = 'Send'", Context = "Any", Enabled = false)]
+    Criteria = "EstadoVeriFactu = 'Enviado'", Context = "Any", Enabled = false)]
 [Appearance("BlockSendActionWhenSent", AppearanceItemType = "Action", TargetItems = "ValidateInvoice",
-    Criteria = "VeriFactuStatus = 'Send'", Context = "Any", Enabled = false)]
+    Criteria = "EstadoVeriFactu = 'Enviado'", Context = "Any", Enabled = false)]
 public class Invoice(Session session) : SalesDocument(session)
 {
-    private string _invoicePrefix;
-    private string _invoiceNumber;
-    private DateTime _invoiceDate;
-    private Customer _customer;
-    private VeriFactuStatusValues _veriFactuStatus;
-    private string _invoiceEntryStatus;
-    private string _invoiceEntryErrorCode;
-    private TipoFactura _invoiceType;
-    private TipoRectificativa _rectificationType;
-    private bool _isInvoiceFix;
-    private string _text;
-    private string _taxAgencyResponse;
-    private string _taxAgencyXml;
+    private string _prefijoFactura;
+    private string _numeroFactura;
+    private DateTime _fechaFactura;
+    private Customer _cliente;
+    private ValoresEstadoVeriFactu _estadoVeriFactu;
+    private string _estadoEntradaFactura;
+    private string _codigoErrorEntradaFactura;
+    private TipoFactura _tipoFactura;
+    private TipoRectificativa _tipoRectificativa;
+    private bool _esSubsanacion;
+    private string _texto;
+    private string _respuestaAgenciaTributaria;
+    private string _xmlAgenciaTributaria;
     private string _csv;
-    private string _validationUrl;
+    private string _urlValidacion;
     private MediaDataObject _qr;
 
     [RuleRequiredField]
-    public string InvoicePrefix
+    public string PrefijoFactura
     {
-        get => _invoicePrefix;
-        set => SetPropertyValue(nameof(InvoicePrefix), ref _invoicePrefix, value);
+        get => _prefijoFactura;
+        set => SetPropertyValue(nameof(PrefijoFactura), ref _prefijoFactura, value);
     }
 
     [NonCloneable]
     [ModelDefault("AllowEdit", "False")]
-    public string InvoiceNumber
+    public string NumeroFactura
     {
-        get => _invoiceNumber;
-        set => SetPropertyValue(nameof(InvoiceNumber), ref _invoiceNumber, value);
+        get => _numeroFactura;
+        set => SetPropertyValue(nameof(NumeroFactura), ref _numeroFactura, value);
     }
 
     [NonCloneable]
     [ModelDefault("AllowEdit", "False")]
-    public DateTime InvoiceDate
+    public DateTime FechaFactura
     {
-        get => _invoiceDate;
-        set => SetPropertyValue(nameof(InvoiceDate), ref _invoiceDate, value);
+        get => _fechaFactura;
+        set => SetPropertyValue(nameof(FechaFactura), ref _fechaFactura, value);
     }
 
     [RuleRequiredField]
     [Association("Customer-Invoices")]
-    public Customer Customer
+    public Customer Cliente
     {
-        get => _customer;
-        set => SetPropertyValue(nameof(Customer), ref _customer, value);
+        get => _cliente;
+        set => SetPropertyValue(nameof(Cliente), ref _cliente, value);
     }
 
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
-    public VeriFactuStatusValues VeriFactuStatus
+    public ValoresEstadoVeriFactu EstadoVeriFactu
     {
-        get => _veriFactuStatus;
-        set => SetPropertyValue(nameof(VeriFactuStatus), ref _veriFactuStatus, value);
+        get => _estadoVeriFactu;
+        set => SetPropertyValue(nameof(EstadoVeriFactu), ref _estadoVeriFactu, value);
     }
 
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
-    public string InvoiceEntryStatus
+    public string EstadoEntradaFactura
     {
-        get => _invoiceEntryStatus;
-        set => SetPropertyValue(nameof(InvoiceEntryStatus), ref _invoiceEntryStatus, value);
+        get => _estadoEntradaFactura;
+        set => SetPropertyValue(nameof(EstadoEntradaFactura), ref _estadoEntradaFactura, value);
     }
 
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
-    public string InvoiceEntryErrorCode
+    public string CodigoErrorEntradaFactura
     {
-        get => _invoiceEntryErrorCode;
-        set => SetPropertyValue(nameof(InvoiceEntryErrorCode), ref _invoiceEntryErrorCode, value);
+        get => _codigoErrorEntradaFactura;
+        set => SetPropertyValue(nameof(CodigoErrorEntradaFactura), ref _codigoErrorEntradaFactura, value);
     }
 
     [NonCloneable]
-    public TipoFactura InvoiceType
+    public TipoFactura TipoFactura
     {
-        get => _invoiceType;
-        set => SetPropertyValue(nameof(InvoiceType), ref _invoiceType, value);
+        get => _tipoFactura;
+        set => SetPropertyValue(nameof(TipoFactura), ref _tipoFactura, value);
     }
 
     [NonCloneable]
-    public TipoRectificativa RectificationType
+    public TipoRectificativa TipoRectificativa
     {
-        get => _rectificationType;
-        set => SetPropertyValue(nameof(RectificationType), ref _rectificationType, value);
+        get => _tipoRectificativa;
+        set => SetPropertyValue(nameof(TipoRectificativa), ref _tipoRectificativa, value);
     }
 
     [NonCloneable]
-    public bool IsInvoiceFix
+    public bool EsSubsanacion
     {
-        get => _isInvoiceFix;
-        set => SetPropertyValue(nameof(IsInvoiceFix), ref _isInvoiceFix, value);
+        get => _esSubsanacion;
+        set => SetPropertyValue(nameof(EsSubsanacion), ref _esSubsanacion, value);
     }
     
     [Size(500)]
-    public string Text
+    public string Texto
     {
-        get => _text;
-        set => SetPropertyValue(nameof(Text), ref _text, value);
+        get => _texto;
+        set => SetPropertyValue(nameof(Texto), ref _texto, value);
     }
 
     [Size(SizeAttribute.Unlimited)]
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
-    public string TaxAgencyResponse
+    public string RespuestaAgenciaTributaria
     {
-        get => _taxAgencyResponse;
-        set => SetPropertyValue(nameof(TaxAgencyResponse), ref _taxAgencyResponse, value);
+        get => _respuestaAgenciaTributaria;
+        set => SetPropertyValue(nameof(RespuestaAgenciaTributaria), ref _respuestaAgenciaTributaria, value);
     }
 
     [Size(SizeAttribute.Unlimited)]
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
-    public string TaxAgencyXml
+    public string XmlAgenciaTributaria
     {
-        get => _taxAgencyXml;
-        set => SetPropertyValue(nameof(TaxAgencyXml), ref _taxAgencyXml, value);
+        get => _xmlAgenciaTributaria;
+        set => SetPropertyValue(nameof(XmlAgenciaTributaria), ref _xmlAgenciaTributaria, value);
     }
 
     [ModelDefault("AllowEdit", "False")]
@@ -155,10 +155,10 @@ public class Invoice(Session session) : SalesDocument(session)
     [Size(255)]
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
-    public string ValidationUrl
+    public string UrlValidacion
     {
-        get => _validationUrl;
-        set => SetPropertyValue(nameof(ValidationUrl), ref _validationUrl, value);
+        get => _urlValidacion;
+        set => SetPropertyValue(nameof(UrlValidacion), ref _urlValidacion, value);
     }
 
     [ModelDefault("AllowEdit", "False")]
@@ -169,10 +169,10 @@ public class Invoice(Session session) : SalesDocument(session)
         set => SetPropertyValue(nameof(Qr), ref _qr, value);
     }
 
-    public enum VeriFactuStatusValues
+    public enum ValoresEstadoVeriFactu
     {
-        Draft,
-        Send
+        Borrador,
+        Enviado
     }
 
     public override void AfterConstruction()
@@ -183,28 +183,28 @@ public class Invoice(Session session) : SalesDocument(session)
 
     private void InitValues()
     {
-        VeriFactuStatus = VeriFactuStatusValues.Draft;
-        InvoiceType = TipoFactura.F1;
-        RectificationType = TipoRectificativa.I;
-        IsInvoiceFix = false;
+        EstadoVeriFactu = ValoresEstadoVeriFactu.Borrador;
+        TipoFactura = TipoFactura.F1;
+        TipoRectificativa = TipoRectificativa.I;
+        EsSubsanacion = false;
         var companyInfo = CompanyInfoHelper.GetCompanyInfo(Session);
-        InvoicePrefix ??= companyInfo?.DefaultInvoicePrefix;
-        Text ??= companyInfo?.VeriFactuDefaultText;
+        PrefijoFactura ??= companyInfo?.PrefijoFacturasVentaPorDefecto;
+        Texto ??= companyInfo?.TextoDefectoVeriFactu;
     }
 
-    public void GetInvoiceNumber()
+    public void ObtenerNumeroFactura()
     {
-        InvoiceNumber =
-            SequenceFactory.GetNextSequence(Session, $"{typeof(Invoice).FullName}.{InvoicePrefix}", InvoicePrefix, 5);
+        NumeroFactura =
+            SequenceFactory.GetNextSequence(Session, $"{typeof(Invoice).FullName}.{PrefijoFactura}", PrefijoFactura, 5);
     }
     
-    public bool IsValid()
+    public bool EsValida()
     {
-        return VeriFactuStatus != VeriFactuStatusValues.Send
-               && Customer != null
-               && !string.IsNullOrEmpty(Customer.Name)
-               && !string.IsNullOrEmpty(Customer.VatNumber)
-               && !string.IsNullOrEmpty(Text)
-               && Taxes.Count > 0;
+        return EstadoVeriFactu != ValoresEstadoVeriFactu.Enviado
+               && Cliente != null
+               && !string.IsNullOrEmpty(Cliente.Nombre)
+               && !string.IsNullOrEmpty(Cliente.Nif)
+               && !string.IsNullOrEmpty(Texto)
+               && Impuestos.Count > 0;
     }
 }

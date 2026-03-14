@@ -16,111 +16,111 @@ namespace erp.Module.BusinessObjects.Taxes;
 [DefaultClassOptions]
 [NavigationItem("Taxes")]
 [ImageName("Top10Percent")]
-[DefaultProperty(nameof(Code))]
+[DefaultProperty(nameof(Codigo))]
 public class TaxKind(Session session) : BaseEntity(session)
 {
-    private string _code;
-    private string _name;
-    private string _notes;
-    private int _sequence;
-    private Account _account;
-    private decimal _rate;
-    private bool _isActive;
-    private bool _isAvailableInSales;
-    private bool _isAvailableInPurchases;
-    private bool _isWithHolding;
-    private Impuesto? _tax;
-    private ClaveRegimen? _taxScheme;
-    private CalificacionOperacion? _taxType;
-    private CausaExencion? _taxException;
+    private string _codigo;
+    private string _nombre;
+    private string _notas;
+    private int _secuencia;
+    private Account _cuenta;
+    private decimal _tipo;
+    private bool _estaActivo;
+    private bool _disponibleEnVentas;
+    private bool _disponibleEnCompras;
+    private bool _esRetencion;
+    private Impuesto? _impuesto;
+    private ClaveRegimen? _regimenFiscal;
+    private CalificacionOperacion? _tipoOperacion;
+    private CausaExencion? _causaExencion;
 
     [RuleRequiredField]
     [RuleUniqueValue]
-    public string Code
+    public string Codigo
     {
-        get => _code;
-        set => SetPropertyValue(nameof(Code), ref _code, value);
+        get => _codigo;
+        set => SetPropertyValue(nameof(Codigo), ref _codigo, value);
     }
 
     [Size(255)]
     [RuleRequiredField]
-    public string Name
+    public string Nombre
     {
-        get => _name;
-        set => SetPropertyValue(nameof(Name), ref _name, value);
+        get => _nombre;
+        set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
     [Size(SizeAttribute.Unlimited)]
-    public string Notes
+    public string Notas
     {
-        get => _notes;
-        set => SetPropertyValue(nameof(Notes), ref _notes, value);
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
     
-    public int Sequence
+    public int Secuencia
     {
-        get => _sequence;
-        set => SetPropertyValue(nameof(Sequence), ref _sequence, value);
+        get => _secuencia;
+        set => SetPropertyValue(nameof(Secuencia), ref _secuencia, value);
     }
 
-    public Account Account
+    public Account Cuenta
     {
-        get => _account;
-        set => SetPropertyValue(nameof(Account), ref _account, value);
+        get => _cuenta;
+        set => SetPropertyValue(nameof(Cuenta), ref _cuenta, value);
     }
 
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
-    public decimal Rate
+    public decimal Tipo
     {
-        get => _rate;
-        set => SetPropertyValue(nameof(Rate), ref _rate, value);
+        get => _tipo;
+        set => SetPropertyValue(nameof(Tipo), ref _tipo, value);
     }
 
-    public bool IsActive
+    public bool EstaActivo
     {
-        get => _isActive;
-        set => SetPropertyValue(nameof(IsActive), ref _isActive, value);
+        get => _estaActivo;
+        set => SetPropertyValue(nameof(EstaActivo), ref _estaActivo, value);
     }
 
-    public bool IsAvailableInSales
+    public bool DisponibleEnVentas
     {
-        get => _isAvailableInSales;
-        set => SetPropertyValue(nameof(IsAvailableInSales), ref _isAvailableInSales, value);
+        get => _disponibleEnVentas;
+        set => SetPropertyValue(nameof(DisponibleEnVentas), ref _disponibleEnVentas, value);
     }
 
-    public bool IsAvailableInPurchases
+    public bool DisponibleEnCompras
     {
-        get => _isAvailableInPurchases;
-        set => SetPropertyValue(nameof(IsAvailableInPurchases), ref _isAvailableInPurchases, value);
+        get => _disponibleEnCompras;
+        set => SetPropertyValue(nameof(DisponibleEnCompras), ref _disponibleEnCompras, value);
     }
 
-    public bool IsWithHolding
+    public bool EsRetencion
     {
-        get => _isWithHolding;
-        set => SetPropertyValue(nameof(IsWithHolding), ref _isWithHolding, value);
+        get => _esRetencion;
+        set => SetPropertyValue(nameof(EsRetencion), ref _esRetencion, value);
     }
-    public Impuesto? Tax
+    public Impuesto? Impuesto
     {
-        get => _tax;
-        set => SetPropertyValue(nameof(Tax), ref _tax, value);
+        get => _impuesto;
+        set => SetPropertyValue(nameof(Impuesto), ref _impuesto, value);
     }
-    public ClaveRegimen? TaxScheme
+    public ClaveRegimen? RegimenFiscal
     {
-        get => _taxScheme;
-        set => SetPropertyValue(nameof(TaxScheme), ref _taxScheme, value);
+        get => _regimenFiscal;
+        set => SetPropertyValue(nameof(RegimenFiscal), ref _regimenFiscal, value);
     }
     
-    public CalificacionOperacion? TaxType
+    public CalificacionOperacion? TipoOperacion
     {
-        get => _taxType;
-        set => SetPropertyValue(nameof(TaxType), ref _taxType, value);
+        get => _tipoOperacion;
+        set => SetPropertyValue(nameof(TipoOperacion), ref _tipoOperacion, value);
     }
     
-    public CausaExencion? TaxException
+    public CausaExencion? CausaExencion
     {
-        get => _taxException;
-        set => SetPropertyValue(nameof(TaxException), ref _taxException, value);
+        get => _causaExencion;
+        set => SetPropertyValue(nameof(CausaExencion), ref _causaExencion, value);
     }
 
     [NonCloneable]
@@ -151,11 +151,11 @@ public class TaxKind(Session session) : BaseEntity(session)
 
     private void InitValues()
     {
-        IsActive = true;
-        IsAvailableInSales = false;
-        IsAvailableInPurchases = false;
-        IsWithHolding = false;
-        Rate = 0;
-        Account = null;
+        EstaActivo = true;
+        DisponibleEnVentas = false;
+        DisponibleEnCompras = false;
+        EsRetencion = false;
+        Tipo = 0;
+        Cuenta = null;
     }
 }

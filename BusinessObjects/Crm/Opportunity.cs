@@ -10,42 +10,42 @@ namespace erp.Module.BusinessObjects.Crm;
 [ImageName("BO_Opportunity")]
 public class Opportunity(Session session) : Contact(session)
 {
-    private string _description;
-    private Customer _customer;
-    private Campaign _campaign;
-    private Medium _medium;
-    private Source _source;
+    private string _descripcion;
+    private Customer _cliente;
+    private Campaign _campana;
+    private Medium _medio;
+    private Source _fuente;
 
     [Size(1000)]
-    public string Description
+    public string Descripcion
     {
-        get => _description;
-        set => SetPropertyValue(nameof(Description), ref _description, value);
+        get => _descripcion;
+        set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
     }
 
     [Association("Customer-Opportunities")]
-    public Customer Customer
+    public Customer Cliente
     {
-        get => _customer;
-        set => SetPropertyValue(nameof(Customer), ref _customer, value);
+        get => _cliente;
+        set => SetPropertyValue(nameof(Cliente), ref _cliente, value);
     }
     
-    public Campaign Campaign
+    public Campaign Campana
     {
-        get => _campaign;
-        set => SetPropertyValue(nameof(Campaign), ref _campaign, value);
+        get => _campana;
+        set => SetPropertyValue(nameof(Campana), ref _campana, value);
     }
     
-    public Medium Medium
+    public Medium Medio
     {
-        get => _medium;
-        set => SetPropertyValue(nameof(Medium), ref _medium, value);
+        get => _medio;
+        set => SetPropertyValue(nameof(Medio), ref _medio, value);
     }
     
-    public Source Source
+    public Source Fuente
     {
-        get => _source;
-        set => SetPropertyValue(nameof(Source), ref _source, value);
+        get => _fuente;
+        set => SetPropertyValue(nameof(Fuente), ref _fuente, value);
     }
     
     [Association("Opportunity-SalesOrders")]

@@ -17,117 +17,117 @@ namespace erp.Module.BusinessObjects.TimeTracking;
 [DefaultClassOptions]
 [NavigationItem("Time Tracking")]
 [ImageName("ShowWorkTimeOnly")]
-[XafDefaultProperty(nameof(DailyTimesheetSequence))]
+[XafDefaultProperty(nameof(SecuenciaParteDiario))]
 public class DailyTimesheet(Session session) : BaseEntity(session)
 {
-    private Employee _employee;
-    private string _dailyTimesheetPrefix;
-    private string _dailyTimesheetSequence;
-    private DateTime _date;
-    private TimeSpan _totalWork;
-    private bool _isLateIn;
-    private bool _isEarlyOut;
-    private string _notes;
+    private Employee _empleado;
+    private string _prefijoParteDiario;
+    private string _secuenciaParteDiario;
+    private DateTime _fecha;
+    private TimeSpan _totalTrabajo;
+    private bool _esEntradaTarde;
+    private bool _esSalidaTemprana;
+    private string _notas;
 
     [Association("Employee-DailyTimesheets")]
     [ModelDefault("AllowEdit", "False")]
     [RuleRequiredField]
-    public Employee Employee
+    public Employee Empleado
     {
-        get => _employee;
-        set => SetPropertyValue(nameof(Employee), ref _employee, value);
+        get => _empleado;
+        set => SetPropertyValue(nameof(Empleado), ref _empleado, value);
     }
 
     [RuleRequiredField]
-    public string DailyTimesheetPrefix
+    public string PrefijoParteDiario
     {
-        get => _dailyTimesheetPrefix;
-        set => SetPropertyValue(nameof(DailyTimesheetPrefix), ref _dailyTimesheetPrefix, value);
+        get => _prefijoParteDiario;
+        set => SetPropertyValue(nameof(PrefijoParteDiario), ref _prefijoParteDiario, value);
     }
 
-    public string DailyTimesheetSequence
+    public string SecuenciaParteDiario
     {
-        get => _dailyTimesheetSequence;
-        set => SetPropertyValue(nameof(DailyTimesheetSequence), ref _dailyTimesheetSequence, value);
+        get => _secuenciaParteDiario;
+        set => SetPropertyValue(nameof(SecuenciaParteDiario), ref _secuenciaParteDiario, value);
     }
 
     [RuleRequiredField]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "d")]
-    public DateTime Date
+    public DateTime Fecha
     {
-        get => _date.Date;
-        set => SetPropertyValue(nameof(Date), ref _date, value.Date);
+        get => _fecha.Date;
+        set => SetPropertyValue(nameof(Fecha), ref _fecha, value.Date);
     }
 
     //[ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "h'h 'm'm'")]
     [ModelDefault("AllowEdit", "False")]
-    public TimeSpan TotalWork
+    public TimeSpan TotalTrabajo
     {
-        get => _totalWork;
-        set => SetPropertyValue(nameof(TotalWork), ref _totalWork, value);
+        get => _totalTrabajo;
+        set => SetPropertyValue(nameof(TotalTrabajo), ref _totalTrabajo, value);
     }
 
     [ModelDefault("AllowEdit", "False")]
-    public bool IsLateIn
+    public bool EsEntradaTarde
     {
-        get => _isLateIn;
-        set => SetPropertyValue(nameof(IsLateIn), ref _isLateIn, value);
+        get => _esEntradaTarde;
+        set => SetPropertyValue(nameof(EsEntradaTarde), ref _esEntradaTarde, value);
     }
 
     [ModelDefault("AllowEdit", "False")]
-    public bool IsEarlyOut
+    public bool EsSalidaTemprana
     {
-        get => _isEarlyOut;
-        set => SetPropertyValue(nameof(IsEarlyOut), ref _isEarlyOut, value);
+        get => _esSalidaTemprana;
+        set => SetPropertyValue(nameof(EsSalidaTemprana), ref _esSalidaTemprana, value);
     }
     
     [Size(SizeAttribute.Unlimited)]
     [ModelDefault("RowCount", "3")]
-    [XafDisplayName("Notes")]
-    public string Notes
+    [XafDisplayName("Notas")]
+    public string Notas
     {
-        get => _notes;
-        set => SetPropertyValue(nameof(Notes), ref _notes, value);
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
     [Association("DailyTimesheet-Entries")]
     [DevExpress.Xpo.Aggregated]
-    public XPCollection<TimesheetEntry> Entries => GetCollection<TimesheetEntry>(nameof(Entries));
+    public XPCollection<TimesheetEntry> Registros => GetCollection<TimesheetEntry>(nameof(Registros));
 
-    public void Recalculate(WorkdayRule rule)
+    public void Recalcular(WorkdayRule regla)
     {
         var total = TimeSpan.Zero;
-        DateTime? firstStart = null;
-        DateTime? lastEnd = null;
+        DateTime? primerInicio = null;
+        DateTime? ultimoFin = null;
 
-        foreach (var e in Entries)
-            if (e.EndOn.HasValue && e.EndOn.Value >= e.StartOn)
+        foreach (var e in Registros)
+            if (e.FechaFin.HasValue && e.FechaFin.Value >= e.FechaInicio)
             {
-                total += e.EndOn.Value - e.StartOn;
-                if (!firstStart.HasValue || e.StartOn < firstStart.Value) firstStart = e.StartOn;
-                if (!lastEnd.HasValue || e.EndOn.Value > lastEnd.Value) lastEnd = e.EndOn.Value;
+                total += e.FechaFin.Value - e.FechaInicio;
+                if (!primerInicio.HasValue || e.FechaInicio < primerInicio.Value) primerInicio = e.FechaInicio;
+                if (!ultimoFin.HasValue || e.FechaFin.Value > ultimoFin.Value) ultimoFin = e.FechaFin.Value;
             }
 
-        TotalWork = total;
+        TotalTrabajo = total;
 
-        if (firstStart.HasValue)
+        if (primerInicio.HasValue)
         {
-            var allowedStartMax = firstStart.Value.Date + rule.WorkdayStart + rule.ToleranceLateIn;
-            IsLateIn = firstStart.Value > allowedStartMax;
+            var inicioPermitidoMax = primerInicio.Value.Date + regla.InicioJornada + regla.ToleranciaEntradaTarde;
+            EsEntradaTarde = primerInicio.Value > inicioPermitidoMax;
         }
         else
         {
-            IsLateIn = false;
+            EsEntradaTarde = false;
         }
 
-        if (lastEnd.HasValue)
+        if (ultimoFin.HasValue)
         {
-            var allowedEndMin = lastEnd.Value.Date + rule.WorkdayEnd - rule.ToleranceEarlyOut;
-            IsEarlyOut = lastEnd.Value < allowedEndMin;
+            var finPermitidoMin = ultimoFin.Value.Date + regla.FinJornada - regla.ToleranciaSalidaTemprana;
+            EsSalidaTemprana = ultimoFin.Value < finPermitidoMin;
         }
         else
         {
-            IsEarlyOut = false;
+            EsSalidaTemprana = false;
         }
     }
 
@@ -139,22 +139,22 @@ public class DailyTimesheet(Session session) : BaseEntity(session)
 
     private void InitValues()
     {
-        SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(Employee), GetCurrentUser());
-        Date = DateTime.Today.Date;
+        SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(Empleado), GetCurrentUser());
+        Fecha = DateTime.Today.Date;
         var companyInfo = CompanyInfoHelper.GetCompanyInfo(Session);
         if (companyInfo == null) return;
-        DailyTimesheetPrefix = companyInfo.DefaultDailyTimeSheetPrefix;
+        PrefijoParteDiario = companyInfo.PrefijoPartesDiariosPorDefecto;
     }
 
     protected override void OnSaving()
     {
         base.OnSaving();
         
-        if (!Session.IsNewObject(this) || !string.IsNullOrEmpty(DailyTimesheetSequence) ||
+        if (!Session.IsNewObject(this) || !string.IsNullOrEmpty(SecuenciaParteDiario) ||
             Session is NestedUnitOfWork) return;
-        DailyTimesheetSequence =
-            SequenceFactory.GetNextSequence(Session, $"{typeof(Invoice).FullName}.{DailyTimesheetPrefix}",
-                DailyTimesheetPrefix, 5);
+        SecuenciaParteDiario =
+            SequenceFactory.GetNextSequence(Session, $"{typeof(Invoice).FullName}.{PrefijoParteDiario}",
+                PrefijoParteDiario, 5);
     }
 
     private ApplicationUser GetCurrentUser()

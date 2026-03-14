@@ -12,121 +12,121 @@ namespace erp.Module.BusinessObjects.Base.Sales;
 [DefaultProperty(nameof(TaxKind))]
 public class SalesDocumentLineTax(Session session) : BaseEntity(session)
 {
-    private SalesDocumentLine _salesDocumentLine;
-    private TaxKind _taxKind;
-    private string _name;
-    private string _notes;
-    private int _sequence;
-    private Account _account;
-    private decimal _rate;
-    private bool _isCompound;
-    private bool _isWithHolding;
-    private decimal _taxableAmount;
-    private decimal _taxAmount;
+    private SalesDocumentLine _lineaDocumentoVenta;
+    private TaxKind _tipoImpuesto;
+    private string _nombre;
+    private string _notas;
+    private int _secuencia;
+    private Account _cuenta;
+    private decimal _tipo;
+    private bool _esCompuesto;
+    private bool _esRetencion;
+    private decimal _baseImponible;
+    private decimal _importeImpuestos;
 
     [Association("SalesDocumentLine-Taxes")]
-    public SalesDocumentLine SalesDocumentLine
+    public SalesDocumentLine LineaDocumentoVenta
     {
-        get => _salesDocumentLine;
-        set => SetPropertyValue(nameof(SalesDocumentLine), ref _salesDocumentLine, value);
+        get => _lineaDocumentoVenta;
+        set => SetPropertyValue(nameof(LineaDocumentoVenta), ref _lineaDocumentoVenta, value);
     }
 
-    public TaxKind TaxKind
+    public TaxKind TipoImpuesto
     {
-        get => _taxKind;
+        get => _tipoImpuesto;
         set
         {
-            if (SetPropertyValue(nameof(TaxKind), ref _taxKind, value))
-                ApplyTaxTypeSnapshot(value);
+            if (SetPropertyValue(nameof(TipoImpuesto), ref _tipoImpuesto, value))
+                AplicarInstantaneaTipoImpuesto(value);
         }
     }
 
-    private void ApplyTaxTypeSnapshot(TaxKind t)
+    private void AplicarInstantaneaTipoImpuesto(TaxKind t)
     {
         if (IsLoading || IsSaving) return;
 
         if (t == null)
         {
-            Name = null;
-            Notes = null;
-            Sequence = 0;
-            Account = null;
-            Rate = 0m;
-            IsCompound = false;
-            IsWithHolding = false;
+            Nombre = null;
+            Notas = null;
+            Secuencia = 0;
+            Cuenta = null;
+            Tipo = 0m;
+            EsCompuesto = false;
+            EsRetencion = false;
             return;
         }
 
-        Name = t.Name;
-        Notes = t.Notes;
-        Sequence = t.Sequence;
-        Account = t.Account;
-        Rate = t.Rate;
-        IsWithHolding = t.IsWithHolding;
+        Nombre = t.Nombre;
+        Notas = t.Notas;
+        Secuencia = t.Secuencia;
+        Cuenta = t.Cuenta;
+        Tipo = t.Tipo;
+        EsRetencion = t.EsRetencion;
     }
 
     [Size(255)]
-    public string Name
+    public string Nombre
     {
-        get => _name;
-        set => SetPropertyValue(nameof(Name), ref _name, value);
+        get => _nombre;
+        set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
     [Size(1000)]
-    public string Notes
+    public string Notas
     {
-        get => _notes;
-        set => SetPropertyValue(nameof(Notes), ref _notes, value);
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
-    public int Sequence
+    public int Secuencia
     {
-        get => _sequence;
-        set => SetPropertyValue(nameof(Sequence), ref _sequence, value);
+        get => _secuencia;
+        set => SetPropertyValue(nameof(Secuencia), ref _secuencia, value);
     }
 
-    public Account Account
+    public Account Cuenta
     {
-        get => _account;
-        set => SetPropertyValue(nameof(Account), ref _account, value);
-    }
-
-    [ModelDefault("DisplayFormat", "{0:n2}")]
-    [ModelDefault("EditMask", "n2")]
-    public decimal Rate
-    {
-        get => _rate;
-        set => SetPropertyValue(nameof(Rate), ref _rate, value);
-    }
-
-    public bool IsCompound
-    {
-        get => _isCompound;
-        set => SetPropertyValue(nameof(IsCompound), ref _isCompound, value);
-    }
-
-    public bool IsWithHolding
-    {
-        get => _isWithHolding;
-        set => SetPropertyValue(nameof(IsWithHolding), ref _isWithHolding, value);
+        get => _cuenta;
+        set => SetPropertyValue(nameof(Cuenta), ref _cuenta, value);
     }
 
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
-    [ModelDefault("AllowEdit", "False")]
-    public decimal TaxableAmount
+    public decimal Tipo
     {
-        get => _taxableAmount;
-        set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
+        get => _tipo;
+        set => SetPropertyValue(nameof(Tipo), ref _tipo, value);
+    }
+
+    public bool EsCompuesto
+    {
+        get => _esCompuesto;
+        set => SetPropertyValue(nameof(EsCompuesto), ref _esCompuesto, value);
+    }
+
+    public bool EsRetencion
+    {
+        get => _esRetencion;
+        set => SetPropertyValue(nameof(EsRetencion), ref _esRetencion, value);
     }
 
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     [ModelDefault("AllowEdit", "False")]
-    public decimal TaxAmount
+    public decimal BaseImponible
     {
-        get => _taxAmount;
-        set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);
+        get => _baseImponible;
+        set => SetPropertyValue(nameof(BaseImponible), ref _baseImponible, value);
+    }
+
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    [ModelDefault("AllowEdit", "False")]
+    public decimal ImporteImpuestos
+    {
+        get => _importeImpuestos;
+        set => SetPropertyValue(nameof(ImporteImpuestos), ref _importeImpuestos, value);
     }
 
     public override void AfterConstruction()

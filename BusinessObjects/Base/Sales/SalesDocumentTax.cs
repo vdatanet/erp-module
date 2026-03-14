@@ -12,149 +12,149 @@ using VeriFactu.Xml.Factu.Alta;
 namespace erp.Module.BusinessObjects.Base.Sales;
 
 [ImageName("RowTotalsPosition")]
-[DefaultProperty(nameof(Sequence))]
+[DefaultProperty(nameof(Secuencia))]
 [NavigationItem("Taxes")]
 public class SalesDocumentTax(Session session): BaseEntity(session)
 {
-    private SalesDocument _salesDocument;
-    private int _sequence;
-    private TaxKind _taxKind;
-    private Account _account;
-    private decimal _rate;
-    private bool _isWithHolding;
-    private Impuesto? _tax;
-    private ClaveRegimen? _taxScheme;
-    private CalificacionOperacion? _taxType;
-    private CausaExencion? _taxException;
+    private SalesDocument _documentoVenta;
+    private int _secuencia;
+    private TaxKind _tipoImpuesto;
+    private Account _cuenta;
+    private decimal _tipo;
+    private bool _esRetencion;
+    private Impuesto? _impuesto;
+    private ClaveRegimen? _regimenFiscal;
+    private CalificacionOperacion? _tipoOperacion;
+    private CausaExencion? _causaExencion;
     
-    private decimal _taxableAmount;
-    private decimal _taxAmount;
+    private decimal _baseImponible;
+    private decimal _importeImpuestos;
     
     [Association("SalesDocument-Taxes")]
-    public SalesDocument SalesDocument
+    public SalesDocument DocumentoVenta
     {
-        get => _salesDocument;
-        set => SetPropertyValue(nameof(SalesDocument), ref _salesDocument, value);
+        get => _documentoVenta;
+        set => SetPropertyValue(nameof(DocumentoVenta), ref _documentoVenta, value);
     }
     
-    public int Sequence
+    public int Secuencia
     {
-        get => _sequence;
-        set => SetPropertyValue(nameof(Sequence), ref _sequence, value);
+        get => _secuencia;
+        set => SetPropertyValue(nameof(Secuencia), ref _secuencia, value);
     }
 
     [ImmediatePostData]
-    public TaxKind TaxKind
+    public TaxKind TipoImpuesto
     {
-        get => _taxKind;
+        get => _tipoImpuesto;
         set
         {
-            bool modified = SetPropertyValue(nameof(TaxKind), ref _taxKind, value);
+            bool modified = SetPropertyValue(nameof(TipoImpuesto), ref _tipoImpuesto, value);
             if (!modified || IsLoading || IsSaving || IsDeleted) return;
-            ApplyTaxSnapshot();
+            AplicarInstantaneaImpuesto();
         }
     }
 
-    private void ApplyTaxSnapshot()
+    private void AplicarInstantaneaImpuesto()
     {
-        if (TaxKind is null)
+        if (TipoImpuesto is null)
         {
-            Sequence = 0;
-            Account = null;
-            Rate = 0;
-            IsWithHolding = false;
-            Tax = null;
-            TaxScheme = null;
-            TaxType = null;
-            TaxException = null;
+            Secuencia = 0;
+            Cuenta = null;
+            Tipo = 0;
+            EsRetencion = false;
+            Impuesto = null;
+            RegimenFiscal = null;
+            TipoOperacion = null;
+            CausaExencion = null;
             return;
         }
 
-        Sequence = TaxKind.Sequence;
-        Account = TaxKind.Account;
-        Rate = TaxKind.Rate;
-        IsWithHolding = TaxKind.IsWithHolding;
-        Tax = TaxKind.Tax;
-        TaxScheme = TaxKind.TaxScheme;
-        TaxType = TaxKind.TaxType;
-        TaxException = TaxKind.TaxException;
+        Secuencia = TipoImpuesto.Secuencia;
+        Cuenta = TipoImpuesto.Cuenta;
+        Tipo = TipoImpuesto.Tipo;
+        EsRetencion = TipoImpuesto.EsRetencion;
+        Impuesto = TipoImpuesto.Impuesto;
+        RegimenFiscal = TipoImpuesto.RegimenFiscal;
+        TipoOperacion = TipoImpuesto.TipoOperacion;
+        CausaExencion = TipoImpuesto.CausaExencion;
     }
 
-    public Account Account
+    public Account Cuenta
     {
-        get => _account;
-        set => SetPropertyValue(nameof(Account), ref _account, value);
+        get => _cuenta;
+        set => SetPropertyValue(nameof(Cuenta), ref _cuenta, value);
     }
 
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     [ImmediatePostData]
-    public decimal Rate
+    public decimal Tipo
     {
-        get => _rate;
+        get => _tipo;
         set
         {
-            bool modified = SetPropertyValue(nameof(Rate), ref _rate, value); 
+            bool modified = SetPropertyValue(nameof(Tipo), ref _tipo, value); 
             if (!modified || IsLoading || IsSaving || IsDeleted) return;
-            GetTaxAmount();
+            CalcularImporteImpuesto();
         }
     }
 
     [ImmediatePostData]
-    public bool IsWithHolding
+    public bool EsRetencion
     {
-        get => _isWithHolding;
+        get => _esRetencion;
         set
         {
-            bool modified = SetPropertyValue(nameof(IsWithHolding), ref _isWithHolding, value);
+            bool modified = SetPropertyValue(nameof(EsRetencion), ref _esRetencion, value);
             if (!modified || IsLoading || IsSaving || IsDeleted) return;
-            GetTaxAmount();
+            CalcularImporteImpuesto();
         }
     }
 
-    private void GetTaxAmount()
+    private void CalcularImporteImpuesto()
     {
-        TaxAmount = AmountCalculator.GetTaxAmount(TaxableAmount, Rate, IsWithHolding);
+        ImporteImpuestos = AmountCalculator.GetTaxAmount(BaseImponible, Tipo, EsRetencion);
     }
 
-    public Impuesto? Tax
+    public Impuesto? Impuesto
     {
-        get => _tax;
-        set => SetPropertyValue(nameof(Tax), ref _tax, value);
+        get => _impuesto;
+        set => SetPropertyValue(nameof(Impuesto), ref _impuesto, value);
     }
-    public ClaveRegimen? TaxScheme
+    public ClaveRegimen? RegimenFiscal
     {
-        get => _taxScheme;
-        set => SetPropertyValue(nameof(TaxScheme), ref _taxScheme, value);
-    }
-    
-    public CalificacionOperacion? TaxType
-    {
-        get => _taxType;
-        set => SetPropertyValue(nameof(TaxType), ref _taxType, value);
+        get => _regimenFiscal;
+        set => SetPropertyValue(nameof(RegimenFiscal), ref _regimenFiscal, value);
     }
     
-    public CausaExencion? TaxException
+    public CalificacionOperacion? TipoOperacion
     {
-        get => _taxException;
-        set => SetPropertyValue(nameof(TaxException), ref _taxException, value);
+        get => _tipoOperacion;
+        set => SetPropertyValue(nameof(TipoOperacion), ref _tipoOperacion, value);
+    }
+    
+    public CausaExencion? CausaExencion
+    {
+        get => _causaExencion;
+        set => SetPropertyValue(nameof(CausaExencion), ref _causaExencion, value);
     }
 
     [ImmediatePostData]
-    public decimal TaxableAmount
+    public decimal BaseImponible
     {
-        get => _taxableAmount;
+        get => _baseImponible;
         set
         {
-            bool modified = SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
+            bool modified = SetPropertyValue(nameof(BaseImponible), ref _baseImponible, value);
             if (!modified || IsLoading || IsSaving || IsDeleted) return;
-            GetTaxAmount();
+            CalcularImporteImpuesto();
         }
     }
     
-    public decimal TaxAmount
+    public decimal ImporteImpuestos
     {
-        get => _taxAmount;
-        set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);  
+        get => _importeImpuestos;
+        set => SetPropertyValue(nameof(ImporteImpuestos), ref _importeImpuestos, value);  
     }
 }

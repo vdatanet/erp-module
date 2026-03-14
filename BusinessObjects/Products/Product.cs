@@ -16,124 +16,124 @@ namespace erp.Module.BusinessObjects.Products;
 [DefaultClassOptions]
 [NavigationItem("Products")]
 [ImageName("BO_Product")]
-[DefaultProperty(nameof(Code))]
+[DefaultProperty(nameof(Codigo))]
 public class Product(Session session) : BaseEntity(session)
 {
-    private string _code;
-    private string _barcode;
-    private string _name;
-    private Category _category;
-    private decimal _standardCost;
-    private decimal _priceList;
-    private Account _salesAccount;
-    private Account _purchaseAccount;
-    private bool _isActive;
-    private bool _isAvailableInSales;
-    private bool _isAvailableInPurchases;
-    private bool _isAvailableInPos;
-    private string _notes;
-    private MediaDataObject _picture;
+    private string _codigo;
+    private string _codigoBarras;
+    private string _nombre;
+    private Category _categoria;
+    private decimal _costeEstandar;
+    private decimal _precioVenta;
+    private Account _cuentaVentas;
+    private Account _cuentaCompras;
+    private bool _estaActivo;
+    private bool _disponibleEnVentas;
+    private bool _disponibleEnCompras;
+    private bool _disponibleEnTpv;
+    private string _notas;
+    private MediaDataObject _foto;
     
     [RuleUniqueValue]
-    public string Code
+    public string Codigo
     {
-        get => _code;
-        set => SetPropertyValue(nameof(Code), ref _code, value);
+        get => _codigo;
+        set => SetPropertyValue(nameof(Codigo), ref _codigo, value);
     }
 
     [RuleUniqueValue]
-    public string Barcode
+    public string CodigoBarras
     {
-        get => _barcode;
-        set => SetPropertyValue(nameof(Barcode), ref _barcode, value);
+        get => _codigoBarras;
+        set => SetPropertyValue(nameof(CodigoBarras), ref _codigoBarras, value);
     }
 
     [RuleUniqueValue]
     [RuleRequiredField]
     [Size(SizeAttribute.Unlimited)]
-    public string Name
+    public string Nombre
     {
-        get => _name;
-        set => SetPropertyValue(nameof(Name), ref _name, value);
+        get => _nombre;
+        set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
     
     [Association("Category-Products")]
-    [DataSourceCriteria("IsActive = True")]
-    public Category Category
+    [DataSourceCriteria("EstaActivo = True")]
+    public Category Categoria
     {
-        get => _category;
-        set => SetPropertyValue(nameof(Category), ref _category, value);
+        get => _categoria;
+        set => SetPropertyValue(nameof(Categoria), ref _categoria, value);
     }
 
-    public decimal StandardCost
+    public decimal CosteEstandar
     {
-        get => _standardCost;
-        set => SetPropertyValue(nameof(StandardCost), ref _standardCost, value);
+        get => _costeEstandar;
+        set => SetPropertyValue(nameof(CosteEstandar), ref _costeEstandar, value);
     }
 
-    public decimal PriceList
+    public decimal PrecioVenta
     {
-        get => _priceList;
-        set => SetPropertyValue(nameof(PriceList), ref _priceList, value);
+        get => _precioVenta;
+        set => SetPropertyValue(nameof(PrecioVenta), ref _precioVenta, value);
     }
 
-    public Account SalesAccount
+    public Account CuentaVentas
     {
-        get => _salesAccount;
-        set => SetPropertyValue(nameof(SalesAccount), ref _salesAccount, value);
+        get => _cuentaVentas;
+        set => SetPropertyValue(nameof(CuentaVentas), ref _cuentaVentas, value);
     }
 
-    public Account PurchaseAccount
+    public Account CuentaCompras
     {
-        get => _purchaseAccount;
-        set => SetPropertyValue(nameof(PurchaseAccount), ref _purchaseAccount, value);
+        get => _cuentaCompras;
+        set => SetPropertyValue(nameof(CuentaCompras), ref _cuentaCompras, value);
     }
 
-    public bool IsActive
+    public bool EstaActivo
     {
-        get => _isActive;
-        set => SetPropertyValue(nameof(IsActive), ref _isActive, value);
+        get => _estaActivo;
+        set => SetPropertyValue(nameof(EstaActivo), ref _estaActivo, value);
     }
 
-    public bool IsAvailableInSales
+    public bool DisponibleEnVentas
     {
-        get => _isAvailableInSales;
-        set => SetPropertyValue(nameof(IsAvailableInSales), ref _isAvailableInSales, value);
+        get => _disponibleEnVentas;
+        set => SetPropertyValue(nameof(DisponibleEnVentas), ref _disponibleEnVentas, value);
     }
     
-    public bool IsAvailableInPurchases
+    public bool DisponibleEnCompras
     {
-        get => _isAvailableInPurchases;
-        set => SetPropertyValue(nameof(IsAvailableInPurchases), ref _isAvailableInPurchases, value);
+        get => _disponibleEnCompras;
+        set => SetPropertyValue(nameof(DisponibleEnCompras), ref _disponibleEnCompras, value);
     }
 
-    public bool IsAvailableInPos
+    public bool DisponibleEnTpv
     {
-        get => _isAvailableInPos;
-        set => SetPropertyValue(nameof(IsAvailableInPos), ref _isAvailableInPos, value);
+        get => _disponibleEnTpv;
+        set => SetPropertyValue(nameof(DisponibleEnTpv), ref _disponibleEnTpv, value);
     }
 
     [Size(SizeAttribute.Unlimited)]
-    public string Notes
+    public string Notas
     {
-        get => _notes;
-        set => SetPropertyValue(nameof(Notes), ref _notes, value);
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
-    public MediaDataObject Picture
+    public MediaDataObject Foto
     {
-        get => _picture;
-        set => SetPropertyValue(nameof(Picture), ref _picture, value);
+        get => _foto;
+        set => SetPropertyValue(nameof(Foto), ref _foto, value);
     }
     
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
     [Association("Products-SalesTaxes")]
-    [DataSourceCriteria("IsAvailableInSales = True AND IsActive = True")]
+    [DataSourceCriteria("IsAvailableInSales = True AND EstaActivo = True")]
     public XPCollection<TaxKind> SalesTaxes => GetCollection<TaxKind>(nameof(SalesTaxes));
     
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
     [Association("Products-PurchaseTaxes")]
-    [DataSourceCriteria("IsAvailableInPurchases = True AND IsActive = True")]
+    [DataSourceCriteria("IsAvailableInPurchases = True AND EstaActivo = True")]
     public XPCollection<TaxKind> PurchaseTaxes => GetCollection<TaxKind>(nameof(PurchaseTaxes));
     
     [Aggregated]
@@ -156,13 +156,13 @@ public class Product(Session session) : BaseEntity(session)
 
     private void InitValues()
     {
-        IsActive = true;
-        IsAvailableInSales = false;
-        IsAvailableInPurchases = false;
-        IsAvailableInPos = false;
+        EstaActivo = true;
+        DisponibleEnVentas = false;
+        DisponibleEnCompras = false;
+        DisponibleEnTpv = false;
         var companyInfo = CompanyInfoHelper.GetCompanyInfo(Session);
         if (companyInfo == null) return;
-        if (companyInfo.DefaultSalesAccount != null) SalesAccount = companyInfo.DefaultSalesAccount;
-        if (companyInfo.DefaultPurchaseAccount != null) PurchaseAccount = companyInfo.DefaultPurchaseAccount;
+        if (companyInfo.CuentaVentasPorDefecto != null) CuentaVentas = companyInfo.CuentaVentasPorDefecto;
+        if (companyInfo.CuentaComprasPorDefecto != null) CuentaCompras = companyInfo.CuentaComprasPorDefecto;
     }
 }

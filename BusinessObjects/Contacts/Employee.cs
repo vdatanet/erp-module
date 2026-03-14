@@ -11,47 +11,47 @@ namespace erp.Module.BusinessObjects.Contacts;
 [ImageName("BO_Employee")]
 public class Employee(Session session) : Contact(session)
 {
-    private WorkdayRule _workdayRule;
-    private bool _isWorking;
-    private DateTime? _lastClockIn;
-    private DateTime? _lastClockOut;
+    private WorkdayRule _reglaJornadaLaboral;
+    private bool _estaTrabajando;
+    private DateTime? _ultimoRegistroEntrada;
+    private DateTime? _ultimoRegistroSalida;
 
     [Association("WorkdayRule-Employees")]
-    [XafDisplayName("Workday Rule")]
-    public WorkdayRule WorkdayRule
+    [XafDisplayName("Regla Jornada Laboral")]
+    public WorkdayRule ReglaJornadaLaboral
     {
-        get => _workdayRule;
-        set => SetPropertyValue(nameof(WorkdayRule), ref _workdayRule, value);
+        get => _reglaJornadaLaboral;
+        set => SetPropertyValue(nameof(ReglaJornadaLaboral), ref _reglaJornadaLaboral, value);
     }
 
-    [XafDisplayName("Is Working")]
-    public bool IsWorking
+    [XafDisplayName("¿Está trabajando?")]
+    public bool EstaTrabajando
     {
-        get => _isWorking;
-        set => SetPropertyValue(nameof(IsWorking), ref _isWorking, value);
+        get => _estaTrabajando;
+        set => SetPropertyValue(nameof(EstaTrabajando), ref _estaTrabajando, value);
     }
 
-    [XafDisplayName("Last Clock In")]
+    [XafDisplayName("Último Registro Entrada")]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
-    public DateTime? LastClockIn
+    public DateTime? UltimoRegistroEntrada
     {
-        get => _lastClockIn;
-        set => SetPropertyValue(nameof(LastClockIn), ref _lastClockIn, value);
+        get => _ultimoRegistroEntrada;
+        set => SetPropertyValue(nameof(UltimoRegistroEntrada), ref _ultimoRegistroEntrada, value);
     }
 
-    [XafDisplayName("Last Clock Out")]
+    [XafDisplayName("Último Registro Salida")]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
-    public DateTime? LastClockOut
+    public DateTime? UltimoRegistroSalida
     {
-        get => _lastClockOut;
-        set => SetPropertyValue(nameof(LastClockOut), ref _lastClockOut, value);
+        get => _ultimoRegistroSalida;
+        set => SetPropertyValue(nameof(UltimoRegistroSalida), ref _ultimoRegistroSalida, value);
     }
     
     [Association("Employee-TimesheetEntries")]
-    [XafDisplayName("Timesheet Entries")]
-    public XPCollection<TimesheetEntry> TimesheetEntries => GetCollection<TimesheetEntry>(nameof(TimesheetEntries));
+    [XafDisplayName("Registros de Tiempo")]
+    public XPCollection<TimesheetEntry> RegistrosTiempo => GetCollection<TimesheetEntry>(nameof(RegistrosTiempo));
 
     [Association("Employee-DailyTimesheets")]
-    [XafDisplayName("Daily Timesheets")]
-    public XPCollection<DailyTimesheet> DailyTimesheets => GetCollection<DailyTimesheet>(nameof(DailyTimesheets));
+    [XafDisplayName("Partes Diarios")]
+    public XPCollection<DailyTimesheet> PartesDiarios => GetCollection<DailyTimesheet>(nameof(PartesDiarios));
 }

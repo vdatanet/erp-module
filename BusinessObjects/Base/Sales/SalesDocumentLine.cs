@@ -12,211 +12,211 @@ namespace erp.Module.BusinessObjects.Base.Sales;
 [ImageName("BO_Order_Item")]
 public class SalesDocumentLine(Session session) : BaseEntity(session)
 {
-    private SalesDocument _salesDocument;
-    private Product _product;
-    private string _productName;
-    private string _notes;
-    private decimal _quantity;
-    private decimal _unitPrice;
-    private decimal _discountPercent;
-    private decimal _taxableAmount;
-    private decimal _taxAmount;
-    private decimal _totalAmount;
+    private SalesDocument _documentoVenta;
+    private Product _producto;
+    private string _nombreProducto;
+    private string _notas;
+    private decimal _cantidad;
+    private decimal _precioUnitario;
+    private decimal _porcentajeDescuento;
+    private decimal _baseImponible;
+    private decimal _importeImpuestos;
+    private decimal _importeTotal;
 
     [Association("SalesDocument-Lines")]
-    public SalesDocument SalesDocument
+    public SalesDocument DocumentoVenta
     {
-        get => _salesDocument;
-        set => SetPropertyValue(nameof(SalesDocument), ref _salesDocument, value);
+        get => _documentoVenta;
+        set => SetPropertyValue(nameof(DocumentoVenta), ref _documentoVenta, value);
     }
 
     [ImmediatePostData]
     [LookupEditorMode(LookupEditorMode.Search)]
-    public Product Product
+    public Product Producto
     {
-        get => _product;
+        get => _producto;
         set
         {
-            var modified = SetPropertyValue(nameof(Product), ref _product, value);
+            var modified = SetPropertyValue(nameof(Producto), ref _producto, value);
             if (!modified || IsLoading || IsSaving || IsDeleted) return;
-            DeleteProductTaxes();
-            ApplyProductSnapshot();
-            RebuildTaxes();
+            BorrarImpuestosProducto();
+            AplicarInstantaneaProducto();
+            ReconstruirImpuestos();
         }
     }
 
     [Size(SizeAttribute.Unlimited)]
-    public string ProductName
+    public string NombreProducto
     {
-        get => _productName;
-        set => SetPropertyValue(nameof(ProductName), ref _productName, value);
+        get => _nombreProducto;
+        set => SetPropertyValue(nameof(NombreProducto), ref _nombreProducto, value);
     }
 
     [Size(SizeAttribute.Unlimited)]
-    public string Notes
+    public string Notas
     {
-        get => _notes;
-        set => SetPropertyValue(nameof(Notes), ref _notes, value);
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
     [ImmediatePostData]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
-    public decimal Quantity
+    public decimal Cantidad
     {
-        get => _quantity;
+        get => _cantidad;
         set
         {
-            var modified = SetPropertyValue(nameof(Quantity), ref _quantity, value);
+            var modified = SetPropertyValue(nameof(Cantidad), ref _cantidad, value);
             if (!modified || IsLoading || IsSaving || IsDeleted) return;
-            SetTaxableAmount();
+            EstablecerBaseImponible();
         }
     }
 
     [ImmediatePostData]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
-    public decimal UnitPrice
+    public decimal PrecioUnitario
     {
-        get => _unitPrice;
+        get => _precioUnitario;
         set
         {
-            var modified = SetPropertyValue(nameof(UnitPrice), ref _unitPrice, value);
+            var modified = SetPropertyValue(nameof(PrecioUnitario), ref _precioUnitario, value);
             if (!modified || IsLoading || IsSaving || IsDeleted) return;
-            SetTaxableAmount();
+            EstablecerBaseImponible();
         }
     }
 
     [ImmediatePostData]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
-    public decimal DiscountPercent
+    public decimal PorcentajeDescuento
     {
-        get => _discountPercent;
+        get => _porcentajeDescuento;
         set
         {
-            var modified = SetPropertyValue(nameof(DiscountPercent), ref _discountPercent, value);
+            var modified = SetPropertyValue(nameof(PorcentajeDescuento), ref _porcentajeDescuento, value);
             if (!modified || IsLoading || IsSaving || IsDeleted) return;
-            SetTaxableAmount();
+            EstablecerBaseImponible();
         }
     }
 
-    [Persistent(nameof(TaxableAmount))]
+    [Persistent(nameof(BaseImponible))]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
-    public decimal TaxableAmount
+    public decimal BaseImponible
     {
-        get => _taxableAmount;
-        protected set => SetPropertyValue(nameof(TaxableAmount), ref _taxableAmount, value);
+        get => _baseImponible;
+        protected set => SetPropertyValue(nameof(BaseImponible), ref _baseImponible, value);
     }
 
-    [Persistent(nameof(TaxAmount))]
+    [Persistent(nameof(ImporteImpuestos))]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
-    public decimal TaxAmount
+    public decimal ImporteImpuestos
     {
-        get => _taxAmount;
-        protected set => SetPropertyValue(nameof(TaxAmount), ref _taxAmount, value);
+        get => _importeImpuestos;
+        protected set => SetPropertyValue(nameof(ImporteImpuestos), ref _importeImpuestos, value);
     }
 
-    [Persistent(nameof(TotalAmount))]
+    [Persistent(nameof(ImporteTotal))]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
-    public decimal TotalAmount
+    public decimal ImporteTotal
     {
-        get => _totalAmount;
-        protected set => SetPropertyValue(nameof(TotalAmount), ref _totalAmount, value);
+        get => _importeTotal;
+        protected set => SetPropertyValue(nameof(ImporteTotal), ref _importeTotal, value);
     }
 
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
     [Association("SalesDocumentLines-TaxKinds")]
-    [DataSourceCriteria("IsAvailableInSales = True AND IsActive = True")]
-    public XPCollection<TaxKind> SalesTaxes
+    [DataSourceCriteria("DisponibleEnVentas = True AND EstaActivo = True")]
+    public XPCollection<TaxKind> TiposImpuestoVenta
     {
         get
         {
-            var collection = GetCollection<TaxKind>(nameof(SalesTaxes));
+            var collection = GetCollection<TaxKind>(nameof(TiposImpuestoVenta));
             if (!collection.IsLoaded)
             {
-                collection.CollectionChanged += SalesTaxes_CollectionChanged;
+                collection.CollectionChanged += TiposImpuestoVenta_CollectionChanged;
             }
             return collection;
         }
     }
 
-    private void SalesTaxes_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
+    private void TiposImpuestoVenta_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
     {
         if (IsLoading || IsSaving || IsDeleted) return;
-        RebuildTaxes();
+        ReconstruirImpuestos();
     }
 
     [Aggregated]
     [VisibleInDetailView(false)]
     [Association("SalesDocumentLine-Taxes")]
-    public XPCollection<SalesDocumentLineTax> Taxes => GetCollection<SalesDocumentLineTax>();
+    public XPCollection<SalesDocumentLineTax> Impuestos => GetCollection<SalesDocumentLineTax>();
 
-    private void ApplyProductSnapshot()
+    private void AplicarInstantaneaProducto()
     {
-        if (Product is null)
+        if (Producto is null)
         {
-            ProductName = null;
-            Notes = null;
-            Quantity = 0;
-            UnitPrice = 0m;
-            DiscountPercent = 0m;
+            NombreProducto = null;
+            Notas = null;
+            Cantidad = 0;
+            PrecioUnitario = 0m;
+            PorcentajeDescuento = 0m;
             return;
         }
 
-        ProductName = Product.Name;
-        Notes = Product.Notes;
-        UnitPrice = Product.PriceList;
+        NombreProducto = Producto.Nombre;
+        Notas = Producto.Notas;
+        PrecioUnitario = Producto.PrecioVenta;
 
-        if (Quantity == 0m)
-            Quantity = 1m;
+        if (Cantidad == 0m)
+            Cantidad = 1m;
 
-        foreach (var tax in Product.SalesTaxes.OrderBy(t => t.Sequence))
+        foreach (var tax in Producto.SalesTaxes.OrderBy(t => t.Secuencia))
         {
-            SalesTaxes.Add(tax);
+            TiposImpuestoVenta.Add(tax);
         }
     }
 
-    private void SetTaxableAmount()
+    private void EstablecerBaseImponible()
     {
-        TaxableAmount = AmountCalculator.GetTaxableAmount(Quantity, UnitPrice, DiscountPercent);
-        RebuildTaxes();
+        BaseImponible = AmountCalculator.GetTaxableAmount(Cantidad, PrecioUnitario, PorcentajeDescuento);
+        ReconstruirImpuestos();
     }
 
-    private void RebuildTaxes()
+    private void ReconstruirImpuestos()
     {
-        for (var i = Taxes.Count - 1; i >= 0; i--) Taxes[i].Delete();
+        for (var i = Impuestos.Count - 1; i >= 0; i--) Impuestos[i].Delete();
         
-        foreach (var tax in SalesTaxes)
+        foreach (var tax in TiposImpuestoVenta)
         {
             _ = new SalesDocumentLineTax(Session)
             {
-                SalesDocumentLine = this,
-                TaxKind = tax,
-                TaxableAmount = TaxableAmount,
-                TaxAmount = AmountCalculator.GetTaxAmount(TaxableAmount, tax.Rate, tax.IsWithHolding)
+                LineaDocumentoVenta = this,
+                TipoImpuesto = tax,
+                BaseImponible = BaseImponible,
+                ImporteImpuestos = AmountCalculator.GetTaxAmount(BaseImponible, tax.Tipo, tax.EsRetencion)
             };
             
         }
 
-        TaxAmount = Taxes.Sum(t => t.TaxAmount);
-        TotalAmount = TaxableAmount + TaxAmount;
+        ImporteImpuestos = Impuestos.Sum(t => t.ImporteImpuestos);
+        ImporteTotal = BaseImponible + ImporteImpuestos;
         
-        if (SalesDocument is null) return;
+        if (DocumentoVenta is null) return;
         
-        SalesDocument.DeleteTaxesSummary();
-        SalesDocument.RebuildTaxSummary();
+        DocumentoVenta.BorrarResumenImpuestos();
+        DocumentoVenta.ReconstruirResumenImpuestos();
     }
 
-    private void DeleteProductTaxes()
+    private void BorrarImpuestosProducto()
     { 
-        var salesTaxesToRemove = SalesTaxes.ToList();
+        var salesTaxesToRemove = TiposImpuestoVenta.ToList();
         foreach (var tax in salesTaxesToRemove)
         {
-            SalesTaxes.Remove(tax);
+            TiposImpuestoVenta.Remove(tax);
         }
     }
 }

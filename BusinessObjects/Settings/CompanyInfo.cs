@@ -17,148 +17,148 @@ namespace erp.Module.BusinessObjects.Settings;
     CustomMessageTemplate = "Can't delete Company Info.")]
 public class CompanyInfo(Session session) : Contact(session)
 {
-    private Journal _defaultSalesJournal;
-    private Journal _defaultPurchaseJournal;
-    private Account _defaultSalesAccount;
-    private Account _defaultPurchaseAccount;
-    private Account _defaultCustomerAccount;
-    private Account _defaultSupplierAccount;
-    private string _defaultInvoicePrefix;
-    private string _defaultBillPrefix;
-    private string _defaultDailyTimeSheetPrefix;
-    private string _veriFactuDefaultText;
-    private string _veriFactuConfigFileName;
-    private string _veriFactuCertificateSerial;
-    private string _veriFactuEndPointPrefix;
-    private string _veriFactuEndPointValidatePrefix;
-    private string _veriFactuSystemName;
-    private string _veriFactuSystemVersion;
-    private string _veriFactuSystemAdministratorName;
-    private string _veriFactuSystemAdministratorFiscalNumber;
+    private Journal _diarioVentasPorDefecto;
+    private Journal _diarioComprasPorDefecto;
+    private Account _cuentaVentasPorDefecto;
+    private Account _cuentaComprasPorDefecto;
+    private Account _cuentaClientesPorDefecto;
+    private Account _cuentaProveedoresPorDefecto;
+    private string _prefijoFacturasVentaPorDefecto;
+    private string _prefijoFacturasCompraPorDefecto;
+    private string _prefijoPartesDiariosPorDefecto;
+    private string _textoDefectoVeriFactu;
+    private string _nombreArchivoConfigVeriFactu;
+    private string _serieCertificadoVeriFactu;
+    private string _prefijoUrlVeriFactu;
+    private string _prefijoUrlValidacionVeriFactu;
+    private string _nombreSistemaVeriFactu;
+    private string _versionSistemaVeriFactu;
+    private string _nombreAdministradorSistemaVeriFactu;
+    private string _nifAdministradorSistemaVeriFactu;
 
-    [DataSourceCriteria("IsActive = True")]
-    public Journal DefaultSalesJournal
+    [DataSourceCriteria("EstaActivo = True")]
+    public Journal DiarioVentasPorDefecto
     {
-        get => _defaultSalesJournal;
-        set => SetPropertyValue(nameof(DefaultSalesJournal), ref _defaultSalesJournal, value);
+        get => _diarioVentasPorDefecto;
+        set => SetPropertyValue(nameof(DiarioVentasPorDefecto), ref _diarioVentasPorDefecto, value);
     }
 
-    [DataSourceCriteria("IsActive = True")]
-    public Journal DefaultPurchaseJournal
+    [DataSourceCriteria("EstaActivo = True")]
+    public Journal DiarioComprasPorDefecto
     {
-        get => _defaultPurchaseJournal;
-        set => SetPropertyValue(nameof(DefaultPurchaseJournal), ref _defaultPurchaseJournal, value);
+        get => _diarioComprasPorDefecto;
+        set => SetPropertyValue(nameof(DiarioComprasPorDefecto), ref _diarioComprasPorDefecto, value);
     }
 
-    [DataSourceCriteria("IsActive = True and IsPostable = True")]
-    public Account DefaultSalesAccount
+    [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
+    public Account CuentaVentasPorDefecto
     {
-        get => _defaultSalesAccount;
-        set => SetPropertyValue(nameof(DefaultSalesAccount), ref _defaultSalesAccount, value);
+        get => _cuentaVentasPorDefecto;
+        set => SetPropertyValue(nameof(CuentaVentasPorDefecto), ref _cuentaVentasPorDefecto, value);
     }
 
-    [DataSourceCriteria("IsActive = True and IsPostable = True")]
-    public Account DefaultPurchaseAccount
+    [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
+    public Account CuentaComprasPorDefecto
     {
-        get => _defaultPurchaseAccount;
-        set => SetPropertyValue(nameof(DefaultPurchaseAccount), ref _defaultPurchaseAccount, value);
+        get => _cuentaComprasPorDefecto;
+        set => SetPropertyValue(nameof(CuentaComprasPorDefecto), ref _cuentaComprasPorDefecto, value);
     }
 
-    [DataSourceCriteria("IsActive = True and IsPostable = True")]
-    public Account DefaultCustomerAccount
+    [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
+    public Account CuentaClientesPorDefecto
     {
-        get => _defaultCustomerAccount;
-        set => SetPropertyValue(nameof(DefaultCustomerAccount), ref _defaultCustomerAccount, value);
+        get => _cuentaClientesPorDefecto;
+        set => SetPropertyValue(nameof(CuentaClientesPorDefecto), ref _cuentaClientesPorDefecto, value);
     }
 
-    [DataSourceCriteria("IsActive = True and IsPostable = True")]
-    public Account DefaultSupplierAccount
+    [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
+    public Account CuentaProveedoresPorDefecto
     {
-        get => _defaultSupplierAccount;
-        set => SetPropertyValue(nameof(DefaultSupplierAccount), ref _defaultSupplierAccount, value);
+        get => _cuentaProveedoresPorDefecto;
+        set => SetPropertyValue(nameof(CuentaProveedoresPorDefecto), ref _cuentaProveedoresPorDefecto, value);
     }
 
-    public string DefaultInvoicePrefix
+    public string PrefijoFacturasVentaPorDefecto
     {
-        get => _defaultInvoicePrefix;
-        set => SetPropertyValue(nameof(DefaultInvoicePrefix), ref _defaultInvoicePrefix, value);
+        get => _prefijoFacturasVentaPorDefecto;
+        set => SetPropertyValue(nameof(PrefijoFacturasVentaPorDefecto), ref _prefijoFacturasVentaPorDefecto, value);
     }
 
-    public string DefaultBillPrefix
+    public string PrefijoFacturasCompraPorDefecto
     {
-        get => _defaultBillPrefix;
-        set => SetPropertyValue(nameof(DefaultBillPrefix), ref _defaultBillPrefix, value);
+        get => _prefijoFacturasCompraPorDefecto;
+        set => SetPropertyValue(nameof(PrefijoFacturasCompraPorDefecto), ref _prefijoFacturasCompraPorDefecto, value);
     }
 
-    public string DefaultDailyTimeSheetPrefix
+    public string PrefijoPartesDiariosPorDefecto
     {
-        get => _defaultDailyTimeSheetPrefix;
-        set => SetPropertyValue(nameof(DefaultDailyTimeSheetPrefix), ref _defaultDailyTimeSheetPrefix, value);
+        get => _prefijoPartesDiariosPorDefecto;
+        set => SetPropertyValue(nameof(PrefijoPartesDiariosPorDefecto), ref _prefijoPartesDiariosPorDefecto, value);
     }
 
     [Size(500)]
-    public string VeriFactuDefaultText
+    public string TextoDefectoVeriFactu
     {
-        get => _veriFactuDefaultText;
-        set => SetPropertyValue(nameof(VeriFactuDefaultText), ref _veriFactuDefaultText, value);
+        get => _textoDefectoVeriFactu;
+        set => SetPropertyValue(nameof(TextoDefectoVeriFactu), ref _textoDefectoVeriFactu, value);
     }
 
-    public string VeriFactuConfigFileName
+    public string NombreArchivoConfigVeriFactu
     {
-        get => _veriFactuConfigFileName;
-        set => SetPropertyValue(nameof(VeriFactuConfigFileName), ref _veriFactuConfigFileName, value);
+        get => _nombreArchivoConfigVeriFactu;
+        set => SetPropertyValue(nameof(NombreArchivoConfigVeriFactu), ref _nombreArchivoConfigVeriFactu, value);
     }
 
-    public string VeriFactuCertificateSerial
+    public string SerieCertificadoVeriFactu
     {
-        get => _veriFactuCertificateSerial;
-        set => SetPropertyValue(nameof(VeriFactuCertificateSerial), ref _veriFactuCertificateSerial, value);
+        get => _serieCertificadoVeriFactu;
+        set => SetPropertyValue(nameof(SerieCertificadoVeriFactu), ref _serieCertificadoVeriFactu, value);
     }
     
-    public string VeriFactuEndPointPrefix
+    public string PrefijoUrlVeriFactu
     {
-        get => _veriFactuEndPointPrefix;
-        set => SetPropertyValue(nameof(VeriFactuEndPointPrefix), ref _veriFactuEndPointPrefix, value);
+        get => _prefijoUrlVeriFactu;
+        set => SetPropertyValue(nameof(PrefijoUrlVeriFactu), ref _prefijoUrlVeriFactu, value);
     }
     
-    public string VeriFactuEndPointValidatePrefix
+    public string PrefijoUrlValidacionVeriFactu
     {
-        get => _veriFactuEndPointValidatePrefix;
-        set => SetPropertyValue(nameof(VeriFactuEndPointValidatePrefix), ref _veriFactuEndPointValidatePrefix, value);
+        get => _prefijoUrlValidacionVeriFactu;
+        set => SetPropertyValue(nameof(PrefijoUrlValidacionVeriFactu), ref _prefijoUrlValidacionVeriFactu, value);
     }
 
     [Size(30)]
-    public string VeriFactuSystemName
+    public string NombreSistemaVeriFactu
     {
-        get => _veriFactuSystemName;
-        set => SetPropertyValue(nameof(VeriFactuSystemName), ref _veriFactuSystemName, value);
+        get => _nombreSistemaVeriFactu;
+        set => SetPropertyValue(nameof(NombreSistemaVeriFactu), ref _nombreSistemaVeriFactu, value);
     }
     
-    public string VeriFactuSystemVersion
+    public string VersionSistemaVeriFactu
     {
-        get => _veriFactuSystemVersion;
-        set => SetPropertyValue(nameof(VeriFactuSystemVersion), ref _veriFactuSystemVersion, value);
+        get => _versionSistemaVeriFactu;
+        set => SetPropertyValue(nameof(VersionSistemaVeriFactu), ref _versionSistemaVeriFactu, value);
     }
     
-    public string VeriFactuSystemAdministratorName
+    public string NombreAdministradorSistemaVeriFactu
     {
-        get => _veriFactuSystemAdministratorName;
-        set => SetPropertyValue(nameof(VeriFactuSystemAdministratorName), ref _veriFactuSystemAdministratorName, value);
+        get => _nombreAdministradorSistemaVeriFactu;
+        set => SetPropertyValue(nameof(NombreAdministradorSistemaVeriFactu), ref _nombreAdministradorSistemaVeriFactu, value);
     }
     
-    public string VeriFactuSystemAdministratorFiscalNumber
+    public string NifAdministradorSistemaVeriFactu
     {
-        get => _veriFactuSystemAdministratorFiscalNumber;
-        set => SetPropertyValue(nameof(VeriFactuSystemAdministratorFiscalNumber), ref _veriFactuSystemAdministratorFiscalNumber, value);
+        get => _nifAdministradorSistemaVeriFactu;
+        set => SetPropertyValue(nameof(NifAdministradorSistemaVeriFactu), ref _nifAdministradorSistemaVeriFactu, value);
     }
     
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
     [Association("CompanyInfos-SalesTaxes")]
-    [DataSourceCriteria("IsAvailableInSales = True AND IsActive = True")]
+    [DataSourceCriteria("DisponibleEnVentas = True AND EstaActivo = True")]
     public XPCollection<TaxKind> SalesTaxes => GetCollection<TaxKind>(nameof(SalesTaxes));
     
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
     [Association("CompanyInfos-PurchaseTaxes")]
-    [DataSourceCriteria("IsAvailableInPurchases = True AND IsActive = True")]
+    [DataSourceCriteria("DisponibleEnCompras = True AND EstaActivo = True")]
     public XPCollection<TaxKind> PurchaseTaxes => GetCollection<TaxKind>(nameof(PurchaseTaxes));
 }
