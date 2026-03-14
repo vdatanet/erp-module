@@ -124,23 +124,23 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
     }
 
     [NonCloneable]
-    [Association("LineaDocumentoVentas-TipoImpuestos")]
+    [Association("LineaDocumentoVenta-TipoImpuestos")]
     public XPCollection<LineaDocumentoVenta> LineasDocumentoVenta => GetCollection<LineaDocumentoVenta>(nameof(LineasDocumentoVenta));
 
     [NonCloneable]
-    [Association("Products-SalesTaxes")]
+    [Association("Productos-ImpuestosVentas")]
     public XPCollection<Producto> ProductoImpuestosVenta => GetCollection<Producto>(nameof(ProductoImpuestosVenta));
 
     [NonCloneable]
-    [Association("Products-PurchaseTaxes")]
+    [Association("Productos-ImpuestosCompras")]
     public XPCollection<Producto> ProductoImpuestosCompra => GetCollection<Producto>(nameof(ProductoImpuestosCompra));
 
     [NonCloneable]
-    [Association("InformacionEmpresas-SalesTaxes")]
+    [Association("InformacionEmpresa-ImpuestosVentas")]
     public XPCollection<InformacionEmpresa> InformacionEmpresaImpuestosVenta => GetCollection<InformacionEmpresa>(nameof(InformacionEmpresaImpuestosVenta));
 
     [NonCloneable]
-    [Association("InformacionEmpresas-PurchaseTaxes")]
+    [Association("InformacionEmpresa-ImpuestosCompras")]
     public XPCollection<InformacionEmpresa> InformacionEmpresaImpuestosCompra => GetCollection<InformacionEmpresa>(nameof(InformacionEmpresaImpuestosCompra));
     
     public override void AfterConstruction()

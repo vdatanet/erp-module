@@ -67,7 +67,7 @@ public class Factura(Session session) : DocumentoVenta(session)
     }
 
     [RuleRequiredField]
-    [Association("Customer-Invoices")]
+    [Association("Cliente-Facturas")]
     public Cliente Cliente
     {
         get => _cliente;

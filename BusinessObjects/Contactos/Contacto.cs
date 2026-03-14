@@ -121,10 +121,10 @@ public class Contacto(Session session) : EntidadBase(session)
     public XPCollection<Tarea> Tareas => GetCollection<Tarea>(nameof(Tareas));
     
     [Aggregated]
-    [Association("Contacto-Pictures")]
+    [Association("Contacto-Fotos")]
     public XPCollection<Imagen> Imagenes => GetCollection<Imagen>(nameof(Imagenes));
     
     [Aggregated]
-    [Association("Contacto-Attachments")]
+    [Association("Contacto-Adjuntos")]
     public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>(nameof(Adjuntos));
 }

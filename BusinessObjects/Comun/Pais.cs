@@ -19,6 +19,6 @@ public class Pais(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
-    [Association("Country-States")] 
+    [Association("Pais-Provincias")] 
     public XPCollection<Provincia> Provincias => GetCollection<Provincia>(nameof(Provincias));
 }

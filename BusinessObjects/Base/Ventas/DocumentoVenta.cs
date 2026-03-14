@@ -40,7 +40,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [Aggregated]
-    [Association("DocumentoVenta-Lines")]
+    [Association("DocumentoVenta-Lineas")]
     public XPCollection<LineaDocumentoVenta> Lineas
     {
         get
@@ -55,7 +55,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     }
     
     [Aggregated]
-    [Association("DocumentoVenta-Taxes")]
+    [Association("DocumentoVenta-Impuestos")]
     public XPCollection<ImpuestoDocumentoVenta> Impuestos => GetCollection<ImpuestoDocumentoVenta>();
     
     private void Lineas_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
@@ -71,11 +71,11 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     public XPCollection<Tarea> Tareas => GetCollection<Tarea>();
 
     [Aggregated]
-    [Association("DocumentoVenta-Pictures")]
+    [Association("DocumentoVenta-Fotos")]
     public XPCollection<Imagen> Imagenes => GetCollection<Imagen>();
 
     [Aggregated]
-    [Association("DocumentoVenta-Attachments")]
+    [Association("DocumentoVenta-Adjuntos")]
     public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
 
     public void BorrarResumenImpuestos()

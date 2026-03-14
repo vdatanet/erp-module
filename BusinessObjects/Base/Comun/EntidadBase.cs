@@ -12,14 +12,14 @@ namespace erp.Module.BusinessObjects.Base.Comun;
 [ModelDefault("IsCloneable", "True")]
 public abstract class EntidadBase(Session session) : BaseObject(session)
 {
-    private ApplicationUser _creadoPor;
-    private ApplicationUser _modificadoPor;
+    private UsuarioAplicacion _creadoPor;
+    private UsuarioAplicacion _modificadoPor;
     private DateTime? _creadoEl;
     private DateTime? _modificadoEl;
 
     [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
-    public ApplicationUser CreadoPor
+    public UsuarioAplicacion CreadoPor
     {
         get => _creadoPor;
         set => SetPropertyValue(nameof(CreadoPor), ref _creadoPor, value);
@@ -27,7 +27,7 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
 
     [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
-    public ApplicationUser ModificadoPor
+    public UsuarioAplicacion ModificadoPor
     {
         get => _modificadoPor;
         set => SetPropertyValue(nameof(ModificadoPor), ref _modificadoPor, value);
@@ -66,9 +66,9 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
         }
     }
 
-    private ApplicationUser GetCurrentUser()
+    private UsuarioAplicacion GetCurrentUser()
     {
-        return Session.GetObjectByKey<ApplicationUser>(
+        return Session.GetObjectByKey<UsuarioAplicacion>(
             Session.ServiceProvider.GetRequiredService<ISecurityStrategyBase>().UserId);
     }
 }

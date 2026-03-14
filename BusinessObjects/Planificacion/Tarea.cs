@@ -22,9 +22,9 @@ public class Tarea(Session session) : EntidadBase(session)
     private DateTime _fechaVencimiento;
     private DateTime _fechaInicio;
     private DateTime _fechaFin;
-    private ApplicationUser _propietario;
-    private ApplicationUser _asignadaA;
-    private ApplicationUser _completadaPor;
+    private UsuarioAplicacion _propietario;
+    private UsuarioAplicacion _asignadaA;
+    private UsuarioAplicacion _completadaPor;
     private Tarea _tareaPadre;
     private Contacto _contacto;
     private Producto _producto;
@@ -63,25 +63,25 @@ public class Tarea(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(FechaFin), ref _fechaFin, value);
     }
 
-    public ApplicationUser Propietario
+    public UsuarioAplicacion Propietario
     {
         get => _propietario;
         set => SetPropertyValue(nameof(Propietario), ref _propietario, value);
     }
 
-    public ApplicationUser AsignadaA
+    public UsuarioAplicacion AsignadaA
     {
         get => _asignadaA;
         set => SetPropertyValue(nameof(AsignadaA), ref _asignadaA, value);
     }
 
-    public ApplicationUser CompletadaPor
+    public UsuarioAplicacion CompletadaPor
     {
         get => _completadaPor;
         set => SetPropertyValue(nameof(CompletadaPor), ref _completadaPor, value);
     }
     
-    [Association("Tarea-Subtasks")]
+    [Association("Tarea-Subtareas")]
     public Tarea TareaPadre
     {
         get => _tareaPadre;
@@ -95,7 +95,7 @@ public class Tarea(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Contacto), ref _contacto, value);
     }
 
-    [Association("Product-Tasks")]
+    [Association("Producto-Tareas")]
     public Producto Producto
     {
         get => _producto;
@@ -117,14 +117,14 @@ public class Tarea(Session session) : EntidadBase(session)
     }
 
     [Aggregated]
-    [Association("Tarea-Subtasks")] 
+    [Association("Tarea-Subtareas")]
     public XPCollection<Tarea> Subtareas => GetCollection<Tarea>(nameof(Subtareas));
 
     [Aggregated]
-    [Association("Tarea-Pictures")]
+    [Association("Tarea-Fotos")]
     public XPCollection<Imagen> Imagenes => GetCollection<Imagen>(nameof(Imagenes));
     
     [Aggregated]
-    [Association("Tarea-Attachments")]
+    [Association("Tarea-Adjuntos")]
     public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>(nameof(Adjuntos));
 }

@@ -13,7 +13,7 @@ public class Provincia(Session session) : EntidadBase(session)
     private string _nombre;
 
     [RuleRequiredField]
-    [Association("Country-States")]
+    [Association("Pais-Provincias")]
     public Pais Pais
     {
         get => _pais;
@@ -28,6 +28,6 @@ public class Provincia(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
     
-    [Association("State-Cities")] 
+    [Association("Provincia-Poblaciones")] 
     public XPCollection<Poblacion> Poblaciones => GetCollection<Poblacion>(nameof(Poblaciones));
 }

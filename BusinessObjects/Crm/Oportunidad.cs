@@ -23,7 +23,7 @@ public class Oportunidad(Session session) : Contacto(session)
         set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
     }
 
-    [Association("Customer-Opportunities")]
+    [Association("Cliente-Oportunidades")]
     public Cliente Cliente
     {
         get => _cliente;

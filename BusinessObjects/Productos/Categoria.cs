@@ -27,7 +27,7 @@ public class Categoria(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
-    [Association("Category-Subcategories")]
+    [Association("Categoria-Subcategorias")]
     public Categoria CategoriaPadre
     {
         get => _categoriaPadre;
@@ -71,10 +71,10 @@ public class Categoria(Session session) : EntidadBase(session)
         }
     }
 
-    [Association("Category-Subcategories")]
+    [Association("Categoria-Subcategorias")]
     public XPCollection<Categoria> Subcategorias => GetCollection<Categoria>(nameof(Subcategorias));
 
-    [Association("Category-Products")] 
+    [Association("Categoria-Productos")] 
     public XPCollection<Producto> Productos => GetCollection<Producto>(nameof(Productos));
 
     public override void AfterConstruction()

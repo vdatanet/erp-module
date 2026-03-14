@@ -57,7 +57,7 @@ public class Producto(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
     
-    [Association("Category-Products")]
+    [Association("Categoria-Productos")]
     [DataSourceCriteria("EstaActivo = True")]
     public Categoria Categoria
     {
@@ -127,25 +127,25 @@ public class Producto(Session session) : EntidadBase(session)
     }
     
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
-    [Association("Products-SalesTaxes")]
+    [Association("Productos-ImpuestosVentas")]
     [DataSourceCriteria("IsAvailableInSales = True AND EstaActivo = True")]
     public XPCollection<TipoImpuesto> SalesTaxes => GetCollection<TipoImpuesto>(nameof(SalesTaxes));
     
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
-    [Association("Products-PurchaseTaxes")]
+    [Association("Productos-ImpuestosCompras")]
     [DataSourceCriteria("IsAvailableInPurchases = True AND EstaActivo = True")]
     public XPCollection<TipoImpuesto> PurchaseTaxes => GetCollection<TipoImpuesto>(nameof(PurchaseTaxes));
     
     [Aggregated]
-    [Association("Product-Tasks")]
+    [Association("Producto-Tareas")]
     public XPCollection<Tarea> Tareas => GetCollection<Tarea>(nameof(Tareas)); 
     
     [Aggregated]
-    [Association("Product-Pictures")]
+    [Association("Producto-Fotos")]
     public XPCollection<Imagen> Imagenes => GetCollection<Imagen>(nameof(Imagenes));
     
     [Aggregated]
-    [Association("Product-Attachments")]
+    [Association("Producto-Adjuntos")]
     public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>(nameof(Adjuntos));
     
     public override void AfterConstruction()

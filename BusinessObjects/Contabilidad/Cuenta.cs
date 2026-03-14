@@ -47,7 +47,7 @@ public class Cuenta(Session session): EntidadBase(session)
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
         
-    [Association("Parent-ChildrenAccounts")]
+    [Association("CuentaPadre-CuentasHijas")]
     public Cuenta CuentaPadre
     {
         get => _cuentaPadre;
@@ -92,7 +92,7 @@ public class Cuenta(Session session): EntidadBase(session)
         set => SetPropertyValue(nameof(Naturaleza), ref _naturaleza, value);
     }
     
-    [Association("Parent-ChildrenAccounts")]
+    [Association("CuentaPadre-CuentasHijas")]
     public XPCollection<Cuenta> CuentasHijas => GetCollection<Cuenta>(nameof(CuentasHijas));
     
     public override void AfterConstruction()

@@ -29,7 +29,7 @@ public class Updater : ModuleUpdater {
         //    theObject = ObjectSpace.CreateObject<DomainObject1>();
         //    theObject.Name = name;
         //}
-        if (!ObjectSpace.CanInstantiate(typeof(ApplicationUser))) {
+        if (!ObjectSpace.CanInstantiate(typeof(UsuarioAplicacion))) {
             return;
         }
 
@@ -55,10 +55,10 @@ public class Updater : ModuleUpdater {
 
             string userName = $"User@{TenantName}";
             // If a user named 'userName' doesn't exist in the database, create this user
-            if(userManager.FindUserByName<ApplicationUser>(ObjectSpace, userName) == null) {
+            if(userManager.FindUserByName<UsuarioAplicacion>(ObjectSpace, userName) == null) {
                 // Set a password if the standard authentication type is used
                 string EmptyPassword = "";
-                _ = userManager.CreateUser<ApplicationUser>(ObjectSpace, userName, EmptyPassword, (user) => {
+                _ = userManager.CreateUser<UsuarioAplicacion>(ObjectSpace, userName, EmptyPassword, (user) => {
                     // Add the Users role to the user
                     user.Roles.Add(defaultRole);
                 });
@@ -66,10 +66,10 @@ public class Updater : ModuleUpdater {
         }
 
         string adminUserName = TenantName != null ? $"Admin@{TenantName}" : "Admin";
-        if(userManager.FindUserByName<ApplicationUser>(ObjectSpace, adminUserName) == null) {
+        if(userManager.FindUserByName<UsuarioAplicacion>(ObjectSpace, adminUserName) == null) {
             // Set a password if the standard authentication type is used
             string EmptyPassword = "";
-            _ = userManager.CreateUser<ApplicationUser>(ObjectSpace, adminUserName, EmptyPassword, (user) => {
+            _ = userManager.CreateUser<UsuarioAplicacion>(ObjectSpace, adminUserName, EmptyPassword, (user) => {
                 // Add the Administrators role to the user
                 user.Roles.Add(adminRole);
             });
@@ -108,10 +108,10 @@ public class Updater : ModuleUpdater {
             defaultRole = ObjectSpace.CreateObject<PermissionPolicyRole>();
             defaultRole.Name = "Default";
 
-            defaultRole.AddObjectPermissionFromLambda<ApplicationUser>(SecurityOperations.Read, cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
+            defaultRole.AddObjectPermissionFromLambda<UsuarioAplicacion>(SecurityOperations.Read, cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
             defaultRole.AddNavigationPermission(@"Application/NavigationItems/Items/Default/Items/MyDetails", SecurityPermissionState.Allow);
-            defaultRole.AddMemberPermissionFromLambda<ApplicationUser>(SecurityOperations.Write, "ChangePasswordOnFirstLogon", cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
-            defaultRole.AddMemberPermissionFromLambda<ApplicationUser>(SecurityOperations.Write, "StoredPassword", cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
+            defaultRole.AddMemberPermissionFromLambda<UsuarioAplicacion>(SecurityOperations.Write, "ChangePasswordOnFirstLogon", cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
+            defaultRole.AddMemberPermissionFromLambda<UsuarioAplicacion>(SecurityOperations.Write, "StoredPassword", cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
             defaultRole.AddTypePermissionsRecursively<PermissionPolicyRole>(SecurityOperations.Read, SecurityPermissionState.Deny);
             defaultRole.AddObjectPermission<ModelDifference>(SecurityOperations.ReadWriteAccess, "UserId = ToStr(CurrentUserId())", SecurityPermissionState.Allow);
             defaultRole.AddObjectPermission<ModelDifferenceAspect>(SecurityOperations.ReadWriteAccess, "Owner.UserId = ToStr(CurrentUserId())", SecurityPermissionState.Allow);

@@ -20,7 +20,7 @@ public class ActividadProyecto(Session session) : EntidadBase(session)
     private string _descripcion;
     private bool _estaActivo = true;
 
-    [Association("Proyecto-Activities")]
+    [Association("Proyecto-Actividades")]
     [RuleRequiredField]
     [XafDisplayName("Proyecto")]
     public Proyecto Proyecto
@@ -62,7 +62,7 @@ public class ActividadProyecto(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(EstaActivo), ref _estaActivo, value);
     }
 
-    [Association("ProjectActivity-TimesheetEntries")]
+    [Association("ActividadProyecto-EntradasParte")]
     [XafDisplayName("Partes de tiempo")]
     public XPCollection<EntradaParte> TimesheetEntries => GetCollection<EntradaParte>(nameof(TimesheetEntries));
 }

@@ -29,7 +29,7 @@ public class ParteDiario(Session session) : EntidadBase(session)
     private bool _esSalidaTemprana;
     private string _notas;
 
-    [Association("Employee-ParteDiarios")]
+    [Association("Empleado-ParteDiarios")]
     [ModelDefault("AllowEdit", "False")]
     [RuleRequiredField]
     public Empleado Empleado
@@ -90,7 +90,7 @@ public class ParteDiario(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
-    [Association("ParteDiario-Entries")]
+    [Association("ParteDiario-Entradas")]
     [DevExpress.Xpo.Aggregated]
     public XPCollection<EntradaParte> Registros => GetCollection<EntradaParte>(nameof(Registros));
 
@@ -157,9 +157,9 @@ public class ParteDiario(Session session) : EntidadBase(session)
                 PrefijoParteDiario, 5);
     }
 
-    private ApplicationUser GetCurrentUser()
+    private UsuarioAplicacion GetCurrentUser()
     {
-        return Session.GetObjectByKey<ApplicationUser>(
+        return Session.GetObjectByKey<UsuarioAplicacion>(
             Session.ServiceProvider.GetRequiredService<ISecurityStrategyBase>().UserId);
     }
 }

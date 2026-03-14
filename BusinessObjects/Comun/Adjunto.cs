@@ -20,28 +20,28 @@ public class Adjunto(Session session) : EntidadBase(session)
     private FileData _fileData;
     private string _description;
 
-    [Association("Contacto-Attachments")]
+    [Association("Contacto-Adjuntos")]
     public Contacto Contacto
     {
         get => _contact;
         set => SetPropertyValue(nameof(Contacto), ref _contact, value);
     }
 
-    [Association("Product-Attachments")]
+    [Association("Producto-Adjuntos")]
     public Producto Producto
     {
         get => _product;
         set => SetPropertyValue(nameof(Producto), ref _product, value);
     }
     
-    [Association("DocumentoVenta-Attachments")]
+    [Association("DocumentoVenta-Adjuntos")]
     public DocumentoVenta DocumentoVenta
     {
         get => _salesDocument;
         set => SetPropertyValue(nameof(DocumentoVenta), ref _salesDocument, value);
     }
 
-    [Association("Tarea-Attachments")]
+    [Association("Tarea-Adjuntos")]
     public Tarea Tarea
     {
         get => _task;

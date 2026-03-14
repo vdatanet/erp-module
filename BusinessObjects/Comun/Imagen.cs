@@ -20,28 +20,28 @@ public class Imagen(Session session): EntidadBase(session)
     private MediaDataObject _mediaDataObject;
     private string _notes;
     
-    [Association("Contacto-Pictures")]
+    [Association("Contacto-Fotos")]
     public Contacto Contacto
     {
         get => _contact;
         set => SetPropertyValue(nameof(Contacto), ref _contact, value);
     }
 
-    [Association("Product-Pictures")]
+    [Association("Producto-Fotos")]
     public Producto Producto
     {
         get => _product;
         set => SetPropertyValue(nameof(Producto), ref _product, value);
     }
     
-    [Association("DocumentoVenta-Pictures")]
+    [Association("DocumentoVenta-Fotos")]
     public DocumentoVenta DocumentoVenta
     {
         get => _salesDocument;
         set => SetPropertyValue(nameof(DocumentoVenta), ref _salesDocument, value);
     }
     
-    [Association("Tarea-Pictures")]
+    [Association("Tarea-Fotos")]
     public Tarea Tarea
     {
         get => _task;

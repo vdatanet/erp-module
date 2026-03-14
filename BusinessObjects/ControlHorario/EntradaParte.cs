@@ -28,7 +28,7 @@ public class EntradaParte(Session session) : EntidadBase(session)
     private ParteDiario _parteDiarioAnterior;
     private ReglaJornada _reglaJornadaAnteriorEmpleado;
 
-    [Association("Employee-TimesheetEntries")]
+    [Association("Empleado-EntradasParte")]
     [RuleRequiredField]
     [ModelDefault("AllowEdit", "False")]
     public Empleado Empleado
@@ -63,7 +63,7 @@ public class EntradaParte(Session session) : EntidadBase(session)
         }
     }
 
-    [Association("Proyecto-TimesheetEntries")]
+    [Association("Proyecto-EntradasParte")]
     [ImmediatePostData]
     public Proyecto Proyecto
     {
@@ -71,7 +71,7 @@ public class EntradaParte(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Proyecto), ref _proyecto, value);
     }
 
-    [Association("ProjectActivity-TimesheetEntries")]
+    [Association("ActividadProyecto-EntradasParte")]
     [DataSourceProperty("Proyecto.Actividades")]
     public ActividadProyecto Actividad
     {
@@ -96,7 +96,7 @@ public class EntradaParte(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Duracion), ref _duracion, value);
     }
 
-    [Association("ParteDiario-Entries")]
+    [Association("ParteDiario-Entradas")]
     public ParteDiario ParteDiario
     {
         get => _parteDiario;
@@ -149,9 +149,9 @@ public class EntradaParte(Session session) : EntidadBase(session)
             ts.Recalcular(regla);
     }
 
-    private ApplicationUser GetCurrentUser()
+    private UsuarioAplicacion GetCurrentUser()
     {
-        return Session.GetObjectByKey<ApplicationUser>(
+        return Session.GetObjectByKey<UsuarioAplicacion>(
             Session.ServiceProvider.GetRequiredService<ISecurityStrategyBase>().UserId);
     }
 }

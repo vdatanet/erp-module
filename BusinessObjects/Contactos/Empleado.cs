@@ -47,11 +47,11 @@ public class Empleado(Session session) : Contacto(session)
         set => SetPropertyValue(nameof(UltimoRegistroSalida), ref _ultimoRegistroSalida, value);
     }
     
-    [Association("Employee-TimesheetEntries")]
+    [Association("Empleado-EntradasParte")]
     [XafDisplayName("Registros de Tiempo")]
     public XPCollection<EntradaParte> RegistrosTiempo => GetCollection<EntradaParte>(nameof(RegistrosTiempo));
 
-    [Association("Employee-ParteDiarios")]
+    [Association("Empleado-ParteDiarios")]
     [XafDisplayName("Partes Diarios")]
     public XPCollection<ParteDiario> PartesDiarios => GetCollection<ParteDiario>(nameof(PartesDiarios));
 }

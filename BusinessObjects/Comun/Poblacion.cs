@@ -13,7 +13,7 @@ public class Poblacion(Session session): EntidadBase(session)
     private string _nombre;
 
     [RuleRequiredField]
-    [Association("State-Cities")]
+    [Association("Provincia-Poblaciones")]
     public Provincia Provincia
     {
         get => _provincia;

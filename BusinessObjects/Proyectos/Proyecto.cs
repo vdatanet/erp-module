@@ -54,11 +54,11 @@ public class Proyecto(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(EstaActivo), ref _estaActivo, value);
     }
 
-    [Association("Proyecto-Activities")]
+    [Association("Proyecto-Actividades")]
     [XafDisplayName("Actividades")]
     public XPCollection<ActividadProyecto> Actividades => GetCollection<ActividadProyecto>(nameof(Actividades));
 
-    [Association("Proyecto-TimesheetEntries")]
+    [Association("Proyecto-EntradasParte")]
     [XafDisplayName("Partes de tiempo")]
     public XPCollection<EntradaParte> TimesheetEntries => GetCollection<EntradaParte>(nameof(TimesheetEntries));
 }

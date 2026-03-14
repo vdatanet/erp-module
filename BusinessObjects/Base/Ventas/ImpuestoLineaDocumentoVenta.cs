@@ -24,7 +24,7 @@ public class ImpuestoLineaDocumentoVenta(Session session) : EntidadBase(session)
     private decimal _baseImponible;
     private decimal _importeImpuestos;
 
-    [Association("LineaDocumentoVenta-Taxes")]
+    [Association("LineaDocumentoVenta-Impuestos")]
     public LineaDocumentoVenta LineaDocumentoVenta
     {
         get => _lineaDocumentoVenta;

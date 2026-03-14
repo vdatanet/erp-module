@@ -154,12 +154,12 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     }
     
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
-    [Association("InformacionEmpresas-SalesTaxes")]
+    [Association("InformacionEmpresa-ImpuestosVentas")]
     [DataSourceCriteria("DisponibleEnVentas = True AND EstaActivo = True")]
     public XPCollection<TipoImpuesto> SalesTaxes => GetCollection<TipoImpuesto>(nameof(SalesTaxes));
     
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
-    [Association("InformacionEmpresas-PurchaseTaxes")]
+    [Association("InformacionEmpresa-ImpuestosCompras")]
     [DataSourceCriteria("DisponibleEnCompras = True AND EstaActivo = True")]
     public XPCollection<TipoImpuesto> PurchaseTaxes => GetCollection<TipoImpuesto>(nameof(PurchaseTaxes));
 }

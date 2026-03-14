@@ -21,10 +21,10 @@ public class Cliente(Session session) : Tercero(session)
         set => SetPropertyValue(nameof(TipoIdentificacion), ref _tipoIdentificacion, value);
     }
     
-    [Association("Customer-Opportunities")]
+    [Association("Cliente-Oportunidades")]
     public XPCollection<Oportunidad> Oportunidades => GetCollection<Oportunidad>(nameof(Oportunidades));
     
-    [Association("Customer-Invoices")]
+    [Association("Cliente-Facturas")]
     public XPCollection<Factura> Facturas => GetCollection<Factura>(nameof(Facturas));
     
     public override void AfterConstruction()

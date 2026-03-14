@@ -23,7 +23,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     private decimal _importeImpuestos;
     private decimal _importeTotal;
 
-    [Association("DocumentoVenta-Lines")]
+    [Association("DocumentoVenta-Lineas")]
     public DocumentoVenta DocumentoVenta
     {
         get => _documentoVenta;
@@ -129,7 +129,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
-    [Association("LineaDocumentoVentas-TipoImpuestos")]
+    [Association("LineaDocumentoVenta-TipoImpuestos")]
     [DataSourceCriteria("DisponibleEnVentas = True AND EstaActivo = True")]
     public XPCollection<TipoImpuesto> TiposImpuestoVenta
     {
@@ -152,7 +152,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
 
     [Aggregated]
     [VisibleInDetailView(false)]
-    [Association("LineaDocumentoVenta-Taxes")]
+    [Association("LineaDocumentoVenta-Impuestos")]
     public XPCollection<ImpuestoLineaDocumentoVenta> Impuestos => GetCollection<ImpuestoLineaDocumentoVenta>();
 
     private void AplicarInstantaneaProducto()
