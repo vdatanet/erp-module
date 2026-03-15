@@ -15,6 +15,7 @@ namespace erp.Module.BusinessObjects.ControlHorario;
 [NavigationItem("Control Horario")]
 [XafDisplayName("Registro de Jornada")]
 [ImageName("Time")]
+[RuleCriteria("FechaFin >= FechaInicio", CustomMessageTemplate = "La fecha de fin debe ser posterior a la fecha de inicio")]
 public class RegistroJornada(Session session) : EntidadBase(session)
 {
     private Empleado _empleado;
@@ -25,9 +26,9 @@ public class RegistroJornada(Session session) : EntidadBase(session)
     private string _notas;
     private TimeSpan _duracion;
 
-    [Association("Empleado-RegistrosJornada")]
     [RuleRequiredField]
-    //[ModelDefault("AllowEdit", "False")]
+    [Association("Empleado-RegistrosJornada")]
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Empleado")]
     public Empleado Empleado
     {
@@ -91,6 +92,7 @@ public class RegistroJornada(Session session) : EntidadBase(session)
 
     [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Duración")]
+    [ModelDefault("DisplayFormat", "{0:hh\\:mm}")]
     public TimeSpan Duracion
     {
         get => _duracion;
@@ -105,7 +107,7 @@ public class RegistroJornada(Session session) : EntidadBase(session)
 
     private void InitValues()
     {
-        //SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(Empleado), GetCurrentUser());
+        Empleado = GetCurrentUser()?.Empleado;
     }
 
     protected override void OnSaving()
@@ -116,10 +118,9 @@ public class RegistroJornada(Session session) : EntidadBase(session)
 
     private void RecalcularDuracion()
     {
-        if (FechaFin.HasValue && FechaFin.Value >= FechaInicio)
-            Duracion = FechaFin.Value - FechaInicio;
-        else
-            Duracion = TimeSpan.Zero;
+        Duracion = (FechaFin.HasValue && FechaFin.Value >= FechaInicio) 
+            ? FechaFin.Value - FechaInicio 
+            : TimeSpan.Zero;
     }
 
     private UsuarioAplicacion GetCurrentUser()
