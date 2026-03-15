@@ -10,7 +10,7 @@ namespace erp.Module.BusinessObjects.Contactos;
 
 [DefaultClassOptions]
 [NavigationItem("Contactos")]
-[ImageName("BO_Cliente")]
+[ImageName("BO_Customer")]
 public class Cliente(Session session) : Tercero(session)
 {
     private IDType _tipoIdentificacion;

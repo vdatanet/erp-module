@@ -8,7 +8,7 @@ namespace erp.Module.BusinessObjects.Contactos;
 
 [DefaultClassOptions]
 [NavigationItem("Contactos")]
-[ImageName("BO_Empleado")]
+[ImageName("BO_Employee")]
 public class Empleado(Session session) : Contacto(session)
 {
     private ReglaJornada _reglaJornadaLaboral;

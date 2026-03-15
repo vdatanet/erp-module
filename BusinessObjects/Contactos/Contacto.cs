@@ -12,7 +12,7 @@ namespace erp.Module.BusinessObjects.Contactos;
 
 [DefaultClassOptions]
 [NavigationItem("Contactos")]
-[ImageName("BO_Contacto")]
+[ImageName("BO_Contact")]
 [DefaultProperty(nameof(Nombre))]
 public class Contacto(Session session) : EntidadBase(session)
 {

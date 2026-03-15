@@ -5,7 +5,7 @@ namespace erp.Module.BusinessObjects.Contactos;
 
 [DefaultClassOptions]
 [NavigationItem("Contactos")]
-[ImageName("BO_Proveedor")]
+[ImageName("BO_Vendor")]
 public class Proveedor(Session session) : Tercero(session)
 {
 }
