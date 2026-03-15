@@ -14,7 +14,6 @@ namespace erp.Module.BusinessObjects.Base.Ventas;
 
 [ImageName("RowTotalsPosition")]
 [DefaultProperty(nameof(Secuencia))]
-[NavigationItem("Impuestos")]
 public class ImpuestoDocumentoVenta(Session session): EntidadBase(session)
 {
     private DocumentoVenta _documentoVenta;
