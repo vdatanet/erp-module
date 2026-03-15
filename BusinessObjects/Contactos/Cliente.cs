@@ -1,6 +1,7 @@
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Facturacion;
 using erp.Module.BusinessObjects.Ventas;
@@ -27,9 +28,18 @@ public class Cliente(Session session) : Tercero(session)
     [XafDisplayName("Oportunidades")]
     public XPCollection<Oportunidad> Oportunidades => GetCollection<Oportunidad>(nameof(Oportunidades));
     
-    [Association("Cliente-Facturas")]
+    [Association("Cliente-DocumentosVenta")]
+    [XafDisplayName("Documentos de Venta")]
+    public XPCollection<DocumentoVenta> DocumentosVenta => GetCollection<DocumentoVenta>();
+
     [XafDisplayName("Facturas")]
     public XPCollection<Factura> Facturas => GetCollection<Factura>(nameof(Facturas));
+
+    [XafDisplayName("Presupuestos")]
+    public XPCollection<Presupuesto> Presupuestos => GetCollection<Presupuesto>(nameof(Presupuestos));
+
+    [XafDisplayName("Pedidos")]
+    public XPCollection<Pedido> Pedidos => GetCollection<Pedido>(nameof(Pedidos));
     
     public override void AfterConstruction()
     {

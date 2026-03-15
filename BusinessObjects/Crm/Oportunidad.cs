@@ -1,6 +1,7 @@
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Ventas;
 
@@ -54,7 +55,10 @@ public class Oportunidad(Session session) : Contacto(session)
         set => SetPropertyValue(nameof(Fuente), ref _fuente, value);
     }
     
-    [Association("Oportunidad-PedidoVentas")]
     [XafDisplayName("Pedidos de Venta")]
-    public XPCollection<PedidoVenta> PedidoVentas => GetCollection<PedidoVenta>(nameof(PedidoVentas));
+    public XPCollection<Pedido> PedidoVentas => GetCollection<Pedido>(nameof(PedidoVentas));
+
+    [Association("Oportunidad-DocumentosVenta")]
+    [XafDisplayName("Documentos de Venta")]
+    public XPCollection<DocumentoVenta> DocumentosVenta => GetCollection<DocumentoVenta>();
 }

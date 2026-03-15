@@ -4,11 +4,9 @@ using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
-using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
-using erp.Module.Factories;
 using erp.Module.Helpers.Contactos;
 using VeriFactu.Xml.Factu;
 using VeriFactu.Xml.Factu.Alta;
@@ -27,7 +25,6 @@ namespace erp.Module.BusinessObjects.Facturacion;
     Criteria = "EstadoVeriFactu = 'Enviado'", Context = "Any", Enabled = false)]
 public class Factura(Session session) : DocumentoVenta(session)
 {
-    private Cliente _cliente;
     private ValoresEstadoVeriFactu _estadoVeriFactu;
     private string _estadoEntradaFactura;
     private string _codigoErrorEntradaFactura;
@@ -40,15 +37,6 @@ public class Factura(Session session) : DocumentoVenta(session)
     private string _csv;
     private string _urlValidacion;
     private MediaDataObject _qr;
-
-    [RuleRequiredField]
-    [Association("Cliente-Facturas")]
-    [XafDisplayName("Cliente")]
-    public Cliente Cliente
-    {
-        get => _cliente;
-        set => SetPropertyValue(nameof(Cliente), ref _cliente, value);
-    }
 
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
@@ -164,6 +152,7 @@ public class Factura(Session session) : DocumentoVenta(session)
     }
 
     [PersistentAlias(nameof(Serie))]
+    [XafDisplayName("Prefijo Factura")]
     public string PrefijoFactura
     {
         get => Serie;
@@ -171,6 +160,7 @@ public class Factura(Session session) : DocumentoVenta(session)
     }
 
     [PersistentAlias(nameof(Numero))]
+    [XafDisplayName("Número Factura")]
     public string NumeroFactura
     {
         get => Numero;
@@ -178,6 +168,7 @@ public class Factura(Session session) : DocumentoVenta(session)
     }
 
     [PersistentAlias(nameof(Fecha))]
+    [XafDisplayName("Fecha Factura")]
     public DateTime FechaFactura
     {
         get => Fecha;
@@ -195,11 +186,10 @@ public class Factura(Session session) : DocumentoVenta(session)
     private void InitValues()
     {
         EstadoVeriFactu = ValoresEstadoVeriFactu.Borrador;
-        TipoFactura = TipoFactura.F1;
-        TipoRectificativa = TipoRectificativa.I;
+        TipoFactura = (TipoFactura)1; // F1
+        TipoRectificativa = (TipoRectificativa)1; // I
         EsSubsanacion = false;
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        Serie ??= companyInfo?.PrefijoFacturasVentaPorDefecto;
         Texto ??= companyInfo?.TextoDefectoVeriFactu;
     }
 

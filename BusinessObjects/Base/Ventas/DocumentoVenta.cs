@@ -7,18 +7,40 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Comun;
 using erp.Module.Factories;
+using erp.Module.BusinessObjects.Contactos;
+using erp.Module.BusinessObjects.Crm;
+using erp.Module.Helpers.Contactos;
 using Tarea = erp.Module.BusinessObjects.Planificacion.Tarea;
 
 namespace erp.Module.BusinessObjects.Base.Ventas;
 
 public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 {
+    private Cliente _cliente;
+    private Oportunidad _oportunidad;
     private decimal _baseImponible;
     private decimal _importeImpuestos;
     private decimal _importeTotal;
     private string _serie;
     private string _numero;
     private DateTime _fecha;
+
+    [RuleRequiredField]
+    [Association("Cliente-DocumentosVenta")]
+    [XafDisplayName("Cliente")]
+    public Cliente Cliente
+    {
+        get => _cliente;
+        set => SetPropertyValue(nameof(Cliente), ref _cliente, value);
+    }
+
+    [XafDisplayName("Oportunidad")]
+    [Association("Oportunidad-DocumentosVenta")]
+    public Oportunidad Oportunidad
+    {
+        get => _oportunidad;
+        set => SetPropertyValue(nameof(Oportunidad), ref _oportunidad, value);
+    }
     
     [XafDisplayName("Serie")]
     [RuleRequiredField]
@@ -156,6 +178,8 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     {
         base.AfterConstruction();
         Fecha = DateTime.Today;
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        Serie ??= companyInfo?.PrefijoFacturasVentaPorDefecto;
     }
 
     public virtual bool GetAsignarNumeroAlGuardar() => true;
