@@ -1,5 +1,4 @@
 using System.Text;
-using System.Xml;
 using System.Xml.Linq;
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
@@ -34,9 +33,8 @@ public class VeriFactuController : ViewController
         if (View.CurrentObject is not FacturaBase invoice) return;
 
         if (!invoice.EsValida())
-        {
-            throw new UserFriendlyException("La factura no es válida para el envío a VeriFactu. Revise que tenga Cliente, Texto e Impuestos.");
-        }
+            throw new UserFriendlyException(
+                "La factura no es válida para el envío a VeriFactu. Revise que tenga Cliente, Texto e Impuestos.");
 
         if (invoice.Fecha == DateTime.MinValue) invoice.Fecha = DateTime.Now.Date;
         if (string.IsNullOrEmpty(invoice.Numero)) invoice.AsignarNumero();
@@ -50,21 +48,19 @@ public class VeriFactuController : ViewController
         var companyInfo = ObjectSpace.FindObject<InformacionEmpresa>(null);
 
         if (companyInfo == null || string.IsNullOrEmpty(companyInfo.Nombre) || string.IsNullOrEmpty(companyInfo.Nif))
-        {
             throw new UserFriendlyException("La información de la empresa (Nombre/NIF) es incompleta.");
-        }
 
         var veriFactuInvoice = MapToVeriFactuInvoice(invoice, companyInfo);
         var invoiceEntry = new InvoiceEntry(veriFactuInvoice);
         invoiceEntry.Save();
 
         UpdateInvoiceFromEntry(invoice, invoiceEntry, veriFactuInvoice);
-        
+
         ObjectSpace.CommitChanges();
 
         if (invoiceEntry.Status == "Correcto")
         {
-            MessageOptions options = new MessageOptions
+            var options = new MessageOptions
             {
                 Duration = 2000,
                 Message = "Factura enviada correctamente a VeriFactu",
@@ -75,7 +71,8 @@ public class VeriFactuController : ViewController
         }
         else
         {
-            throw new UserFriendlyException($"Error al enviar a VeriFactu: {invoiceEntry.Status} - {invoiceEntry.ErrorCode}");
+            throw new UserFriendlyException(
+                $"Error al enviar a VeriFactu: {invoiceEntry.Status} - {invoiceEntry.ErrorCode}");
         }
     }
 
