@@ -7,6 +7,7 @@ using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
+using erp.Module.BusinessObjects.Crm;
 using erp.Module.Helpers.Contactos;
 using VeriFactu.Xml.Factu;
 using VeriFactu.Xml.Factu.Alta;
@@ -37,6 +38,14 @@ public class Factura(Session session) : DocumentoVenta(session)
     private string _csv;
     private string _urlValidacion;
     private MediaDataObject _qr;
+    private Oportunidad _oportunidad;
+
+    [XafDisplayName("Oportunidad")]
+    public Oportunidad Oportunidad
+    {
+        get => _oportunidad;
+        set => SetPropertyValue(nameof(Oportunidad), ref _oportunidad, value);
+    }
 
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]

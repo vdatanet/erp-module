@@ -1,3 +1,4 @@
+using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Ventas;
@@ -13,10 +14,13 @@ namespace erp.Module.BusinessObjects.Ventas;
 [ImageName("BO_Order")]
 public class Presupuesto(Session session): DocumentoVenta(session)
 {
+    private Oportunidad _oportunidad;
+
     [Association("Oportunidad-Presupuestos")]
-    public override Oportunidad Oportunidad
+    [XafDisplayName("Oportunidad")]
+    public Oportunidad Oportunidad
     {
-        get => base.Oportunidad;
-        set => base.Oportunidad = value;
+        get => _oportunidad;
+        set => SetPropertyValue(nameof(Oportunidad), ref _oportunidad, value);
     }
 }

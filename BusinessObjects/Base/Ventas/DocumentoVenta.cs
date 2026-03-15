@@ -18,7 +18,6 @@ namespace erp.Module.BusinessObjects.Base.Ventas;
 public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 {
     private Cliente _cliente;
-    private Oportunidad _oportunidad;
     private decimal _baseImponible;
     private decimal _importeImpuestos;
     private decimal _importeTotal;
@@ -33,13 +32,6 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     {
         get => _cliente;
         set => SetPropertyValue(nameof(Cliente), ref _cliente, value);
-    }
-
-    [XafDisplayName("Oportunidad")]
-    public virtual Oportunidad Oportunidad
-    {
-        get => _oportunidad;
-        set => SetPropertyValue(nameof(Oportunidad), ref _oportunidad, value);
     }
     
     [XafDisplayName("Serie")]
