@@ -30,10 +30,8 @@ public class Cliente(Session session) : Tercero(session)
     
     [Association("Cliente-DocumentosVenta")]
     [XafDisplayName("Documentos de Venta")]
-    public XPCollection<DocumentoVenta> DocumentosVenta => GetCollection<DocumentoVenta>();
+    public XPCollection<DocumentoVenta> DocumentosVenta => GetCollection<DocumentoVenta>(nameof(DocumentosVenta));
 
-    [XafDisplayName("Facturas")]
-    public XPCollection<Factura> Facturas => GetCollection<Factura>(nameof(Facturas));
 
     [XafDisplayName("Presupuestos")]
     public XPCollection<Presupuesto> Presupuestos => GetCollection<Presupuesto>(nameof(Presupuestos));

@@ -8,6 +8,7 @@ using erp.Module.BusinessObjects.Configuracion;
 using erp.Module.Helpers.Comun;
 using VeriFactu.Business;
 using VeriFactu.Config;
+using FacturaBase = erp.Module.BusinessObjects.Facturacion.FacturaBase;
 using Factura = erp.Module.BusinessObjects.Facturacion.Factura;
 
 namespace erp.Module.Controllers.Invoicing;
@@ -16,7 +17,7 @@ public class VeriFactuController : ViewController
 {
     public VeriFactuController()
     {
-        TargetObjectType = typeof(Factura);
+        TargetObjectType = typeof(FacturaBase);
         TargetViewType = ViewType.Any;
 
         var validateFactura = new SimpleAction(this, "ValidateFactura", PredefinedCategory.View)
@@ -54,7 +55,7 @@ public class VeriFactuController : ViewController
         //    CancelFactura(invoice);
     }
 
-    private void CancelFactura(Factura invoice)
+    private void CancelFactura(FacturaBase invoice)
     {
         // var companyInfo = ObjectSpace.FindObject<InformacionEmpresa>(null);
         //
@@ -76,7 +77,7 @@ public class VeriFactuController : ViewController
 
     private void ValidateFactura_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
-        if (View.CurrentObject is not Factura invoice) return;
+        if (View.CurrentObject is not FacturaBase invoice) return;
         if (!invoice.EsValida()) return;
 
         if (invoice.FechaFactura == DateTime.MinValue) invoice.FechaFactura = DateTime.Now.Date;
@@ -86,7 +87,7 @@ public class VeriFactuController : ViewController
         SendFactura(invoice);
     }
 
-    private void SendFactura(Factura invoice)
+    private void SendFactura(FacturaBase invoice)
     {
         var companyInfo = ObjectSpace.FindObject<InformacionEmpresa>(null);
         
@@ -99,8 +100,8 @@ public class VeriFactuController : ViewController
             {
                 InvoiceType = invoice.TipoFactura,
                 SellerName = companyInfo.Nombre,
-                BuyerID = invoice.Cliente.Nif,
-                BuyerName = invoice.Cliente.Nombre,
+                BuyerID = invoice.Cliente?.Nif,
+                BuyerName = invoice.Cliente?.Nombre,
                 Text = invoice.Texto,
                 TaxItems = []
             };
