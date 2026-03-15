@@ -79,21 +79,28 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         get => _codigoBarrasLector;
         set
         {
-            if (SetPropertyValue(nameof(CodigoBarrasLector), ref _codigoBarrasLector, value) && !string.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
             {
-                try
+                SetPropertyValue(nameof(CodigoBarrasLector), ref _codigoBarrasLector, value);
+                return;
+            }
+
+            var oldValue = _codigoBarrasLector;
+            _codigoBarrasLector = value;
+            OnChanged(nameof(CodigoBarrasLector), oldValue, value);
+
+            try
+            {
+                var cleanedValue = value.Trim('\r', '\n', ' ');
+                if (!string.IsNullOrWhiteSpace(cleanedValue))
                 {
-                    var cleanedValue = value.Trim('\r', '\n', ' ');
-                    if (!string.IsNullOrWhiteSpace(cleanedValue))
-                    {
-                        CapturarProductoPorCodigo(cleanedValue);
-                    }
+                    CapturarProductoPorCodigo(cleanedValue);
                 }
-                finally
-                {
-                    _codigoBarrasLector = string.Empty;
-                    OnChanged(nameof(CodigoBarrasLector), null, string.Empty);
-                }
+            }
+            finally
+            {
+                _codigoBarrasLector = string.Empty;
+                OnChanged(nameof(CodigoBarrasLector), value, string.Empty);
             }
         }
     }
