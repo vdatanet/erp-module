@@ -22,63 +22,21 @@ public class VeriFactuController : ViewController
 
         var validateFactura = new SimpleAction(this, "ValidateFactura", PredefinedCategory.View)
         {
-            //Specify the Action's button caption.
             Caption = "Validar",
-            //Specify the confirmation message that pops up when a user executes an Action.
-            //ConfirmationMessage = "Are you sure you want to send the Factura to the Tax Agency?",
-            //Specify the icon of the Action's button in the interface.
             ImageName = "Action_Validation_Validate",
             TargetViewType = ViewType.DetailView
         };
         validateFactura.Execute += ValidateFactura_Execute;
-
-        //var cancelVeriFactuFactura = new SimpleAction(this, "CancelVeriFactuFactura", PredefinedCategory.View)
-        //{
-        //    //Specify the Action's button caption.
-        //    Caption = "Cancel VeriFactu",
-        //    //Specify the confirmation message that pops up when a user executes an Action.
-        //    ConfirmationMessage = "Are you sure you want to cancel the Factura to the Tax Agency?",
-        //    //Specify the icon of the Action's button in the interface.
-        //    ImageName = "Cancel",
-        //    TargetViewType = ViewType.DetailView
-        //};
-        //cancelVeriFactuFactura.Execute += CancelVeriFactuFactura_Execute;
-    }
-
-    private void CancelVeriFactuFactura_Execute(object sender, SimpleActionExecuteEventArgs e)
-    {
-        //ObjectSpace.CommitChanges();
-
-        //if (View.CurrentObject is not Factura invoice) return;
-
-        //if (invoice.VeriFactuStatus == Factura.VeriFactuStatusValues.Send)
-        //    CancelFactura(invoice);
-    }
-
-    private void CancelFactura(FacturaBase invoice)
-    {
-        // var companyInfo = ObjectSpace.FindObject<InformacionEmpresa>(null);
-        //
-        // var veriFactuFactura =
-        //     new VeriFactu.Business.Factura(invoice.FacturaNumber, invoice.FacturaDate, companyInfo.VatNumber)
-        //     {
-        //         SellerName = companyInfo.Name
-        //     };
-        // var invoiceCancellation = new FacturaCancellation(veriFactuFactura);
-        // invoiceCancellation.Save();
-        // invoice.TaxAgencyResponse = invoiceCancellation.Response;
-        // invoice.VeriFactuStatus = Factura.VeriFactuStatusValues.Draft;
-        // invoice.FacturaEntryStatus = invoiceCancellation.Status;
-        // invoice.Csv = null;
-        // invoice.ValidationUrl = null;
-        // invoice.Qr = null;
-        // ObjectSpace.CommitChanges();
     }
 
     private void ValidateFactura_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
         if (View.CurrentObject is not FacturaBase invoice) return;
-        //if (!invoice.EsValida()) return;
+
+        if (!invoice.EsValida())
+        {
+            throw new UserFriendlyException("La factura no es válida para el envío a VeriFactu. Revise que tenga Cliente, Texto e Impuestos.");
+        }
 
         if (invoice.Fecha == DateTime.MinValue) invoice.Fecha = DateTime.Now.Date;
         if (string.IsNullOrEmpty(invoice.Numero)) invoice.AsignarNumero();
@@ -91,20 +49,47 @@ public class VeriFactuController : ViewController
     {
         var companyInfo = ObjectSpace.FindObject<InformacionEmpresa>(null);
 
-        if (companyInfo == null) return;
-        if (string.IsNullOrEmpty(companyInfo.Nombre)) return;
-        if (string.IsNullOrEmpty(companyInfo.Nif)) return;
+        if (companyInfo == null || string.IsNullOrEmpty(companyInfo.Nombre) || string.IsNullOrEmpty(companyInfo.Nif))
+        {
+            throw new UserFriendlyException("La información de la empresa (Nombre/NIF) es incompleta.");
+        }
 
-        var veriFactuFactura =
-            new Invoice(invoice.Numero, invoice.Fecha, companyInfo.Nif)
+        var veriFactuInvoice = MapToVeriFactuInvoice(invoice, companyInfo);
+        var invoiceEntry = new InvoiceEntry(veriFactuInvoice);
+        invoiceEntry.Save();
+
+        UpdateInvoiceFromEntry(invoice, invoiceEntry, veriFactuInvoice);
+        
+        ObjectSpace.CommitChanges();
+
+        if (invoiceEntry.Status == "Correcto")
+        {
+            MessageOptions options = new MessageOptions
             {
-                InvoiceType = invoice.TipoFactura,
-                SellerName = companyInfo.Nombre,
-                BuyerID = invoice.Cliente?.Nif,
-                BuyerName = invoice.Cliente?.Nombre,
-                Text = invoice.Texto,
-                TaxItems = []
+                Duration = 2000,
+                Message = "Factura enviada correctamente a VeriFactu",
+                Type = InformationType.Success,
+                Web = { Position = InformationPosition.Right }
             };
+            Application.ShowViewStrategy.ShowMessage(options);
+        }
+        else
+        {
+            throw new UserFriendlyException($"Error al enviar a VeriFactu: {invoiceEntry.Status} - {invoiceEntry.ErrorCode}");
+        }
+    }
+
+    private Invoice MapToVeriFactuInvoice(FacturaBase invoice, InformacionEmpresa companyInfo)
+    {
+        var veriFactuFactura = new Invoice(invoice.Numero, invoice.Fecha, companyInfo.Nif)
+        {
+            InvoiceType = invoice.TipoFactura,
+            SellerName = companyInfo.Nombre,
+            BuyerID = invoice.Cliente?.Nif,
+            BuyerName = invoice.Cliente?.Nombre,
+            Text = invoice.Texto,
+            TaxItems = []
+        };
 
         foreach (var tax in invoice.Impuestos)
         {
@@ -124,23 +109,27 @@ public class VeriFactuController : ViewController
             veriFactuFactura.TaxItems.Add(taxItem);
         }
 
-        var invoiceEntry = new InvoiceEntry(veriFactuFactura);
-        invoiceEntry.Save();
+        return veriFactuFactura;
+    }
 
-        if (invoiceEntry.Status != "Correcto")
-        {
-            invoice.EstadoEntradaFactura = invoiceEntry.Status;
-            invoice.RespuestaAgenciaTributaria = invoiceEntry.Response;
-            invoice.CodigoErrorEntradaFactura = invoiceEntry.ErrorCode;
-            ObjectSpace.CommitChanges();
-            return;
-        }
-
+    private void UpdateInvoiceFromEntry(FacturaBase invoice, InvoiceEntry invoiceEntry, Invoice veriFactuFactura)
+    {
         invoice.EstadoEntradaFactura = invoiceEntry.Status;
+        invoice.RespuestaAgenciaTributaria = invoiceEntry.Response;
+        invoice.CodigoErrorEntradaFactura = invoiceEntry.ErrorCode;
+
+        if (invoiceEntry.Status != "Correcto") return;
 
         var newRecord = veriFactuFactura.GetRegistroAlta();
-        var validationUrl = newRecord.GetUrlValidate();
+        invoice.UrlValidacion = newRecord.GetUrlValidate();
+        invoice.Csv = invoiceEntry.CSV;
+
         var qr = newRecord.GetValidateQr();
+        var qrMedia = ObjectSpace.CreateObject<MediaDataObject>();
+        qrMedia.MediaData = qr;
+        invoice.Qr = qrMedia;
+
+        invoice.EstadoVeriFactu = FacturaBase.ValoresEstadoVeriFactu.Enviado;
 
         try
         {
@@ -149,10 +138,6 @@ public class VeriFactuController : ViewController
                 var response = XDocument.Parse(invoiceEntry.Response);
                 invoice.RespuestaAgenciaTributaria = response.ToString();
             }
-            else
-            {
-                invoice.RespuestaAgenciaTributaria = "No response data available";
-            }
 
             if (invoiceEntry.Xml is { Length: > 0 })
             {
@@ -160,35 +145,11 @@ public class VeriFactuController : ViewController
                 var xml = XDocument.Parse(xmlString);
                 invoice.XmlAgenciaTributaria = xml.ToString();
             }
-            else
-            {
-                invoice.XmlAgenciaTributaria = "No XML data available";
-            }
-        }
-        catch (XmlException ex)
-        {
-            invoice.RespuestaAgenciaTributaria = $"Error parsing response XML: {ex.Message}";
-            invoice.XmlAgenciaTributaria = "XML parsing failed";
-        }
-        catch (ArgumentException ex) when (ex.ParamName == "bytes")
-        {
-            invoice.XmlAgenciaTributaria = $"Error decoding XML data: {ex.Message}";
         }
         catch (Exception ex)
         {
-            invoice.RespuestaAgenciaTributaria = $"Unexpected error processing response: {ex.Message}";
-            invoice.XmlAgenciaTributaria = "Processing failed";
+            invoice.RespuestaAgenciaTributaria += $"\nError processing XML detail: {ex.Message}";
         }
-
-        invoice.EstadoVeriFactu = FacturaBase.ValoresEstadoVeriFactu.Enviado;
-        invoice.Csv = invoiceEntry.CSV;
-        invoice.UrlValidacion = validationUrl;
-
-        var qrMedia = ObjectSpace.CreateObject<MediaDataObject>();
-        qrMedia.MediaData = qr;
-        invoice.Qr = qrMedia;
-
-        ObjectSpace.CommitChanges();
     }
 
     protected override void OnActivated()
@@ -197,9 +158,7 @@ public class VeriFactuController : ViewController
 
         var companyInfo = ObjectSpace.FindObject<InformacionEmpresa>(null);
 
-        if (companyInfo == null) return;
-
-        if (string.IsNullOrEmpty(companyInfo.NombreArchivoConfigVeriFactu)) return;
+        if (companyInfo == null || string.IsNullOrEmpty(companyInfo.NombreArchivoConfigVeriFactu)) return;
 
         Settings.SetConfigFileName(companyInfo.NombreArchivoConfigVeriFactu);
 
