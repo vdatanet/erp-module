@@ -9,16 +9,26 @@ namespace erp.Module.BusinessObjects.Crm;
 
 [DefaultClassOptions]
 [NavigationItem("Crm")]
+[XafDefaultProperty(nameof(Nombre))]
 [ImageName("BO_Lead")]
 public class Oportunidad(Session session) : EntidadBase(session)
 {
+    private string _nombre;
     private string _descripcion;
     private Cliente _cliente;
     private Campana _campana;
     private Medio _medio;
     private Origen _fuente;
+    
+    [Size(255)]
+    [XafDisplayName("Nombre")]
+    public string Nombre
+    {
+        get => _nombre;
+        set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
+    }
 
-    [Size(1000)]
+    [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Descripción")]
     public string Descripcion
     {
