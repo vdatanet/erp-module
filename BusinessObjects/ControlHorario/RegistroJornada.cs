@@ -158,6 +158,7 @@ public class RegistroJornada(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Ubicación Inicio")]
+    [ModelDefault("AllowEdit", "False")]
     [Size(SizeAttribute.Unlimited)]
     public string UbicacionInicio
     {
@@ -172,6 +173,7 @@ public class RegistroJornada(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Ubicación Fin")]
+    [ModelDefault("AllowEdit", "False")]
     [Size(SizeAttribute.Unlimited)]
     public string UbicacionFin
     {
