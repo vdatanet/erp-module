@@ -2,10 +2,22 @@ using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Comun;
 using erp.Module.BusinessObjects.Contactos;
+using erp.Module.BusinessObjects.Planificacion;
 using erp.Module.BusinessObjects.Ventas;
 
 namespace erp.Module.BusinessObjects.Crm;
+
+public enum EstadoOportunidad
+{
+    [XafDisplayName("Prospecto")] Prospecto,
+    [XafDisplayName("Calificada")] Calificada,
+    [XafDisplayName("Propuesta")] Propuesta,
+    [XafDisplayName("Negociación")] Negociacion,
+    [XafDisplayName("Ganada")] Ganada,
+    [XafDisplayName("Perdida")] Perdida
+}
 
 [DefaultClassOptions]
 [NavigationItem("Crm")]
@@ -19,7 +31,13 @@ public class Oportunidad(Session session) : EntidadBase(session)
     private Campana _campana;
     private Medio _medio;
     private Origen _fuente;
-    
+    private EstadoOportunidad _estado;
+    private double _probabilidad;
+    private decimal _valorEstimado;
+    private DateTime _fechaCierreEstimada;
+    private UsuarioAplicacion _responsable;
+    private string _notas;
+
     [Size(255)]
     [XafDisplayName("Nombre")]
     public string Nombre
@@ -65,7 +83,69 @@ public class Oportunidad(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Fuente), ref _fuente, value);
     }
 
+    [XafDisplayName("Estado")]
+    public EstadoOportunidad Estado
+    {
+        get => _estado;
+        set => SetPropertyValue(nameof(Estado), ref _estado, value);
+    }
+
+    [XafDisplayName("Probabilidad (%)")]
+    public double Probabilidad
+    {
+        get => _probabilidad;
+        set => SetPropertyValue(nameof(Probabilidad), ref _probabilidad, value);
+    }
+
+    [XafDisplayName("Valor Estimado")]
+    [DbType("decimal(18,2)")]
+    public decimal ValorEstimado
+    {
+        get => _valorEstimado;
+        set => SetPropertyValue(nameof(ValorEstimado), ref _valorEstimado, value);
+    }
+
+    [XafDisplayName("Fecha Cierre Estimada")]
+    public DateTime FechaCierreEstimada
+    {
+        get => _fechaCierreEstimada;
+        set => SetPropertyValue(nameof(FechaCierreEstimada), ref _fechaCierreEstimada, value);
+    }
+
+    [XafDisplayName("Responsable")]
+    public UsuarioAplicacion Responsable
+    {
+        get => _responsable;
+        set => SetPropertyValue(nameof(Responsable), ref _responsable, value);
+    }
+
+    [Size(SizeAttribute.Unlimited)]
+    [XafDisplayName("Notas")]
+    public string Notas
+    {
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
+    }
+
     [Association("Oportunidad-Presupuestos")]
     [XafDisplayName("Presupuestos")]
     public XPCollection<Presupuesto> Presupuestos => GetCollection<Presupuesto>();
+
+    [Association("Oportunidad-Pedidos")]
+    [XafDisplayName("Pedidos")]
+    public XPCollection<Pedido> Pedidos => GetCollection<Pedido>();
+
+    [Association("Oportunidad-Tareas")]
+    [XafDisplayName("Tareas")]
+    public XPCollection<Tarea> Tareas => GetCollection<Tarea>(nameof(Tareas));
+
+    [DevExpress.Xpo.Aggregated]
+    [Association("Oportunidad-Fotos")]
+    [XafDisplayName("Imágenes")]
+    public XPCollection<Imagen> Imagenes => GetCollection<Imagen>(nameof(Imagenes));
+
+    [DevExpress.Xpo.Aggregated]
+    [Association("Oportunidad-Adjuntos")]
+    [XafDisplayName("Adjuntos")]
+    public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>(nameof(Adjuntos));
 }

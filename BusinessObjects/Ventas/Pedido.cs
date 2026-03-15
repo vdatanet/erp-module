@@ -15,6 +15,7 @@ public class Pedido(Session session): DocumentoVenta(session)
 {
     private Oportunidad _oportunidad;
 
+    [Association("Oportunidad-Pedidos")]
     [XafDisplayName("Oportunidad")]
     public Oportunidad Oportunidad
     {

@@ -7,6 +7,7 @@ using erp.Module.BusinessObjects.Comun;
 using erp.Module.BusinessObjects.Productos;
 
 using erp.Module.BusinessObjects.Contactos;
+using erp.Module.BusinessObjects.Crm;
 
 namespace erp.Module.BusinessObjects.Planificacion;
 
@@ -30,6 +31,7 @@ public class Tarea(Session session) : EntidadBase(session)
     private Contacto _contacto;
     private Producto _producto;
     private DocumentoVenta _documentoVenta;
+    private Oportunidad _oportunidad;
     private string _notas;
 
     [Size(255)]
@@ -120,6 +122,14 @@ public class Tarea(Session session) : EntidadBase(session)
     {
         get => _documentoVenta;
         set => SetPropertyValue(nameof(DocumentoVenta), ref _documentoVenta, value);
+    }
+
+    [Association("Oportunidad-Tareas")]
+    [XafDisplayName("Oportunidad")]
+    public Oportunidad Oportunidad
+    {
+        get => _oportunidad;
+        set => SetPropertyValue(nameof(Oportunidad), ref _oportunidad, value);
     }
 
     [Size(1000)]

@@ -5,6 +5,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
+using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Productos;
 
 using erp.Module.BusinessObjects.Planificacion;
@@ -18,6 +19,7 @@ public class Imagen(Session session): EntidadBase(session)
     private Producto _product;
     private DocumentoVenta _salesDocument;
     private Tarea _task;
+    private Oportunidad _opportunity;
     private MediaDataObject _mediaDataObject;
     private string _notes;
     
@@ -51,6 +53,14 @@ public class Imagen(Session session): EntidadBase(session)
     {
         get => _task;
         set => SetPropertyValue(nameof(Tarea), ref _task, value);
+    }
+    
+    [Association("Oportunidad-Fotos")]
+    [XafDisplayName("Oportunidad")]
+    public Oportunidad Oportunidad
+    {
+        get => _opportunity;
+        set => SetPropertyValue(nameof(Oportunidad), ref _opportunity, value);
     }
     
     [XafDisplayName("Imagen")]
