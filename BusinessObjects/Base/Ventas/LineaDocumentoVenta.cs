@@ -74,19 +74,11 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
         get => _codigoBarrasLector;
         set
         {
-            if (string.IsNullOrEmpty(value))
-            {
-                SetPropertyValue(nameof(CodigoBarrasLector), ref _codigoBarrasLector, value);
-                return;
-            }
-
-            var oldValue = _codigoBarrasLector;
-            _codigoBarrasLector = value;
-            OnChanged(nameof(CodigoBarrasLector), oldValue, value);
+            if (string.IsNullOrEmpty(value) || IsLoading || IsSaving) return;
 
             try
             {
-                var cleanedValue = value.Trim('\r', '\n');
+                var cleanedValue = value.Trim('\r', '\n', ' ');
                 if (!string.IsNullOrWhiteSpace(cleanedValue))
                 {
                     CapturarProductoPorCodigo(cleanedValue);
@@ -95,7 +87,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
             finally
             {
                 _codigoBarrasLector = string.Empty;
-                OnChanged(nameof(CodigoBarrasLector), value, string.Empty);
+                OnChanged(nameof(CodigoBarrasLector));
             }
         }
     }
