@@ -12,6 +12,7 @@ using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.BaseImpl.MultiTenancy;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
 using erp.Module.BusinessObjects;
+using erp.Module.BusinessObjects.Configuracion;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.DatabaseUpdate;
@@ -38,6 +39,14 @@ public class Updater : ModuleUpdater {
         // https://docs.devexpress.com/eXpressAppFramework/119064/data-security-and-safety/security-system/authentication
         // If a role doesn't exist in the database, create this role
         var adminRole = CreateAdminRole();
+
+        InformacionEmpresa infoEmpresa = ObjectSpace.FirstOrDefault<InformacionEmpresa>(_ => true);
+        if (infoEmpresa == null)
+        {
+            infoEmpresa = ObjectSpace.CreateObject<InformacionEmpresa>();
+            infoEmpresa.Nombre = "Mi Empresa";
+            infoEmpresa.Nif = "B00000000";
+        }
 
         UserManager userManager = ObjectSpace.ServiceProvider.GetRequiredService<UserManager>();
 
