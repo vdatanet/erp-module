@@ -7,7 +7,7 @@ using erp.Module.BusinessObjects.Base.Comun;
 namespace erp.Module.BusinessObjects.Comun;
 
 [DefaultClassOptions]
-[NavigationItem("Comun")]
+[NavigationItem("Auxiliares")]
 public class Provincia(Session session) : EntidadBase(session)
 {
     private Pais _pais;
