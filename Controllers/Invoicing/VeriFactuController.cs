@@ -77,13 +77,13 @@ public class VeriFactuController : ViewController
 
     private void ValidateFactura_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
-        //if (View.CurrentObject is not FacturaBase invoice) return;
+        if (View.CurrentObject is not FacturaBase invoice) return;
         //if (!invoice.EsValida()) return;
 
-        //if (invoice.FechaFactura == DateTime.MinValue) invoice.FechaFactura = DateTime.Now.Date;
-        //if (string.IsNullOrEmpty(invoice.NumeroFactura)) invoice.ObtenerNumeroFactura();
+        if (invoice.Fecha == DateTime.MinValue) invoice.Fecha = DateTime.Now.Date;
+        if (string.IsNullOrEmpty(invoice.Numero)) invoice.AsignarNumero();
         
-        //ObjectSpace.CommitChanges();
+        ObjectSpace.CommitChanges();
         //SendFactura(invoice);
     }
 

@@ -166,10 +166,6 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
         Texto ??= companyInfo?.TextoDefectoVeriFactu;
     }
 
-    public void ObtenerNumeroFactura()
-    {
-        AsignarNumero();
-    }
     
     public abstract bool EsValida();
 }
