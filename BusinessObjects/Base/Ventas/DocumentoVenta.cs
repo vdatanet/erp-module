@@ -11,6 +11,7 @@ using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.Helpers.Contactos;
 using Tarea = erp.Module.BusinessObjects.Planificacion.Tarea;
+using erp.Module.Helpers.Comun;
 
 namespace erp.Module.BusinessObjects.Base.Ventas;
 
@@ -121,7 +122,6 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private void Lineas_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
     {
         if (IsLoading || IsSaving || IsDeleted) return;
-        if (e.CollectionChangedType != XPCollectionChangedType.AfterRemove) return;
         BorrarResumenImpuestos();
         ReconstruirResumenImpuestos();
     }
@@ -154,7 +154,8 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
             .Select(g => new
             {
                 TaxType = g.Key,
-                BaseSum = g.Sum(x => x.BaseImponible)
+                BaseSum = g.Sum(x => x.BaseImponible),
+                TaxSum = g.Sum(x => x.ImporteImpuestos)
             })
             .OrderBy(x => x.TaxType.Secuencia)
             .ToList();
@@ -164,13 +165,14 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
             DocumentoVenta = this,
             TipoImpuesto = g.TaxType,
             Secuencia = g.TaxType.Secuencia,
-            BaseImponible = g.BaseSum
+            BaseImponible = g.BaseSum,
+            ImporteImpuestos = g.TaxSum
         });
 
         Impuestos.AddRange(newTaxes);
 
-        BaseImponible = Lineas.Sum(t => t.BaseImponible);
-        ImporteImpuestos = Lineas.Sum(t => t.ImporteImpuestos);
+        BaseImponible = MoneyMath.RoundMoney(Lineas.Sum(t => t.BaseImponible));
+        ImporteImpuestos = MoneyMath.RoundMoney(Lineas.Sum(t => t.ImporteImpuestos));
         ImporteTotal = BaseImponible + ImporteImpuestos;
     }
 
