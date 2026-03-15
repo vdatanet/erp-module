@@ -77,118 +77,118 @@ public class VeriFactuController : ViewController
 
     private void ValidateFactura_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
-        if (View.CurrentObject is not FacturaBase invoice) return;
-        if (!invoice.EsValida()) return;
+        //if (View.CurrentObject is not FacturaBase invoice) return;
+        //if (!invoice.EsValida()) return;
 
-        if (invoice.FechaFactura == DateTime.MinValue) invoice.FechaFactura = DateTime.Now.Date;
-        if (string.IsNullOrEmpty(invoice.NumeroFactura)) invoice.ObtenerNumeroFactura();
+        //if (invoice.FechaFactura == DateTime.MinValue) invoice.FechaFactura = DateTime.Now.Date;
+        //if (string.IsNullOrEmpty(invoice.NumeroFactura)) invoice.ObtenerNumeroFactura();
         
-        ObjectSpace.CommitChanges();
-        SendFactura(invoice);
+        //ObjectSpace.CommitChanges();
+        //SendFactura(invoice);
     }
 
     private void SendFactura(FacturaBase invoice)
     {
-        var companyInfo = ObjectSpace.FindObject<InformacionEmpresa>(null);
+        //var companyInfo = ObjectSpace.FindObject<InformacionEmpresa>(null);
         
-        if (companyInfo == null) return;
-        if (string.IsNullOrEmpty(companyInfo.Nombre)) return;
-        if (string.IsNullOrEmpty(companyInfo.Nif)) return;
+        //if (companyInfo == null) return;
+        //if (string.IsNullOrEmpty(companyInfo.Nombre)) return;
+        //if (string.IsNullOrEmpty(companyInfo.Nif)) return;
         
-        var veriFactuFactura =
-            new VeriFactu.Business.Invoice(invoice.NumeroFactura, invoice.FechaFactura, companyInfo.Nif)
-            {
-                InvoiceType = invoice.TipoFactura,
-                SellerName = companyInfo.Nombre,
-                BuyerID = invoice.Cliente?.Nif,
-                BuyerName = invoice.Cliente?.Nombre,
-                Text = invoice.Texto,
-                TaxItems = []
-            };
+        //var veriFactuFactura =
+            //new VeriFactu.Business.Invoice(invoice.NumeroFactura, invoice.FechaFactura, companyInfo.Nif)
+            //{
+                //InvoiceType = invoice.TipoFactura,
+                //SellerName = companyInfo.Nombre,
+                //BuyerID = invoice.Cliente?.Nif,
+                //BuyerName = invoice.Cliente?.Nombre,
+                //Text = invoice.Texto,
+                //TaxItems = []
+            //};
 
-        foreach (var tax in invoice.Impuestos)
-        {
-            if (tax.Impuesto == null) continue;
+        //foreach (var tax in invoice.Impuestos)
+        //{
+            //if (tax.Impuesto == null) continue;
 
-            var taxItem = new TaxItem
-            {
-                TaxRate = tax.Tipo,
-                TaxBase = tax.BaseImponible,
-                TaxAmount = tax.ImporteImpuestos,
-                Tax = tax.Impuesto ?? default,
-                TaxType = tax.TipoOperacion ?? default,
-                TaxScheme = tax.RegimenFiscal ?? default,
-                TaxException = tax.CausaExencion ?? default
-            };
+            //var taxItem = new TaxItem
+            //{
+                //TaxRate = tax.Tipo,
+                //TaxBase = tax.BaseImponible,
+                //TaxAmount = tax.ImporteImpuestos,
+                //Tax = tax.Impuesto ?? default,
+                //TaxType = tax.TipoOperacion ?? default,
+                //TaxScheme = tax.RegimenFiscal ?? default,
+                //TaxException = tax.CausaExencion ?? default
+            //};
 
-            veriFactuFactura.TaxItems.Add(taxItem);
-        }
+            //veriFactuFactura.TaxItems.Add(taxItem);
+        //}
 
-        var invoiceEntry = new InvoiceEntry(veriFactuFactura);
-        invoiceEntry.Save();
+        //var invoiceEntry = new InvoiceEntry(veriFactuFactura);
+        //invoiceEntry.Save();
 
-        if (invoiceEntry.Status != "Correcto")
-        {
-            invoice.EstadoEntradaFactura = invoiceEntry.Status;
-            invoice.RespuestaAgenciaTributaria = invoiceEntry.Response;
-            invoice.CodigoErrorEntradaFactura = invoiceEntry.ErrorCode;
-            ObjectSpace.CommitChanges();
-            return;
-        }
+        //if (invoiceEntry.Status != "Correcto")
+        //{
+            //invoice.EstadoEntradaFactura = invoiceEntry.Status;
+            //invoice.RespuestaAgenciaTributaria = invoiceEntry.Response;
+            //invoice.CodigoErrorEntradaFactura = invoiceEntry.ErrorCode;
+            //ObjectSpace.CommitChanges();
+            //return;
+        //}
 
-        invoice.EstadoEntradaFactura = invoiceEntry.Status;
+        //invoice.EstadoEntradaFactura = invoiceEntry.Status;
 
-        var newRecord = veriFactuFactura.GetRegistroAlta();
-        var validationUrl = newRecord.GetUrlValidate();
-        var qr = newRecord.GetValidateQr();
+        //var newRecord = veriFactuFactura.GetRegistroAlta();
+        //var validationUrl = newRecord.GetUrlValidate();
+        //var qr = newRecord.GetValidateQr();
 
-        try
-        {
-            if (!string.IsNullOrEmpty(invoiceEntry.Response))
-            {
-                var response = XDocument.Parse(invoiceEntry.Response);
-                invoice.RespuestaAgenciaTributaria = response.ToString();
-            }
-            else
-            {
-                invoice.RespuestaAgenciaTributaria = "No response data available";
-            }
+        //try
+        //{
+            //if (!string.IsNullOrEmpty(invoiceEntry.Response))
+            //{
+                //var response = XDocument.Parse(invoiceEntry.Response);
+                //invoice.RespuestaAgenciaTributaria = response.ToString();
+            //}
+            //else
+            //{
+                //invoice.RespuestaAgenciaTributaria = "No response data available";
+            //}
 
-            if (invoiceEntry.Xml is { Length: > 0 })
-            {
-                var xmlString = Encoding.UTF8.GetString(invoiceEntry.Xml);
-                var xml = XDocument.Parse(xmlString);
-                invoice.XmlAgenciaTributaria = xml.ToString();
-            }
-            else
-            {
-                invoice.XmlAgenciaTributaria = "No XML data available";
-            }
-        }
-        catch (System.Xml.XmlException ex)
-        {
-            invoice.RespuestaAgenciaTributaria = $"Error parsing response XML: {ex.Message}";
-            invoice.XmlAgenciaTributaria = "XML parsing failed";
-        }
-        catch (ArgumentException ex) when (ex.ParamName == "bytes")
-        {
-            invoice.XmlAgenciaTributaria = $"Error decoding XML data: {ex.Message}";
-        }
-        catch (Exception ex)
-        {
-            invoice.RespuestaAgenciaTributaria = $"Unexpected error processing response: {ex.Message}";
-            invoice.XmlAgenciaTributaria = "Processing failed";
-        }
+            //if (invoiceEntry.Xml is { Length: > 0 })
+            //{
+                //var xmlString = Encoding.UTF8.GetString(invoiceEntry.Xml);
+                //var xml = XDocument.Parse(xmlString);
+                //invoice.XmlAgenciaTributaria = xml.ToString();
+            //}
+            //else
+            //{
+                //invoice.XmlAgenciaTributaria = "No XML data available";
+            //}
+        //}
+        //catch (System.Xml.XmlException ex)
+        //{
+            //invoice.RespuestaAgenciaTributaria = $"Error parsing response XML: {ex.Message}";
+            //invoice.XmlAgenciaTributaria = "XML parsing failed";
+        //}
+        //catch (ArgumentException ex) when (ex.ParamName == "bytes")
+        //{
+            //invoice.XmlAgenciaTributaria = $"Error decoding XML data: {ex.Message}";
+        //}
+        //catch (Exception ex)
+        //{
+            //invoice.RespuestaAgenciaTributaria = $"Unexpected error processing response: {ex.Message}";
+            //invoice.XmlAgenciaTributaria = "Processing failed";
+        //}
 
-        invoice.EstadoVeriFactu = Factura.ValoresEstadoVeriFactu.Enviado;
-        invoice.Csv = invoiceEntry.CSV;
-        invoice.UrlValidacion = validationUrl;
+        //invoice.EstadoVeriFactu = Factura.ValoresEstadoVeriFactu.Enviado;
+        //invoice.Csv = invoiceEntry.CSV;
+        //invoice.UrlValidacion = validationUrl;
 
-        var qrMedia = ObjectSpace.CreateObject<MediaDataObject>();
-        qrMedia.MediaData = qr;
-        invoice.Qr = qrMedia;
+        //var qrMedia = ObjectSpace.CreateObject<MediaDataObject>();
+        //qrMedia.MediaData = qr;
+        //invoice.Qr = qrMedia;
 
-        ObjectSpace.CommitChanges();
+        //ObjectSpace.CommitChanges();
     }
 
     protected override void OnActivated()

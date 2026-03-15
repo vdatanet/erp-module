@@ -147,31 +147,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
         Borrador,
         Enviado
     }
-
-    [PersistentAlias(nameof(Serie))]
-    [XafDisplayName("Prefijo Factura")]
-    public string PrefijoFactura
-    {
-        get => Serie;
-        set => Serie = value;
-    }
-
-    [PersistentAlias(nameof(Numero))]
-    [XafDisplayName("Número Factura")]
-    public string NumeroFactura
-    {
-        get => Numero;
-        set => Numero = value;
-    }
-
-    [PersistentAlias(nameof(Fecha))]
-    [XafDisplayName("Fecha Factura")]
-    public DateTime FechaFactura
-    {
-        get => Fecha;
-        set => Fecha = value;
-    }
-
+    
     public override bool GetAsignarNumeroAlGuardar() => false;
 
     public override void AfterConstruction()

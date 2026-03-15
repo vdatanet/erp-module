@@ -7,7 +7,7 @@ namespace erp.Module.BusinessObjects.Facturacion;
 [DefaultClassOptions]
 [NavigationItem("Facturacion")]
 [ImageName("BO_Factura")] // Podría cambiarse a algo más específico si existe
-[DefaultProperty(nameof(NumeroFactura))]
+[DefaultProperty(nameof(Numero))]
 public class FacturaSimplificada(Session session) : FacturaBase(session)
 {
     public override bool EsValida()
