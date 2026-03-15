@@ -23,7 +23,7 @@ public class VeriFactuController : ViewController
         var validateFactura = new SimpleAction(this, "ValidateFactura", PredefinedCategory.View)
         {
             //Specify the Action's button caption.
-            Caption = "Validate",
+            Caption = "Validar",
             //Specify the confirmation message that pops up when a user executes an Action.
             //ConfirmationMessage = "Are you sure you want to send the Factura to the Tax Agency?",
             //Specify the icon of the Action's button in the interface.
@@ -84,7 +84,7 @@ public class VeriFactuController : ViewController
         if (string.IsNullOrEmpty(invoice.Numero)) invoice.AsignarNumero();
         
         ObjectSpace.CommitChanges();
-        //SendFactura(invoice);
+        SendFactura(invoice);
     }
 
     private void SendFactura(FacturaBase invoice)

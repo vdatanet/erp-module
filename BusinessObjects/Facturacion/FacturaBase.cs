@@ -165,7 +165,6 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         Texto ??= companyInfo?.TextoDefectoVeriFactu;
     }
-
     
     public abstract bool EsValida();
 }
