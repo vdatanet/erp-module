@@ -1,7 +1,6 @@
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.ExpressApp.Security;
-using DevExpress.ExpressApp.Xpo;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
@@ -14,8 +13,9 @@ namespace erp.Module.BusinessObjects.ControlHorario;
 
 [DefaultClassOptions]
 [NavigationItem("Control Horario")]
+[XafDisplayName("Registro de Jornada")]
 [ImageName("Time")]
-public class EntradaParte(Session session) : EntidadBase(session)
+public class RegistroJornada(Session session) : EntidadBase(session)
 {
     private Empleado _empleado;
     private DateTime _fechaInicio;
@@ -24,8 +24,8 @@ public class EntradaParte(Session session) : EntidadBase(session)
     private ActividadProyecto _actividad;
     private string _notas;
     private TimeSpan _duracion;
-    
-    [Association("Empleado-EntradasParte")]
+
+    [Association("Empleado-RegistrosJornada")]
     [RuleRequiredField]
     //[ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Empleado")]
@@ -62,7 +62,7 @@ public class EntradaParte(Session session) : EntidadBase(session)
         }
     }
 
-    [Association("Proyecto-EntradasParte")]
+    [Association("Proyecto-RegistrosJornada")]
     [ImmediatePostData]
     [XafDisplayName("Proyecto")]
     public Proyecto Proyecto
@@ -71,7 +71,7 @@ public class EntradaParte(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Proyecto), ref _proyecto, value);
     }
 
-    [Association("ActividadProyecto-EntradasParte")]
+    [Association("ActividadProyecto-RegistrosJornada")]
     [DataSourceProperty("Proyecto.Actividades")]
     [XafDisplayName("Actividad")]
     public ActividadProyecto Actividad
@@ -112,16 +112,6 @@ public class EntradaParte(Session session) : EntidadBase(session)
     {
         base.OnSaving();
         RecalcularDuracion();
-    }
-
-    protected override void OnDeleting()
-    {
-        base.OnDeleting();
-    }
-
-    protected override void OnDeleted()
-    {
-        base.OnDeleted();
     }
 
     private void RecalcularDuracion()

@@ -58,7 +58,7 @@ public class Proyecto(Session session) : EntidadBase(session)
     [XafDisplayName("Actividades")]
     public XPCollection<ActividadProyecto> Actividades => GetCollection<ActividadProyecto>(nameof(Actividades));
 
-    [Association("Proyecto-EntradasParte")]
-    [XafDisplayName("Partes de tiempo")]
-    public XPCollection<EntradaParte> TimesheetEntries => GetCollection<EntradaParte>(nameof(TimesheetEntries));
+    [Association("Proyecto-RegistrosJornada")]
+    [XafDisplayName("Registros de Jornada")]
+    public XPCollection<RegistroJornada> RegistrosJornadas => GetCollection<RegistroJornada>(nameof(RegistrosJornadas));
 }
