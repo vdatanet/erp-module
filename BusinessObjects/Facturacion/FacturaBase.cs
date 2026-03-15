@@ -34,15 +34,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     private string _csv;
     private string _urlValidacion;
     private MediaDataObject _qr;
-    private Oportunidad _oportunidad;
-
-    [XafDisplayName("Oportunidad")]
-    public Oportunidad Oportunidad
-    {
-        get => _oportunidad;
-        set => SetPropertyValue(nameof(Oportunidad), ref _oportunidad, value);
-    }
-
+    
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
     [XafDisplayName("Estado VeriFactu")]
