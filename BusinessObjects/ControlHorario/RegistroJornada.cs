@@ -25,6 +25,12 @@ public class RegistroJornada(Session session) : EntidadBase(session)
     private ActividadProyecto _actividad;
     private string _notas;
     private TimeSpan _duracion;
+    private double? _latitudInicio;
+    private double? _longitudInicio;
+    private double? _latitudFin;
+    private double? _longitudFin;
+    private string _ubicacionInicio;
+    private string _ubicacionFin;
 
     [RuleRequiredField]
     [Association("Empleado-RegistrosJornada")]
@@ -99,6 +105,66 @@ public class RegistroJornada(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Duracion), ref _duracion, value);
     }
 
+    [XafDisplayName("Latitud Inicio")]
+    [ImmediatePostData]
+    public double? LatitudInicio
+    {
+        get => _latitudInicio;
+        set
+        {
+            if (SetPropertyValue(nameof(LatitudInicio), ref _latitudInicio, value)) ActualizarUbicacionInicio();
+        }
+    }
+
+    [XafDisplayName("Longitud Inicio")]
+    [ImmediatePostData]
+    public double? LongitudInicio
+    {
+        get => _longitudInicio;
+        set
+        {
+            if (SetPropertyValue(nameof(LongitudInicio), ref _longitudInicio, value)) ActualizarUbicacionInicio();
+        }
+    }
+
+    [XafDisplayName("Latitud Fin")]
+    [ImmediatePostData]
+    public double? LatitudFin
+    {
+        get => _latitudFin;
+        set
+        {
+            if (SetPropertyValue(nameof(LatitudFin), ref _latitudFin, value)) ActualizarUbicacionFin();
+        }
+    }
+
+    [XafDisplayName("Longitud Fin")]
+    [ImmediatePostData]
+    public double? LongitudFin
+    {
+        get => _longitudFin;
+        set
+        {
+            if (SetPropertyValue(nameof(LongitudFin), ref _longitudFin, value)) ActualizarUbicacionFin();
+        }
+    }
+
+    [XafDisplayName("Ubicación Inicio")]
+    [Size(SizeAttribute.Unlimited)]
+    public string UbicacionInicio
+    {
+        get => _ubicacionInicio;
+        set => SetPropertyValue(nameof(UbicacionInicio), ref _ubicacionInicio, value);
+    }
+
+    [XafDisplayName("Ubicación Fin")]
+    [Size(SizeAttribute.Unlimited)]
+    public string UbicacionFin
+    {
+        get => _ubicacionFin;
+        set => SetPropertyValue(nameof(UbicacionFin), ref _ubicacionFin, value);
+    }
+    
     public override void AfterConstruction()
     {
         base.AfterConstruction();
@@ -127,5 +193,17 @@ public class RegistroJornada(Session session) : EntidadBase(session)
     {
         return Session.GetObjectByKey<UsuarioAplicacion>(
             Session.ServiceProvider.GetRequiredService<ISecurityStrategyBase>().UserId);
+    }
+
+    private void ActualizarUbicacionInicio()
+    {
+        if (IsLoading || IsSaving || !LatitudInicio.HasValue || !LongitudInicio.HasValue) return;
+        UbicacionInicio = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0},{1}", LatitudInicio.Value, LongitudInicio.Value);
+    }
+
+    private void ActualizarUbicacionFin()
+    {
+        if (IsLoading || IsSaving || !LatitudFin.HasValue || !LongitudFin.HasValue) return;
+        UbicacionFin = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0},{1}", LatitudFin.Value, LongitudFin.Value);
     }
 }
