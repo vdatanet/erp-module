@@ -145,25 +145,28 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
             .Select(g => new
             {
                 TaxType = g.Key,
-                BaseSum = g.Sum(x => x.BaseImponible),
-                TaxSum = g.Sum(x => x.ImporteImpuestos)
+                BaseSum = g.Sum(x => x.BaseImponible)
             })
             .OrderBy(x => x.TaxType.Secuencia)
             .ToList();
 
-        var newTaxes = groups.Select(g => new ImpuestoDocumentoVenta(this.Session)
+        var newTaxes = groups.Select(g =>
         {
-            DocumentoVenta = this,
-            TipoImpuesto = g.TaxType,
-            Secuencia = g.TaxType.Secuencia,
-            BaseImponible = g.BaseSum,
-            ImporteImpuestos = g.TaxSum
-        });
+            var tax = new ImpuestoDocumentoVenta(this.Session)
+            {
+                DocumentoVenta = this,
+                TipoImpuesto = g.TaxType,
+                BaseImponible = g.BaseSum
+            };
+            tax.Secuencia = g.TaxType.Secuencia;
+            tax.ImporteImpuestos = AmountCalculator.GetTaxAmount(g.BaseSum, g.TaxType.Tipo, g.TaxType.EsRetencion);
+            return tax;
+        }).ToList();
 
         Impuestos.AddRange(newTaxes);
 
         BaseImponible = MoneyMath.RoundMoney(Lineas.Sum(t => t.BaseImponible));
-        ImporteImpuestos = MoneyMath.RoundMoney(Lineas.Sum(t => t.ImporteImpuestos));
+        ImporteImpuestos = MoneyMath.RoundMoney(Impuestos.Sum(t => t.ImporteImpuestos));
         ImporteTotal = BaseImponible + ImporteImpuestos;
     }
 
