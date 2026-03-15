@@ -15,6 +15,26 @@ public class Empleado(Session session) : Contacto(session)
     private DateTime? _ultimoRegistroEntrada;
     private DateTime? _ultimoRegistroSalida;
     
+    private UsuarioAplicacion _usuario;
+    
+    [XafDisplayName("Usuario de Aplicación")]
+    public UsuarioAplicacion Usuario
+    {
+        get => _usuario;
+        set
+        {
+            if (_usuario == value) return;
+            UsuarioAplicacion anterior = _usuario;
+            _usuario = value;
+            if (IsLoading) return;
+            if (anterior != null && anterior.Empleado == this)
+                anterior.Empleado = null;
+            if (_usuario != null)
+                _usuario.Empleado = this;
+            OnChanged(nameof(Usuario), anterior, _usuario);
+        }
+    }
+
     [XafDisplayName("¿Está trabajando?")]
     public bool EstaTrabajando
     {
