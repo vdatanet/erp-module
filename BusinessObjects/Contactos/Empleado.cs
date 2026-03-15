@@ -12,6 +12,7 @@ namespace erp.Module.BusinessObjects.Contactos;
 public class Empleado(Session session) : Contacto(session)
 {
     private bool _estaTrabajando;
+    private string _ubicacion;
     private DateTime? _ultimoRegistroEntrada;
     private DateTime? _ultimoRegistroSalida;
     
@@ -36,14 +37,25 @@ public class Empleado(Session session) : Contacto(session)
     }
 
     [XafDisplayName("¿Está trabajando?")]
+    [ModelDefault("AllowEdit", "False")]
     public bool EstaTrabajando
     {
         get => _estaTrabajando;
         set => SetPropertyValue(nameof(EstaTrabajando), ref _estaTrabajando, value);
     }
+    
+    [XafDisplayName("Ubicación")]
+    [ModelDefault("AllowEdit", "False")]
+    [Size(SizeAttribute.Unlimited)]
+    public string Ubicacion
+    {
+        get => _ubicacion;
+        set => SetPropertyValue(nameof(Ubicacion), ref _ubicacion, value);
+    }
 
     [XafDisplayName("Último Registro Entrada")]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
+    [ModelDefault("AllowEdit", "False")]
     public DateTime? UltimoRegistroEntrada
     {
         get => _ultimoRegistroEntrada;
@@ -52,6 +64,7 @@ public class Empleado(Session session) : Contacto(session)
 
     [XafDisplayName("Último Registro Salida")]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
+    [ModelDefault("AllowEdit", "False")]
     public DateTime? UltimoRegistroSalida
     {
         get => _ultimoRegistroSalida;

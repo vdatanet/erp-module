@@ -52,7 +52,11 @@ public class RegistroJornada(Session session) : EntidadBase(session)
         get => _fechaInicio;
         set
         {
-            if (SetPropertyValue(nameof(FechaInicio), ref _fechaInicio, value)) RecalcularDuracion();
+            if (SetPropertyValue(nameof(FechaInicio), ref _fechaInicio, value))
+            {
+                RecalcularDuracion();
+                ActualizarEmpleado();
+            }
         }
     }
 
@@ -65,7 +69,11 @@ public class RegistroJornada(Session session) : EntidadBase(session)
         get => _fechaFin;
         set
         {
-            if (SetPropertyValue(nameof(FechaFin), ref _fechaFin, value)) RecalcularDuracion();
+            if (SetPropertyValue(nameof(FechaFin), ref _fechaFin, value))
+            {
+                RecalcularDuracion();
+                ActualizarEmpleado();
+            }
         }
     }
 
@@ -154,7 +162,13 @@ public class RegistroJornada(Session session) : EntidadBase(session)
     public string UbicacionInicio
     {
         get => _ubicacionInicio;
-        set => SetPropertyValue(nameof(UbicacionInicio), ref _ubicacionInicio, value);
+        set
+        {
+            if (SetPropertyValue(nameof(UbicacionInicio), ref _ubicacionInicio, value))
+            {
+                ActualizarEmpleado();
+            }
+        }
     }
 
     [XafDisplayName("Ubicación Fin")]
@@ -162,13 +176,20 @@ public class RegistroJornada(Session session) : EntidadBase(session)
     public string UbicacionFin
     {
         get => _ubicacionFin;
-        set => SetPropertyValue(nameof(UbicacionFin), ref _ubicacionFin, value);
+        set
+        {
+            if (SetPropertyValue(nameof(UbicacionFin), ref _ubicacionFin, value))
+            {
+                ActualizarEmpleado();
+            }
+        }
     }
     
     public override void AfterConstruction()
     {
         base.AfterConstruction();
         InitValues();
+        ActualizarEmpleado();
     }
 
     private void InitValues()
@@ -205,5 +226,23 @@ public class RegistroJornada(Session session) : EntidadBase(session)
     {
         if (IsLoading || IsSaving || !LatitudFin.HasValue || !LongitudFin.HasValue) return;
         UbicacionFin = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0},{1}", LatitudFin.Value, LongitudFin.Value);
+    }
+
+    private void ActualizarEmpleado()
+    {
+        if (IsLoading || IsSaving || Empleado == null) return;
+
+        if (FechaFin.HasValue)
+        {
+            Empleado.EstaTrabajando = false;
+            Empleado.Ubicacion = null;
+            Empleado.UltimoRegistroSalida = FechaFin;
+        }
+        else
+        {
+            Empleado.EstaTrabajando = true;
+            Empleado.Ubicacion = UbicacionInicio;
+            Empleado.UltimoRegistroEntrada = FechaInicio;
+        }
     }
 }
