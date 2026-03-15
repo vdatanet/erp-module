@@ -11,8 +11,8 @@ using erp.Module.BusinessObjects.Contactos;
 namespace erp.Module.BusinessObjects.Planificacion;
 
 [DefaultClassOptions]
-[NavigationItem("Planificacion")]
-[ImageName("BO_Tarea")]
+[NavigationItem("Planificación")]
+[ImageName("BO_Task")]
 public class Tarea(Session session) : EntidadBase(session)
 {
     private string _nombre;
