@@ -1,6 +1,7 @@
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Ventas;
@@ -9,8 +10,8 @@ namespace erp.Module.BusinessObjects.Crm;
 
 [DefaultClassOptions]
 [NavigationItem("Crm")]
-[ImageName("BO_Oportunidad")]
-public class Oportunidad(Session session) : Contacto(session)
+[ImageName("BO_Lead")]
+public class Oportunidad(Session session) : EntidadBase(session)
 {
     private string _descripcion;
     private Cliente _cliente;
@@ -55,8 +56,6 @@ public class Oportunidad(Session session) : Contacto(session)
         set => SetPropertyValue(nameof(Fuente), ref _fuente, value);
     }
     
-    [XafDisplayName("Pedidos de Venta")]
-    public XPCollection<Pedido> PedidoVentas => GetCollection<Pedido>(nameof(PedidoVentas));
 
     [Association("Oportunidad-DocumentosVenta")]
     [XafDisplayName("Documentos de Venta")]
