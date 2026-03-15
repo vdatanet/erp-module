@@ -2,7 +2,6 @@ using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
-using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Ventas;
 
@@ -34,30 +33,29 @@ public class Oportunidad(Session session) : EntidadBase(session)
         get => _cliente;
         set => SetPropertyValue(nameof(Cliente), ref _cliente, value);
     }
-    
+
     [XafDisplayName("Campaña")]
     public Campana Campana
     {
         get => _campana;
         set => SetPropertyValue(nameof(Campana), ref _campana, value);
     }
-    
+
     [XafDisplayName("Medio")]
     public Medio Medio
     {
         get => _medio;
         set => SetPropertyValue(nameof(Medio), ref _medio, value);
     }
-    
+
     [XafDisplayName("Fuente")]
     public Origen Fuente
     {
         get => _fuente;
         set => SetPropertyValue(nameof(Fuente), ref _fuente, value);
     }
-    
 
-    [Association("Oportunidad-DocumentosVenta")]
-    [XafDisplayName("Documentos de Venta")]
-    public XPCollection<DocumentoVenta> DocumentosVenta => GetCollection<DocumentoVenta>();
+    [Association("Oportunidad-Presupuestos")]
+    [XafDisplayName("Presupuestos")]
+    public XPCollection<Presupuesto> Presupuestos => GetCollection<Presupuesto>();
 }

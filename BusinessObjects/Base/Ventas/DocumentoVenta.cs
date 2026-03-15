@@ -36,8 +36,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Oportunidad")]
-    [Association("Oportunidad-DocumentosVenta")]
-    public Oportunidad Oportunidad
+    public virtual Oportunidad Oportunidad
     {
         get => _oportunidad;
         set => SetPropertyValue(nameof(Oportunidad), ref _oportunidad, value);
