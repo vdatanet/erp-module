@@ -7,6 +7,7 @@ using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.Helpers.Comun;
+using DevExpress.Data.Filtering;
 
 namespace erp.Module.BusinessObjects.Base.Ventas;
 
@@ -23,6 +24,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     private decimal _baseImponible;
     private decimal _importeImpuestos;
     private decimal _importeTotal;
+    private string _codigoBarrasLector;
 
     [Association("DocumentoVenta-Lineas")]
     [XafDisplayName("Documento Venta")]
@@ -62,6 +64,33 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
+    }
+
+    [NonPersistent]
+    [ImmediatePostData]
+    [XafDisplayName("Capturar Código (Lector)")]
+    public string CodigoBarrasLector
+    {
+        get => _codigoBarrasLector;
+        set
+        {
+            if (SetPropertyValue(nameof(CodigoBarrasLector), ref _codigoBarrasLector, value) && !string.IsNullOrEmpty(value))
+            {
+                CapturarProductoPorCodigo(value);
+                _codigoBarrasLector = null;
+                OnChanged(nameof(CodigoBarrasLector));
+            }
+        }
+    }
+
+    private void CapturarProductoPorCodigo(string codigo)
+    {
+        var producto = Session.FindObject<Producto>(CriteriaOperator.Parse("(CodigoBarras = ? OR Codigo = ?) AND EstaActivo = True AND DisponibleEnVentas = True", codigo, codigo));
+        if (producto != null)
+        {
+            Producto = producto;
+            if (Cantidad == 0) Cantidad = 1;
+        }
     }
 
     [ImmediatePostData]

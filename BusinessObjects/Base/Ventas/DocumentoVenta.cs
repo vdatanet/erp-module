@@ -1,5 +1,6 @@
 using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.DC;
+using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
@@ -12,6 +13,7 @@ using erp.Module.BusinessObjects.Crm;
 using erp.Module.Helpers.Contactos;
 using Tarea = erp.Module.BusinessObjects.Planificacion.Tarea;
 using erp.Module.Helpers.Comun;
+using erp.Module.BusinessObjects.Productos;
 
 namespace erp.Module.BusinessObjects.Base.Ventas;
 
@@ -24,6 +26,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private string _serie;
     private string _numero;
     private DateTime _fecha;
+    private string _codigoBarrasLector;
 
     [RuleRequiredField("erp.Module.BusinessObjects.Facturacion.Factura.Cliente_Required", DefaultContexts.Save, TargetCriteria = "IsInstanceOfType(this, 'erp.Module.BusinessObjects.Facturacion.Factura') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Presupuesto')")]
     [Association("Cliente-DocumentosVenta")]
@@ -57,6 +60,46 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     {
         get => _fecha;
         set => SetPropertyValue(nameof(Fecha), ref _fecha, value);
+    }
+
+    [NonPersistent]
+    [ImmediatePostData]
+    [XafDisplayName("Capturar Código (Lector)")]
+    public string CodigoBarrasLector
+    {
+        get => _codigoBarrasLector;
+        set
+        {
+            if (SetPropertyValue(nameof(CodigoBarrasLector), ref _codigoBarrasLector, value) && !string.IsNullOrEmpty(value))
+            {
+                CapturarProductoPorCodigo(value);
+                _codigoBarrasLector = null;
+                OnChanged(nameof(CodigoBarrasLector));
+            }
+        }
+    }
+
+    private void CapturarProductoPorCodigo(string codigo)
+    {
+        var producto = Session.FindObject<Producto>(CriteriaOperator.Parse("(CodigoBarras = ? OR Codigo = ?) AND EstaActivo = True AND DisponibleEnVentas = True", codigo, codigo));
+        if (producto != null)
+        {
+            var lineaExistente = Lineas.FirstOrDefault(l => l.Producto != null && l.Producto.Oid == producto.Oid);
+            if (lineaExistente != null)
+            {
+                lineaExistente.Cantidad += 1;
+            }
+            else
+            {
+                var linea = new LineaDocumentoVenta(Session)
+                {
+                    DocumentoVenta = this,
+                    Producto = producto,
+                    Cantidad = 1
+                };
+                Lineas.Add(linea);
+            }
+        }
     }
 
     [ModelDefault("AllowEdit","False")]
