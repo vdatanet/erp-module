@@ -24,13 +24,10 @@ public class EntradaParte(Session session) : EntidadBase(session)
     private ActividadProyecto _actividad;
     private string _notas;
     private TimeSpan _duracion;
-    private ParteDiario _parteDiario;
-    private ParteDiario _parteDiarioAnterior;
-    private ReglaJornada _reglaJornadaAnteriorEmpleado;
-
+    
     [Association("Empleado-EntradasParte")]
     [RuleRequiredField]
-    [ModelDefault("AllowEdit", "False")]
+    //[ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Empleado")]
     public Empleado Empleado
     {
@@ -100,14 +97,6 @@ public class EntradaParte(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Duracion), ref _duracion, value);
     }
 
-    [Association("ParteDiario-Entradas")]
-    [XafDisplayName("Parte Diario")]
-    public ParteDiario ParteDiario
-    {
-        get => _parteDiario;
-        set => SetPropertyValue(nameof(ParteDiario), ref _parteDiario, value);
-    }
-
     public override void AfterConstruction()
     {
         base.AfterConstruction();
@@ -116,7 +105,7 @@ public class EntradaParte(Session session) : EntidadBase(session)
 
     private void InitValues()
     {
-        SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(Empleado), GetCurrentUser());
+        //SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(Empleado), GetCurrentUser());
     }
 
     protected override void OnSaving()
@@ -127,20 +116,12 @@ public class EntradaParte(Session session) : EntidadBase(session)
 
     protected override void OnDeleting()
     {
-        if (ParteDiario is not null) _parteDiarioAnterior = ParteDiario;
-        _reglaJornadaAnteriorEmpleado = Empleado?.ReglaJornadaLaboral ?? _reglaJornadaAnteriorEmpleado;
         base.OnDeleting();
     }
 
     protected override void OnDeleted()
     {
         base.OnDeleted();
-
-        if (_parteDiarioAnterior is { } ts && _reglaJornadaAnteriorEmpleado is { } regla)
-            ts.Recalcular(regla);
-
-        _parteDiarioAnterior = null;
-        _reglaJornadaAnteriorEmpleado = null;
     }
 
     private void RecalcularDuracion()
@@ -149,9 +130,6 @@ public class EntradaParte(Session session) : EntidadBase(session)
             Duracion = FechaFin.Value - FechaInicio;
         else
             Duracion = TimeSpan.Zero;
-
-        if (ParteDiario is { } ts && Empleado?.ReglaJornadaLaboral is { } regla)
-            ts.Recalcular(regla);
     }
 
     private UsuarioAplicacion GetCurrentUser()

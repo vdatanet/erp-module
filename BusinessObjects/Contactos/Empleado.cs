@@ -11,19 +11,10 @@ namespace erp.Module.BusinessObjects.Contactos;
 [ImageName("BO_Employee")]
 public class Empleado(Session session) : Contacto(session)
 {
-    private ReglaJornada _reglaJornadaLaboral;
     private bool _estaTrabajando;
     private DateTime? _ultimoRegistroEntrada;
     private DateTime? _ultimoRegistroSalida;
-
-    [Association("ReglaJornada-Empleados")]
-    [XafDisplayName("Regla Jornada Laboral")]
-    public ReglaJornada ReglaJornadaLaboral
-    {
-        get => _reglaJornadaLaboral;
-        set => SetPropertyValue(nameof(ReglaJornadaLaboral), ref _reglaJornadaLaboral, value);
-    }
-
+    
     [XafDisplayName("¿Está trabajando?")]
     public bool EstaTrabajando
     {
@@ -50,8 +41,4 @@ public class Empleado(Session session) : Contacto(session)
     [Association("Empleado-EntradasParte")]
     [XafDisplayName("Registros de Tiempo")]
     public XPCollection<EntradaParte> RegistrosTiempo => GetCollection<EntradaParte>(nameof(RegistrosTiempo));
-
-    [Association("Empleado-ParteDiarios")]
-    [XafDisplayName("Partes Diarios")]
-    public XPCollection<ParteDiario> PartesDiarios => GetCollection<ParteDiario>(nameof(PartesDiarios));
 }
