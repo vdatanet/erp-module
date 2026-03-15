@@ -26,6 +26,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private string _serie;
     private string _numero;
     private DateTime _fecha;
+    private string _notas;
     private string _codigoBarrasLector;
 
     [RuleRequiredField("erp.Module.BusinessObjects.Facturacion.Factura.Cliente_Required", DefaultContexts.Save, TargetCriteria = "IsInstanceOfType(this, 'erp.Module.BusinessObjects.Facturacion.Factura') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Presupuesto')")]
@@ -62,6 +63,14 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Fecha), ref _fecha, value);
     }
 
+    [Size(SizeAttribute.Unlimited)]
+    [XafDisplayName("Notas")]
+    public string Notas
+    {
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
+    }
+
     [NonPersistent]
     [ImmediatePostData]
     [XafDisplayName("Capturar Código (Lector)")]
@@ -72,9 +81,19 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         {
             if (SetPropertyValue(nameof(CodigoBarrasLector), ref _codigoBarrasLector, value) && !string.IsNullOrEmpty(value))
             {
-                CapturarProductoPorCodigo(value);
-                _codigoBarrasLector = null;
-                OnChanged(nameof(CodigoBarrasLector));
+                try
+                {
+                    var cleanedValue = value.Trim('\r', '\n', ' ');
+                    if (!string.IsNullOrWhiteSpace(cleanedValue))
+                    {
+                        CapturarProductoPorCodigo(cleanedValue);
+                    }
+                }
+                finally
+                {
+                    _codigoBarrasLector = string.Empty;
+                    OnChanged(nameof(CodigoBarrasLector), null, string.Empty);
+                }
             }
         }
     }
@@ -101,8 +120,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
             }
         }
     }
-
-    [ModelDefault("AllowEdit","False")]
+    
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     [XafDisplayName("Base Imponible")]

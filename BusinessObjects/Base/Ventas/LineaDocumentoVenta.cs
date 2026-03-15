@@ -76,9 +76,16 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
         {
             if (SetPropertyValue(nameof(CodigoBarrasLector), ref _codigoBarrasLector, value) && !string.IsNullOrEmpty(value))
             {
-                CapturarProductoPorCodigo(value);
-                _codigoBarrasLector = null;
-                OnChanged(nameof(CodigoBarrasLector));
+                try
+                {
+                    var cleanedValue = value.Trim('\r', '\n');
+                    CapturarProductoPorCodigo(cleanedValue);
+                }
+                finally
+                {
+                    _codigoBarrasLector = string.Empty;
+                    OnChanged(nameof(CodigoBarrasLector), null, string.Empty);
+                }
             }
         }
     }
