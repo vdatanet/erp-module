@@ -4,11 +4,15 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Comun;
+using System.ComponentModel;
 
 namespace erp.Module.BusinessObjects.Auxiliares;
 
 [DefaultClassOptions]
 [NavigationItem("Auxiliares")]
+[XafDisplayName("País")]
+[ImageName("Business_World")]
+[DefaultProperty(nameof(Nombre))]
 public class Pais(Session session) : EntidadBase(session)
 {
     private string _nombre;

@@ -8,6 +8,9 @@ namespace erp.Module.BusinessObjects.Auxiliares;
 
 [DefaultClassOptions]
 [NavigationItem("Auxiliares")]
+[XafDisplayName("Provincia")]
+[XafDefaultProperty(nameof(Nombre))]
+[ImageName("Travel_Map")]
 public class Provincia(Session session) : EntidadBase(session)
 {
     private string _nombre;

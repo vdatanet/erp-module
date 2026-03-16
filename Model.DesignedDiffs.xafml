@@ -105,5 +105,75 @@
         <ColumnInfo Id="Nombre" Index="0" />
       </Columns>
     </ListView>
+    <DetailView Id="Pais_DetailView" FreezeLayout="True">
+      <Layout IsNewNode="True" Removed="True">
+        <LayoutGroup Id="Main" Index="0" ShowCaption="False" IsNewNode="True">
+          <LayoutGroup Id="SimpleEditors" Index="0" ShowCaption="False" IsNewNode="True">
+            <LayoutGroup Id="Pais" Index="0" ShowCaption="False" IsNewNode="True">
+              <LayoutItem Id="Nombre" ViewItem="Nombre" ShowCaption="" Index="0" IsNewNode="True" />
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="Pais_ListView" Caption="Paises" FreezeColumnIndices="True">
+      <Columns>
+        <ColumnInfo Id="Oid" Index="-1" />
+        <ColumnInfo Id="Nombre" Index="0" />
+      </Columns>
+    </ListView>
+    <ListView Id="Pais_LookupListView" Caption="Paises" FreezeColumnIndices="True">
+      <Columns>
+        <ColumnInfo Id="Nombre" Index="0" />
+      </Columns>
+    </ListView>
+    <DetailView Id="Poblacion_DetailView" FreezeLayout="True">
+      <Layout IsNewNode="True" Removed="True">
+        <LayoutGroup Id="Main" Index="0" ShowCaption="False" IsNewNode="True">
+          <LayoutGroup Id="SimpleEditors" Index="0" ShowCaption="False" IsNewNode="True">
+            <LayoutGroup Id="Poblacion" Index="0" ShowCaption="False" IsNewNode="True">
+              <LayoutItem Id="Provincia" ViewItem="Provincia" ShowCaption="" Index="0" IsNewNode="True" />
+              <LayoutItem Id="Nombre" ViewItem="Nombre" ShowCaption="" Index="1" IsNewNode="True" />
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="Poblacion_ListView" FreezeColumnIndices="True" Caption="Poblaciones">
+      <Columns>
+        <ColumnInfo Id="Oid" Index="-1" />
+        <ColumnInfo Id="Nombre" Index="0" />
+        <ColumnInfo Id="Provincia" Index="1" />
+      </Columns>
+    </ListView>
+    <ListView Id="Poblacion_LookupListView" Caption="Poblaciones" FreezeColumnIndices="True">
+      <Columns>
+        <ColumnInfo Id="Nombre" Index="0" />
+      </Columns>
+    </ListView>
+    <DetailView Id="Provincia_DetailView" FreezeLayout="True">
+      <Layout IsNewNode="True" Removed="True">
+        <LayoutGroup Id="Main" Index="0" ShowCaption="False" IsNewNode="True">
+          <LayoutGroup Id="SimpleEditors" Index="0" ShowCaption="False" IsNewNode="True">
+            <LayoutGroup Id="Provincia" Index="0" ShowCaption="False" IsNewNode="True">
+              <LayoutItem Id="Pais" ViewItem="Pais" ShowCaption="" Index="0" IsNewNode="True" />
+              <LayoutItem Id="Nombre" ViewItem="Nombre" ShowCaption="" Index="1" IsNewNode="True" />
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="Provincia_ListView" FreezeColumnIndices="True" Caption="Provincias">
+      <Columns>
+        <ColumnInfo Id="Oid" Index="-1" />
+        <ColumnInfo Id="Nombre" Index="0" />
+        <ColumnInfo Id="Pais" Index="1" />
+      </Columns>
+    </ListView>
+    <ListView Id="Provincia_LookupListView" FreezeColumnIndices="True" Caption="Provincias">
+      <Columns>
+        <ColumnInfo Id="Nombre" Index="0" />
+      </Columns>
+    </ListView>
   </Views>
 </Application>
