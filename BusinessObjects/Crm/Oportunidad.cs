@@ -62,6 +62,7 @@ public class Oportunidad(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Cliente), ref _cliente, value);
     }
 
+    [Association("Campana-Oportunidades")]
     [XafDisplayName("Campaña")]
     public Campana Campana
     {
@@ -69,6 +70,7 @@ public class Oportunidad(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Campana), ref _campana, value);
     }
 
+    [Association("Medio-Oportunidades")]
     [XafDisplayName("Medio")]
     public Medio Medio
     {
@@ -76,6 +78,7 @@ public class Oportunidad(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Medio), ref _medio, value);
     }
 
+    [Association("Origen-Oportunidades")]
     [XafDisplayName("Fuente")]
     public Origen Fuente
     {

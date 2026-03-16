@@ -30,4 +30,8 @@ public class Medio(Session session) : EntidadBase(session)
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
+
+    [Association("Medio-Oportunidades")]
+    [XafDisplayName("Oportunidades")]
+    public XPCollection<Oportunidad> Oportunidades => GetCollection<Oportunidad>(nameof(Oportunidades));
 }

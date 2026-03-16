@@ -30,4 +30,8 @@ public class Origen(Session session) : EntidadBase(session)
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
+
+    [Association("Origen-Oportunidades")]
+    [XafDisplayName("Oportunidades")]
+    public XPCollection<Oportunidad> Oportunidades => GetCollection<Oportunidad>(nameof(Oportunidades));
 }
