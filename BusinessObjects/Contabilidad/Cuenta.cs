@@ -10,7 +10,7 @@ namespace erp.Module.BusinessObjects.Contabilidad;
 
 [DefaultClassOptions]
 [NavigationItem("Contabilidad")]
-[ImageName("ClienteContactoDirectory")]
+[ImageName("CustomerContactDirectory")]
 [DefaultProperty(nameof(Codigo))]
 public class Cuenta(Session session) : EntidadBase(session)
 {

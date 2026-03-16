@@ -230,25 +230,25 @@
                 <LayoutItem Id="Foto" ViewItem="Foto" Index="5" RelativeSize="4.086845466155811" IsNewNode="True" />
               </LayoutGroup>
             </LayoutGroup>
-            <LayoutGroup Id="Contabilidad" ShowCaption="True" CaptionLocation="Top" Direction="Vertical" Index="1" Caption="Contabilidad" RelativeSize="100" IsNewNode="True">
-              <LayoutItem Id="PosicionFiscalPorDefecto" ViewItem="PosicionFiscalPorDefecto" Index="0" RelativeSize="4.086845466155811" IsNewNode="True" />
-              <LayoutItem Id="CondicionPagoPorDefecto" ViewItem="CondicionPagoPorDefecto" Index="1" RelativeSize="3.0651340996168583" IsNewNode="True" />
-              <LayoutItem Id="CuentaPagosPorDefecto" ViewItem="CuentaPagosPorDefecto" Index="2" RelativeSize="3.0651340996168583" IsNewNode="True" />
-              <LayoutItem Id="CuentaProveedoresPorDefecto" ViewItem="CuentaProveedoresPorDefecto" Index="3" RelativeSize="3.0651340996168583" IsNewNode="True" />
-              <LayoutItem Id="CuentaCobrosPorDefecto" ViewItem="CuentaCobrosPorDefecto" Index="4" RelativeSize="3.0651340996168583" IsNewNode="True" />
-              <LayoutItem Id="CuentaClientesPorDefecto" ViewItem="CuentaClientesPorDefecto" Index="5" RelativeSize="3.0651340996168583" IsNewNode="True" />
-              <LayoutItem Id="CuentaComprasPorDefecto" ViewItem="CuentaComprasPorDefecto" Index="6" RelativeSize="3.0651340996168583" IsNewNode="True" />
-              <LayoutItem Id="CuentaVentasPorDefecto" ViewItem="CuentaVentasPorDefecto" Index="7" RelativeSize="3.0651340996168583" IsNewNode="True" />
-              <LayoutItem Id="DiarioComprasPorDefecto" ViewItem="DiarioComprasPorDefecto" Index="8" RelativeSize="3.0651340996168583" IsNewNode="True" />
-              <LayoutItem Id="DiarioVentasPorDefecto" ViewItem="DiarioVentasPorDefecto" Index="9" RelativeSize="71.39208173690932" IsNewNode="True" />
+            <LayoutGroup Id="Contabilidad" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="1" Caption="Contabilidad" RelativeSize="100" ImageName="Actions_Book" IsNewNode="True">
+              <LayoutGroup Id="col1" Index="0" ShowCaption="False" RelativeSize="49.953917050691246" IsNewNode="True">
+                <LayoutItem Id="PosicionFiscalPorDefecto" ViewItem="PosicionFiscalPorDefecto" Index="0" RelativeSize="4.086845466155811" IsNewNode="True" />
+                <LayoutItem Id="CondicionPagoPorDefecto" ViewItem="CondicionPagoPorDefecto" Index="1" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="DiarioVentasPorDefecto" ViewItem="DiarioVentasPorDefecto" Index="2" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="CuentaVentasPorDefecto" ViewItem="CuentaVentasPorDefecto" Index="3" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="CuentaClientesPorDefecto" ViewItem="CuentaClientesPorDefecto" Index="4" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="CuentaCobrosPorDefecto" ViewItem="CuentaCobrosPorDefecto" Index="5" RelativeSize="83.65261813537676" IsNewNode="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="col2" Index="1" ShowCaption="False" RelativeSize="50.046082949308754" Caption="col2" IsNewNode="True" />
             </LayoutGroup>
-            <LayoutGroup Id="Prefijos" ShowCaption="True" CaptionLocation="Top" Direction="Vertical" Index="2" Caption="Prefijos" RelativeSize="100" IsNewNode="True">
-              <LayoutItem Id="PrefijoFacturasVentaPorDefecto" ViewItem="PrefijoFacturasVentaPorDefecto" Index="0" RelativeSize="4.086845466155811" IsNewNode="True" />
-              <LayoutItem Id="PrefijoFacturasSimplificadasPorDefecto" ViewItem="PrefijoFacturasSimplificadasPorDefecto" Index="1" RelativeSize="3.0651340996168583" IsNewNode="True" />
-              <LayoutItem Id="PrefijoFacturasCompraPorDefecto" ViewItem="PrefijoFacturasCompraPorDefecto" Index="2" RelativeSize="3.0651340996168583" IsNewNode="True" />
-              <LayoutItem Id="PrefijoPedidosPorDefecto" ViewItem="PrefijoPedidosPorDefecto" Index="3" RelativeSize="3.0651340996168583" IsNewNode="True" />
-              <LayoutItem Id="PrefijoPresupuestosPorDefecto" ViewItem="PrefijoPresupuestosPorDefecto" Index="4" RelativeSize="3.0651340996168583" IsNewNode="True" />
-              <LayoutItem Id="PrefijoPartesDiariosPorDefecto" ViewItem="PrefijoPartesDiariosPorDefecto" Index="5" RelativeSize="83.65261813537676" IsNewNode="True" />
+            <LayoutGroup Id="Prefijos" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="2" Caption="Prefijos" RelativeSize="100" ImageName="Number" IsNewNode="True">
+              <LayoutGroup Id="col1" Index="0" ShowCaption="False" RelativeSize="49.953917050691246" Caption="Prefijo Facturas Venta" IsNewNode="True">
+                <LayoutItem Id="PrefijoPresupuestosPorDefecto" ViewItem="PrefijoPresupuestosPorDefecto" Index="0" RelativeSize="4.086845466155811" IsNewNode="True" />
+                <LayoutItem Id="PrefijoPedidosPorDefecto" ViewItem="PrefijoPedidosPorDefecto" Index="1" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="PrefijoFacturasVentaPorDefecto" ViewItem="PrefijoFacturasVentaPorDefecto" Index="2" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="PrefijoFacturasSimplificadasPorDefecto" ViewItem="PrefijoFacturasSimplificadasPorDefecto" Index="3" RelativeSize="89.78288633461047" IsNewNode="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="col2" Index="1" ShowCaption="False" RelativeSize="50.046082949308754" Caption="col2" IsNewNode="True" />
             </LayoutGroup>
             <LayoutGroup Id="VeriFactu" ShowCaption="True" CaptionLocation="Top" Direction="Vertical" Index="3" Caption="VeriFactu" RelativeSize="100" IsNewNode="True">
               <LayoutItem Id="NifAdministradorSistemaVeriFactu" ViewItem="NifAdministradorSistemaVeriFactu" Index="0" RelativeSize="4.086845466155811" IsNewNode="True" />
