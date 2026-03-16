@@ -145,6 +145,18 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
+    <ListView Id="MedioPago_ListView" Caption="Medios de Pago" FreezeColumnIndices="True">
+      <Columns>
+        <ColumnInfo Id="Notas" Index="-1" />
+        <ColumnInfo Id="Oid" Index="-1" />
+        <ColumnInfo Id="Nombre" Index="0" />
+      </Columns>
+    </ListView>
+    <ListView Id="MedioPago_LookupListView" Caption="Medios de Pago" FreezeColumnIndices="True">
+      <Columns>
+        <ColumnInfo Id="Nombre" Index="0" />
+      </Columns>
+    </ListView>
     <DetailView Id="Pais_DetailView" FreezeLayout="True">
       <Layout IsNewNode="True" Removed="True">
         <LayoutGroup Id="Main" Index="0" ShowCaption="False" IsNewNode="True">
