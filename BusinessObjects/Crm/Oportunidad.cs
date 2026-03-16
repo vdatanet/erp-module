@@ -30,7 +30,7 @@ public class Oportunidad(Session session) : EntidadBase(session)
     private Cliente _cliente;
     private Campana _campana;
     private Medio _medio;
-    private Origen _fuente;
+    private Fuente _fuente;
     private EstadoOportunidad _estado;
     private double _probabilidad;
     private decimal _valorEstimado;
@@ -78,9 +78,9 @@ public class Oportunidad(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Medio), ref _medio, value);
     }
 
-    [Association("Origen-Oportunidades")]
+    [Association("Fuente-Oportunidades")]
     [XafDisplayName("Fuente")]
-    public Origen Fuente
+    public Fuente Fuente
     {
         get => _fuente;
         set => SetPropertyValue(nameof(Fuente), ref _fuente, value);

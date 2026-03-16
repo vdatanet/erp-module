@@ -7,10 +7,10 @@ namespace erp.Module.BusinessObjects.Crm;
 
 [DefaultClassOptions]
 [NavigationItem("Crm")]
-[XafDisplayName("Origen")]
+[XafDisplayName("Fuente")]
 [XafDefaultProperty(nameof(Name))]
 [ImageName("Datasource")]
-public class Origen(Session session) : EntidadBase(session)
+public class Fuente(Session session) : EntidadBase(session)
 {
     private string _name;
     private string _notas;
@@ -31,7 +31,7 @@ public class Origen(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
-    [Association("Origen-Oportunidades")]
+    [Association("Fuente-Oportunidades")]
     [XafDisplayName("Oportunidades")]
     public XPCollection<Oportunidad> Oportunidades => GetCollection<Oportunidad>(nameof(Oportunidades));
 }
