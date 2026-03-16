@@ -14,7 +14,6 @@ public class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLoginInfo,
 {
     private int accessFailedCount;
     private DateTime lockoutEnd;
-
     public ApplicationUser(Session session) : base(session)
     {
     }

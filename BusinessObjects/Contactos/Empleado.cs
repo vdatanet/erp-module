@@ -22,18 +22,7 @@ public class Empleado(Session session) : Contacto(session)
     public ApplicationUser Usuario
     {
         get => _usuario;
-        set
-        {
-            if (_usuario == value) return;
-            var anterior = _usuario;
-            _usuario = value;
-            if (IsLoading) return;
-            if (anterior != null && anterior.GetMemberValue("Empleado") == (object)this)
-                anterior.SetMemberValue("Empleado", null);
-            if (_usuario != null)
-                _usuario.SetMemberValue("Empleado", this);
-            OnChanged(nameof(Usuario), anterior, _usuario);
-        }
+        set => SetPropertyValue(nameof(Usuario), ref _usuario, value);
     }
 
     [XafDisplayName("¿Está trabajando?")]
