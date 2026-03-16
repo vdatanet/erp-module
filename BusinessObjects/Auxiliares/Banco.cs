@@ -10,7 +10,7 @@ namespace erp.Module.BusinessObjects.Auxiliares;
 
 [DefaultClassOptions]
 [NavigationItem("Auxiliares")]
-[ImageName("BO_Bank")]
+[ImageName("Business_Bank")]
 [DefaultProperty(nameof(Nombre))]
 public class Banco(Session session) : EntidadBase(session)
 {
