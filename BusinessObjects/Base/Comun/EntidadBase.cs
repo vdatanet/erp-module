@@ -20,6 +20,7 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
 
     [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
+    [NonCloneable]
     [XafDisplayName("Creado por")]
     public UsuarioAplicacion CreadoPor
     {
@@ -29,6 +30,7 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
 
     [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
+    [NonCloneable]
     [XafDisplayName("Modificado por")]
     public UsuarioAplicacion ModificadoPor
     {
@@ -39,6 +41,7 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
     [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
+    [NonCloneable]
     [XafDisplayName("Creado el")]
     public DateTime? CreadoEl
     {
@@ -49,6 +52,7 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
     [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
+    [NonCloneable]
     [XafDisplayName("Modificado el")]
     public DateTime? ModificadoEl
     {
