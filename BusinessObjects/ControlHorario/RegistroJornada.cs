@@ -8,7 +8,6 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
-using erp.Module.BusinessObjects.Proyectos;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.BusinessObjects.ControlHorario;
@@ -21,7 +20,6 @@ namespace erp.Module.BusinessObjects.ControlHorario;
     CustomMessageTemplate = "La fecha de fin debe ser posterior a la fecha de inicio")]
 public class RegistroJornada(Session session) : EntidadBase(session)
 {
-    private ActividadProyecto _actividad;
     private TimeSpan _duracion;
     private Empleado _empleado;
     private DateTime? _fechaFin;
@@ -31,7 +29,6 @@ public class RegistroJornada(Session session) : EntidadBase(session)
     private double? _longitudFin;
     private double? _longitudInicio;
     private string _notas;
-    private Proyecto _proyecto;
     private string _ubicacionFin;
     private string _ubicacionInicio;
 
@@ -79,25 +76,7 @@ public class RegistroJornada(Session session) : EntidadBase(session)
             }
         }
     }
-
-    [Association("Proyecto-RegistrosJornada")]
-    [ImmediatePostData]
-    [XafDisplayName("Proyecto")]
-    public Proyecto Proyecto
-    {
-        get => _proyecto;
-        set => SetPropertyValue(nameof(Proyecto), ref _proyecto, value);
-    }
-
-    [Association("ActividadProyecto-RegistrosJornada")]
-    [DataSourceProperty("Proyecto.Actividades")]
-    [XafDisplayName("Actividad")]
-    public ActividadProyecto Actividad
-    {
-        get => _actividad;
-        set => SetPropertyValue(nameof(Actividad), ref _actividad, value);
-    }
-
+    
     [Size(SizeAttribute.Unlimited)]
     [ModelDefault("RowCount", "3")]
     [XafDisplayName("Notas")]
