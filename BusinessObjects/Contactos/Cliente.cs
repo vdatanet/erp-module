@@ -3,6 +3,7 @@ using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
+using DevExpress.Data.Filtering;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Contabilidad;
@@ -142,11 +143,14 @@ public class Cliente(Session session) : Tercero(session)
     [VisibleInDetailView(false)]
     public XPCollection<DocumentoVenta> DocumentosVenta => GetCollection<DocumentoVenta>();
     
-    [XafDisplayName("Presupuestos")] public XPCollection<Presupuesto> Presupuestos => GetCollection<Presupuesto>();
+    [XafDisplayName("Presupuestos")]
+    public XPCollection<Presupuesto> Presupuestos => new(Session, CriteriaOperator.Parse("Cliente = ?", this));
 
-    [XafDisplayName("Pedidos")] public XPCollection<Pedido> Pedidos => GetCollection<Pedido>();
+    [XafDisplayName("Pedidos")]
+    public XPCollection<Pedido> Pedidos => new(Session, CriteriaOperator.Parse("Cliente = ?", this));
 
-    [XafDisplayName("Facturas")] public XPCollection<Factura> Facturas => GetCollection<Factura>();
+    [XafDisplayName("Facturas")]
+    public XPCollection<Factura> Facturas => new(Session, CriteriaOperator.Parse("Cliente = ?", this));
     
     public override void AfterConstruction()
     {
