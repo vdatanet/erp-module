@@ -7,20 +7,26 @@ using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Productos;
+using System.ComponentModel;
 
 namespace erp.Module.BusinessObjects.Auxiliares;
 
+[DefaultClassOptions]
+[NavigationItem("Auxiliares")]
 [ImageName("BO_FileAttachment")]
+[XafDisplayName("Adjunto")]
+[DefaultProperty(nameof(Nombre))]
 [FileAttachment(nameof(FileData))]
 public class Adjunto(Session session) : EntidadBase(session)
 {
     private Contacto _contact;
-    private string _description;
+    private string _nombre;
     private FileData _fileData;
     private Oportunidad _opportunity;
     private Producto _product;
     private DocumentoVenta _salesDocument;
     private Tarea _task;
+    private string _notas;
 
     [Association("Contacto-Adjuntos")]
     [XafDisplayName("Contacto")]
@@ -69,11 +75,19 @@ public class Adjunto(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(FileData), ref _fileData, value);
     }
 
-    [Size(1000)]
-    [XafDisplayName("Descripción")]
-    public string Description
+    [Size(255)]
+    [XafDisplayName("Nombre")]
+    public string Nombre
     {
-        get => _description;
-        set => SetPropertyValue(nameof(Description), ref _description, value);
+        get => _nombre;
+        set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
+    }
+
+    [Size(SizeAttribute.Unlimited)]
+    [XafDisplayName("Notas")]
+    public string Notas
+    {
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 }

@@ -23,6 +23,37 @@
     <SchemaModule Name="SystemModule" Version="25.2.5.0" IsNewNode="True" />
   </SchemaModules>
   <Views>
+    <DetailView Id="Adjunto_DetailView" FreezeLayout="True">
+      <Layout IsNewNode="True" Removed="True">
+        <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
+          <LayoutGroup Id="SimpleEditors" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
+            <LayoutGroup Id="Adjunto" Index="0" ShowCaption="False" RelativeSize="100" Caption="Archivo" IsNewNode="True">
+              <LayoutItem Id="Nombre" ViewItem="Nombre" Index="0" RelativeSize="3.8415366146458583" IsNewNode="True" />
+              <LayoutItem Id="FileData" ViewItem="FileData" ShowCaption="" Index="1" RelativeSize="2.881152460984394" IsNewNode="True" />
+              <LayoutItem Id="Notas" ViewItem="Notas" Index="2" RelativeSize="93.27731092436974" IsNewNode="True" />
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="Adjunto_ListView" Caption="Adjuntos" FreezeColumnIndices="True">
+      <Columns>
+        <ColumnInfo Id="Contacto" Index="-1" />
+        <ColumnInfo Id="DocumentoVenta" Index="-1" />
+        <ColumnInfo Id="Notas" Index="-1" />
+        <ColumnInfo Id="Oid" Index="-1" />
+        <ColumnInfo Id="Oportunidad" Index="-1" />
+        <ColumnInfo Id="Producto" Index="-1" />
+        <ColumnInfo Id="Tarea" Index="-1" />
+        <ColumnInfo Id="Nombre" Index="0" />
+        <ColumnInfo Id="FileData" Index="6" />
+      </Columns>
+    </ListView>
+    <ListView Id="Adjunto_LookupListView" FreezeColumnIndices="True" Caption="s">
+      <Columns>
+        <ColumnInfo Id="Nombre" Index="0" />
+      </Columns>
+    </ListView>
     <ListView Id="ApplicationUser_ListView" Caption="Users" />
     <DetailView Id="Banco_DetailView" FreezeLayout="True">
       <Layout IsNewNode="True" Removed="True">
@@ -289,7 +320,6 @@
         <ColumnInfo Id="Codigo" Index="-1" />
         <ColumnInfo Id="CodigoPostal" Index="-1" />
         <ColumnInfo Id="CondicionPagoPorDefecto" Index="-1" />
-        <ColumnInfo Id="CorreoElectronico" Index="-1" />
         <ColumnInfo Id="CuentaClientesPorDefecto" Index="-1" />
         <ColumnInfo Id="CuentaCobrosPorDefecto" Index="-1" />
         <ColumnInfo Id="CuentaComprasPorDefecto" Index="-1" />
@@ -298,10 +328,7 @@
         <ColumnInfo Id="CuentaVentasPorDefecto" Index="-1" />
         <ColumnInfo Id="DiarioComprasPorDefecto" Index="-1" />
         <ColumnInfo Id="DiarioVentasPorDefecto" Index="-1" />
-        <ColumnInfo Id="Direccion" Index="-1" />
         <ColumnInfo Id="Foto" Index="-1" />
-        <ColumnInfo Id="Movil" Index="-1" />
-        <ColumnInfo Id="Nif" Index="-1" />
         <ColumnInfo Id="NifAdministradorSistemaVeriFactu" Index="-1" />
         <ColumnInfo Id="NombreAdministradorSistemaVeriFactu" Index="-1" />
         <ColumnInfo Id="NombreArchivoConfigVeriFactu" Index="-1" />
@@ -324,11 +351,15 @@
         <ColumnInfo Id="Provincia" Index="-1" />
         <ColumnInfo Id="SerieCertificadoVeriFactu" Index="-1" />
         <ColumnInfo Id="SitioWeb" Index="-1" />
-        <ColumnInfo Id="Telefono" Index="-1" />
         <ColumnInfo Id="TextoDefectoVeriFactu" Index="-1" />
         <ColumnInfo Id="TipoIdentificacion" Index="-1" />
         <ColumnInfo Id="VersionSistemaVeriFactu" Index="-1" />
         <ColumnInfo Id="Nombre" Index="0" />
+        <ColumnInfo Id="Nif" Index="1" />
+        <ColumnInfo Id="Direccion" Index="2" />
+        <ColumnInfo Id="Telefono" Index="3" />
+        <ColumnInfo Id="Movil" Index="4" />
+        <ColumnInfo Id="CorreoElectronico" Index="5" />
       </Columns>
     </ListView>
     <ListView Id="InformacionEmpresa_LookupListView" FreezeColumnIndices="True">
