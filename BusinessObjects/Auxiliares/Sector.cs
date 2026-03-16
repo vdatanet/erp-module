@@ -10,6 +10,7 @@ namespace erp.Module.BusinessObjects.Auxiliares;
 [DefaultClassOptions]
 [NavigationItem("Auxiliares")]
 [ImageName("BO_List")]
+[XafDisplayName("Sector")]
 [DefaultProperty(nameof(Nombre))]
 public class Sector(Session session) : EntidadBase(session)
 {
