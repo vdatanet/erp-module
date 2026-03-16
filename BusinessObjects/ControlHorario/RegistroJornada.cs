@@ -239,13 +239,13 @@ public class RegistroJornada(Session session) : EntidadBase(session)
         if (FechaFin.HasValue)
         {
             Empleado.EstaTrabajando = false;
-            Empleado.Ubicacion = null;
+            Empleado.UbicacionEntradaActual = null;
             Empleado.UltimoRegistroSalida = FechaFin;
         }
         else
         {
             Empleado.EstaTrabajando = true;
-            Empleado.Ubicacion = UbicacionInicio;
+            Empleado.UbicacionEntradaActual = UbicacionInicio;
             Empleado.UltimoRegistroEntrada = FechaInicio;
         }
     }

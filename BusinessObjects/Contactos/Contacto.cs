@@ -49,7 +49,6 @@ public class Contacto(Session session) : EntidadBase(session)
     }
 
     [Size(50)]
-    [RuleRequiredField]
     [XafDisplayName("NIF")]
     public string Nif
     {

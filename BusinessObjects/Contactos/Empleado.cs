@@ -12,7 +12,7 @@ namespace erp.Module.BusinessObjects.Contactos;
 public class Empleado(Session session) : Contacto(session)
 {
     private bool _estaTrabajando;
-    private string _ubicacion;
+    private string _ubicacionEntradaActual;
     private DateTime? _ultimoRegistroEntrada;
     private DateTime? _ultimoRegistroSalida;
 
@@ -33,13 +33,13 @@ public class Empleado(Session session) : Contacto(session)
         set => SetPropertyValue(nameof(EstaTrabajando), ref _estaTrabajando, value);
     }
 
-    [XafDisplayName("Ubicación")]
+    [XafDisplayName("Ubicación de entrada actual")]
     [ModelDefault("AllowEdit", "False")]
     [Size(SizeAttribute.Unlimited)]
-    public string Ubicacion
+    public string UbicacionEntradaActual
     {
-        get => _ubicacion;
-        set => SetPropertyValue(nameof(Ubicacion), ref _ubicacion, value);
+        get => _ubicacionEntradaActual;
+        set => SetPropertyValue(nameof(UbicacionEntradaActual), ref _ubicacionEntradaActual, value);
     }
 
     [XafDisplayName("Último Registro Entrada")]
