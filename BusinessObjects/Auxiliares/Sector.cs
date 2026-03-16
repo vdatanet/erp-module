@@ -14,12 +14,22 @@ namespace erp.Module.BusinessObjects.Auxiliares;
 public class Sector(Session session) : EntidadBase(session)
 {
     private string _nombre;
+    private string _notas;
 
     [RuleRequiredField]
     [XafDisplayName("Nombre")]
+    [Size(255)]
     public string Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
+    }
+
+    [XafDisplayName("Notas")]
+    [Size(SizeAttribute.Unlimited)]
+    public string Notas
+    {
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 }

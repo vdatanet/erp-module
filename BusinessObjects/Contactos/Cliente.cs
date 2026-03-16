@@ -21,8 +21,6 @@ namespace erp.Module.BusinessObjects.Contactos;
 [ImageName("BO_Customer")]
 public class Cliente(Session session) : Tercero(session)
 {
-    private decimal _descuentoComercial;
-    private decimal _limiteCredito;
     private bool _activo;
     private DateTime _fechaAlta;
     private DateTime? _fechaBaja;
@@ -68,25 +66,7 @@ public class Cliente(Session session) : Tercero(session)
         get => _fechaBaja;
         set => SetPropertyValue(nameof(FechaBaja), ref _fechaBaja, value);
     }
-
-    [XafDisplayName("Límite de Crédito")]
-    [ModelDefault("DisplayFormat", "{0:n2}")]
-    [ModelDefault("EditMask", "n2")]
-    public decimal LimiteCredito
-    {
-        get => _limiteCredito;
-        set => SetPropertyValue(nameof(LimiteCredito), ref _limiteCredito, value);
-    }
-
-    [XafDisplayName("Descuento Comercial (%)")]
-    [ModelDefault("DisplayFormat", "{0:n2}")]
-    [ModelDefault("EditMask", "n2")]
-    public decimal DescuentoComercial
-    {
-        get => _descuentoComercial;
-        set => SetPropertyValue(nameof(DescuentoComercial), ref _descuentoComercial, value);
-    }
-
+    
     [XafDisplayName("Cuenta Contable")]
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
     public Cuenta CuentaContable
