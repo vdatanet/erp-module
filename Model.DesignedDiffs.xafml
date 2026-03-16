@@ -250,21 +250,25 @@
               </LayoutGroup>
               <LayoutGroup Id="col2" Index="1" ShowCaption="False" RelativeSize="50.046082949308754" Caption="col2" IsNewNode="True" />
             </LayoutGroup>
-            <LayoutGroup Id="VeriFactu" ShowCaption="True" CaptionLocation="Top" Direction="Vertical" Index="3" Caption="VeriFactu" RelativeSize="100" IsNewNode="True">
-              <LayoutItem Id="NifAdministradorSistemaVeriFactu" ViewItem="NifAdministradorSistemaVeriFactu" Index="0" RelativeSize="4.086845466155811" IsNewNode="True" />
-              <LayoutItem Id="VersionSistemaVeriFactu" ViewItem="VersionSistemaVeriFactu" Index="1" RelativeSize="3.0651340996168583" IsNewNode="True" />
-              <LayoutItem Id="NombreAdministradorSistemaVeriFactu" ViewItem="NombreAdministradorSistemaVeriFactu" Index="2" RelativeSize="3.0651340996168583" IsNewNode="True" />
-              <LayoutItem Id="NombreSistemaVeriFactu" ViewItem="NombreSistemaVeriFactu" Index="3" RelativeSize="3.0651340996168583" IsNewNode="True" />
-              <LayoutItem Id="PrefijoUrlValidacionVeriFactu" ViewItem="PrefijoUrlValidacionVeriFactu" Index="4" RelativeSize="3.0651340996168583" IsNewNode="True" />
-              <LayoutItem Id="PrefijoUrlVeriFactu" ViewItem="PrefijoUrlVeriFactu" Index="5" RelativeSize="3.0651340996168583" IsNewNode="True" />
-              <LayoutItem Id="SerieCertificadoVeriFactu" ViewItem="SerieCertificadoVeriFactu" Index="6" RelativeSize="3.0651340996168583" IsNewNode="True" />
-              <LayoutItem Id="NombreArchivoConfigVeriFactu" ViewItem="NombreArchivoConfigVeriFactu" Index="7" RelativeSize="77.52234993614304" IsNewNode="True" />
+            <LayoutGroup Id="VeriFactu" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="3" Caption="VeriFactu" RelativeSize="100" ImageName="Actions_Send" IsNewNode="True">
+              <LayoutGroup Id="col1" Index="0" ShowCaption="False" RelativeSize="49.953917050691246" IsNewNode="True">
+                <LayoutItem Id="NombreArchivoConfigVeriFactu" ViewItem="NombreArchivoConfigVeriFactu" Index="0" RelativeSize="4.086845466155811" IsNewNode="True" />
+                <LayoutItem Id="SerieCertificadoVeriFactu" ViewItem="SerieCertificadoVeriFactu" Index="1" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="NombreSistemaVeriFactu" ViewItem="NombreSistemaVeriFactu" Index="2" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="NombreAdministradorSistemaVeriFactu" ViewItem="NombreAdministradorSistemaVeriFactu" Index="3" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="NifAdministradorSistemaVeriFactu" ViewItem="NifAdministradorSistemaVeriFactu" Index="4" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="VersionSistemaVeriFactu" ViewItem="VersionSistemaVeriFactu" Index="5" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="PrefijoUrlVeriFactu" ViewItem="PrefijoUrlVeriFactu" Index="6" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="PrefijoUrlValidacionVeriFactu" ViewItem="PrefijoUrlValidacionVeriFactu" Index="7" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="TextoDefectoVeriFactu" ViewItem="TextoDefectoVeriFactu" Index="8" RelativeSize="74.45721583652617" IsNewNode="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="col2" Index="1" ShowCaption="False" RelativeSize="50.046082949308754" IsNewNode="True" />
             </LayoutGroup>
-            <LayoutGroup Id="SalesTaxes" Index="4" ShowCaption="True" RelativeSize="100" IsNewNode="True">
-              <LayoutItem Id="SalesTaxes" ViewItem="SalesTaxes" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
+            <LayoutGroup Id="ImpuestosVentas" Index="4" ShowCaption="True" RelativeSize="100" Direction="Vertical" Caption="Impuestos Ventas" IsNewNode="True">
+              <LayoutItem Id="ImpuestosVentas" ViewItem="ImpuestosVentas" Index="0" RelativeSize="100" IsNewNode="True" />
             </LayoutGroup>
-            <LayoutGroup Id="PurchaseTaxes" Index="5" ShowCaption="True" RelativeSize="100" IsNewNode="True">
-              <LayoutItem Id="PurchaseTaxes" ViewItem="PurchaseTaxes" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
+            <LayoutGroup Id="ImpuestosCompras" Index="5" ShowCaption="True" RelativeSize="100" Direction="Vertical" Caption="Impuestos Compras" IsNewNode="True">
+              <LayoutItem Id="ImpuestosCompras" ViewItem="ImpuestosCompras" Index="0" RelativeSize="100" IsNewNode="True" />
             </LayoutGroup>
             <LayoutGroup Id="Tareas" Index="6" ShowCaption="True" RelativeSize="100" IsNewNode="True">
               <LayoutItem Id="Tareas" ViewItem="Tareas" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
