@@ -6,6 +6,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Impuestos;
+using erp.Module.BusinessObjects.Auxiliares;
 
 namespace erp.Module.BusinessObjects.Configuracion;
 
@@ -22,6 +23,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     private Cuenta _cuentaComprasPorDefecto;
     private Cuenta _cuentaProveedoresPorDefecto;
     private Cuenta _cuentaVentasPorDefecto;
+    private CondicionesPago _condicionesPagoPorDefecto;
     private Diario _diarioComprasPorDefecto;
     private Diario _diarioVentasPorDefecto;
     private string _nifAdministradorSistemaVeriFactu;
@@ -52,7 +54,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
         get => _diarioComprasPorDefecto;
         set => SetPropertyValue(nameof(DiarioComprasPorDefecto), ref _diarioComprasPorDefecto, value);
     }
-
+    
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
     [XafDisplayName("Cuenta Ventas por Defecto")]
     public Cuenta CuentaVentasPorDefecto
@@ -83,6 +85,13 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     {
         get => _cuentaProveedoresPorDefecto;
         set => SetPropertyValue(nameof(CuentaProveedoresPorDefecto), ref _cuentaProveedoresPorDefecto, value);
+    }
+    
+    [XafDisplayName("Condiciones de Pago por Defecto")]
+    public CondicionesPago CondicionesPagoPorDefecto
+    {
+        get => _condicionesPagoPorDefecto;
+        set => SetPropertyValue(nameof(CondicionesPagoPorDefecto), ref _condicionesPagoPorDefecto, value);
     }
 
     [XafDisplayName("Prefijo Facturas Venta")]

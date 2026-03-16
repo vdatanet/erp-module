@@ -3,8 +3,11 @@ using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Ventas;
+using erp.Module.Helpers.Contactos;
+using erp.Module.BusinessObjects.Configuracion;
 
 using erp.Module.Factories;
 
@@ -17,6 +20,24 @@ public class Cliente(Session session) : Tercero(session)
 {
     private CondicionesPago _condicionesPago;
     private Banco _bancoPredeterminado;
+    private Cuenta _cuentaContable;
+    private Diario _diarioVentas;
+
+    [XafDisplayName("Cuenta Contable")]
+    [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
+    public Cuenta CuentaContable
+    {
+        get => _cuentaContable;
+        set => SetPropertyValue(nameof(CuentaContable), ref _cuentaContable, value);
+    }
+
+    [XafDisplayName("Diario de Ventas")]
+    [DataSourceCriteria("EstaActivo = True")]
+    public Diario DiarioVentas
+    {
+        get => _diarioVentas;
+        set => SetPropertyValue(nameof(DiarioVentas), ref _diarioVentas, value);
+    }
 
     [XafDisplayName("Condiciones de Pago")]
     public CondicionesPago CondicionesPago
@@ -70,5 +91,10 @@ public class Cliente(Session session) : Tercero(session)
 
     private void InitValues()
     {
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        if (companyInfo == null) return;
+        _cuentaContable = companyInfo.CuentaClientesPorDefecto;
+        _diarioVentas = companyInfo.DiarioVentasPorDefecto;
+        _condicionesPago = companyInfo.CondicionesPagoPorDefecto;
     }
 }
