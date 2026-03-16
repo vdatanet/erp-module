@@ -39,7 +39,6 @@ public class Tarea(Session session) : EntidadBase(session)
     private Empleado _asignadaA;
     private Empleado _completadaPor;
     private Contacto _contacto;
-    private string _descripcion;
     private DocumentoVenta _documentoVenta;
     private EstadoTarea _estado;
     private DateTime _fechaFin;
@@ -61,14 +60,6 @@ public class Tarea(Session session) : EntidadBase(session)
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
-    }
-
-    [Size(SizeAttribute.Unlimited)]
-    [XafDisplayName("Descripción")]
-    public string Descripcion
-    {
-        get => _descripcion;
-        set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
     }
 
     [XafDisplayName("Estado")]
