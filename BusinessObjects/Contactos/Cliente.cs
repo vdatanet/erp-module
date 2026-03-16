@@ -5,6 +5,7 @@ using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Crm;
+using erp.Module.BusinessObjects.Facturacion;
 using erp.Module.BusinessObjects.Ventas;
 using erp.Module.Helpers.Contactos;
 using erp.Module.BusinessObjects.Configuracion;
@@ -72,11 +73,14 @@ public class Cliente(Session session) : Tercero(session)
 
     [Association("Cliente-DocumentosVenta")]
     [XafDisplayName("Documentos de Venta")]
+    [VisibleInDetailView(false)]
     public XPCollection<DocumentoVenta> DocumentosVenta => GetCollection<DocumentoVenta>();
     
     [XafDisplayName("Presupuestos")] public XPCollection<Presupuesto> Presupuestos => GetCollection<Presupuesto>();
 
     [XafDisplayName("Pedidos")] public XPCollection<Pedido> Pedidos => GetCollection<Pedido>();
+
+    [XafDisplayName("Facturas")] public XPCollection<Factura> Facturas => GetCollection<Factura>();
     
     public override void AfterConstruction()
     {
