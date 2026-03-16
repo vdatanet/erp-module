@@ -4,7 +4,6 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Ventas;
-using VeriFactu.Xml.Factu;
 
 namespace erp.Module.BusinessObjects.Contactos;
 
@@ -13,16 +12,6 @@ namespace erp.Module.BusinessObjects.Contactos;
 [ImageName("BO_Customer")]
 public class Cliente(Session session) : Tercero(session)
 {
-    private IDType _tipoIdentificacion;
-
-    [NonCloneable]
-    [XafDisplayName("Tipo de Identificación")]
-    public IDType TipoIdentificacion
-    {
-        get => _tipoIdentificacion;
-        set => SetPropertyValue(nameof(TipoIdentificacion), ref _tipoIdentificacion, value);
-    }
-
     [Association("Cliente-Oportunidades")]
     [XafDisplayName("Oportunidades")]
     public XPCollection<Oportunidad> Oportunidades => GetCollection<Oportunidad>();
@@ -30,8 +19,7 @@ public class Cliente(Session session) : Tercero(session)
     [Association("Cliente-DocumentosVenta")]
     [XafDisplayName("Documentos de Venta")]
     public XPCollection<DocumentoVenta> DocumentosVenta => GetCollection<DocumentoVenta>();
-
-
+    
     [XafDisplayName("Presupuestos")] public XPCollection<Presupuesto> Presupuestos => GetCollection<Presupuesto>();
 
     [XafDisplayName("Pedidos")] public XPCollection<Pedido> Pedidos => GetCollection<Pedido>();
@@ -44,6 +32,5 @@ public class Cliente(Session session) : Tercero(session)
 
     private void InitValues()
     {
-        TipoIdentificacion = IDType.NIF_IVA;
     }
 }

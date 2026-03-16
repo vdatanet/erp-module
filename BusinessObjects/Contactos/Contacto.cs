@@ -7,6 +7,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Comun;
 using Tarea = erp.Module.BusinessObjects.Planificacion.Tarea;
+using VeriFactu.Xml.Factu;
 
 namespace erp.Module.BusinessObjects.Contactos;
 
@@ -21,6 +22,7 @@ public class Contacto(Session session) : EntidadBase(session)
     private string _direccion;
     private MediaDataObject _foto;
     private string _movil;
+    private IDType _tipoIdentificacion;
     private string _nif;
     private string _nombre;
     private string _nombreComercial;
@@ -46,6 +48,14 @@ public class Contacto(Session session) : EntidadBase(session)
     {
         get => _nombreComercial;
         set => SetPropertyValue(nameof(NombreComercial), ref _nombreComercial, value);
+    }
+    
+    [NonCloneable]
+    [XafDisplayName("Tipo de Identificación")]
+    public IDType TipoIdentificacion
+    {
+        get => _tipoIdentificacion;
+        set => SetPropertyValue(nameof(TipoIdentificacion), ref _tipoIdentificacion, value);
     }
 
     [Size(50)]
@@ -152,4 +162,15 @@ public class Contacto(Session session) : EntidadBase(session)
     [Association("Contacto-Adjuntos")]
     [XafDisplayName("Adjuntos")]
     public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
+    
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        InitValues();
+    }
+
+    private void InitValues()
+    {
+        TipoIdentificacion = IDType.NIF_IVA;
+    }
 }
