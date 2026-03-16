@@ -7,11 +7,14 @@ using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Impuestos;
+using System.ComponentModel;
 
 namespace erp.Module.BusinessObjects.Configuraciones;
 
 [DefaultClassOptions]
 [NavigationItem("Configuraciones")]
+[XafDisplayName("Información de la Empresa")]
+[DefaultProperty(nameof(Nombre))]
 [ImageName("Actions_Settings")]
 [RuleObjectExists("InformacionEmpresaExists", DefaultContexts.Save, "True", InvertResult = true,
     CustomMessageTemplate = "La información de la empresa ya existe.")]
@@ -170,13 +173,13 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     [Association("InformacionEmpresa-ImpuestosVentas")]
     [DataSourceCriteria("DisponibleEnVentas = True AND EstaActivo = True")]
     [XafDisplayName("Impuestos Ventas")]
-    public XPCollection<TipoImpuesto> SalesTaxes => GetCollection<TipoImpuesto>();
+    public XPCollection<TipoImpuesto> ImpuestosVentas => GetCollection<TipoImpuesto>();
 
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
     [Association("InformacionEmpresa-ImpuestosCompras")]
     [DataSourceCriteria("DisponibleEnCompras = True AND EstaActivo = True")]
     [XafDisplayName("Impuestos Compras")]
-    public XPCollection<TipoImpuesto> PurchaseTaxes => GetCollection<TipoImpuesto>();
+    public XPCollection<TipoImpuesto> ImpuestosCompras => GetCollection<TipoImpuesto>();
 
     [Size(500)]
     [XafDisplayName("Texto Defecto VeriFactu")]
