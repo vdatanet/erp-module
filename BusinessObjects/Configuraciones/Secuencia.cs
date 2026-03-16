@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
@@ -6,6 +8,9 @@ namespace erp.Module.BusinessObjects.Configuraciones;
 
 [DefaultClassOptions]
 [NavigationItem("Configuraciones")]
+[XafDisplayName("Secuencia")]
+[DefaultProperty(nameof(Nombre))]
+[ImageName("BO_Secuencia")]
 public class Secuencia(Session session) : BaseObject(session)
 {
     private string _nombre;
