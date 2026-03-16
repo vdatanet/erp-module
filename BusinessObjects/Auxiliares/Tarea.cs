@@ -1,40 +1,62 @@
+using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.DC;
+using DevExpress.ExpressApp.Model;
+using DevExpress.ExpressApp.Security;
 using DevExpress.Persistent.Base;
+using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Productos;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.BusinessObjects.Auxiliares;
 
+public enum EstadoTarea
+{
+    [XafDisplayName("Pendiente"), ImageName("State_Validation_Pending")] Pendiente,
+    [XafDisplayName("En Progreso"), ImageName("State_Task_InProgress")] EnProgreso,
+    [XafDisplayName("Completada"), ImageName("State_Task_Completed")] Completada,
+    [XafDisplayName("Cancelada"), ImageName("State_Task_Deferred")] Cancelada
+}
+
+public enum PrioridadTarea
+{
+    [XafDisplayName("Baja"), ImageName("State_Priority_Low")] Baja,
+    [XafDisplayName("Media"), ImageName("State_Priority_Normal")] Media,
+    [XafDisplayName("Alta"), ImageName("State_Priority_High")] Alta,
+    [XafDisplayName("Crítica"), ImageName("State_Priority_Urgent")] Critica
+}
+
 [DefaultClassOptions]
 [NavigationItem("Auxiliares")]
+[XafDisplayName("Tarea")]
+[XafDefaultProperty(nameof(Nombre))]
 [ImageName("BO_Task")]
 public class Tarea(Session session) : EntidadBase(session)
 {
-    private ApplicationUser _asignadaA;
-    private ApplicationUser _completadaPor;
+    private Empleado _asignadaA;
+    private Empleado _completadaPor;
     private Contacto _contacto;
     private string _descripcion;
     private DocumentoVenta _documentoVenta;
+    private EstadoTarea _estado;
     private DateTime _fechaFin;
-
     private DateTime _fechaInicio;
-
-    //private string _status;
-    //private string _priority;
-    //private string _type;
     private DateTime _fechaVencimiento;
     private string _nombre;
     private string _notas;
     private Oportunidad _oportunidad;
+    private int _porcentajeCompletado;
+    private PrioridadTarea _prioridad;
     private Producto _producto;
-    private ApplicationUser _propietario;
+    private Empleado _propietario;
     private Tarea _tareaPadre;
 
     [Size(255)]
+    [RuleRequiredField]
     [XafDisplayName("Nombre")]
     public string Nombre
     {
@@ -42,12 +64,67 @@ public class Tarea(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
-    [Size(1000)]
+    [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Descripción")]
     public string Descripcion
     {
         get => _descripcion;
         set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
+    }
+
+    [XafDisplayName("Estado")]
+    public EstadoTarea Estado
+    {
+        get => _estado;
+        set
+        {
+            if (SetPropertyValue(nameof(Estado), ref _estado, value))
+            {
+                if (!IsLoading && !IsSaving)
+                {
+                    if (value == EstadoTarea.Completada)
+                    {
+                        PorcentajeCompletado = 100;
+                        FechaFin = DateTime.Now;
+                        CompletadaPor = GetCurrentEmpleado();
+                    }
+                    else if (value == EstadoTarea.Pendiente && PorcentajeCompletado == 100)
+                    {
+                        PorcentajeCompletado = 0;
+                    }
+                }
+            }
+        }
+    }
+
+    [XafDisplayName("Prioridad")]
+    public PrioridadTarea Prioridad
+    {
+        get => _prioridad;
+        set => SetPropertyValue(nameof(Prioridad), ref _prioridad, value);
+    }
+
+    [XafDisplayName("% Completado")]
+    public int PorcentajeCompletado
+    {
+        get => _porcentajeCompletado;
+        set
+        {
+            if (SetPropertyValue(nameof(PorcentajeCompletado), ref _porcentajeCompletado, value))
+            {
+                if (!IsLoading && !IsSaving)
+                {
+                    if (value == 100)
+                    {
+                        Estado = EstadoTarea.Completada;
+                    }
+                    else if (value > 0 && Estado == EstadoTarea.Pendiente)
+                    {
+                        Estado = EstadoTarea.EnProgreso;
+                    }
+                }
+            }
+        }
     }
 
     [XafDisplayName("Fecha Vencimiento")]
@@ -65,6 +142,7 @@ public class Tarea(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Fecha Fin")]
+    [ModelDefault("AllowEdit", "False")]
     public DateTime FechaFin
     {
         get => _fechaFin;
@@ -72,21 +150,24 @@ public class Tarea(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Propietario")]
-    public ApplicationUser Propietario
+    [Association("Empleado-TareasPropias")]
+    public Empleado Propietario
     {
         get => _propietario;
         set => SetPropertyValue(nameof(Propietario), ref _propietario, value);
     }
 
     [XafDisplayName("Asignada A")]
-    public ApplicationUser AsignadaA
+    [Association("Empleado-TareasAsignadas")]
+    public Empleado AsignadaA
     {
         get => _asignadaA;
         set => SetPropertyValue(nameof(AsignadaA), ref _asignadaA, value);
     }
 
     [XafDisplayName("Completada Por")]
-    public ApplicationUser CompletadaPor
+    [ModelDefault("AllowEdit", "False")]
+    public Empleado CompletadaPor
     {
         get => _completadaPor;
         set => SetPropertyValue(nameof(CompletadaPor), ref _completadaPor, value);
@@ -132,7 +213,7 @@ public class Tarea(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Oportunidad), ref _oportunidad, value);
     }
 
-    [Size(1000)]
+    [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Notas")]
     public string Notas
     {
@@ -154,4 +235,36 @@ public class Tarea(Session session) : EntidadBase(session)
     [Association("Tarea-Adjuntos")]
     [XafDisplayName("Adjuntos")]
     public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
+
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        Estado = EstadoTarea.Pendiente;
+        Prioridad = PrioridadTarea.Media;
+        Propietario = GetCurrentEmpleado();
+    }
+
+    protected override void OnSaving()
+    {
+        // Validaciones de fechas básicas
+        if (FechaInicio != default && FechaVencimiento != default && FechaInicio > FechaVencimiento)
+            throw new UserFriendlyException("La Fecha de inicio no puede ser posterior a la Fecha de vencimiento.");
+
+        if (FechaInicio != default && FechaFin != default && FechaInicio > FechaFin)
+            throw new UserFriendlyException("La Fecha de inicio no puede ser posterior a la Fecha de fin.");
+
+        if (Propietario == null)
+        {
+            // No usamos SecuredPropertySetter aquí para evitar dependencia; es suficiente asignar directamente
+            SetPropertyValue(nameof(Propietario), ref _propietario, GetCurrentEmpleado());
+        }
+
+        base.OnSaving();
+    }
+
+    private Empleado GetCurrentEmpleado()
+    {
+        var userId = Session.ServiceProvider.GetRequiredService<ISecurityStrategyBase>().UserId;
+        return Session.FindObject<Empleado>(new DevExpress.Data.Filtering.BinaryOperator("Usuario.Oid", userId));
+    }
 }

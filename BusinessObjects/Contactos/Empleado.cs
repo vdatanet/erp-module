@@ -2,6 +2,7 @@ using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.ControlHorario;
 
 namespace erp.Module.BusinessObjects.Contactos;
@@ -68,4 +69,12 @@ public class Empleado(Session session) : Contacto(session)
     [Association("Empleado-RegistrosJornada")]
     [XafDisplayName("Registros de Tiempo")]
     public XPCollection<RegistroJornada> RegistrosJornada => GetCollection<RegistroJornada>();
+
+    [Association("Empleado-TareasPropias")]
+    [XafDisplayName("Tareas Propias")]
+    public XPCollection<Tarea> TareasPropias => GetCollection<Tarea>();
+
+    [Association("Empleado-TareasAsignadas")]
+    [XafDisplayName("Tareas Asignadas")]
+    public XPCollection<Tarea> TareasAsignadas => GetCollection<Tarea>();
 }
