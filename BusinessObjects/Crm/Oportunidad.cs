@@ -1,3 +1,4 @@
+using DevExpress.ExpressApp.Model;
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
@@ -7,6 +8,7 @@ using erp.Module.BusinessObjects.Comun;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Planificacion;
 using erp.Module.BusinessObjects.Ventas;
+using erp.Module.Helpers.Comun;
 
 namespace erp.Module.BusinessObjects.Crm;
 
@@ -35,6 +37,8 @@ public class Oportunidad(Session session) : EntidadBase(session)
     private EstadoOportunidad _estado;
     private double _probabilidad;
     private decimal _valorEstimado;
+    private decimal _sumaPresupuestos;
+    private decimal _sumaPedidos;
     private DateTime _fechaCierreEstimada;
     private UsuarioAplicacion _responsable;
     private string _notas;
@@ -111,6 +115,36 @@ public class Oportunidad(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(ValorEstimado), ref _valorEstimado, value);
     }
 
+    [XafDisplayName("Suma Presupuestos")]
+    [DbType("decimal(18,2)")]
+    [ModelDefault("AllowEdit", "False")]
+    public decimal SumaPresupuestos
+    {
+        get => _sumaPresupuestos;
+        set => SetPropertyValue(nameof(SumaPresupuestos), ref _sumaPresupuestos, value);
+    }
+
+    [XafDisplayName("Suma Pedidos")]
+    [DbType("decimal(18,2)")]
+    [ModelDefault("AllowEdit", "False")]
+    public decimal SumaPedidos
+    {
+        get => _sumaPedidos;
+        set => SetPropertyValue(nameof(SumaPedidos), ref _sumaPedidos, value);
+    }
+
+    public void ActualizarSumaPresupuestos()
+    {
+        if (IsLoading || IsSaving) return;
+        SumaPresupuestos = MoneyMath.RoundMoney(Presupuestos.Sum(p => p.BaseImponible));
+    }
+
+    public void ActualizarSumaPedidos()
+    {
+        if (IsLoading || IsSaving) return;
+        SumaPedidos = MoneyMath.RoundMoney(Pedidos.Sum(p => p.BaseImponible));
+    }
+
     [XafDisplayName("Fecha Cierre Estimada")]
     public DateTime FechaCierreEstimada
     {
@@ -135,11 +169,45 @@ public class Oportunidad(Session session) : EntidadBase(session)
 
     [Association("Oportunidad-Presupuestos")]
     [XafDisplayName("Presupuestos")]
-    public XPCollection<Presupuesto> Presupuestos => GetCollection<Presupuesto>();
+    public XPCollection<Presupuesto> Presupuestos
+    {
+        get
+        {
+            var collection = GetCollection<Presupuesto>(nameof(Presupuestos));
+            if (!collection.IsLoaded)
+            {
+                collection.CollectionChanged += Presupuestos_CollectionChanged;
+            }
+            return collection;
+        }
+    }
+
+    private void Presupuestos_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
+    {
+        if (IsLoading || IsSaving || IsDeleted) return;
+        ActualizarSumaPresupuestos();
+    }
 
     [Association("Oportunidad-Pedidos")]
     [XafDisplayName("Pedidos")]
-    public XPCollection<Pedido> Pedidos => GetCollection<Pedido>();
+    public XPCollection<Pedido> Pedidos
+    {
+        get
+        {
+            var collection = GetCollection<Pedido>(nameof(Pedidos));
+            if (!collection.IsLoaded)
+            {
+                collection.CollectionChanged += Pedidos_CollectionChanged;
+            }
+            return collection;
+        }
+    }
+
+    private void Pedidos_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
+    {
+        if (IsLoading || IsSaving || IsDeleted) return;
+        ActualizarSumaPedidos();
+    }
 
     [Association("Oportunidad-Tareas")]
     [XafDisplayName("Tareas")]
