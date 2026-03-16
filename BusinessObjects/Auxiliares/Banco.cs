@@ -11,6 +11,7 @@ namespace erp.Module.BusinessObjects.Auxiliares;
 [DefaultClassOptions]
 [NavigationItem("Auxiliares")]
 [ImageName("Business_Bank")]
+[XafDisplayName("Banco")]
 [DefaultProperty(nameof(Nombre))]
 public class Banco(Session session) : EntidadBase(session)
 {
@@ -18,8 +19,10 @@ public class Banco(Session session) : EntidadBase(session)
     private string _iban;
     private string _bic;
     private Cliente _cliente;
+    private string _notas;
 
     [RuleRequiredField]
+    [Size(255)]
     [XafDisplayName("Nombre")]
     public string Nombre
     {
@@ -47,5 +50,13 @@ public class Banco(Session session) : EntidadBase(session)
     {
         get => _cliente;
         set => SetPropertyValue(nameof(Cliente), ref _cliente, value);
+    }
+
+    [Size(SizeAttribute.Unlimited)]
+    [XafDisplayName("Notas")]
+    public string Notas
+    {
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 }

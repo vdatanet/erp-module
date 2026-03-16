@@ -9,8 +9,8 @@ namespace erp.Module.BusinessObjects.Auxiliares;
 
 [DefaultClassOptions]
 [NavigationItem("Auxiliares")]
-[ImageName("BO_List")]
-[XafDisplayName("Condición de Pago")]
+[ImageName("EmployeeQuickWelcome")]
+[XafDisplayName("Condiciones de Pago")]
 [DefaultProperty(nameof(Nombre))]
 public class CondicionPago(Session session) : EntidadBase(session)
 {
