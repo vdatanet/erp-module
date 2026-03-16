@@ -26,8 +26,7 @@ public enum PrioridadTarea
 {
     [XafDisplayName("Baja"), ImageName("State_Priority_Low")] Baja,
     [XafDisplayName("Media"), ImageName("State_Priority_Normal")] Media,
-    [XafDisplayName("Alta"), ImageName("State_Priority_High")] Alta,
-    [XafDisplayName("Crítica"), ImageName("State_Priority_Urgent")] Critica
+    [XafDisplayName("Alta"), ImageName("State_Priority_High")] Alta
 }
 
 [DefaultClassOptions]
