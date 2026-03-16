@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
@@ -20,6 +20,7 @@
     <PackageReference Include="DevExpress.ExpressApp.CloneObject" Version="25.2.*" />
     <PackageReference Include="DevExpress.ExpressApp.CodeAnalysis" Version="25.2.*" />
     <PackageReference Include="DevExpress.ExpressApp.ConditionalAppearance" Version="25.2.*" />
+    <PackageReference Include="DevExpress.ExpressApp.Core.All.es" Version="25.2.5" />
     <PackageReference Include="DevExpress.ExpressApp.Dashboards" Version="25.2.*" />
     <PackageReference Include="DevExpress.ExpressApp.MultiTenancy.Xpo" Version="25.2.*" />
     <PackageReference Include="DevExpress.ExpressApp.Notifications" Version="25.2.*" />
