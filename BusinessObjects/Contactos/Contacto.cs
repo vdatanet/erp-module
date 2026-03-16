@@ -5,6 +5,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Comun;
 using erp.Module.Factories;

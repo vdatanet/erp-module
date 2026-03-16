@@ -4,22 +4,22 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 
-namespace erp.Module.BusinessObjects.Comun;
+namespace erp.Module.BusinessObjects.Auxiliares;
 
 [DefaultClassOptions]
 [NavigationItem("Auxiliares")]
-public class Poblacion(Session session) : EntidadBase(session)
+public class Provincia(Session session) : EntidadBase(session)
 {
     private string _nombre;
-    private Provincia _provincia;
+    private Pais _pais;
 
     [RuleRequiredField]
-    [Association("Provincia-Poblaciones")]
-    [XafDisplayName("Provincia")]
-    public Provincia Provincia
+    [Association("Pais-Provincias")]
+    [XafDisplayName("País")]
+    public Pais Pais
     {
-        get => _provincia;
-        set => SetPropertyValue(nameof(Provincia), ref _provincia, value);
+        get => _pais;
+        set => SetPropertyValue(nameof(Pais), ref _pais, value);
     }
 
     [RuleRequiredField]
@@ -30,4 +30,9 @@ public class Poblacion(Session session) : EntidadBase(session)
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
+
+    [Association("Provincia-Poblaciones")]
+    [XafDisplayName("Poblaciones")]
+    [VisibleInDetailView(false)]
+    public XPCollection<Poblacion> Poblaciones => GetCollection<Poblacion>();
 }
