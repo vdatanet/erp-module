@@ -35,8 +35,7 @@ public class Updater : ModuleUpdater {
 
 #if !RELEASE
         if (TenantName == null) {
-            _ = CreateTenant("company1.com", "erp_company1");
-            _ = CreateTenant("company2.com", "erp_company2");
+            _ = CreateTenant("demo", "erp_demo");
             ObjectSpace.CommitChanges();
         }
 #endif
@@ -89,7 +88,7 @@ public class Updater : ModuleUpdater {
         if (tenant == null) {
             tenant = ObjectSpace.CreateObject<Tenant>();
             tenant.Name = tenantName;
-            tenant.ConnectionString = $"XpoProvider=MySql;server=localhost;user=root;password=password;database={databaseName}";
+            tenant.ConnectionString = $"XpoProvider=Postgres;Server=db-local;User ID=postgres;Password=;database={databaseName}";
         }
         return tenant;
     }
