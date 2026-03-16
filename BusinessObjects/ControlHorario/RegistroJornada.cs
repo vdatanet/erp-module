@@ -1,4 +1,5 @@
 using System.Globalization;
+using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.ExpressApp.Security;
@@ -192,7 +193,11 @@ public class RegistroJornada(Session session) : EntidadBase(session)
 
     private void InitValues()
     {
-        Empleado = GetCurrentUser()?.GetMemberValue("Empleado") as Empleado;
+        var userId = Session.ServiceProvider.GetRequiredService<ISecurityStrategyBase>().UserId;
+        if (userId != null)
+        {
+            Empleado = Session.FindObject<Empleado>(new BinaryOperator("Usuario.Oid", userId));
+        }
     }
 
     protected override void OnSaving()

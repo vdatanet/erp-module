@@ -79,6 +79,9 @@ public sealed class erpModule : ModuleBase
             {
                 var memberInfo = userTypeInfo.CreateMember("Empleado", typeof(erp.Module.BusinessObjects.Contactos.Empleado));
                 memberInfo.AddAttribute(new DevExpress.ExpressApp.DC.XafDisplayNameAttribute("Empleado"));
+                memberInfo.AddAttribute(new DevExpress.Xpo.NonPersistentAttribute());
+                memberInfo.AddAttribute(new DevExpress.Persistent.Base.VisibleInDetailViewAttribute(false));
+                memberInfo.AddAttribute(new DevExpress.Persistent.Base.VisibleInListViewAttribute(false));
             }
         }
     }
