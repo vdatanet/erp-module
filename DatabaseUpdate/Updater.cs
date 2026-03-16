@@ -47,6 +47,11 @@ public class Updater(IObjectSpace objectSpace, Version currentDbVersion) : Modul
 
         var userManager = ObjectSpace.ServiceProvider.GetRequiredService<UserManager>();
 
+        if (TenantName == null)
+        {
+            CreateTenant("demo");
+        }
+
         if (TenantName != null)
         {
             var defaultRole = CreateDefaultRole();
@@ -88,17 +93,14 @@ public class Updater(IObjectSpace objectSpace, Version currentDbVersion) : Modul
         //}
     }
 
-    private Tenant CreateTenant(string tenantName, string databaseName)
+    private Tenant CreateTenant(string tenantName)
     {
         var tenant = ObjectSpace.FirstOrDefault<Tenant>(t => t.Name == tenantName);
-        if (tenant == null)
-        {
-            tenant = ObjectSpace.CreateObject<Tenant>();
-            tenant.Name = tenantName;
-            tenant.ConnectionString =
-                $"XpoProvider=MySql;server=localhost;user=root;password=password;database={databaseName}";
-        }
-
+        if (tenant != null) return tenant;
+        tenant = ObjectSpace.CreateObject<Tenant>();
+        tenant.Name = tenantName;
+        tenant.ConnectionString =
+            $"XpoProvider=Postgres;Server=db-local;User ID=postgres;Password=;database=erp_{tenantName}";
         return tenant;
     }
 
