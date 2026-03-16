@@ -393,23 +393,23 @@
     </DetailView>
     <ListView Id="Tarea_ListView" FreezeColumnIndices="True" Caption="Tareas">
       <Columns>
+        <ColumnInfo Id="Contacto" Index="-1" />
+        <ColumnInfo Id="DocumentoVenta" Index="-1" />
+        <ColumnInfo Id="FechaFin" Index="-1" />
+        <ColumnInfo Id="FechaInicio" Index="-1" />
         <ColumnInfo Id="Notas" Index="-1" />
         <ColumnInfo Id="Oid" Index="-1" />
+        <ColumnInfo Id="Oportunidad" Index="-1" />
+        <ColumnInfo Id="PorcentajeCompletado" Index="-1" />
+        <ColumnInfo Id="Producto" Index="-1" />
+        <ColumnInfo Id="TareaPadre" Index="-1" />
         <ColumnInfo Id="Nombre" Index="0" />
         <ColumnInfo Id="Estado" Index="1" />
         <ColumnInfo Id="Prioridad" Index="2" />
-        <ColumnInfo Id="PorcentajeCompletado" Index="3" />
         <ColumnInfo Id="FechaVencimiento" Index="4" />
-        <ColumnInfo Id="FechaInicio" Index="5" />
-        <ColumnInfo Id="FechaFin" Index="6" />
         <ColumnInfo Id="Propietario" Index="7" />
         <ColumnInfo Id="AsignadaA" Index="8" />
         <ColumnInfo Id="CompletadaPor" Index="9" />
-        <ColumnInfo Id="TareaPadre" Index="10" />
-        <ColumnInfo Id="Contacto" Index="11" />
-        <ColumnInfo Id="Producto" Index="12" />
-        <ColumnInfo Id="DocumentoVenta" Index="13" />
-        <ColumnInfo Id="Oportunidad" Index="14" />
       </Columns>
     </ListView>
     <ListView Id="Tarea_LookupListView" Caption="s" FreezeColumnIndices="True">
