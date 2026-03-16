@@ -3,7 +3,15 @@
   <BOModel>
     <Class Name="DevExpress.Persistent.BaseImpl.PermissionPolicy.PermissionPolicyUser" Caption="Base User" />
   </BOModel>
-  <NavigationItems StartupNavigationItem="" NavigationStyle="Accordion" />
+  <NavigationItems StartupNavigationItem="" NavigationStyle="Accordion">
+    <Items>
+      <Item Id="Default">
+        <Items>
+          <Item Id="UserSettings" ViewId="ModelDifference_ListView" Caption="Ajustes Usuario" IsNewNode="True" />
+        </Items>
+      </Item>
+    </Items>
+  </NavigationItems>
   <Options>
     <LayoutManagerOptions RequiredFieldMark="*" />
   </Options>

@@ -5,7 +5,6 @@ using DevExpress.Xpo;
 namespace erp.Module.BusinessObjects.Comun;
 
 [DefaultClassOptions]
-[NavigationItem("Configuraciones")]
 public class Secuencia(Session session) : BaseObject(session)
 {
     private string _nombre;
