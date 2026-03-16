@@ -6,8 +6,8 @@ using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
-using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Planificacion;
+using erp.Module.BusinessObjects.Productos;
 
 namespace erp.Module.BusinessObjects.Comun;
 
@@ -16,12 +16,12 @@ namespace erp.Module.BusinessObjects.Comun;
 public class Adjunto(Session session) : EntidadBase(session)
 {
     private Contacto _contact;
+    private string _description;
+    private FileData _fileData;
+    private Oportunidad _opportunity;
     private Producto _product;
     private DocumentoVenta _salesDocument;
     private Tarea _task;
-    private Oportunidad _opportunity;
-    private FileData _fileData;
-    private string _description;
 
     [Association("Contacto-Adjuntos")]
     [XafDisplayName("Contacto")]
@@ -38,7 +38,7 @@ public class Adjunto(Session session) : EntidadBase(session)
         get => _product;
         set => SetPropertyValue(nameof(Producto), ref _product, value);
     }
-    
+
     [Association("DocumentoVenta-Adjuntos")]
     [XafDisplayName("Documento Venta")]
     public DocumentoVenta DocumentoVenta

@@ -5,9 +5,9 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
-using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Comun;
+using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.Helpers.Contactos;
 using Tarea = erp.Module.BusinessObjects.Planificacion.Tarea;
@@ -20,21 +20,21 @@ namespace erp.Module.BusinessObjects.Productos;
 [DefaultProperty(nameof(Codigo))]
 public class Producto(Session session) : EntidadBase(session)
 {
+    private Categoria _categoria;
     private string _codigo;
     private string _codigoBarras;
-    private string _nombre;
-    private Categoria _categoria;
     private decimal _costeEstandar;
-    private decimal _precioVenta;
-    private Cuenta _cuentaVentas;
     private Cuenta _cuentaCompras;
-    private bool _estaActivo;
-    private bool _disponibleEnVentas;
+    private Cuenta _cuentaVentas;
     private bool _disponibleEnCompras;
     private bool _disponibleEnTpv;
-    private string _notas;
+    private bool _disponibleEnVentas;
+    private bool _estaActivo;
     private MediaDataObject _foto;
-    
+    private string _nombre;
+    private string _notas;
+    private decimal _precioVenta;
+
     [RuleUniqueValue]
     [XafDisplayName("Código")]
     public string Codigo
@@ -60,7 +60,7 @@ public class Producto(Session session) : EntidadBase(session)
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
-    
+
     [Association("Categoria-Productos")]
     [DataSourceCriteria("EstaActivo = True")]
     [XafDisplayName("Categoría")]
@@ -111,7 +111,7 @@ public class Producto(Session session) : EntidadBase(session)
         get => _disponibleEnVentas;
         set => SetPropertyValue(nameof(DisponibleEnVentas), ref _disponibleEnVentas, value);
     }
-    
+
     [XafDisplayName("Disponible en Compras")]
     public bool DisponibleEnCompras
     {
@@ -140,34 +140,34 @@ public class Producto(Session session) : EntidadBase(session)
         get => _foto;
         set => SetPropertyValue(nameof(Foto), ref _foto, value);
     }
-    
+
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
     [Association("Productos-ImpuestosVentas")]
     [DataSourceCriteria("DisponibleEnVentas = True AND EstaActivo = True")]
     [XafDisplayName("Impuestos Ventas")]
-    public XPCollection<TipoImpuesto> SalesTaxes => GetCollection<TipoImpuesto>(nameof(SalesTaxes));
-    
+    public XPCollection<TipoImpuesto> SalesTaxes => GetCollection<TipoImpuesto>();
+
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
     [Association("Productos-ImpuestosCompras")]
     [DataSourceCriteria("DisponibleEnCompras = True AND EstaActivo = True")]
     [XafDisplayName("Impuestos Compras")]
-    public XPCollection<TipoImpuesto> PurchaseTaxes => GetCollection<TipoImpuesto>(nameof(PurchaseTaxes));
-    
+    public XPCollection<TipoImpuesto> PurchaseTaxes => GetCollection<TipoImpuesto>();
+
     [DevExpress.Xpo.Aggregated]
     [Association("Producto-Tareas")]
     [XafDisplayName("Tareas")]
-    public XPCollection<Tarea> Tareas => GetCollection<Tarea>(nameof(Tareas)); 
-    
+    public XPCollection<Tarea> Tareas => GetCollection<Tarea>();
+
     [DevExpress.Xpo.Aggregated]
     [Association("Producto-Fotos")]
     [XafDisplayName("Imágenes")]
-    public XPCollection<Imagen> Imagenes => GetCollection<Imagen>(nameof(Imagenes));
-    
+    public XPCollection<Imagen> Imagenes => GetCollection<Imagen>();
+
     [DevExpress.Xpo.Aggregated]
     [Association("Producto-Adjuntos")]
     [XafDisplayName("Adjuntos")]
-    public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>(nameof(Adjuntos));
-    
+    public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
+
     public override void AfterConstruction()
     {
         base.AfterConstruction();

@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using DevExpress.Persistent.Base;
-using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 
 namespace erp.Module.BusinessObjects.Facturacion;

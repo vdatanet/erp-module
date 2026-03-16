@@ -1,3 +1,4 @@
+using System.Globalization;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.ExpressApp.Security;
@@ -7,7 +8,6 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Proyectos;
-using erp.Module.BusinessObjects;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.BusinessObjects.ControlHorario;
@@ -16,22 +16,23 @@ namespace erp.Module.BusinessObjects.ControlHorario;
 [NavigationItem("Control Horario")]
 [XafDisplayName("Registro de Jornada")]
 [ImageName("Time")]
-[RuleCriteria("FechaFin >= FechaInicio", CustomMessageTemplate = "La fecha de fin debe ser posterior a la fecha de inicio")]
+[RuleCriteria("FechaFin >= FechaInicio",
+    CustomMessageTemplate = "La fecha de fin debe ser posterior a la fecha de inicio")]
 public class RegistroJornada(Session session) : EntidadBase(session)
 {
-    private Empleado _empleado;
-    private DateTime _fechaInicio;
-    private DateTime? _fechaFin;
-    private Proyecto _proyecto;
     private ActividadProyecto _actividad;
-    private string _notas;
     private TimeSpan _duracion;
-    private double? _latitudInicio;
-    private double? _longitudInicio;
+    private Empleado _empleado;
+    private DateTime? _fechaFin;
+    private DateTime _fechaInicio;
     private double? _latitudFin;
+    private double? _latitudInicio;
     private double? _longitudFin;
-    private string _ubicacionInicio;
+    private double? _longitudInicio;
+    private string _notas;
+    private Proyecto _proyecto;
     private string _ubicacionFin;
+    private string _ubicacionInicio;
 
     [RuleRequiredField]
     [Association("Empleado-RegistrosJornada")]
@@ -166,10 +167,7 @@ public class RegistroJornada(Session session) : EntidadBase(session)
         get => _ubicacionInicio;
         set
         {
-            if (SetPropertyValue(nameof(UbicacionInicio), ref _ubicacionInicio, value))
-            {
-                ActualizarEmpleado();
-            }
+            if (SetPropertyValue(nameof(UbicacionInicio), ref _ubicacionInicio, value)) ActualizarEmpleado();
         }
     }
 
@@ -181,13 +179,10 @@ public class RegistroJornada(Session session) : EntidadBase(session)
         get => _ubicacionFin;
         set
         {
-            if (SetPropertyValue(nameof(UbicacionFin), ref _ubicacionFin, value))
-            {
-                ActualizarEmpleado();
-            }
+            if (SetPropertyValue(nameof(UbicacionFin), ref _ubicacionFin, value)) ActualizarEmpleado();
         }
     }
-    
+
     public override void AfterConstruction()
     {
         base.AfterConstruction();
@@ -208,8 +203,8 @@ public class RegistroJornada(Session session) : EntidadBase(session)
 
     private void RecalcularDuracion()
     {
-        Duracion = (FechaFin.HasValue && FechaFin.Value >= FechaInicio) 
-            ? FechaFin.Value - FechaInicio 
+        Duracion = FechaFin.HasValue && FechaFin.Value >= FechaInicio
+            ? FechaFin.Value - FechaInicio
             : TimeSpan.Zero;
     }
 
@@ -222,13 +217,14 @@ public class RegistroJornada(Session session) : EntidadBase(session)
     private void ActualizarUbicacionInicio()
     {
         if (IsLoading || IsSaving || !LatitudInicio.HasValue || !LongitudInicio.HasValue) return;
-        UbicacionInicio = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0},{1}", LatitudInicio.Value, LongitudInicio.Value);
+        UbicacionInicio = string.Format(CultureInfo.InvariantCulture, "{0},{1}", LatitudInicio.Value,
+            LongitudInicio.Value);
     }
 
     private void ActualizarUbicacionFin()
     {
         if (IsLoading || IsSaving || !LatitudFin.HasValue || !LongitudFin.HasValue) return;
-        UbicacionFin = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0},{1}", LatitudFin.Value, LongitudFin.Value);
+        UbicacionFin = string.Format(CultureInfo.InvariantCulture, "{0},{1}", LatitudFin.Value, LongitudFin.Value);
     }
 
     private void ActualizarEmpleado()

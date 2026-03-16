@@ -6,23 +6,22 @@ using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
-using erp.Module.BusinessObjects.Productos;
-
 using erp.Module.BusinessObjects.Planificacion;
+using erp.Module.BusinessObjects.Productos;
 
 namespace erp.Module.BusinessObjects.Comun;
 
 [ImageName("Images")]
-public class Imagen(Session session): EntidadBase(session)
+public class Imagen(Session session) : EntidadBase(session)
 {
     private Contacto _contact;
+    private MediaDataObject _mediaDataObject;
+    private string _notes;
+    private Oportunidad _opportunity;
     private Producto _product;
     private DocumentoVenta _salesDocument;
     private Tarea _task;
-    private Oportunidad _opportunity;
-    private MediaDataObject _mediaDataObject;
-    private string _notes;
-    
+
     [Association("Contacto-Fotos")]
     [XafDisplayName("Contacto")]
     public Contacto Contacto
@@ -38,7 +37,7 @@ public class Imagen(Session session): EntidadBase(session)
         get => _product;
         set => SetPropertyValue(nameof(Producto), ref _product, value);
     }
-    
+
     [Association("DocumentoVenta-Fotos")]
     [XafDisplayName("Documento Venta")]
     public DocumentoVenta DocumentoVenta
@@ -46,7 +45,7 @@ public class Imagen(Session session): EntidadBase(session)
         get => _salesDocument;
         set => SetPropertyValue(nameof(DocumentoVenta), ref _salesDocument, value);
     }
-    
+
     [Association("Tarea-Fotos")]
     [XafDisplayName("Tarea")]
     public Tarea Tarea
@@ -54,7 +53,7 @@ public class Imagen(Session session): EntidadBase(session)
         get => _task;
         set => SetPropertyValue(nameof(Tarea), ref _task, value);
     }
-    
+
     [Association("Oportunidad-Fotos")]
     [XafDisplayName("Oportunidad")]
     public Oportunidad Oportunidad
@@ -62,14 +61,14 @@ public class Imagen(Session session): EntidadBase(session)
         get => _opportunity;
         set => SetPropertyValue(nameof(Oportunidad), ref _opportunity, value);
     }
-    
+
     [XafDisplayName("Imagen")]
     public MediaDataObject MediaDataObject
     {
         get => _mediaDataObject;
         set => SetPropertyValue(nameof(MediaDataObject), ref _mediaDataObject, value);
     }
-    
+
     [Size(1000)]
     [XafDisplayName("Notas")]
     public string Notes

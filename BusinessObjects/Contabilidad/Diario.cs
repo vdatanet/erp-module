@@ -14,9 +14,9 @@ namespace erp.Module.BusinessObjects.Contabilidad;
 [DefaultProperty(nameof(Nombre))]
 public class Diario(Session session) : EntidadBase(session)
 {
+    private bool _estaActivo;
     private string _nombre;
     private string _notas;
-    private bool _estaActivo;
 
     [RuleRequiredField]
     [RuleUniqueValue]
@@ -36,17 +36,17 @@ public class Diario(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
-    public override void AfterConstruction()
-    {
-        base.AfterConstruction();
-        InitValues();
-    }
-
     [XafDisplayName("Activo")]
     public bool EstaActivo
     {
         get => _estaActivo;
         set => SetPropertyValue(nameof(EstaActivo), ref _estaActivo, value);
+    }
+
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        InitValues();
     }
 
     private void InitValues()

@@ -11,7 +11,7 @@ public class SequenceService(Session session)
 
     public string GetNextSequence(string sequenceName, string prefix, int padding)
     {
-        int maxRetries = 5;
+        var maxRetries = 5;
         for (var attempt = 0; attempt < maxRetries; attempt++)
         {
             using var uow = new UnitOfWork(session.DataLayer);
@@ -19,7 +19,6 @@ public class SequenceService(Session session)
             {
                 var generator = uow.FindObject<Secuencia>(new BinaryOperator(nameof(Secuencia.Nombre), sequenceName));
                 if (generator == null)
-                {
                     generator = new Secuencia(uow)
                     {
                         Nombre = sequenceName,
@@ -27,7 +26,6 @@ public class SequenceService(Session session)
                         Prefijo = prefix,
                         Relleno = padding
                     };
-                }
 
                 generator.ValorActual++;
                 uow.CommitChanges();
@@ -57,6 +55,7 @@ public class SequenceService(Session session)
                 Thread.Sleep(50 + Jitter.Next(10, 50));
             }
         }
+
         throw new Exception("No se pudo obtener la secuencia por concurrencia tras múltiples reintentos.");
     }
 
@@ -64,8 +63,8 @@ public class SequenceService(Session session)
     {
         // Dependiendo de la DB (Postgres, SQL Server, etc.), el mensaje o el tipo de excepción varía.
         // XPO suele lanzar excepciones específicas o envolverlas.
-        return ex.Message.Contains("duplicate key") || ex.Message.Contains("unique constraint") || 
-               ex.InnerException?.Message.Contains("duplicate key") == true || 
+        return ex.Message.Contains("duplicate key") || ex.Message.Contains("unique constraint") ||
+               ex.InnerException?.Message.Contains("duplicate key") == true ||
                ex.InnerException?.Message.Contains("unique constraint") == true;
     }
 

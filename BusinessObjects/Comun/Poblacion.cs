@@ -8,10 +8,10 @@ namespace erp.Module.BusinessObjects.Comun;
 
 [DefaultClassOptions]
 [NavigationItem("Auxiliares")]
-public class Poblacion(Session session): EntidadBase(session)
+public class Poblacion(Session session) : EntidadBase(session)
 {
-    private Provincia _provincia;
     private string _nombre;
+    private Provincia _provincia;
 
     [RuleRequiredField]
     [Association("Provincia-Poblaciones")]

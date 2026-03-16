@@ -4,7 +4,6 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Contabilidad;
-
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Impuestos;
 
@@ -19,24 +18,24 @@ namespace erp.Module.BusinessObjects.Configuracion;
     CustomMessageTemplate = "Can't delete Company Info.")]
 public class InformacionEmpresa(Session session) : Contacto(session)
 {
-    private Diario _diarioVentasPorDefecto;
-    private Diario _diarioComprasPorDefecto;
-    private Cuenta _cuentaVentasPorDefecto;
-    private Cuenta _cuentaComprasPorDefecto;
     private Cuenta _cuentaClientesPorDefecto;
+    private Cuenta _cuentaComprasPorDefecto;
     private Cuenta _cuentaProveedoresPorDefecto;
-    private string _prefijoFacturasVentaPorDefecto;
-    private string _prefijoFacturasCompraPorDefecto;
-    private string _prefijoPartesDiariosPorDefecto;
-    private string _textoDefectoVeriFactu;
-    private string _nombreArchivoConfigVeriFactu;
-    private string _serieCertificadoVeriFactu;
-    private string _prefijoUrlVeriFactu;
-    private string _prefijoUrlValidacionVeriFactu;
-    private string _nombreSistemaVeriFactu;
-    private string _versionSistemaVeriFactu;
-    private string _nombreAdministradorSistemaVeriFactu;
+    private Cuenta _cuentaVentasPorDefecto;
+    private Diario _diarioComprasPorDefecto;
+    private Diario _diarioVentasPorDefecto;
     private string _nifAdministradorSistemaVeriFactu;
+    private string _nombreAdministradorSistemaVeriFactu;
+    private string _nombreArchivoConfigVeriFactu;
+    private string _nombreSistemaVeriFactu;
+    private string _prefijoFacturasCompraPorDefecto;
+    private string _prefijoFacturasVentaPorDefecto;
+    private string _prefijoPartesDiariosPorDefecto;
+    private string _prefijoUrlValidacionVeriFactu;
+    private string _prefijoUrlVeriFactu;
+    private string _serieCertificadoVeriFactu;
+    private string _textoDefectoVeriFactu;
+    private string _versionSistemaVeriFactu;
 
     [DataSourceCriteria("EstaActivo = True")]
     [XafDisplayName("Diario Ventas por Defecto")]
@@ -128,14 +127,14 @@ public class InformacionEmpresa(Session session) : Contacto(session)
         get => _serieCertificadoVeriFactu;
         set => SetPropertyValue(nameof(SerieCertificadoVeriFactu), ref _serieCertificadoVeriFactu, value);
     }
-    
+
     [XafDisplayName("URL VeriFactu")]
     public string PrefijoUrlVeriFactu
     {
         get => _prefijoUrlVeriFactu;
         set => SetPropertyValue(nameof(PrefijoUrlVeriFactu), ref _prefijoUrlVeriFactu, value);
     }
-    
+
     [XafDisplayName("URL Validación VeriFactu")]
     public string PrefijoUrlValidacionVeriFactu
     {
@@ -150,37 +149,38 @@ public class InformacionEmpresa(Session session) : Contacto(session)
         get => _nombreSistemaVeriFactu;
         set => SetPropertyValue(nameof(NombreSistemaVeriFactu), ref _nombreSistemaVeriFactu, value);
     }
-    
+
     [XafDisplayName("Versión Sistema VeriFactu")]
     public string VersionSistemaVeriFactu
     {
         get => _versionSistemaVeriFactu;
         set => SetPropertyValue(nameof(VersionSistemaVeriFactu), ref _versionSistemaVeriFactu, value);
     }
-    
+
     [XafDisplayName("Nombre Admin Sistema VeriFactu")]
     public string NombreAdministradorSistemaVeriFactu
     {
         get => _nombreAdministradorSistemaVeriFactu;
-        set => SetPropertyValue(nameof(NombreAdministradorSistemaVeriFactu), ref _nombreAdministradorSistemaVeriFactu, value);
+        set => SetPropertyValue(nameof(NombreAdministradorSistemaVeriFactu), ref _nombreAdministradorSistemaVeriFactu,
+            value);
     }
-    
+
     [XafDisplayName("NIF Admin Sistema VeriFactu")]
     public string NifAdministradorSistemaVeriFactu
     {
         get => _nifAdministradorSistemaVeriFactu;
         set => SetPropertyValue(nameof(NifAdministradorSistemaVeriFactu), ref _nifAdministradorSistemaVeriFactu, value);
     }
-    
+
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
     [Association("InformacionEmpresa-ImpuestosVentas")]
     [DataSourceCriteria("DisponibleEnVentas = True AND EstaActivo = True")]
     [XafDisplayName("Impuestos Ventas")]
-    public XPCollection<TipoImpuesto> SalesTaxes => GetCollection<TipoImpuesto>(nameof(SalesTaxes));
-    
+    public XPCollection<TipoImpuesto> SalesTaxes => GetCollection<TipoImpuesto>();
+
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
     [Association("InformacionEmpresa-ImpuestosCompras")]
     [DataSourceCriteria("DisponibleEnCompras = True AND EstaActivo = True")]
     [XafDisplayName("Impuestos Compras")]
-    public XPCollection<TipoImpuesto> PurchaseTaxes => GetCollection<TipoImpuesto>(nameof(PurchaseTaxes));
+    public XPCollection<TipoImpuesto> PurchaseTaxes => GetCollection<TipoImpuesto>();
 }

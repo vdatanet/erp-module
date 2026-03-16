@@ -23,5 +23,5 @@ public class Pais(Session session) : EntidadBase(session)
 
     [Association("Pais-Provincias")]
     [XafDisplayName("Provincias")]
-    public XPCollection<Provincia> Provincias => GetCollection<Provincia>(nameof(Provincias));
+    public XPCollection<Provincia> Provincias => GetCollection<Provincia>();
 }

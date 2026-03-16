@@ -10,8 +10,8 @@ namespace erp.Module.BusinessObjects.Comun;
 [NavigationItem("Auxiliares")]
 public class Provincia(Session session) : EntidadBase(session)
 {
-    private Pais _pais;
     private string _nombre;
+    private Pais _pais;
 
     [RuleRequiredField]
     [Association("Pais-Provincias")]
@@ -30,8 +30,8 @@ public class Provincia(Session session) : EntidadBase(session)
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
-    
+
     [Association("Provincia-Poblaciones")]
     [XafDisplayName("Poblaciones")]
-    public XPCollection<Poblacion> Poblaciones => GetCollection<Poblacion>(nameof(Poblaciones));
+    public XPCollection<Poblacion> Poblaciones => GetCollection<Poblacion>();
 }

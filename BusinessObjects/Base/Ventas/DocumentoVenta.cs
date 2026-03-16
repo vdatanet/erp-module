@@ -1,34 +1,33 @@
 using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.DC;
-using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Comun;
-using erp.Module.Factories;
 using erp.Module.BusinessObjects.Contactos;
-using erp.Module.BusinessObjects.Crm;
+using erp.Module.Factories;
+using erp.Module.Helpers.Comun;
 using erp.Module.Helpers.Contactos;
 using Tarea = erp.Module.BusinessObjects.Planificacion.Tarea;
-using erp.Module.Helpers.Comun;
-using erp.Module.BusinessObjects.Productos;
 
 namespace erp.Module.BusinessObjects.Base.Ventas;
 
 public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 {
-    private Cliente _cliente;
     private decimal _baseImponible;
+    private Cliente _cliente;
+    private DateTime _fecha;
     private decimal _importeImpuestos;
     private decimal _importeTotal;
-    private string _serie;
-    private string _numero;
-    private DateTime _fecha;
     private string _notas;
+    private string _numero;
+    private string _serie;
 
-    [RuleRequiredField("erp.Module.BusinessObjects.Facturacion.Factura.Cliente_Required", DefaultContexts.Save, TargetCriteria = "IsInstanceOfType(this, 'erp.Module.BusinessObjects.Facturacion.Factura') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Presupuesto')")]
+    [RuleRequiredField("erp.Module.BusinessObjects.Facturacion.Factura.Cliente_Required", DefaultContexts.Save,
+        TargetCriteria =
+            "IsInstanceOfType(this, 'erp.Module.BusinessObjects.Facturacion.Factura') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Presupuesto')")]
     [Association("Cliente-DocumentosVenta")]
     [XafDisplayName("Cliente")]
     public Cliente Cliente
@@ -36,10 +35,11 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         get => _cliente;
         set => SetPropertyValue(nameof(Cliente), ref _cliente, value);
     }
-    
+
     [XafDisplayName("Serie")]
     [RuleRequiredField]
-    [Appearance("BlockSerieWhenNumeroIsSet", Enabled = false, Criteria = "!IsNewObject(this) and !IsNullOrEmpty(Numero)", Context = "Any")]
+    [Appearance("BlockSerieWhenNumeroIsSet", Enabled = false,
+        Criteria = "!IsNewObject(this) and !IsNullOrEmpty(Numero)", Context = "Any")]
     public string Serie
     {
         get => _serie;
@@ -106,26 +106,16 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     {
         get
         {
-            var collection = GetCollection<LineaDocumentoVenta>(nameof(Lineas));
-            if (!collection.IsLoaded)
-            {
-                collection.CollectionChanged += Lineas_CollectionChanged;
-            }
+            var collection = GetCollection<LineaDocumentoVenta>();
+            if (!collection.IsLoaded) collection.CollectionChanged += Lineas_CollectionChanged;
             return collection;
         }
     }
-    
+
     [DevExpress.Xpo.Aggregated]
     [Association("DocumentoVenta-Impuestos")]
     [XafDisplayName("Impuestos")]
     public XPCollection<ImpuestoDocumentoVenta> Impuestos => GetCollection<ImpuestoDocumentoVenta>();
-    
-    private void Lineas_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
-    {
-        if (IsLoading || IsSaving || IsDeleted) return;
-        BorrarResumenImpuestos();
-        ReconstruirResumenImpuestos();
-    }
 
     [DevExpress.Xpo.Aggregated]
     [Association("DocumentoVenta-Tareas")]
@@ -141,6 +131,13 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     [Association("DocumentoVenta-Adjuntos")]
     [XafDisplayName("Adjuntos")]
     public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
+
+    private void Lineas_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
+    {
+        if (IsLoading || IsSaving || IsDeleted) return;
+        BorrarResumenImpuestos();
+        ReconstruirResumenImpuestos();
+    }
 
     public void BorrarResumenImpuestos()
     {
@@ -162,7 +159,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
         var newTaxes = groups.Select(g =>
         {
-            var tax = new ImpuestoDocumentoVenta(this.Session)
+            var tax = new ImpuestoDocumentoVenta(Session)
             {
                 DocumentoVenta = this,
                 TipoImpuesto = g.TaxType,
@@ -188,19 +185,20 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         Serie ??= companyInfo?.PrefijoFacturasVentaPorDefecto;
     }
 
-    public virtual bool GetAsignarNumeroAlGuardar() => true;
+    public virtual bool GetAsignarNumeroAlGuardar()
+    {
+        return true;
+    }
 
     protected override void OnSaving()
     {
         base.OnSaving();
         if (GetAsignarNumeroAlGuardar() && string.IsNullOrEmpty(Numero) && !string.IsNullOrEmpty(Serie))
-        {
             AsignarNumero();
-        }
     }
 
     public virtual void AsignarNumero()
     {
-        Numero = SequenceFactory.GetNextSequence(Session, $"{this.GetType().FullName}.{Serie}", Serie, 5);
+        Numero = SequenceFactory.GetNextSequence(Session, $"{GetType().FullName}.{Serie}", Serie, 5);
     }
 }

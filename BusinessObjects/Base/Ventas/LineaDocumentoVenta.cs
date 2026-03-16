@@ -4,26 +4,25 @@ using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
-using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Impuestos;
+using erp.Module.BusinessObjects.Productos;
 using erp.Module.Helpers.Comun;
-using DevExpress.Data.Filtering;
 
 namespace erp.Module.BusinessObjects.Base.Ventas;
 
 [ImageName("BO_Order_Item")]
 public class LineaDocumentoVenta(Session session) : EntidadBase(session)
 {
-    private DocumentoVenta _documentoVenta;
-    private Producto _producto;
-    private string _nombreProducto;
-    private string _notas;
-    private decimal _cantidad;
-    private decimal _precioUnitario;
-    private decimal _porcentajeDescuento;
     private decimal _baseImponible;
+    private decimal _cantidad;
+    private DocumentoVenta _documentoVenta;
     private decimal _importeImpuestos;
     private decimal _importeTotal;
+    private string _nombreProducto;
+    private string _notas;
+    private decimal _porcentajeDescuento;
+    private decimal _precioUnitario;
+    private Producto _producto;
 
     [Association("DocumentoVenta-Lineas")]
     [XafDisplayName("Documento Venta")]
@@ -148,19 +147,10 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     {
         get
         {
-            var collection = GetCollection<TipoImpuesto>(nameof(TiposImpuestoVenta));
-            if (!collection.IsLoaded)
-            {
-                collection.CollectionChanged += TiposImpuestoVenta_CollectionChanged;
-            }
+            var collection = GetCollection<TipoImpuesto>();
+            if (!collection.IsLoaded) collection.CollectionChanged += TiposImpuestoVenta_CollectionChanged;
             return collection;
         }
-    }
-
-    private void TiposImpuestoVenta_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
-    {
-        if (IsLoading || IsSaving || IsDeleted) return;
-        ReconstruirImpuestos();
     }
 
     [DevExpress.Xpo.Aggregated]
@@ -168,6 +158,12 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     [Association("LineaDocumentoVenta-Impuestos")]
     [XafDisplayName("Detalle Impuestos")]
     public XPCollection<ImpuestoLineaDocumentoVenta> Impuestos => GetCollection<ImpuestoLineaDocumentoVenta>();
+
+    private void TiposImpuestoVenta_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
+    {
+        if (IsLoading || IsSaving || IsDeleted) return;
+        ReconstruirImpuestos();
+    }
 
     private void AplicarInstantaneaProducto()
     {
@@ -188,10 +184,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
         if (Cantidad == 0m)
             Cantidad = 1m;
 
-        foreach (var tax in Producto.SalesTaxes.OrderBy(t => t.Secuencia))
-        {
-            TiposImpuestoVenta.Add(tax);
-        }
+        foreach (var tax in Producto.SalesTaxes.OrderBy(t => t.Secuencia)) TiposImpuestoVenta.Add(tax);
     }
 
     private void EstablecerBaseImponible()
@@ -203,9 +196,8 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     private void ReconstruirImpuestos()
     {
         for (var i = Impuestos.Count - 1; i >= 0; i--) Impuestos[i].Delete();
-        
+
         foreach (var tax in TiposImpuestoVenta)
-        {
             _ = new ImpuestoLineaDocumentoVenta(Session)
             {
                 LineaDocumentoVenta = this,
@@ -213,24 +205,19 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
                 BaseImponible = BaseImponible,
                 ImporteImpuestos = AmountCalculator.GetTaxAmount(BaseImponible, tax.Tipo, tax.EsRetencion)
             };
-            
-        }
 
         ImporteImpuestos = Impuestos.Sum(t => t.ImporteImpuestos);
         ImporteTotal = BaseImponible + ImporteImpuestos;
-        
+
         if (DocumentoVenta is null) return;
-        
+
         DocumentoVenta.BorrarResumenImpuestos();
         DocumentoVenta.ReconstruirResumenImpuestos();
     }
 
     private void BorrarImpuestosProducto()
-    { 
+    {
         var salesTaxesToRemove = TiposImpuestoVenta.ToList();
-        foreach (var tax in salesTaxesToRemove)
-        {
-            TiposImpuestoVenta.Remove(tax);
-        }
+        foreach (var tax in salesTaxesToRemove) TiposImpuestoVenta.Remove(tax);
     }
 }

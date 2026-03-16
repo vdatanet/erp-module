@@ -10,8 +10,8 @@ public class Secuencia(Session session) : BaseObject(session)
 {
     private string _nombre;
     private string _prefijo;
-    private int _valorActual;
     private int _relleno;
+    private int _valorActual;
 
     [Indexed(Unique = true)]
     public string Nombre

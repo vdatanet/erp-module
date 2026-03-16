@@ -1,6 +1,7 @@
 using System.Text;
 using System.Xml.Linq;
 using DevExpress.ExpressApp;
+using DevExpress.Persistent.BaseImpl;
 using erp.Module.BusinessObjects.Configuracion;
 using erp.Module.BusinessObjects.Facturacion;
 using erp.Module.Helpers.Comun;
@@ -36,10 +37,8 @@ public class VeriFactuService
         objectSpace.CommitChanges();
 
         if (invoiceEntry.Status != "Correcto")
-        {
             throw new UserFriendlyException(
                 $"Error al enviar a VeriFactu: {invoiceEntry.Status} - {invoiceEntry.ErrorCode}");
-        }
     }
 
     private void ConfigureVeriFactu(IObjectSpace objectSpace)
@@ -106,7 +105,8 @@ public class VeriFactuService
         return veriFactuFactura;
     }
 
-    private void UpdateInvoiceFromEntry(IObjectSpace objectSpace, FacturaBase invoice, InvoiceEntry invoiceEntry, Invoice veriFactuFactura)
+    private void UpdateInvoiceFromEntry(IObjectSpace objectSpace, FacturaBase invoice, InvoiceEntry invoiceEntry,
+        Invoice veriFactuFactura)
     {
         invoice.EstadoEntradaFactura = invoiceEntry.Status;
         invoice.RespuestaAgenciaTributaria = invoiceEntry.Response;
@@ -119,7 +119,7 @@ public class VeriFactuService
         invoice.Csv = invoiceEntry.CSV;
 
         var qr = newRecord.GetValidateQr();
-        var qrMedia = objectSpace.CreateObject<DevExpress.Persistent.BaseImpl.MediaDataObject>();
+        var qrMedia = objectSpace.CreateObject<MediaDataObject>();
         qrMedia.MediaData = qr;
         invoice.Qr = qrMedia;
 

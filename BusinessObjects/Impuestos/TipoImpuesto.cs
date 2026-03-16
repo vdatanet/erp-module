@@ -6,8 +6,8 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Base.Ventas;
-using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Configuracion;
+using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Productos;
 using VeriFactu.Xml.Factu;
 using VeriFactu.Xml.Factu.Alta;
@@ -20,20 +20,20 @@ namespace erp.Module.BusinessObjects.Impuestos;
 [DefaultProperty(nameof(Codigo))]
 public class TipoImpuesto(Session session) : EntidadBase(session)
 {
+    private CausaExencion? _causaExencion;
     private string _codigo;
+    private Cuenta _cuenta;
+    private bool _disponibleEnCompras;
+    private bool _disponibleEnVentas;
+    private bool _esRetencion;
+    private bool _estaActivo;
+    private Impuesto? _impuesto;
     private string _nombre;
     private string _notas;
-    private int _secuencia;
-    private Cuenta _cuenta;
-    private decimal _tipo;
-    private bool _estaActivo;
-    private bool _disponibleEnVentas;
-    private bool _disponibleEnCompras;
-    private bool _esRetencion;
-    private Impuesto? _impuesto;
     private ClaveRegimen? _regimenFiscal;
+    private int _secuencia;
+    private decimal _tipo;
     private CalificacionOperacion? _tipoOperacion;
-    private CausaExencion? _causaExencion;
 
     [RuleRequiredField]
     [RuleUniqueValue]
@@ -60,7 +60,7 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
-    
+
     [XafDisplayName("Secuencia")]
     public int Secuencia
     {
@@ -111,26 +111,28 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
         get => _esRetencion;
         set => SetPropertyValue(nameof(EsRetencion), ref _esRetencion, value);
     }
+
     [XafDisplayName("Impuesto VeriFactu")]
     public Impuesto? Impuesto
     {
         get => _impuesto;
         set => SetPropertyValue(nameof(Impuesto), ref _impuesto, value);
     }
+
     [XafDisplayName("Régimen Fiscal")]
     public ClaveRegimen? RegimenFiscal
     {
         get => _regimenFiscal;
         set => SetPropertyValue(nameof(RegimenFiscal), ref _regimenFiscal, value);
     }
-    
+
     [XafDisplayName("Tipo Operación")]
     public CalificacionOperacion? TipoOperacion
     {
         get => _tipoOperacion;
         set => SetPropertyValue(nameof(TipoOperacion), ref _tipoOperacion, value);
     }
-    
+
     [XafDisplayName("Causa Exención")]
     public CausaExencion? CausaExencion
     {
@@ -140,24 +142,24 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
 
     [NonCloneable]
     [Association("LineaDocumentoVenta-TipoImpuestos")]
-    public XPCollection<LineaDocumentoVenta> LineasDocumentoVenta => GetCollection<LineaDocumentoVenta>(nameof(LineasDocumentoVenta));
+    public XPCollection<LineaDocumentoVenta> LineasDocumentoVenta => GetCollection<LineaDocumentoVenta>();
 
     [NonCloneable]
     [Association("Productos-ImpuestosVentas")]
-    public XPCollection<Producto> ProductoImpuestosVenta => GetCollection<Producto>(nameof(ProductoImpuestosVenta));
+    public XPCollection<Producto> ProductoImpuestosVenta => GetCollection<Producto>();
 
     [NonCloneable]
     [Association("Productos-ImpuestosCompras")]
-    public XPCollection<Producto> ProductoImpuestosCompra => GetCollection<Producto>(nameof(ProductoImpuestosCompra));
+    public XPCollection<Producto> ProductoImpuestosCompra => GetCollection<Producto>();
 
     [NonCloneable]
     [Association("InformacionEmpresa-ImpuestosVentas")]
-    public XPCollection<InformacionEmpresa> InformacionEmpresaImpuestosVenta => GetCollection<InformacionEmpresa>(nameof(InformacionEmpresaImpuestosVenta));
+    public XPCollection<InformacionEmpresa> InformacionEmpresaImpuestosVenta => GetCollection<InformacionEmpresa>();
 
     [NonCloneable]
     [Association("InformacionEmpresa-ImpuestosCompras")]
-    public XPCollection<InformacionEmpresa> InformacionEmpresaImpuestosCompra => GetCollection<InformacionEmpresa>(nameof(InformacionEmpresaImpuestosCompra));
-    
+    public XPCollection<InformacionEmpresa> InformacionEmpresaImpuestosCompra => GetCollection<InformacionEmpresa>();
+
     public override void AfterConstruction()
     {
         base.AfterConstruction();

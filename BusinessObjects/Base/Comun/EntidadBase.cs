@@ -5,7 +5,6 @@ using DevExpress.ExpressApp.Xpo;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
-using erp.Module.BusinessObjects;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.BusinessObjects.Base.Comun;
@@ -14,10 +13,10 @@ namespace erp.Module.BusinessObjects.Base.Comun;
 [ModelDefault("IsCloneable", "True")]
 public abstract class EntidadBase(Session session) : BaseObject(session)
 {
-    private ApplicationUser _creadoPor;
-    private ApplicationUser _modificadoPor;
     private DateTime? _creadoEl;
+    private ApplicationUser _creadoPor;
     private DateTime? _modificadoEl;
+    private ApplicationUser _modificadoPor;
 
     [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]

@@ -7,29 +7,40 @@ namespace erp.Module.BusinessObjects;
 
 [DeferredDeletion(false)]
 [Persistent("PermissionPolicyUserLoginInfo")]
-public class ApplicationUserLoginInfo : BaseObject, ISecurityUserLoginInfo {
-    string loginProviderName;
-    ApplicationUser user;
-    string providerUserKey;
-    public ApplicationUserLoginInfo(Session session) : base(session) { }
+public class ApplicationUserLoginInfo : BaseObject, ISecurityUserLoginInfo
+{
+    private string loginProviderName;
+    private string providerUserKey;
+    private ApplicationUser user;
 
-    [Indexed("ProviderUserKey", Unique = true)]
-    [Appearance("PasswordProvider", Enabled = false, Criteria = "!(IsNewObject(this)) and LoginProviderName == '" + SecurityDefaults.PasswordAuthentication + "'", Context = "DetailView")]
-    public string LoginProviderName {
-        get { return loginProviderName; }
-        set { SetPropertyValue(nameof(LoginProviderName), ref loginProviderName, value); }
-    }
-
-    [Appearance("PasswordProviderUserKey", Enabled = false, Criteria = "!(IsNewObject(this)) and LoginProviderName == '" + SecurityDefaults.PasswordAuthentication + "'", Context = "DetailView")]
-    public string ProviderUserKey {
-        get { return providerUserKey; }
-        set { SetPropertyValue(nameof(ProviderUserKey), ref providerUserKey, value); }
+    public ApplicationUserLoginInfo(Session session) : base(session)
+    {
     }
 
     [Association("User-LoginInfo")]
-    public ApplicationUser User {
-        get { return user; }
-        set { SetPropertyValue(nameof(User), ref user, value); }
+    public ApplicationUser User
+    {
+        get => user;
+        set => SetPropertyValue(nameof(User), ref user, value);
+    }
+
+    [Indexed("ProviderUserKey", Unique = true)]
+    [Appearance("PasswordProvider", Enabled = false,
+        Criteria = "!(IsNewObject(this)) and LoginProviderName == '" + SecurityDefaults.PasswordAuthentication + "'",
+        Context = "DetailView")]
+    public string LoginProviderName
+    {
+        get => loginProviderName;
+        set => SetPropertyValue(nameof(LoginProviderName), ref loginProviderName, value);
+    }
+
+    [Appearance("PasswordProviderUserKey", Enabled = false,
+        Criteria = "!(IsNewObject(this)) and LoginProviderName == '" + SecurityDefaults.PasswordAuthentication + "'",
+        Context = "DetailView")]
+    public string ProviderUserKey
+    {
+        get => providerUserKey;
+        set => SetPropertyValue(nameof(ProviderUserKey), ref providerUserKey, value);
     }
 
     object ISecurityUserLoginInfo.User => User;

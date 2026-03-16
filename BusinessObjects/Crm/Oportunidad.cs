@@ -1,5 +1,5 @@
-using DevExpress.ExpressApp.Model;
 using DevExpress.ExpressApp.DC;
+using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
@@ -8,7 +8,6 @@ using erp.Module.BusinessObjects.Comun;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Planificacion;
 using erp.Module.BusinessObjects.Ventas;
-using erp.Module.BusinessObjects;
 using erp.Module.Helpers.Comun;
 
 namespace erp.Module.BusinessObjects.Crm;
@@ -29,20 +28,20 @@ public enum EstadoOportunidad
 [ImageName("BO_Lead")]
 public class Oportunidad(Session session) : EntidadBase(session)
 {
-    private string _titulo;
-    private string _descripcion;
-    private Cliente _cliente;
     private Campana _campana;
-    private Medio _medio;
-    private Fuente _fuente;
+    private Cliente _cliente;
+    private string _descripcion;
     private EstadoOportunidad _estado;
-    private double _probabilidad;
-    private decimal _valorEstimado;
-    private decimal _sumaPresupuestos;
-    private decimal _sumaPedidos;
     private DateTime _fechaCierreEstimada;
-    private ApplicationUser _responsable;
+    private Fuente _fuente;
+    private Medio _medio;
     private string _notas;
+    private double _probabilidad;
+    private ApplicationUser _responsable;
+    private decimal _sumaPedidos;
+    private decimal _sumaPresupuestos;
+    private string _titulo;
+    private decimal _valorEstimado;
 
     [Size(255)]
     [RuleRequiredField]
@@ -134,26 +133,6 @@ public class Oportunidad(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(SumaPedidos), ref _sumaPedidos, value);
     }
 
-    public void ActualizarSumaPresupuestos(bool forceChangeEvents)
-    {
-        if (IsLoading || IsSaving) return;
-        var newSuma = MoneyMath.RoundMoney(Presupuestos.Sum(p => p.BaseImponible));
-        if (SumaPresupuestos != newSuma)
-        {
-            SumaPresupuestos = newSuma;
-        }
-    }
-
-    public void ActualizarSumaPedidos(bool forceChangeEvents)
-    {
-        if (IsLoading || IsSaving) return;
-        var newSuma = MoneyMath.RoundMoney(Pedidos.Sum(p => p.BaseImponible));
-        if (SumaPedidos != newSuma)
-        {
-            SumaPedidos = newSuma;
-        }
-    }
-
     [XafDisplayName("Fecha Cierre Estimada")]
     public DateTime FechaCierreEstimada
     {
@@ -183,19 +162,10 @@ public class Oportunidad(Session session) : EntidadBase(session)
     {
         get
         {
-            var collection = GetCollection<Presupuesto>(nameof(Presupuestos));
-            if (!collection.IsLoaded)
-            {
-                collection.CollectionChanged += Presupuestos_CollectionChanged;
-            }
+            var collection = GetCollection<Presupuesto>();
+            if (!collection.IsLoaded) collection.CollectionChanged += Presupuestos_CollectionChanged;
             return collection;
         }
-    }
-
-    private void Presupuestos_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
-    {
-        if (IsLoading || IsSaving || IsDeleted) return;
-        ActualizarSumaPresupuestos(true);
     }
 
     [DevExpress.Xpo.Aggregated]
@@ -205,13 +175,44 @@ public class Oportunidad(Session session) : EntidadBase(session)
     {
         get
         {
-            var collection = GetCollection<Pedido>(nameof(Pedidos));
-            if (!collection.IsLoaded)
-            {
-                collection.CollectionChanged += Pedidos_CollectionChanged;
-            }
+            var collection = GetCollection<Pedido>();
+            if (!collection.IsLoaded) collection.CollectionChanged += Pedidos_CollectionChanged;
             return collection;
         }
+    }
+
+    [Association("Oportunidad-Tareas")]
+    [XafDisplayName("Tareas")]
+    public XPCollection<Tarea> Tareas => GetCollection<Tarea>();
+
+    [DevExpress.Xpo.Aggregated]
+    [Association("Oportunidad-Fotos")]
+    [XafDisplayName("Imágenes")]
+    public XPCollection<Imagen> Imagenes => GetCollection<Imagen>();
+
+    [DevExpress.Xpo.Aggregated]
+    [Association("Oportunidad-Adjuntos")]
+    [XafDisplayName("Adjuntos")]
+    public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
+
+    public void ActualizarSumaPresupuestos(bool forceChangeEvents)
+    {
+        if (IsLoading || IsSaving) return;
+        var newSuma = MoneyMath.RoundMoney(Presupuestos.Sum(p => p.BaseImponible));
+        if (SumaPresupuestos != newSuma) SumaPresupuestos = newSuma;
+    }
+
+    public void ActualizarSumaPedidos(bool forceChangeEvents)
+    {
+        if (IsLoading || IsSaving) return;
+        var newSuma = MoneyMath.RoundMoney(Pedidos.Sum(p => p.BaseImponible));
+        if (SumaPedidos != newSuma) SumaPedidos = newSuma;
+    }
+
+    private void Presupuestos_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
+    {
+        if (IsLoading || IsSaving || IsDeleted) return;
+        ActualizarSumaPresupuestos(true);
     }
 
     private void Pedidos_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
@@ -219,20 +220,6 @@ public class Oportunidad(Session session) : EntidadBase(session)
         if (IsLoading || IsSaving || IsDeleted) return;
         ActualizarSumaPedidos(true);
     }
-
-    [Association("Oportunidad-Tareas")]
-    [XafDisplayName("Tareas")]
-    public XPCollection<Tarea> Tareas => GetCollection<Tarea>(nameof(Tareas));
-
-    [DevExpress.Xpo.Aggregated]
-    [Association("Oportunidad-Fotos")]
-    [XafDisplayName("Imágenes")]
-    public XPCollection<Imagen> Imagenes => GetCollection<Imagen>(nameof(Imagenes));
-
-    [DevExpress.Xpo.Aggregated]
-    [Association("Oportunidad-Adjuntos")]
-    [XafDisplayName("Adjuntos")]
-    public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>(nameof(Adjuntos));
 
     public override void AfterConstruction()
     {

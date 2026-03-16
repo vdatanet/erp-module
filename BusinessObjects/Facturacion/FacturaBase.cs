@@ -1,15 +1,11 @@
-using System.ComponentModel;
-using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.ConditionalAppearance;
+using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Ventas;
-using erp.Module.BusinessObjects.Contactos;
-using erp.Module.BusinessObjects.Crm;
 using erp.Module.Helpers.Contactos;
-using VeriFactu.Xml.Factu;
 using VeriFactu.Xml.Factu.Alta;
 
 namespace erp.Module.BusinessObjects.Facturacion;
@@ -22,19 +18,25 @@ namespace erp.Module.BusinessObjects.Facturacion;
     Criteria = "EstadoVeriFactu = 'Enviado'", Context = "Any", Enabled = false)]
 public abstract class FacturaBase(Session session) : DocumentoVenta(session)
 {
-    private ValoresEstadoVeriFactu _estadoVeriFactu;
-    private string _estadoEntradaFactura;
+    public enum ValoresEstadoVeriFactu
+    {
+        Borrador,
+        Enviado
+    }
+
     private string _codigoErrorEntradaFactura;
+    private string _csv;
+    private bool _esSubsanacion;
+    private string _estadoEntradaFactura;
+    private ValoresEstadoVeriFactu _estadoVeriFactu;
+    private MediaDataObject _qr;
+    private string _respuestaAgenciaTributaria;
+    private string _texto;
     private TipoFactura _tipoFactura;
     private TipoRectificativa _tipoRectificativa;
-    private bool _esSubsanacion;
-    private string _texto;
-    private string _respuestaAgenciaTributaria;
-    private string _xmlAgenciaTributaria;
-    private string _csv;
     private string _urlValidacion;
-    private MediaDataObject _qr;
-    
+    private string _xmlAgenciaTributaria;
+
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
     [XafDisplayName("Estado VeriFactu")]
@@ -85,7 +87,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
         get => _esSubsanacion;
         set => SetPropertyValue(nameof(EsSubsanacion), ref _esSubsanacion, value);
     }
-    
+
     [Size(500)]
     [XafDisplayName("Texto")]
     public string Texto
@@ -142,13 +144,10 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
         set => SetPropertyValue(nameof(Qr), ref _qr, value);
     }
 
-    public enum ValoresEstadoVeriFactu
+    public override bool GetAsignarNumeroAlGuardar()
     {
-        Borrador,
-        Enviado
+        return false;
     }
-    
-    public override bool GetAsignarNumeroAlGuardar() => false;
 
     public override void AfterConstruction()
     {
@@ -165,6 +164,6 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         Texto ??= companyInfo?.TextoDefectoVeriFactu;
     }
-    
+
     public abstract bool EsValida();
 }

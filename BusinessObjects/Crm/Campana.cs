@@ -33,5 +33,5 @@ public class Campana(Session session) : EntidadBase(session)
 
     [Association("Campana-Oportunidades")]
     [XafDisplayName("Oportunidades")]
-    public XPCollection<Oportunidad> Oportunidades => GetCollection<Oportunidad>(nameof(Oportunidades));
+    public XPCollection<Oportunidad> Oportunidades => GetCollection<Oportunidad>();
 }

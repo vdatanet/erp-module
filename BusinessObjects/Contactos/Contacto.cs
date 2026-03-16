@@ -16,21 +16,21 @@ namespace erp.Module.BusinessObjects.Contactos;
 [DefaultProperty(nameof(Nombre))]
 public class Contacto(Session session) : EntidadBase(session)
 {
+    private string _codigoPostal;
+    private string _correoElectronico;
+    private string _direccion;
+    private MediaDataObject _foto;
+    private string _movil;
+    private string _nif;
     private string _nombre;
     private string _nombreComercial;
-    private string _nif;
-    private string _direccion;
-    private Pais _pais;
-    private Provincia _provincia;
-    private Poblacion _poblacion;
-    private string _codigoPostal;
-    private string _telefono;
-    private string _movil;
-    private string _correoElectronico;
-    private string _sitioWeb;
-    private MediaDataObject _foto;
     private string _notas;
-    
+    private Pais _pais;
+    private Poblacion _poblacion;
+    private Provincia _provincia;
+    private string _sitioWeb;
+    private string _telefono;
+
     [Size(255)]
     [RuleRequiredField]
     [XafDisplayName("Nombre")]
@@ -87,7 +87,7 @@ public class Contacto(Session session) : EntidadBase(session)
         get => _poblacion;
         set => SetPropertyValue(nameof(Poblacion), ref _poblacion, value);
     }
-    
+
     [Size(10)]
     [XafDisplayName("Código Postal")]
     public string CodigoPostal
@@ -123,14 +123,14 @@ public class Contacto(Session session) : EntidadBase(session)
         get => _sitioWeb;
         set => SetPropertyValue(nameof(SitioWeb), ref _sitioWeb, value);
     }
-    
+
     [XafDisplayName("Foto")]
     public MediaDataObject Foto
     {
         get => _foto;
         set => SetPropertyValue(nameof(Foto), ref _foto, value);
     }
-    
+
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Notas")]
     public string Notas
@@ -138,19 +138,19 @@ public class Contacto(Session session) : EntidadBase(session)
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
-    
+
     [DevExpress.Xpo.Aggregated]
     [Association("Contacto-Tareas")]
     [XafDisplayName("Tareas")]
-    public XPCollection<Tarea> Tareas => GetCollection<Tarea>(nameof(Tareas));
-    
+    public XPCollection<Tarea> Tareas => GetCollection<Tarea>();
+
     [DevExpress.Xpo.Aggregated]
     [Association("Contacto-Fotos")]
     [XafDisplayName("Imágenes")]
-    public XPCollection<Imagen> Imagenes => GetCollection<Imagen>(nameof(Imagenes));
-    
+    public XPCollection<Imagen> Imagenes => GetCollection<Imagen>();
+
     [DevExpress.Xpo.Aggregated]
     [Association("Contacto-Adjuntos")]
     [XafDisplayName("Adjuntos")]
-    public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>(nameof(Adjuntos));
+    public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
 }

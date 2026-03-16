@@ -4,11 +4,9 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Comun;
-using erp.Module.BusinessObjects.Productos;
-using erp.Module.BusinessObjects;
-
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
+using erp.Module.BusinessObjects.Productos;
 
 namespace erp.Module.BusinessObjects.Planificacion;
 
@@ -17,23 +15,25 @@ namespace erp.Module.BusinessObjects.Planificacion;
 [ImageName("BO_Task")]
 public class Tarea(Session session) : EntidadBase(session)
 {
-    private string _nombre;
+    private ApplicationUser _asignadaA;
+    private ApplicationUser _completadaPor;
+    private Contacto _contacto;
     private string _descripcion;
+    private DocumentoVenta _documentoVenta;
+    private DateTime _fechaFin;
+
+    private DateTime _fechaInicio;
+
     //private string _status;
     //private string _priority;
     //private string _type;
     private DateTime _fechaVencimiento;
-    private DateTime _fechaInicio;
-    private DateTime _fechaFin;
-    private ApplicationUser _propietario;
-    private ApplicationUser _asignadaA;
-    private ApplicationUser _completadaPor;
-    private Tarea _tareaPadre;
-    private Contacto _contacto;
-    private Producto _producto;
-    private DocumentoVenta _documentoVenta;
-    private Oportunidad _oportunidad;
+    private string _nombre;
     private string _notas;
+    private Oportunidad _oportunidad;
+    private Producto _producto;
+    private ApplicationUser _propietario;
+    private Tarea _tareaPadre;
 
     [Size(255)]
     [XafDisplayName("Nombre")]
@@ -92,7 +92,7 @@ public class Tarea(Session session) : EntidadBase(session)
         get => _completadaPor;
         set => SetPropertyValue(nameof(CompletadaPor), ref _completadaPor, value);
     }
-    
+
     [Association("Tarea-Subtareas")]
     [XafDisplayName("Tarea Padre")]
     public Tarea TareaPadre
@@ -116,7 +116,7 @@ public class Tarea(Session session) : EntidadBase(session)
         get => _producto;
         set => SetPropertyValue(nameof(Producto), ref _producto, value);
     }
-    
+
     [Association("DocumentoVenta-Tareas")]
     [XafDisplayName("Documento Venta")]
     public DocumentoVenta DocumentoVenta
@@ -144,15 +144,15 @@ public class Tarea(Session session) : EntidadBase(session)
     [DevExpress.Xpo.Aggregated]
     [Association("Tarea-Subtareas")]
     [XafDisplayName("Subtareas")]
-    public XPCollection<Tarea> Subtareas => GetCollection<Tarea>(nameof(Subtareas));
+    public XPCollection<Tarea> Subtareas => GetCollection<Tarea>();
 
     [DevExpress.Xpo.Aggregated]
     [Association("Tarea-Fotos")]
     [XafDisplayName("Imágenes")]
-    public XPCollection<Imagen> Imagenes => GetCollection<Imagen>(nameof(Imagenes));
-    
+    public XPCollection<Imagen> Imagenes => GetCollection<Imagen>();
+
     [DevExpress.Xpo.Aggregated]
     [Association("Tarea-Adjuntos")]
     [XafDisplayName("Adjuntos")]
-    public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>(nameof(Adjuntos));
+    public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
 }

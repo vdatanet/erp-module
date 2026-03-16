@@ -4,14 +4,12 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Crm;
 
-using erp.Module.BusinessObjects.Contactos;
-
 namespace erp.Module.BusinessObjects.Ventas;
 
 [DefaultClassOptions]
 [NavigationItem("Ventas")]
 [ImageName("BO_Order")]
-public class Pedido(Session session): DocumentoVenta(session)
+public class Pedido(Session session) : DocumentoVenta(session)
 {
     private Oportunidad _oportunidad;
 
@@ -24,10 +22,7 @@ public class Pedido(Session session): DocumentoVenta(session)
         {
             var oldOportunidad = _oportunidad;
             if (!SetPropertyValue(nameof(Oportunidad), ref _oportunidad, value) || IsLoading || IsSaving) return;
-            if (value != null && value.Cliente != null)
-            {
-                Cliente = value.Cliente;
-            }
+            if (value != null && value.Cliente != null) Cliente = value.Cliente;
 
             oldOportunidad?.ActualizarSumaPedidos(true);
             _oportunidad?.ActualizarSumaPedidos(true);
@@ -38,9 +33,6 @@ public class Pedido(Session session): DocumentoVenta(session)
     {
         base.OnChanged(propertyName, oldValue, newValue);
         if (IsLoading || IsSaving || IsDeleted) return;
-        if (propertyName == nameof(BaseImponible))
-        {
-            Oportunidad?.ActualizarSumaPedidos(true);
-        }
+        if (propertyName == nameof(BaseImponible)) Oportunidad?.ActualizarSumaPedidos(true);
     }
 }

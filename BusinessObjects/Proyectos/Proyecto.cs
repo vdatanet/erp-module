@@ -15,9 +15,9 @@ namespace erp.Module.BusinessObjects.Proyectos;
 public class Proyecto(Session session) : EntidadBase(session)
 {
     private string _codigo;
-    private string _nombre;
     private string _descripcion;
     private bool _estaActivo = true;
+    private string _nombre;
 
     [Size(64)]
     [RuleRequiredField]
@@ -56,9 +56,9 @@ public class Proyecto(Session session) : EntidadBase(session)
 
     [Association("Proyecto-Actividades")]
     [XafDisplayName("Actividades")]
-    public XPCollection<ActividadProyecto> Actividades => GetCollection<ActividadProyecto>(nameof(Actividades));
+    public XPCollection<ActividadProyecto> Actividades => GetCollection<ActividadProyecto>();
 
     [Association("Proyecto-RegistrosJornada")]
     [XafDisplayName("Registros de Jornada")]
-    public XPCollection<RegistroJornada> RegistrosJornadas => GetCollection<RegistroJornada>(nameof(RegistrosJornadas));
+    public XPCollection<RegistroJornada> RegistrosJornadas => GetCollection<RegistroJornada>();
 }

@@ -4,8 +4,9 @@ public static class AmountCalculator
 {
     public static decimal GetTaxableAmount(decimal quantity, decimal unitPrice, decimal discountPercent)
     {
-        return MoneyMath.RoundMoney(quantity * unitPrice * (1 - discountPercent / 100m), 2);
+        return MoneyMath.RoundMoney(quantity * unitPrice * (1 - discountPercent / 100m));
     }
+
     public static decimal GetTaxAmount(decimal taxableAmount, decimal rate, bool isWithHolding)
     {
         var sign = isWithHolding ? -1m : 1m;

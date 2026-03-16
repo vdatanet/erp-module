@@ -3,8 +3,8 @@ using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
-using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Impuestos;
 
 namespace erp.Module.BusinessObjects.Base.Ventas;
@@ -13,17 +13,17 @@ namespace erp.Module.BusinessObjects.Base.Ventas;
 [DefaultProperty(nameof(TipoImpuesto))]
 public class ImpuestoLineaDocumentoVenta(Session session) : EntidadBase(session)
 {
+    private decimal _baseImponible;
+    private Cuenta _cuenta;
+    private bool _esCompuesto;
+    private bool _esRetencion;
+    private decimal _importeImpuestos;
     private LineaDocumentoVenta _lineaDocumentoVenta;
-    private TipoImpuesto _tipoImpuesto;
     private string _nombre;
     private string _notas;
     private int _secuencia;
-    private Cuenta _cuenta;
     private decimal _tipo;
-    private bool _esCompuesto;
-    private bool _esRetencion;
-    private decimal _baseImponible;
-    private decimal _importeImpuestos;
+    private TipoImpuesto _tipoImpuesto;
 
     [Association("LineaDocumentoVenta-Impuestos")]
     [XafDisplayName("Línea Documento Venta")]
@@ -42,30 +42,6 @@ public class ImpuestoLineaDocumentoVenta(Session session) : EntidadBase(session)
             if (SetPropertyValue(nameof(TipoImpuesto), ref _tipoImpuesto, value))
                 AplicarInstantaneaTipoImpuesto(value);
         }
-    }
-
-    private void AplicarInstantaneaTipoImpuesto(TipoImpuesto t)
-    {
-        if (IsLoading || IsSaving) return;
-
-        if (t == null)
-        {
-            Nombre = null;
-            Notas = null;
-            Secuencia = 0;
-            Cuenta = null;
-            Tipo = 0m;
-            EsCompuesto = false;
-            EsRetencion = false;
-            return;
-        }
-
-        Nombre = t.Nombre;
-        Notas = t.Notas;
-        Secuencia = t.Secuencia;
-        Cuenta = t.Cuenta;
-        Tipo = t.Tipo;
-        EsRetencion = t.EsRetencion;
     }
 
     [Size(255)]
@@ -138,6 +114,30 @@ public class ImpuestoLineaDocumentoVenta(Session session) : EntidadBase(session)
     {
         get => _importeImpuestos;
         set => SetPropertyValue(nameof(ImporteImpuestos), ref _importeImpuestos, value);
+    }
+
+    private void AplicarInstantaneaTipoImpuesto(TipoImpuesto t)
+    {
+        if (IsLoading || IsSaving) return;
+
+        if (t == null)
+        {
+            Nombre = null;
+            Notas = null;
+            Secuencia = 0;
+            Cuenta = null;
+            Tipo = 0m;
+            EsCompuesto = false;
+            EsRetencion = false;
+            return;
+        }
+
+        Nombre = t.Nombre;
+        Notas = t.Notas;
+        Secuencia = t.Secuencia;
+        Cuenta = t.Cuenta;
+        Tipo = t.Tipo;
+        EsRetencion = t.EsRetencion;
     }
 
     public override void AfterConstruction()

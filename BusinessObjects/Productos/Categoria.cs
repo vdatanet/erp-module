@@ -13,10 +13,10 @@ namespace erp.Module.BusinessObjects.Productos;
 [ImageName("BO_Product_Group")]
 public class Categoria(Session session) : EntidadBase(session)
 {
-    private string _nombre;
     private Categoria _categoriaPadre;
-    private bool _estaActivo;
     private bool _disponibleEnTpV;
+    private bool _estaActivo;
+    private string _nombre;
     private string _notas;
 
     [Size(255)]
@@ -65,7 +65,7 @@ public class Categoria(Session session) : EntidadBase(session)
         get
         {
             var sb = new StringBuilder();
-            Categoria current = this;
+            var current = this;
             while (current != null)
             {
                 if (sb.Length > 0)
@@ -80,11 +80,11 @@ public class Categoria(Session session) : EntidadBase(session)
 
     [Association("Categoria-Subcategorias")]
     [XafDisplayName("Subcategorías")]
-    public XPCollection<Categoria> Subcategorias => GetCollection<Categoria>(nameof(Subcategorias));
+    public XPCollection<Categoria> Subcategorias => GetCollection<Categoria>();
 
-    [Association("Categoria-Productos")] 
+    [Association("Categoria-Productos")]
     [XafDisplayName("Productos")]
-    public XPCollection<Producto> Productos => GetCollection<Producto>(nameof(Productos));
+    public XPCollection<Producto> Productos => GetCollection<Producto>();
 
     public override void AfterConstruction()
     {

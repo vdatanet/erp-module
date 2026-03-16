@@ -1,10 +1,6 @@
-using System.Text;
-using System.Xml.Linq;
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
 using DevExpress.Persistent.Base;
-using DevExpress.Persistent.BaseImpl;
-using erp.Module.BusinessObjects.Configuracion;
 using erp.Module.Services;
 using Microsoft.Extensions.DependencyInjection;
 using FacturaBase = erp.Module.BusinessObjects.Facturacion.FacturaBase;

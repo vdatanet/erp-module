@@ -3,7 +3,6 @@ using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.ControlHorario;
-using erp.Module.BusinessObjects;
 
 namespace erp.Module.BusinessObjects.Contactos;
 
@@ -16,9 +15,9 @@ public class Empleado(Session session) : Contacto(session)
     private string _ubicacion;
     private DateTime? _ultimoRegistroEntrada;
     private DateTime? _ultimoRegistroSalida;
-    
+
     private ApplicationUser _usuario;
-    
+
     [XafDisplayName("Usuario de Aplicación")]
     public ApplicationUser Usuario
     {
@@ -26,7 +25,7 @@ public class Empleado(Session session) : Contacto(session)
         set
         {
             if (_usuario == value) return;
-            ApplicationUser anterior = _usuario;
+            var anterior = _usuario;
             _usuario = value;
             if (IsLoading) return;
             if (anterior != null && anterior.Empleado == this)
@@ -44,7 +43,7 @@ public class Empleado(Session session) : Contacto(session)
         get => _estaTrabajando;
         set => SetPropertyValue(nameof(EstaTrabajando), ref _estaTrabajando, value);
     }
-    
+
     [XafDisplayName("Ubicación")]
     [ModelDefault("AllowEdit", "False")]
     [Size(SizeAttribute.Unlimited)]
@@ -71,8 +70,8 @@ public class Empleado(Session session) : Contacto(session)
         get => _ultimoRegistroSalida;
         set => SetPropertyValue(nameof(UltimoRegistroSalida), ref _ultimoRegistroSalida, value);
     }
-    
+
     [Association("Empleado-RegistrosJornada")]
     [XafDisplayName("Registros de Tiempo")]
-    public XPCollection<RegistroJornada> RegistrosJornada => GetCollection<RegistroJornada>(nameof(RegistrosJornada));
+    public XPCollection<RegistroJornada> RegistrosJornada => GetCollection<RegistroJornada>();
 }
