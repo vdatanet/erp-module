@@ -10,7 +10,7 @@ namespace erp.Module.BusinessObjects.Configuraciones;
 [NavigationItem("Configuraciones")]
 [XafDisplayName("Secuencia")]
 [DefaultProperty(nameof(Nombre))]
-[ImageName("BO_Secuencia")]
+[ImageName("Number")]
 public class Secuencia(Session session) : BaseObject(session)
 {
     private string _nombre;

@@ -327,5 +327,33 @@
         <ColumnInfo Id="Nombre" Index="0" />
       </Columns>
     </ListView>
+    <DetailView Id="Secuencia_DetailView" FreezeLayout="True">
+      <Layout IsNewNode="True" Removed="True">
+        <LayoutGroup Id="Main" Index="0" ShowCaption="False" IsNewNode="True">
+          <LayoutGroup Id="SimpleEditors" Index="0" ShowCaption="False" IsNewNode="True">
+            <LayoutGroup Id="Secuencia" Index="0" ShowCaption="False" IsNewNode="True">
+              <LayoutItem Id="Nombre" ViewItem="Nombre" ShowCaption="" Index="0" IsNewNode="True" />
+              <LayoutItem Id="Prefijo" ViewItem="Prefijo" ShowCaption="" Index="1" IsNewNode="True" />
+              <LayoutItem Id="ValorActual" ViewItem="ValorActual" ShowCaption="" Index="2" IsNewNode="True" />
+              <LayoutItem Id="Relleno" ViewItem="Relleno" ShowCaption="" Index="3" IsNewNode="True" />
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="Secuencia_ListView" FreezeColumnIndices="True" Caption="Secuencias">
+      <Columns>
+        <ColumnInfo Id="Oid" Index="-1" />
+        <ColumnInfo Id="Nombre" Index="0" />
+        <ColumnInfo Id="Prefijo" Index="1" />
+        <ColumnInfo Id="ValorActual" Index="2" />
+        <ColumnInfo Id="Relleno" Index="3" />
+      </Columns>
+    </ListView>
+    <ListView Id="Secuencia_LookupListView" Caption="Secuencias" FreezeColumnIndices="True">
+      <Columns>
+        <ColumnInfo Id="Nombre" Index="0" />
+      </Columns>
+    </ListView>
   </Views>
 </Application>
