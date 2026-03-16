@@ -21,6 +21,14 @@ public class Presupuesto(Session session): DocumentoVenta(session)
     public Oportunidad Oportunidad
     {
         get => _oportunidad;
-        set => SetPropertyValue(nameof(Oportunidad), ref _oportunidad, value);
+        set
+        {
+            if (!SetPropertyValue(nameof(Oportunidad), ref _oportunidad, value) || IsLoading || IsSaving ||
+                value == null) return;
+            if (value.Cliente != null)
+            {
+                Cliente = value.Cliente;
+            }
+        }
     }
 }
