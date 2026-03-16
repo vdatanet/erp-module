@@ -98,5 +98,11 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
+    <ListView Id="Cliente_ListView" Caption="Clientes" />
+    <ListView Id="Cliente_LookupListView" FreezeColumnIndices="True" Caption="Clientes">
+      <Columns>
+        <ColumnInfo Id="Nombre" Index="0" />
+      </Columns>
+    </ListView>
   </Views>
 </Application>
