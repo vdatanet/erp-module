@@ -12,6 +12,7 @@ using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.BaseImpl.MultiTenancy;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
 using erp.Module.BusinessObjects;
+using erp.Module.BusinessObjects.Configuracion;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.DatabaseUpdate;
@@ -76,6 +77,17 @@ public class Updater : ModuleUpdater {
 
         ObjectSpace.CommitChanges(); //This line persists created object(s).
 #endif
+        if (TenantId != null)
+        {
+            InformacionEmpresa informacionEmpresa = ObjectSpace.FirstOrDefault<InformacionEmpresa>(i => true);
+            if (informacionEmpresa == null)
+            {
+                informacionEmpresa = ObjectSpace.CreateObject<InformacionEmpresa>();
+                informacionEmpresa.Nombre = "Empresa por Defecto";
+                informacionEmpresa.Nif = "B00000000";
+                ObjectSpace.CommitChanges();
+            }
+        }
     }
     public override void UpdateDatabaseBeforeUpdateSchema() {
         base.UpdateDatabaseBeforeUpdateSchema();
