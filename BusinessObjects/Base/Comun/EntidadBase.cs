@@ -5,6 +5,7 @@ using DevExpress.ExpressApp.Xpo;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.BusinessObjects.Base.Comun;
@@ -13,8 +14,8 @@ namespace erp.Module.BusinessObjects.Base.Comun;
 [ModelDefault("IsCloneable", "True")]
 public abstract class EntidadBase(Session session) : BaseObject(session)
 {
-    private UsuarioAplicacion _creadoPor;
-    private UsuarioAplicacion _modificadoPor;
+    private ApplicationUser _creadoPor;
+    private ApplicationUser _modificadoPor;
     private DateTime? _creadoEl;
     private DateTime? _modificadoEl;
 
@@ -22,7 +23,7 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
     [NonCloneable]
     [XafDisplayName("Creado por")]
-    public UsuarioAplicacion CreadoPor
+    public ApplicationUser CreadoPor
     {
         get => _creadoPor;
         set => SetPropertyValue(nameof(CreadoPor), ref _creadoPor, value);
@@ -32,7 +33,7 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
     [NonCloneable]
     [XafDisplayName("Modificado por")]
-    public UsuarioAplicacion ModificadoPor
+    public ApplicationUser ModificadoPor
     {
         get => _modificadoPor;
         set => SetPropertyValue(nameof(ModificadoPor), ref _modificadoPor, value);
@@ -75,9 +76,9 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
         }
     }
 
-    private UsuarioAplicacion GetCurrentUser()
+    private ApplicationUser GetCurrentUser()
     {
-        return Session.GetObjectByKey<UsuarioAplicacion>(
+        return Session.GetObjectByKey<ApplicationUser>(
             Session.ServiceProvider.GetRequiredService<ISecurityStrategyBase>().UserId);
     }
 }

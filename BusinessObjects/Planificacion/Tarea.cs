@@ -5,6 +5,7 @@ using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Comun;
 using erp.Module.BusinessObjects.Productos;
+using erp.Module.BusinessObjects;
 
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
@@ -24,9 +25,9 @@ public class Tarea(Session session) : EntidadBase(session)
     private DateTime _fechaVencimiento;
     private DateTime _fechaInicio;
     private DateTime _fechaFin;
-    private UsuarioAplicacion _propietario;
-    private UsuarioAplicacion _asignadaA;
-    private UsuarioAplicacion _completadaPor;
+    private ApplicationUser _propietario;
+    private ApplicationUser _asignadaA;
+    private ApplicationUser _completadaPor;
     private Tarea _tareaPadre;
     private Contacto _contacto;
     private Producto _producto;
@@ -72,21 +73,21 @@ public class Tarea(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Propietario")]
-    public UsuarioAplicacion Propietario
+    public ApplicationUser Propietario
     {
         get => _propietario;
         set => SetPropertyValue(nameof(Propietario), ref _propietario, value);
     }
 
     [XafDisplayName("Asignada A")]
-    public UsuarioAplicacion AsignadaA
+    public ApplicationUser AsignadaA
     {
         get => _asignadaA;
         set => SetPropertyValue(nameof(AsignadaA), ref _asignadaA, value);
     }
 
     [XafDisplayName("Completada Por")]
-    public UsuarioAplicacion CompletadaPor
+    public ApplicationUser CompletadaPor
     {
         get => _completadaPor;
         set => SetPropertyValue(nameof(CompletadaPor), ref _completadaPor, value);

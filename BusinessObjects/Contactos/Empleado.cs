@@ -3,6 +3,7 @@ using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.ControlHorario;
+using erp.Module.BusinessObjects;
 
 namespace erp.Module.BusinessObjects.Contactos;
 
@@ -16,16 +17,16 @@ public class Empleado(Session session) : Contacto(session)
     private DateTime? _ultimoRegistroEntrada;
     private DateTime? _ultimoRegistroSalida;
     
-    private UsuarioAplicacion _usuario;
+    private ApplicationUser _usuario;
     
     [XafDisplayName("Usuario de Aplicación")]
-    public UsuarioAplicacion Usuario
+    public ApplicationUser Usuario
     {
         get => _usuario;
         set
         {
             if (_usuario == value) return;
-            UsuarioAplicacion anterior = _usuario;
+            ApplicationUser anterior = _usuario;
             _usuario = value;
             if (IsLoading) return;
             if (anterior != null && anterior.Empleado == this)

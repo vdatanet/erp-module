@@ -8,6 +8,7 @@ using erp.Module.BusinessObjects.Comun;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Planificacion;
 using erp.Module.BusinessObjects.Ventas;
+using erp.Module.BusinessObjects;
 using erp.Module.Helpers.Comun;
 
 namespace erp.Module.BusinessObjects.Crm;
@@ -40,7 +41,7 @@ public class Oportunidad(Session session) : EntidadBase(session)
     private decimal _sumaPresupuestos;
     private decimal _sumaPedidos;
     private DateTime _fechaCierreEstimada;
-    private UsuarioAplicacion _responsable;
+    private ApplicationUser _responsable;
     private string _notas;
 
     [Size(255)]
@@ -161,7 +162,7 @@ public class Oportunidad(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Responsable")]
-    public UsuarioAplicacion Responsable
+    public ApplicationUser Responsable
     {
         get => _responsable;
         set => SetPropertyValue(nameof(Responsable), ref _responsable, value);

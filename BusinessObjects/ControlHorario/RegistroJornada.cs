@@ -7,6 +7,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Proyectos;
+using erp.Module.BusinessObjects;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.BusinessObjects.ControlHorario;
@@ -212,9 +213,9 @@ public class RegistroJornada(Session session) : EntidadBase(session)
             : TimeSpan.Zero;
     }
 
-    private UsuarioAplicacion GetCurrentUser()
+    private ApplicationUser GetCurrentUser()
     {
-        return Session.GetObjectByKey<UsuarioAplicacion>(
+        return Session.GetObjectByKey<ApplicationUser>(
             Session.ServiceProvider.GetRequiredService<ISecurityStrategyBase>().UserId);
     }
 

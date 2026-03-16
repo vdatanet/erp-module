@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Text;
 using DevExpress.ExpressApp;
+using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Security;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
@@ -30,7 +31,7 @@ public class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLoginInfo,
 
     [Browsable(false)]
     [NonCloneable]
-    [Aggregated, Association("User-LoginInfo")]
+    [DevExpress.Xpo.Aggregated, Association("User-LoginInfo")]
     public XPCollection<ApplicationUserLoginInfo> LoginInfo {
         get { return GetCollection<ApplicationUserLoginInfo>(nameof(LoginInfo)); }
     }
@@ -43,5 +44,13 @@ public class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLoginInfo,
         result.ProviderUserKey = providerUserKey;
         result.User = this;
         return result;
+    }
+
+    private erp.Module.BusinessObjects.Contactos.Empleado _empleado;
+    [XafDisplayName("Empleado")]
+    public erp.Module.BusinessObjects.Contactos.Empleado Empleado
+    {
+        get => _empleado;
+        set => SetPropertyValue(nameof(Empleado), ref _empleado, value);
     }
 }
