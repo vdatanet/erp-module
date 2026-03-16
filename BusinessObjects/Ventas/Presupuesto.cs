@@ -30,8 +30,8 @@ public class Presupuesto(Session session): DocumentoVenta(session)
                 Cliente = value.Cliente;
             }
 
-            oldOportunidad?.ActualizarSumaPresupuestos();
-            _oportunidad?.ActualizarSumaPresupuestos();
+            oldOportunidad?.ActualizarSumaPresupuestos(true);
+            _oportunidad?.ActualizarSumaPresupuestos(true);
         }
     }
 
@@ -41,7 +41,7 @@ public class Presupuesto(Session session): DocumentoVenta(session)
         if (IsLoading || IsSaving || IsDeleted) return;
         if (propertyName == nameof(BaseImponible))
         {
-            Oportunidad?.ActualizarSumaPresupuestos();
+            Oportunidad?.ActualizarSumaPresupuestos(true);
         }
     }
 }

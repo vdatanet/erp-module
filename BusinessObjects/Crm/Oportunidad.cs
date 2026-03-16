@@ -133,16 +133,24 @@ public class Oportunidad(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(SumaPedidos), ref _sumaPedidos, value);
     }
 
-    public void ActualizarSumaPresupuestos()
+    public void ActualizarSumaPresupuestos(bool forceChangeEvents)
     {
         if (IsLoading || IsSaving) return;
-        SumaPresupuestos = MoneyMath.RoundMoney(Presupuestos.Sum(p => p.BaseImponible));
+        var newSuma = MoneyMath.RoundMoney(Presupuestos.Sum(p => p.BaseImponible));
+        if (SumaPresupuestos != newSuma)
+        {
+            SumaPresupuestos = newSuma;
+        }
     }
 
-    public void ActualizarSumaPedidos()
+    public void ActualizarSumaPedidos(bool forceChangeEvents)
     {
         if (IsLoading || IsSaving) return;
-        SumaPedidos = MoneyMath.RoundMoney(Pedidos.Sum(p => p.BaseImponible));
+        var newSuma = MoneyMath.RoundMoney(Pedidos.Sum(p => p.BaseImponible));
+        if (SumaPedidos != newSuma)
+        {
+            SumaPedidos = newSuma;
+        }
     }
 
     [XafDisplayName("Fecha Cierre Estimada")]
@@ -167,6 +175,7 @@ public class Oportunidad(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
+    [DevExpress.Xpo.Aggregated]
     [Association("Oportunidad-Presupuestos")]
     [XafDisplayName("Presupuestos")]
     public XPCollection<Presupuesto> Presupuestos
@@ -185,9 +194,10 @@ public class Oportunidad(Session session) : EntidadBase(session)
     private void Presupuestos_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
     {
         if (IsLoading || IsSaving || IsDeleted) return;
-        ActualizarSumaPresupuestos();
+        ActualizarSumaPresupuestos(true);
     }
 
+    [DevExpress.Xpo.Aggregated]
     [Association("Oportunidad-Pedidos")]
     [XafDisplayName("Pedidos")]
     public XPCollection<Pedido> Pedidos
@@ -206,7 +216,7 @@ public class Oportunidad(Session session) : EntidadBase(session)
     private void Pedidos_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
     {
         if (IsLoading || IsSaving || IsDeleted) return;
-        ActualizarSumaPedidos();
+        ActualizarSumaPedidos(true);
     }
 
     [Association("Oportunidad-Tareas")]

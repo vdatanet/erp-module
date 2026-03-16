@@ -29,8 +29,8 @@ public class Pedido(Session session): DocumentoVenta(session)
                 Cliente = value.Cliente;
             }
 
-            oldOportunidad?.ActualizarSumaPedidos();
-            _oportunidad?.ActualizarSumaPedidos();
+            oldOportunidad?.ActualizarSumaPedidos(true);
+            _oportunidad?.ActualizarSumaPedidos(true);
         }
     }
 
@@ -40,7 +40,7 @@ public class Pedido(Session session): DocumentoVenta(session)
         if (IsLoading || IsSaving || IsDeleted) return;
         if (propertyName == nameof(BaseImponible))
         {
-            Oportunidad?.ActualizarSumaPedidos();
+            Oportunidad?.ActualizarSumaPedidos(true);
         }
     }
 }
