@@ -16,7 +16,7 @@ namespace erp.Module.BusinessObjects.Auxiliares;
 
 public enum EstadoTarea
 {
-    [XafDisplayName("Pendiente"), ImageName("State_Validation_Pending")] Pendiente,
+    [XafDisplayName("Pendiente"), ImageName("State_Task_NotStarted")] Pendiente,
     [XafDisplayName("En Progreso"), ImageName("State_Task_InProgress")] EnProgreso,
     [XafDisplayName("Completada"), ImageName("State_Task_Completed")] Completada,
     [XafDisplayName("Cancelada"), ImageName("State_Task_Deferred")] Cancelada
