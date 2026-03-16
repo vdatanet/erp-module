@@ -1,6 +1,6 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <Deterministic>false</Deterministic>
     <AssemblyVersion>1.0.*</AssemblyVersion>
@@ -9,13 +9,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Model.DesignedDiffs.Localization.es.xafml" />
     <None Remove="Model.DesignedDiffs.xafml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Model.DesignedDiffs.Localization.es.xafml">
-      <DependentUpon>Model.DesignedDiffs.xafml</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Model.DesignedDiffs.xafml" />
@@ -24,12 +18,8 @@
     <PackageReference Include="DevExpress.ExpressApp" Version="25.2.*" />
     <PackageReference Include="DevExpress.ExpressApp.Chart" Version="25.2.*" />
     <PackageReference Include="DevExpress.ExpressApp.CloneObject" Version="25.2.*" />
-    <PackageReference Include="DevExpress.ExpressApp.CodeAnalysis" Version="25.2.5">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="DevExpress.ExpressApp.CodeAnalysis" Version="25.2.*" />
     <PackageReference Include="DevExpress.ExpressApp.ConditionalAppearance" Version="25.2.*" />
-    <PackageReference Include="DevExpress.ExpressApp.Core.All.es" Version="25.2.5" />
     <PackageReference Include="DevExpress.ExpressApp.Dashboards" Version="25.2.*" />
     <PackageReference Include="DevExpress.ExpressApp.MultiTenancy.Xpo" Version="25.2.*" />
     <PackageReference Include="DevExpress.ExpressApp.Notifications" Version="25.2.*" />
@@ -45,10 +35,9 @@
     <PackageReference Include="DevExpress.ExpressApp.Xpo" Version="25.2.*" />
     <PackageReference Include="DevExpress.Persistent.Base" Version="25.2.*" />
     <PackageReference Include="DevExpress.Persistent.BaseImpl.Xpo" Version="25.2.*" />
-    <PackageReference Include="Azure.Identity" Version="1.19.0" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.16.0" />
-    <PackageReference Include="MySqlConnector" Version="2.5.0" />
-    <PackageReference Include="VeriFactu" Version="1.0.64" />
+    <PackageReference Include="Azure.Identity" Version="1.17.1" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.2" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
+    <PackageReference Include="MySqlConnector" Version="2.4.0" />
   </ItemGroup>
 </Project>

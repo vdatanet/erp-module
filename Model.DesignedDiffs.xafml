@@ -1,8 +1,12 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" ?>
 <Application Title="erp">
-  <SchemaModules>
-    <SchemaModule Name="CloneObjectModule" Version="25.2.4.0" IsNewNode="True" />
-    <SchemaModule Name="SchedulerModuleBase" Version="25.2.4.0" IsNewNode="True" />
-    <SchemaModule Name="SystemModule" Version="25.2.4.0" IsNewNode="True" />
-  </SchemaModules>
+  <BOModel>
+    <Class Name="DevExpress.Persistent.BaseImpl.PermissionPolicy.PermissionPolicyUser" Caption="Base User" />
+  </BOModel>
+  <Options>
+    <LayoutManagerOptions RequiredFieldMark="*" />
+  </Options>
+  <Views>
+    <ListView Id="ApplicationUser_ListView" Caption="Users" />
+  </Views>
 </Application>
