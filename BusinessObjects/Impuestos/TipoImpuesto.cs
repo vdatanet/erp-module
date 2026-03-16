@@ -161,6 +161,9 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
     [Association("InformacionEmpresa-ImpuestosCompras")]
     public XPCollection<InformacionEmpresa> InformacionEmpresaImpuestosCompra => GetCollection<InformacionEmpresa>();
 
+    [NonCloneable]
+    [Association("MapeoImpuesto-ImpuestosDestino")]
+    public XPCollection<MapeoImpuesto> MapeosImpuestoDestino => GetCollection<MapeoImpuesto>();
 
     public override void AfterConstruction()
     {

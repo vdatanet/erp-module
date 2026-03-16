@@ -1,3 +1,4 @@
+using DevExpress.ExpressApp.Editors;
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
@@ -13,7 +14,6 @@ public class MapeoImpuesto(Session session) : EntidadBase(session)
 {
     private PosicionFiscal _posicionFiscal;
     private TipoImpuesto _impuestoOrigen;
-    private TipoImpuesto _impuestoDestino;
 
     [Association("PosicionFiscal-Mapeos")]
     [XafDisplayName("Posición Fiscal")]
@@ -31,11 +31,8 @@ public class MapeoImpuesto(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(ImpuestoOrigen), ref _impuestoOrigen, value);
     }
 
-    [RuleRequiredField]
-    [XafDisplayName("Impuesto Destino")]
-    public TipoImpuesto ImpuestoDestino
-    {
-        get => _impuestoDestino;
-        set => SetPropertyValue(nameof(ImpuestoDestino), ref _impuestoDestino, value);
-    }
+    [XafDisplayName("Impuestos Destino")]
+    [Association("MapeoImpuesto-ImpuestosDestino")]
+    [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
+    public XPCollection<TipoImpuesto> ImpuestosDestino => GetCollection<TipoImpuesto>(nameof(ImpuestosDestino));
 }
