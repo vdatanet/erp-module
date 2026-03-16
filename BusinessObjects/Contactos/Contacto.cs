@@ -36,6 +36,15 @@ public class Contacto(Session session) : EntidadBase(session)
     private Provincia _provincia;
     private string _sitioWeb;
     private string _telefono;
+    private Cliente _cliente;
+
+    [XafDisplayName("Cliente")]
+    [Association("Cliente-Contactos")]
+    public Cliente Cliente
+    {
+        get => _cliente;
+        set => SetPropertyValue(nameof(Cliente), ref _cliente, value);
+    }
 
     [Size(50)]
     [XafDisplayName("Código")]

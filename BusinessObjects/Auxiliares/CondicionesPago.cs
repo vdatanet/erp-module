@@ -8,7 +8,7 @@ using erp.Module.BusinessObjects.Base.Comun;
 namespace erp.Module.BusinessObjects.Auxiliares;
 
 [DefaultClassOptions]
-[NavigationItem("Configuraciones")]
+[NavigationItem("Auxiliares")]
 [ImageName("BO_List")]
 [DefaultProperty(nameof(Nombre))]
 public class CondicionesPago(Session session) : EntidadBase(session)

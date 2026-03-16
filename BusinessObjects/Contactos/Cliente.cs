@@ -16,6 +16,7 @@ namespace erp.Module.BusinessObjects.Contactos;
 public class Cliente(Session session) : Tercero(session)
 {
     private CondicionesPago _condicionesPago;
+    private Banco _bancoPredeterminado;
 
     [XafDisplayName("Condiciones de Pago")]
     public CondicionesPago CondicionesPago
@@ -23,6 +24,26 @@ public class Cliente(Session session) : Tercero(session)
         get => _condicionesPago;
         set => SetPropertyValue(nameof(CondicionesPago), ref _condicionesPago, value);
     }
+    
+    [XafDisplayName("Banco Predeterminado")]
+    [DataSourceProperty(nameof(Bancos))]
+    public Banco BancoPredeterminado
+    {
+        get => _bancoPredeterminado;
+        set => SetPropertyValue(nameof(BancoPredeterminado), ref _bancoPredeterminado, value);
+    }
+
+    [Association("Cliente-Bancos")]
+    [XafDisplayName("Bancos")]
+    public XPCollection<Banco> Bancos => GetCollection<Banco>(nameof(Bancos));
+    
+    [Association("Cliente-Contactos")]
+    [XafDisplayName("Contactos")]
+    public XPCollection<Contacto> Contactos => GetCollection<Contacto>();
+
+    [Association("Cliente-Domicilios")]
+    [XafDisplayName("Domicilios")]
+    public XPCollection<Domicilio> Domicilios => GetCollection<Domicilio>(nameof(Domicilios));
 
     [Association("Cliente-Oportunidades")]
     [XafDisplayName("Oportunidades")]
@@ -35,7 +56,7 @@ public class Cliente(Session session) : Tercero(session)
     [XafDisplayName("Presupuestos")] public XPCollection<Presupuesto> Presupuestos => GetCollection<Presupuesto>();
 
     [XafDisplayName("Pedidos")] public XPCollection<Pedido> Pedidos => GetCollection<Pedido>();
-
+    
     public override void AfterConstruction()
     {
         base.AfterConstruction();
