@@ -28,10 +28,10 @@ public class Empleado(Session session) : Contacto(session)
             var anterior = _usuario;
             _usuario = value;
             if (IsLoading) return;
-            if (anterior != null && anterior.Empleado == this)
-                anterior.Empleado = null;
+            if (anterior != null && anterior.GetMemberValue("Empleado") == (object)this)
+                anterior.SetMemberValue("Empleado", null);
             if (_usuario != null)
-                _usuario.Empleado = this;
+                _usuario.SetMemberValue("Empleado", this);
             OnChanged(nameof(Usuario), anterior, _usuario);
         }
     }

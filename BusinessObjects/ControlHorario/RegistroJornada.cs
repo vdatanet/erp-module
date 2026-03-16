@@ -192,7 +192,7 @@ public class RegistroJornada(Session session) : EntidadBase(session)
 
     private void InitValues()
     {
-        Empleado = GetCurrentUser()?.Empleado;
+        Empleado = GetCurrentUser()?.GetMemberValue("Empleado") as Empleado;
     }
 
     protected override void OnSaving()

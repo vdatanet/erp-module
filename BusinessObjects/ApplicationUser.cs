@@ -12,7 +12,6 @@ namespace erp.Module.BusinessObjects;
 [DefaultProperty(nameof(UserName))]
 public class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLoginInfo, ISecurityUserLockout
 {
-    private Empleado _empleado;
     private int accessFailedCount;
     private DateTime lockoutEnd;
 
@@ -25,13 +24,6 @@ public class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLoginInfo,
     [DevExpress.Xpo.Aggregated]
     [Association("User-LoginInfo")]
     public XPCollection<ApplicationUserLoginInfo> LoginInfo => GetCollection<ApplicationUserLoginInfo>();
-
-    [XafDisplayName("Empleado")]
-    public Empleado Empleado
-    {
-        get => _empleado;
-        set => SetPropertyValue(nameof(Empleado), ref _empleado, value);
-    }
 
     [Browsable(false)]
     public int AccessFailedCount

@@ -17,6 +17,7 @@ using DevExpress.ExpressApp.Validation;
 using DevExpress.ExpressApp.ViewVariantsModule;
 using DevExpress.ExpressApp.Xpo;
 using DevExpress.Persistent.BaseImpl;
+using erp.Module.BusinessObjects;
 using Updater = erp.Module.DatabaseUpdate.Updater;
 
 namespace erp.Module;
@@ -69,5 +70,16 @@ public sealed class erpModule : ModuleBase
     {
         base.CustomizeTypesInfo(typesInfo);
         CalculatedPersistentAliasHelper.CustomizeTypesInfo(typesInfo);
+
+        var userTypeInfo = typesInfo.FindTypeInfo(typeof(ApplicationUser));
+        if (userTypeInfo != null)
+        {
+            var empleadoMember = userTypeInfo.FindMember("Empleado");
+            if (empleadoMember == null)
+            {
+                var memberInfo = userTypeInfo.CreateMember("Empleado", typeof(erp.Module.BusinessObjects.Contactos.Empleado));
+                memberInfo.AddAttribute(new DevExpress.ExpressApp.DC.XafDisplayNameAttribute("Empleado"));
+            }
+        }
     }
 }
