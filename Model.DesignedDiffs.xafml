@@ -5,9 +5,11 @@
   </BOModel>
   <NavigationItems StartupNavigationItem="" NavigationStyle="Accordion">
     <Items>
-      <Item Id="Default">
+      <Item Id="Configuraciones">
         <Items>
-          <Item Id="UserSettings" ViewId="ModelDifference_ListView" Caption="Ajustes Usuario" IsNewNode="True" />
+          <Item Id="InformacionEmpresa_ListView" Index="0" />
+          <Item Id="Secuencia_ListView" Index="0" />
+          <Item Id="UserSettings" ViewId="ModelDifference_ListView" Caption="Ajustes Usuario" Index="0" IsNewNode="True" />
         </Items>
       </Item>
     </Items>

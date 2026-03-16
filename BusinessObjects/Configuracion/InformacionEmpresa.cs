@@ -10,6 +10,7 @@ using erp.Module.BusinessObjects.Impuestos;
 namespace erp.Module.BusinessObjects.Configuracion;
 
 [DefaultClassOptions]
+[NavigationItem("Configuraciones")]
 [ImageName("Actions_Settings")]
 [RuleObjectExists("InformacionEmpresaExists", DefaultContexts.Save, "True", InvertResult = true,
     CustomMessageTemplate = "Company Info already exists.")]

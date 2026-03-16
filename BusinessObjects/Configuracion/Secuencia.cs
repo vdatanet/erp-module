@@ -2,9 +2,10 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
 
-namespace erp.Module.BusinessObjects.Comun;
+namespace erp.Module.BusinessObjects.Configuracion;
 
 [DefaultClassOptions]
+[NavigationItem("Configuraciones")]
 public class Secuencia(Session session) : BaseObject(session)
 {
     private string _nombre;
