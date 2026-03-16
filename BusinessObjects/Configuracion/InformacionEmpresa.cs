@@ -24,6 +24,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     private Cuenta _cuentaProveedoresPorDefecto;
     private Cuenta _cuentaVentasPorDefecto;
     private CondicionesPago _condicionesPagoPorDefecto;
+    private PosicionFiscal _posicionFiscalPorDefecto;
     private Diario _diarioComprasPorDefecto;
     private Diario _diarioVentasPorDefecto;
     private string _nifAdministradorSistemaVeriFactu;
@@ -92,6 +93,13 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     {
         get => _condicionesPagoPorDefecto;
         set => SetPropertyValue(nameof(CondicionesPagoPorDefecto), ref _condicionesPagoPorDefecto, value);
+    }
+
+    [XafDisplayName("Posición Fiscal por Defecto")]
+    public PosicionFiscal PosicionFiscalPorDefecto
+    {
+        get => _posicionFiscalPorDefecto;
+        set => SetPropertyValue(nameof(PosicionFiscalPorDefecto), ref _posicionFiscalPorDefecto, value);
     }
 
     [XafDisplayName("Prefijo Facturas Venta")]

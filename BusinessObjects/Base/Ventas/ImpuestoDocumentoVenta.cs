@@ -99,7 +99,7 @@ public class ImpuestoDocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Impuesto), ref _impuesto, value);
     }
 
-    [XafDisplayName("Régimen Fiscal")]
+    [XafDisplayName("Posición Fiscal")]
     public ClaveRegimen? RegimenFiscal
     {
         get => _regimenFiscal;

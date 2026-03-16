@@ -1,4 +1,5 @@
 using DevExpress.ExpressApp.DC;
+using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Ventas;
@@ -6,6 +7,7 @@ using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Facturacion;
+using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.BusinessObjects.Ventas;
 using erp.Module.Helpers.Contactos;
 using erp.Module.BusinessObjects.Configuracion;
@@ -19,10 +21,39 @@ namespace erp.Module.BusinessObjects.Contactos;
 [ImageName("BO_Customer")]
 public class Cliente(Session session) : Tercero(session)
 {
+    private decimal _descuentoComercial;
+    private decimal _limiteCredito;
+    private bool _bloqueado;
     private CondicionesPago _condicionesPago;
     private Banco _bancoPredeterminado;
     private Cuenta _cuentaContable;
     private Diario _diarioVentas;
+    private PosicionFiscal _posicionFiscal;
+
+    [XafDisplayName("Bloqueado")]
+    public bool Bloqueado
+    {
+        get => _bloqueado;
+        set => SetPropertyValue(nameof(Bloqueado), ref _bloqueado, value);
+    }
+
+    [XafDisplayName("Límite de Crédito")]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    public decimal LimiteCredito
+    {
+        get => _limiteCredito;
+        set => SetPropertyValue(nameof(LimiteCredito), ref _limiteCredito, value);
+    }
+
+    [XafDisplayName("Descuento Comercial (%)")]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    public decimal DescuentoComercial
+    {
+        get => _descuentoComercial;
+        set => SetPropertyValue(nameof(DescuentoComercial), ref _descuentoComercial, value);
+    }
 
     [XafDisplayName("Cuenta Contable")]
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
@@ -53,6 +84,13 @@ public class Cliente(Session session) : Tercero(session)
     {
         get => _bancoPredeterminado;
         set => SetPropertyValue(nameof(BancoPredeterminado), ref _bancoPredeterminado, value);
+    }
+
+    [XafDisplayName("Posición Fiscal")]
+    public PosicionFiscal PosicionFiscal
+    {
+        get => _posicionFiscal;
+        set => SetPropertyValue(nameof(PosicionFiscal), ref _posicionFiscal, value);
     }
 
     [Association("Cliente-Bancos")]
@@ -100,5 +138,6 @@ public class Cliente(Session session) : Tercero(session)
         _cuentaContable = companyInfo.CuentaClientesPorDefecto;
         _diarioVentas = companyInfo.DiarioVentasPorDefecto;
         _condicionesPago = companyInfo.CondicionesPagoPorDefecto;
+        _posicionFiscal = companyInfo.PosicionFiscalPorDefecto;
     }
 }

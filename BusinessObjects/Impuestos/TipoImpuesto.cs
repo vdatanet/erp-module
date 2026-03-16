@@ -7,6 +7,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Configuracion;
+using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Productos;
 using VeriFactu.Xml.Factu;
@@ -119,7 +120,7 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Impuesto), ref _impuesto, value);
     }
 
-    [XafDisplayName("Régimen Fiscal")]
+    [XafDisplayName("Posición Fiscal")]
     public ClaveRegimen? RegimenFiscal
     {
         get => _regimenFiscal;
@@ -159,6 +160,7 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
     [NonCloneable]
     [Association("InformacionEmpresa-ImpuestosCompras")]
     public XPCollection<InformacionEmpresa> InformacionEmpresaImpuestosCompra => GetCollection<InformacionEmpresa>();
+
 
     public override void AfterConstruction()
     {
