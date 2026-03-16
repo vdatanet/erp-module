@@ -154,4 +154,10 @@ public class Oportunidad(Session session) : EntidadBase(session)
     [Association("Oportunidad-Adjuntos")]
     [XafDisplayName("Adjuntos")]
     public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>(nameof(Adjuntos));
+
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        Estado = EstadoOportunidad.Prospecto;
+    }
 }
