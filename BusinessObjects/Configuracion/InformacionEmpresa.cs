@@ -25,7 +25,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     private Cuenta _cuentaPagosPorDefecto;
     private Cuenta _cuentaProveedoresPorDefecto;
     private Cuenta _cuentaVentasPorDefecto;
-    private CondicionesPago _condicionesPagoPorDefecto;
+    private CondicionPago _condicionPagoPorDefecto;
     private PosicionFiscal _posicionFiscalPorDefecto;
     private Diario _diarioComprasPorDefecto;
     private Diario _diarioVentasPorDefecto;
@@ -110,10 +110,10 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     }
     
     [XafDisplayName("Condiciones de Pago por Defecto")]
-    public CondicionesPago CondicionesPagoPorDefecto
+    public CondicionPago CondicionPagoPorDefecto
     {
-        get => _condicionesPagoPorDefecto;
-        set => SetPropertyValue(nameof(CondicionesPagoPorDefecto), ref _condicionesPagoPorDefecto, value);
+        get => _condicionPagoPorDefecto;
+        set => SetPropertyValue(nameof(CondicionPagoPorDefecto), ref _condicionPagoPorDefecto, value);
     }
 
     [XafDisplayName("Posición Fiscal por Defecto")]

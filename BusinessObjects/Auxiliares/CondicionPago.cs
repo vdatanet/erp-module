@@ -10,16 +10,19 @@ namespace erp.Module.BusinessObjects.Auxiliares;
 [DefaultClassOptions]
 [NavigationItem("Auxiliares")]
 [ImageName("BO_List")]
+[XafDisplayName("Condición de Pago")]
 [DefaultProperty(nameof(Nombre))]
-public class CondicionesPago(Session session) : EntidadBase(session)
+public class CondicionPago(Session session) : EntidadBase(session)
 {
     private string _nombre;
     private MedioPago _medioPago;
     private int _plazoPrimerPago;
     private int _diasEntrePlazos;
     private int _numeroPlazos;
+    private string _notas;
 
     [RuleRequiredField]
+    [Size(255)]
     [XafDisplayName("Nombre")]
     public string Nombre
     {
@@ -53,6 +56,14 @@ public class CondicionesPago(Session session) : EntidadBase(session)
     {
         get => _numeroPlazos;
         set => SetPropertyValue(nameof(NumeroPlazos), ref _numeroPlazos, value);
+    }
+    
+    [Size(SizeAttribute.Unlimited)]
+    [XafDisplayName("Notas")]
+    public string Notas
+    {
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
     public override void AfterConstruction()

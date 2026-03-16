@@ -26,7 +26,7 @@ public class Cliente(Session session) : Tercero(session)
     private bool _activo;
     private DateTime _fechaAlta;
     private DateTime? _fechaBaja;
-    private CondicionesPago _condicionesPago;
+    private CondicionPago _condicionPago;
     private Banco _bancoPredeterminado;
     private Cuenta _cuentaContable;
     private Cuenta _cuentaCobro;
@@ -94,10 +94,10 @@ public class Cliente(Session session) : Tercero(session)
     }
 
     [XafDisplayName("Condiciones de Pago")]
-    public CondicionesPago CondicionesPago
+    public CondicionPago CondicionPago
     {
-        get => _condicionesPago;
-        set => SetPropertyValue(nameof(CondicionesPago), ref _condicionesPago, value);
+        get => _condicionPago;
+        set => SetPropertyValue(nameof(CondicionPago), ref _condicionPago, value);
     }
     
     [XafDisplayName("Banco Predeterminado")]
@@ -171,7 +171,7 @@ public class Cliente(Session session) : Tercero(session)
         _cuentaCobro = companyInfo.CuentaCobrosPorDefecto;
         _diarioVentas = companyInfo.DiarioVentasPorDefecto;
         _posicionFiscal = companyInfo.PosicionFiscalPorDefecto;
-        _condicionesPago = companyInfo.CondicionesPagoPorDefecto;
+        _condicionPago = companyInfo.CondicionPagoPorDefecto;
         _activo = true;
         _fechaAlta = DateTime.Now;
     }
