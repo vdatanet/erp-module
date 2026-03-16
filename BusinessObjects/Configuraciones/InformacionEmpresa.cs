@@ -14,9 +14,9 @@ namespace erp.Module.BusinessObjects.Configuraciones;
 [NavigationItem("Configuraciones")]
 [ImageName("Actions_Settings")]
 [RuleObjectExists("InformacionEmpresaExists", DefaultContexts.Save, "True", InvertResult = true,
-    CustomMessageTemplate = "Company Info already exists.")]
+    CustomMessageTemplate = "La información de la empresa ya existe.")]
 [RuleCriteria("NotDeleteInformacionEmpresa", DefaultContexts.Delete, "False",
-    CustomMessageTemplate = "Can't delete Company Info.")]
+    CustomMessageTemplate = "No se puede eliminar la información de la empresa.")]
 public class InformacionEmpresa(Session session) : Contacto(session)
 {
     private Cuenta _cuentaClientesPorDefecto;
