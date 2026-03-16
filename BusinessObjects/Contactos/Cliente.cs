@@ -1,6 +1,7 @@
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
+using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Auxiliares;

@@ -163,6 +163,8 @@ public class Contacto(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(SitioWeb), ref _sitioWeb, value);
     }
 
+    [VisibleInListView(false)]
+    [VisibleInDetailView(false)]
     [XafDisplayName("Foto")]
     public MediaDataObject Foto
     {
