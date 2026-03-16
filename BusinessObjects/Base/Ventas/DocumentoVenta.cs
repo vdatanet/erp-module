@@ -27,7 +27,6 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private string _numero;
     private DateTime _fecha;
     private string _notas;
-    private string _codigoBarrasLector;
 
     [RuleRequiredField("erp.Module.BusinessObjects.Facturacion.Factura.Cliente_Required", DefaultContexts.Save, TargetCriteria = "IsInstanceOfType(this, 'erp.Module.BusinessObjects.Facturacion.Factura') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Presupuesto')")]
     [Association("Cliente-DocumentosVenta")]
@@ -71,55 +70,6 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
-    [NonPersistent]
-    [ImmediatePostData]
-    [XafDisplayName("Capturar Código (Lector)")]
-    public string CodigoBarrasLector
-    {
-        get => _codigoBarrasLector;
-        set
-        {
-            if (string.IsNullOrEmpty(value) || IsLoading || IsSaving) return;
-
-            try
-            {
-                var cleanedValue = value.Trim('\r', '\n', ' ');
-                if (!string.IsNullOrWhiteSpace(cleanedValue))
-                {
-                    CapturarProductoPorCodigo(cleanedValue);
-                }
-            }
-            finally
-            {
-                _codigoBarrasLector = string.Empty;
-                OnChanged(nameof(CodigoBarrasLector));
-            }
-        }
-    }
-
-    private void CapturarProductoPorCodigo(string codigo)
-    {
-        var producto = Session.FindObject<Producto>(CriteriaOperator.Parse("(CodigoBarras = ? OR Codigo = ?) AND EstaActivo = True AND DisponibleEnVentas = True", codigo, codigo));
-        if (producto != null)
-        {
-            var lineaExistente = Lineas.FirstOrDefault(l => l.Producto != null && l.Producto.Oid == producto.Oid);
-            if (lineaExistente != null)
-            {
-                lineaExistente.Cantidad += 1;
-            }
-            else
-            {
-                var linea = new LineaDocumentoVenta(Session)
-                {
-                    DocumentoVenta = this,
-                    Producto = producto,
-                    Cantidad = 1
-                };
-                Lineas.Add(linea);
-            }
-        }
-    }
-    
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     [XafDisplayName("Base Imponible")]

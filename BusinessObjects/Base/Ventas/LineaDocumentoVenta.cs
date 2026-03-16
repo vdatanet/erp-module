@@ -24,7 +24,6 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     private decimal _baseImponible;
     private decimal _importeImpuestos;
     private decimal _importeTotal;
-    private string _codigoBarrasLector;
 
     [Association("DocumentoVenta-Lineas")]
     [XafDisplayName("Documento Venta")]
@@ -64,42 +63,6 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
-    }
-
-    [NonPersistent]
-    [ImmediatePostData]
-    [XafDisplayName("Capturar Código (Lector)")]
-    public string CodigoBarrasLector
-    {
-        get => _codigoBarrasLector;
-        set
-        {
-            if (string.IsNullOrEmpty(value) || IsLoading || IsSaving) return;
-
-            try
-            {
-                var cleanedValue = value.Trim('\r', '\n', ' ');
-                if (!string.IsNullOrWhiteSpace(cleanedValue))
-                {
-                    CapturarProductoPorCodigo(cleanedValue);
-                }
-            }
-            finally
-            {
-                _codigoBarrasLector = string.Empty;
-                OnChanged(nameof(CodigoBarrasLector));
-            }
-        }
-    }
-
-    private void CapturarProductoPorCodigo(string codigo)
-    {
-        var producto = Session.FindObject<Producto>(CriteriaOperator.Parse("(CodigoBarras = ? OR Codigo = ?) AND EstaActivo = True AND DisponibleEnVentas = True", codigo, codigo));
-        if (producto != null)
-        {
-            Producto = producto;
-            if (Cantidad == 0) Cantidad = 1;
-        }
     }
 
     [ImmediatePostData]
