@@ -10,7 +10,6 @@ using erp.Module.BusinessObjects.Contactos;
 using erp.Module.Factories;
 using erp.Module.Helpers.Comun;
 using erp.Module.Helpers.Contactos;
-using Tarea = erp.Module.BusinessObjects.Planificacion.Tarea;
 
 namespace erp.Module.BusinessObjects.Base.Ventas;
 

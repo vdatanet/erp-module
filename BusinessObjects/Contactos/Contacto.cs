@@ -8,7 +8,6 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.Factories;
-using Tarea = erp.Module.BusinessObjects.Planificacion.Tarea;
 using VeriFactu.Xml.Factu;
 
 namespace erp.Module.BusinessObjects.Contactos;

@@ -10,7 +10,6 @@ using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.Helpers.Contactos;
-using Tarea = erp.Module.BusinessObjects.Planificacion.Tarea;
 
 namespace erp.Module.BusinessObjects.Productos;
 

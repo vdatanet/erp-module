@@ -3,15 +3,14 @@ using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Base.Ventas;
-using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Productos;
 
-namespace erp.Module.BusinessObjects.Planificacion;
+namespace erp.Module.BusinessObjects.Auxiliares;
 
 [DefaultClassOptions]
-[NavigationItem("Planificación")]
+[NavigationItem("Auxiliares")]
 [ImageName("BO_Task")]
 public class Tarea(Session session) : EntidadBase(session)
 {

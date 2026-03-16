@@ -6,7 +6,6 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Contactos;
-using erp.Module.BusinessObjects.Planificacion;
 using erp.Module.BusinessObjects.Ventas;
 using erp.Module.Helpers.Comun;
 
