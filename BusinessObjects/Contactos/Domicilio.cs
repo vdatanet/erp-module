@@ -4,7 +4,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
-using erp.Module.BusinessObjects.Comun;
+using erp.Module.BusinessObjects.Auxiliares;
 
 namespace erp.Module.BusinessObjects.Contactos;
 

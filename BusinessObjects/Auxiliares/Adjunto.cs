@@ -9,7 +9,7 @@ using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Planificacion;
 using erp.Module.BusinessObjects.Productos;
 
-namespace erp.Module.BusinessObjects.Comun;
+namespace erp.Module.BusinessObjects.Auxiliares;
 
 [ImageName("BO_FileAttachment")]
 [FileAttachment(nameof(FileData))]
