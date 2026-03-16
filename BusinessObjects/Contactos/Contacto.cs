@@ -1,11 +1,13 @@
 using System.ComponentModel;
 using DevExpress.ExpressApp.DC;
+using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Comun;
+using erp.Module.Factories;
 using Tarea = erp.Module.BusinessObjects.Planificacion.Tarea;
 using VeriFactu.Xml.Factu;
 
@@ -17,6 +19,8 @@ namespace erp.Module.BusinessObjects.Contactos;
 [DefaultProperty(nameof(Nombre))]
 public class Contacto(Session session) : EntidadBase(session)
 {
+    private string _codigo;
+    private int _numero;
     private string _codigoPostal;
     private string _correoElectronico;
     private string _direccion;
@@ -32,6 +36,23 @@ public class Contacto(Session session) : EntidadBase(session)
     private Provincia _provincia;
     private string _sitioWeb;
     private string _telefono;
+
+    [Size(50)]
+    [XafDisplayName("Código")]
+    [ModelDefault("AllowEdit", "False")]
+    public string Codigo
+    {
+        get => _codigo;
+        set => SetPropertyValue(nameof(Codigo), ref _codigo, value);
+    }
+
+    [XafDisplayName("Número")]
+    [ModelDefault("AllowEdit", "False")]
+    public int Numero
+    {
+        get => _numero;
+        set => SetPropertyValue(nameof(Numero), ref _numero, value);
+    }
 
     [Size(255)]
     [RuleRequiredField]
@@ -167,6 +188,30 @@ public class Contacto(Session session) : EntidadBase(session)
     {
         base.AfterConstruction();
         InitValues();
+    }
+
+    protected override void OnSaving()
+    {
+        base.OnSaving();
+        if (string.IsNullOrEmpty(Codigo) && GetAsignarCodigoAlGuardar()) AsignarCodigo();
+    }
+
+    public virtual bool GetAsignarCodigoAlGuardar()
+    {
+        return !string.IsNullOrEmpty(GetPrefijoCodigo());
+    }
+
+    public virtual void AsignarCodigo()
+    {
+        var prefijo = GetPrefijoCodigo();
+        if (string.IsNullOrEmpty(prefijo)) return;
+        Numero = SequenceFactory.GetNextSequence(Session, GetType().FullName, out var formattedSequence, prefijo, 5);
+        Codigo = formattedSequence;
+    }
+
+    public virtual string GetPrefijoCodigo()
+    {
+        return string.Empty;
     }
 
     private void InitValues()

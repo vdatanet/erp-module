@@ -5,6 +5,8 @@ using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Ventas;
 
+using erp.Module.Factories;
+
 namespace erp.Module.BusinessObjects.Contactos;
 
 [DefaultClassOptions]
@@ -28,6 +30,11 @@ public class Cliente(Session session) : Tercero(session)
     {
         base.AfterConstruction();
         InitValues();
+    }
+
+    public override string GetPrefijoCodigo()
+    {
+        return "C";
     }
 
     private void InitValues()

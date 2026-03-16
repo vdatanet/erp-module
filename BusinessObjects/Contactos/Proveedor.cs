@@ -8,4 +8,8 @@ namespace erp.Module.BusinessObjects.Contactos;
 [ImageName("BO_Vendor")]
 public class Proveedor(Session session) : Tercero(session)
 {
+    public override string GetPrefijoCodigo()
+    {
+        return "P";
+    }
 }

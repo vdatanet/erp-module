@@ -60,6 +60,11 @@ public class Empleado(Session session) : Contacto(session)
         set => SetPropertyValue(nameof(UltimoRegistroSalida), ref _ultimoRegistroSalida, value);
     }
 
+    public override string GetPrefijoCodigo()
+    {
+        return "E";
+    }
+
     [Association("Empleado-RegistrosJornada")]
     [XafDisplayName("Registros de Tiempo")]
     public XPCollection<RegistroJornada> RegistrosJornada => GetCollection<RegistroJornada>();

@@ -9,7 +9,7 @@ public class SequenceService(Session session)
 {
     private static readonly Random Jitter = new();
 
-    public string GetNextSequence(string sequenceName, string prefix, int padding)
+    public int GetNextSequence(string sequenceName, string prefix, int padding, out string formattedSequence)
     {
         var maxRetries = 5;
         for (var attempt = 0; attempt < maxRetries; attempt++)
@@ -29,7 +29,8 @@ public class SequenceService(Session session)
 
                 generator.ValorActual++;
                 uow.CommitChanges();
-                return BuildSequenceString(generator);
+                formattedSequence = BuildSequenceString(generator);
+                return generator.ValorActual;
             }
             catch (LockingException)
             {
