@@ -74,7 +74,7 @@ public class Updater(IObjectSpace objectSpace, Version currentDbVersion) : Modul
         if (userManager.FindUserByName<UsuarioAplicacion>(ObjectSpace, adminUserName) == null)
         {
             // Set a password if the standard authentication type is used
-            var emptyPassword = "";
+            const string emptyPassword = "";
             _ = userManager.CreateUser<UsuarioAplicacion>(ObjectSpace, adminUserName, emptyPassword, user =>
             {
                 // Add the Administrators role to the user
@@ -107,45 +107,39 @@ public class Updater(IObjectSpace objectSpace, Version currentDbVersion) : Modul
     private PermissionPolicyRole CreateAdminRole()
     {
         var adminRole = ObjectSpace.FirstOrDefault<PermissionPolicyRole>(r => r.Name == "Administrators");
-        if (adminRole == null)
-        {
-            adminRole = ObjectSpace.CreateObject<PermissionPolicyRole>();
-            adminRole.Name = "Administrators";
-            adminRole.IsAdministrative = true;
-        }
-
+        if (adminRole != null) return adminRole;
+        adminRole = ObjectSpace.CreateObject<PermissionPolicyRole>();
+        adminRole.Name = "Administrators";
+        adminRole.IsAdministrative = true;
         return adminRole;
     }
 
     private PermissionPolicyRole CreateDefaultRole()
     {
         var defaultRole = ObjectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Default");
-        if (defaultRole == null)
-        {
-            defaultRole = ObjectSpace.CreateObject<PermissionPolicyRole>();
-            defaultRole.Name = "Default";
+        if (defaultRole != null) return defaultRole;
+        defaultRole = ObjectSpace.CreateObject<PermissionPolicyRole>();
+        defaultRole.Name = "Default";
 
-            defaultRole.AddObjectPermissionFromLambda<UsuarioAplicacion>(SecurityOperations.Read,
-                cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
-            defaultRole.AddNavigationPermission(@"Application/NavigationItems/Items/Default/Items/MyDetails",
-                SecurityPermissionState.Allow);
-            defaultRole.AddMemberPermissionFromLambda<UsuarioAplicacion>(SecurityOperations.Write,
-                "ChangePasswordOnFirstLogon", cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(),
-                SecurityPermissionState.Allow);
-            defaultRole.AddMemberPermissionFromLambda<UsuarioAplicacion>(SecurityOperations.Write, "StoredPassword",
-                cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
-            defaultRole.AddTypePermissionsRecursively<PermissionPolicyRole>(SecurityOperations.Read,
-                SecurityPermissionState.Deny);
-            defaultRole.AddObjectPermission<ModelDifference>(SecurityOperations.ReadWriteAccess,
-                "UserId = ToStr(CurrentUserId())", SecurityPermissionState.Allow);
-            defaultRole.AddObjectPermission<ModelDifferenceAspect>(SecurityOperations.ReadWriteAccess,
-                "Owner.UserId = ToStr(CurrentUserId())", SecurityPermissionState.Allow);
-            defaultRole.AddTypePermissionsRecursively<ModelDifference>(SecurityOperations.Create,
-                SecurityPermissionState.Allow);
-            defaultRole.AddTypePermissionsRecursively<ModelDifferenceAspect>(SecurityOperations.Create,
-                SecurityPermissionState.Allow);
-        }
-
+        defaultRole.AddObjectPermissionFromLambda<UsuarioAplicacion>(SecurityOperations.Read,
+            cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
+        defaultRole.AddNavigationPermission(@"Application/NavigationItems/Items/Default/Items/MyDetails",
+            SecurityPermissionState.Allow);
+        defaultRole.AddMemberPermissionFromLambda<UsuarioAplicacion>(SecurityOperations.Write,
+            "ChangePasswordOnFirstLogon", cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(),
+            SecurityPermissionState.Allow);
+        defaultRole.AddMemberPermissionFromLambda<UsuarioAplicacion>(SecurityOperations.Write, "StoredPassword",
+            cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
+        defaultRole.AddTypePermissionsRecursively<PermissionPolicyRole>(SecurityOperations.Read,
+            SecurityPermissionState.Deny);
+        defaultRole.AddObjectPermission<ModelDifference>(SecurityOperations.ReadWriteAccess,
+            "UserId = ToStr(CurrentUserId())", SecurityPermissionState.Allow);
+        defaultRole.AddObjectPermission<ModelDifferenceAspect>(SecurityOperations.ReadWriteAccess,
+            "Owner.UserId = ToStr(CurrentUserId())", SecurityPermissionState.Allow);
+        defaultRole.AddTypePermissionsRecursively<ModelDifference>(SecurityOperations.Create,
+            SecurityPermissionState.Allow);
+        defaultRole.AddTypePermissionsRecursively<ModelDifferenceAspect>(SecurityOperations.Create,
+            SecurityPermissionState.Allow);
         return defaultRole;
     }
 }
