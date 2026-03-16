@@ -3,12 +3,12 @@ using DevExpress.ExpressApp.Editors;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Impuestos;
-using erp.Module.BusinessObjects.Auxiliares;
 
-namespace erp.Module.BusinessObjects.Configuracion;
+namespace erp.Module.BusinessObjects.Configuraciones;
 
 [DefaultClassOptions]
 [NavigationItem("Configuraciones")]

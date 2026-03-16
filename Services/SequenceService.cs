@@ -1,7 +1,7 @@
 using DevExpress.Data.Filtering;
 using DevExpress.Xpo;
 using DevExpress.Xpo.DB.Exceptions;
-using erp.Module.BusinessObjects.Configuracion;
+using erp.Module.BusinessObjects.Configuraciones;
 
 namespace erp.Module.Services;
 

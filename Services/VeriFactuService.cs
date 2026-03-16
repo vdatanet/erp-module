@@ -2,7 +2,7 @@ using System.Text;
 using System.Xml.Linq;
 using DevExpress.ExpressApp;
 using DevExpress.Persistent.BaseImpl;
-using erp.Module.BusinessObjects.Configuracion;
+using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Facturacion;
 using erp.Module.Helpers.Comun;
 using VeriFactu.Business;

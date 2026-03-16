@@ -12,7 +12,7 @@ using erp.Module.BusinessObjects.Facturacion;
 using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.BusinessObjects.Ventas;
 using erp.Module.Helpers.Contactos;
-using erp.Module.BusinessObjects.Configuracion;
+using erp.Module.BusinessObjects.Configuraciones;
 
 using erp.Module.Factories;
 

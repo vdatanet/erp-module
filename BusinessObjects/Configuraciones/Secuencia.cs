@@ -2,7 +2,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
 
-namespace erp.Module.BusinessObjects.Configuracion;
+namespace erp.Module.BusinessObjects.Configuraciones;
 
 [DefaultClassOptions]
 [NavigationItem("Configuraciones")]
