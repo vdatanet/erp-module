@@ -7,19 +7,48 @@ using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Productos;
+using System.ComponentModel;
 
 namespace erp.Module.BusinessObjects.Auxiliares;
 
+[DefaultClassOptions]
+[NavigationItem("Auxiliares")]
 [ImageName("Images")]
+[XafDisplayName("Imagen")]
+[DefaultProperty(nameof(Nombre))]
 public class Imagen(Session session) : EntidadBase(session)
 {
-    private Contacto _contact;
+    private string _nombre;
     private MediaDataObject _mediaDataObject;
-    private string _notes;
+    private string _notas;
+    private Contacto _contact;
     private Oportunidad _opportunity;
     private Producto _product;
     private DocumentoVenta _salesDocument;
     private Tarea _task;
+
+    [Size(255)]
+    [XafDisplayName("Nombre")]
+    public string Nombre
+    {
+        get => _nombre;
+        set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
+    }
+
+    [XafDisplayName("Imagen")]
+    public MediaDataObject MediaDataObject
+    {
+        get => _mediaDataObject;
+        set => SetPropertyValue(nameof(MediaDataObject), ref _mediaDataObject, value);
+    }
+
+    [Size(SizeAttribute.Unlimited)]
+    [XafDisplayName("Notas")]
+    public string Notas
+    {
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
+    }
 
     [Association("Contacto-Fotos")]
     [XafDisplayName("Contacto")]
@@ -59,20 +88,5 @@ public class Imagen(Session session) : EntidadBase(session)
     {
         get => _opportunity;
         set => SetPropertyValue(nameof(Oportunidad), ref _opportunity, value);
-    }
-
-    [XafDisplayName("Imagen")]
-    public MediaDataObject MediaDataObject
-    {
-        get => _mediaDataObject;
-        set => SetPropertyValue(nameof(MediaDataObject), ref _mediaDataObject, value);
-    }
-
-    [Size(1000)]
-    [XafDisplayName("Notas")]
-    public string Notes
-    {
-        get => _notes;
-        set => SetPropertyValue(nameof(Notes), ref _notes, value);
     }
 }
