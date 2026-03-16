@@ -34,4 +34,8 @@ public class PosicionFiscal(Session session) : EntidadBase(session)
     [Association("PosicionFiscal-Mapeos")]
     [XafDisplayName("Mapeos de Impuestos")]
     public XPCollection<MapeoImpuesto> Mapeos => GetCollection<MapeoImpuesto>(nameof(Mapeos));
+
+    [Association("PosicionFiscal-MapeosCuenta")]
+    [XafDisplayName("Mapeos de Cuentas")]
+    public XPCollection<MapeoCuenta> MapeosCuenta => GetCollection<MapeoCuenta>(nameof(MapeosCuenta));
 }
