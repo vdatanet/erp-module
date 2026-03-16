@@ -7,11 +7,13 @@ namespace erp.Module.BusinessObjects.Crm;
 
 [DefaultClassOptions]
 [NavigationItem("Crm")]
+[XafDisplayName("Campaña")]
+[XafDefaultProperty(nameof(Nombre))]
 [ImageName("Shopping_Wallet")]
 public class Campana(Session session) : EntidadBase(session)
 {
     private string _nombre;
-    private string _descripcion;
+    private string _notas;
 
     [Size(255)]
     [XafDisplayName("Nombre")]
@@ -21,11 +23,11 @@ public class Campana(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
-    [Size(1000)]
-    [XafDisplayName("Descripción")]
-    public string Descripcion
+    [Size(SizeAttribute.Unlimited)]
+    [XafDisplayName("Notas")]
+    public string Notas
     {
-        get => _descripcion;
-        set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 }

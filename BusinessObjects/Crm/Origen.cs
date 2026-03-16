@@ -7,11 +7,13 @@ namespace erp.Module.BusinessObjects.Crm;
 
 [DefaultClassOptions]
 [NavigationItem("Crm")]
+[XafDisplayName("Origen")]
+[XafDefaultProperty(nameof(Name))]
 [ImageName("Datasource")]
 public class Origen(Session session) : EntidadBase(session)
 {
     private string _name;
-    private string _description;
+    private string _notas;
 
     [Size(255)]
     [XafDisplayName("Nombre")]
@@ -21,11 +23,11 @@ public class Origen(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Name), ref _name, value);
     }
 
-    [Size(1000)]
-    [XafDisplayName("Descripción")]
-    public string Description
+    [Size(SizeAttribute.Unlimited)]
+    [XafDisplayName("Notas")]
+    public string Notas
     {
-        get => _description;
-        set => SetPropertyValue(nameof(Description), ref _description, value);
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 }
