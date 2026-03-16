@@ -105,6 +105,46 @@
         <ColumnInfo Id="Nombre" Index="0" />
       </Columns>
     </ListView>
+    <DetailView Id="Contacto_DetailView" FreezeLayout="True">
+      <Layout IsNewNode="True" Removed="True">
+        <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
+          <LayoutGroup Id="SimpleEditors" Index="0" ShowCaption="False" RelativeSize="28.70762711864407" IsNewNode="True">
+            <LayoutGroup Id="Contacto" Index="0" Direction="Horizontal" ShowCaption="True" RelativeSize="100" ImageName="BO_Contact" IsNewNode="True">
+              <LayoutGroup Id="Contacto_col1" Index="0" ShowCaption="False" RelativeSize="50" IsNewNode="True">
+                <LayoutItem Id="Nombre" ViewItem="Nombre" ShowCaption="" Index="0" RelativeSize="13.793103448275861" IsNewNode="True" />
+                <LayoutItem Id="NombreComercial" ViewItem="NombreComercial" ShowCaption="" Index="1" RelativeSize="10.344827586206897" IsNewNode="True" />
+                <LayoutItem Id="TipoIdentificacion" ViewItem="TipoIdentificacion" ShowCaption="" Index="2" RelativeSize="10.344827586206897" IsNewNode="True" />
+                <LayoutItem Id="Nif" ViewItem="Nif" ShowCaption="" Index="3" RelativeSize="10.344827586206897" IsNewNode="True" />
+                <LayoutItem Id="Direccion" ViewItem="Direccion" ShowCaption="" Index="4" RelativeSize="10.344827586206897" IsNewNode="True" />
+                <LayoutItem Id="CodigoPostal" ViewItem="CodigoPostal" Index="5" RelativeSize="10.344827586206897" IsNewNode="True" />
+                <LayoutItem Id="Poblacion" ViewItem="Poblacion" Index="6" RelativeSize="10.344827586206897" IsNewNode="True" />
+                <LayoutItem Id="Provincia" ViewItem="Provincia" Index="7" RelativeSize="10.344827586206897" IsNewNode="True" />
+                <LayoutItem Id="Pais" ViewItem="Pais" Index="8" RelativeSize="13.793103448275861" IsNewNode="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="Contacto_col2" Index="1" ShowCaption="False" RelativeSize="50" IsNewNode="True">
+                <LayoutItem Id="Telefono" ViewItem="Telefono" ShowCaption="" Index="0" RelativeSize="13.793103448275861" IsNewNode="True" />
+                <LayoutItem Id="Movil" ViewItem="Movil" ShowCaption="" Index="1" RelativeSize="10.344827586206897" IsNewNode="True" />
+                <LayoutItem Id="CorreoElectronico" ViewItem="CorreoElectronico" ShowCaption="" Index="2" RelativeSize="10.344827586206897" IsNewNode="True" />
+                <LayoutItem Id="SitioWeb" ViewItem="SitioWeb" ShowCaption="" Index="3" RelativeSize="10.344827586206897" IsNewNode="True" />
+                <LayoutItem Id="Notas" ViewItem="Notas" Index="4" RelativeSize="41.37931034482759" IsNewNode="True" />
+                <LayoutItem Id="Foto" ViewItem="Foto" Index="5" RelativeSize="13.793103448275861" IsNewNode="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+          <TabbedGroup Id="Tabs" Index="1" RelativeSize="71.29237288135593" IsNewNode="True">
+            <LayoutGroup Id="Tareas" Index="0" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+              <LayoutItem Id="Tareas" ViewItem="Tareas" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
+            </LayoutGroup>
+            <LayoutGroup Id="Imagenes" Index="1" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+              <LayoutItem Id="Imagenes" ViewItem="Imagenes" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
+            </LayoutGroup>
+            <LayoutGroup Id="Adjuntos" Index="2" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+              <LayoutItem Id="Adjuntos" ViewItem="Adjuntos" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
+            </LayoutGroup>
+          </TabbedGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
     <DetailView Id="Pais_DetailView" FreezeLayout="True">
       <Layout IsNewNode="True" Removed="True">
         <LayoutGroup Id="Main" Index="0" ShowCaption="False" IsNewNode="True">
