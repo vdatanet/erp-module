@@ -18,7 +18,10 @@
         <PackageReference Include="DevExpress.ExpressApp" Version="25.2.*" />
         <PackageReference Include="DevExpress.ExpressApp.Chart" Version="25.2.*" />
         <PackageReference Include="DevExpress.ExpressApp.CloneObject" Version="25.2.*" />
-        <PackageReference Include="DevExpress.ExpressApp.CodeAnalysis" Version="25.2.*" />
+        <PackageReference Include="DevExpress.ExpressApp.CodeAnalysis" Version="25.2.5">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="DevExpress.ExpressApp.ConditionalAppearance" Version="25.2.*" />
         <PackageReference Include="DevExpress.ExpressApp.Core.All.es" Version="25.2.5" />
         <PackageReference Include="DevExpress.ExpressApp.Dashboards" Version="25.2.*" />
