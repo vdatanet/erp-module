@@ -9,7 +9,7 @@
         <Items>
           <Item Id="InformacionEmpresa_ListView" Index="0" />
           <Item Id="Secuencia_ListView" Index="0" />
-          <Item Id="UserSettings" ViewId="ModelDifference_ListView" Caption="Ajustes Usuario" Index="0" IsNewNode="True" />
+          <Item Id="UserSettings" ViewId="ModelDifference_ListView" Caption="Ajustes de usuario" Index="0" IsNewNode="True" />
         </Items>
       </Item>
     </Items>
@@ -297,6 +297,32 @@
       </Columns>
     </ListView>
     <ListView Id="Provincia_LookupListView" FreezeColumnIndices="True" Caption="Provincias">
+      <Columns>
+        <ColumnInfo Id="Nombre" Index="0" />
+      </Columns>
+    </ListView>
+    <DetailView Id="Sector_DetailView" FreezeLayout="True">
+      <Layout IsNewNode="True" Removed="True">
+        <LayoutGroup Id="Main" Index="0" ShowCaption="False" IsNewNode="True">
+          <LayoutGroup Id="SimpleEditors" Index="0" ShowCaption="False" IsNewNode="True">
+            <LayoutGroup Id="Sector" Index="0" ShowCaption="False" IsNewNode="True">
+              <LayoutItem Id="Nombre" ViewItem="Nombre" ShowCaption="" Index="0" IsNewNode="True" />
+            </LayoutGroup>
+          </LayoutGroup>
+          <LayoutGroup Id="SizeableEditors" Index="1" ShowCaption="False" IsNewNode="True">
+            <LayoutItem Id="Notas" ViewItem="Notas" ShowCaption="" Index="0" IsNewNode="True" />
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="Sector_ListView" FreezeColumnIndices="True" Caption="Sectores">
+      <Columns>
+        <ColumnInfo Id="Notas" Index="-1" />
+        <ColumnInfo Id="Oid" Index="-1" />
+        <ColumnInfo Id="Nombre" Index="0" />
+      </Columns>
+    </ListView>
+    <ListView Id="Sector_LookupListView" Caption="Sectores" FreezeColumnIndices="True">
       <Columns>
         <ColumnInfo Id="Nombre" Index="0" />
       </Columns>
