@@ -2,6 +2,7 @@ using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Ventas;
+using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Ventas;
 
@@ -14,6 +15,15 @@ namespace erp.Module.BusinessObjects.Contactos;
 [ImageName("BO_Customer")]
 public class Cliente(Session session) : Tercero(session)
 {
+    private CondicionesPago _condicionesPago;
+
+    [XafDisplayName("Condiciones de Pago")]
+    public CondicionesPago CondicionesPago
+    {
+        get => _condicionesPago;
+        set => SetPropertyValue(nameof(CondicionesPago), ref _condicionesPago, value);
+    }
+
     [Association("Cliente-Oportunidades")]
     [XafDisplayName("Oportunidades")]
     public XPCollection<Oportunidad> Oportunidades => GetCollection<Oportunidad>();
