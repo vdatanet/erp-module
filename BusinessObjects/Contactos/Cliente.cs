@@ -32,6 +32,7 @@ public class Cliente(Session session) : Tercero(session)
     private Cuenta _cuentaCobro;
     private Diario _diarioVentas;
     private PosicionFiscal _posicionFiscal;
+    private Sector _sector;
 
     [XafDisplayName("Activo")]
     public bool Activo
@@ -130,6 +131,13 @@ public class Cliente(Session session) : Tercero(session)
     {
         get => _posicionFiscal;
         set => SetPropertyValue(nameof(PosicionFiscal), ref _posicionFiscal, value);
+    }
+
+    [XafDisplayName("Sector")]
+    public Sector Sector
+    {
+        get => _sector;
+        set => SetPropertyValue(nameof(Sector), ref _sector, value);
     }
 
     [Association("Cliente-Bancos")]
