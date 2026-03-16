@@ -23,18 +23,49 @@ public class Cliente(Session session) : Tercero(session)
 {
     private decimal _descuentoComercial;
     private decimal _limiteCredito;
-    private bool _bloqueado;
+    private bool _activo;
+    private DateTime _fechaAlta;
+    private DateTime? _fechaBaja;
     private CondicionesPago _condicionesPago;
     private Banco _bancoPredeterminado;
     private Cuenta _cuentaContable;
+    private Cuenta _cuentaCobro;
     private Diario _diarioVentas;
     private PosicionFiscal _posicionFiscal;
 
-    [XafDisplayName("Bloqueado")]
-    public bool Bloqueado
+    [XafDisplayName("Activo")]
+    public bool Activo
     {
-        get => _bloqueado;
-        set => SetPropertyValue(nameof(Bloqueado), ref _bloqueado, value);
+        get => _activo;
+        set
+        {
+            if (!SetPropertyValue(nameof(Activo), ref _activo, value)) return;
+            if (IsLoading || IsSaving) return;
+            if (value)
+            {
+                FechaBaja = null;
+            }
+            else
+            {
+                FechaBaja = DateTime.Now;
+            }
+        }
+    }
+
+    [XafDisplayName("Fecha de Alta")]
+    [ModelDefault("AllowEdit", "False")]
+    public DateTime FechaAlta
+    {
+        get => _fechaAlta;
+        set => SetPropertyValue(nameof(FechaAlta), ref _fechaAlta, value);
+    }
+
+    [XafDisplayName("Fecha de Baja")]
+    [ModelDefault("AllowEdit", "False")]
+    public DateTime? FechaBaja
+    {
+        get => _fechaBaja;
+        set => SetPropertyValue(nameof(FechaBaja), ref _fechaBaja, value);
     }
 
     [XafDisplayName("Límite de Crédito")]
@@ -61,6 +92,14 @@ public class Cliente(Session session) : Tercero(session)
     {
         get => _cuentaContable;
         set => SetPropertyValue(nameof(CuentaContable), ref _cuentaContable, value);
+    }
+
+    [XafDisplayName("Cuenta de Cobro")]
+    [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
+    public Cuenta CuentaCobro
+    {
+        get => _cuentaCobro;
+        set => SetPropertyValue(nameof(CuentaCobro), ref _cuentaCobro, value);
     }
 
     [XafDisplayName("Diario de Ventas")]
@@ -136,8 +175,11 @@ public class Cliente(Session session) : Tercero(session)
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null) return;
         _cuentaContable = companyInfo.CuentaClientesPorDefecto;
+        _cuentaCobro = companyInfo.CuentaCobrosPorDefecto;
         _diarioVentas = companyInfo.DiarioVentasPorDefecto;
-        _condicionesPago = companyInfo.CondicionesPagoPorDefecto;
         _posicionFiscal = companyInfo.PosicionFiscalPorDefecto;
+        _condicionesPago = companyInfo.CondicionesPagoPorDefecto;
+        _activo = true;
+        _fechaAlta = DateTime.Now;
     }
 }

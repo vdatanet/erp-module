@@ -20,7 +20,9 @@ namespace erp.Module.BusinessObjects.Configuracion;
 public class InformacionEmpresa(Session session) : Contacto(session)
 {
     private Cuenta _cuentaClientesPorDefecto;
+    private Cuenta _cuentaCobrosPorDefecto;
     private Cuenta _cuentaComprasPorDefecto;
+    private Cuenta _cuentaPagosPorDefecto;
     private Cuenta _cuentaProveedoresPorDefecto;
     private Cuenta _cuentaVentasPorDefecto;
     private CondicionesPago _condicionesPagoPorDefecto;
@@ -32,8 +34,11 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     private string _nombreArchivoConfigVeriFactu;
     private string _nombreSistemaVeriFactu;
     private string _prefijoFacturasCompraPorDefecto;
+    private string _prefijoFacturasSimplificadasPorDefecto;
     private string _prefijoFacturasVentaPorDefecto;
+    private string _prefijoPedidosPorDefecto;
     private string _prefijoPartesDiariosPorDefecto;
+    private string _prefijoPresupuestosPorDefecto;
     private string _prefijoUrlValidacionVeriFactu;
     private string _prefijoUrlVeriFactu;
     private string _serieCertificadoVeriFactu;
@@ -81,11 +86,27 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     }
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
+    [XafDisplayName("Cuenta de Cobros por Defecto")]
+    public Cuenta CuentaCobrosPorDefecto
+    {
+        get => _cuentaCobrosPorDefecto;
+        set => SetPropertyValue(nameof(CuentaCobrosPorDefecto), ref _cuentaCobrosPorDefecto, value);
+    }
+
+    [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
     [XafDisplayName("Cuenta Proveedores por Defecto")]
     public Cuenta CuentaProveedoresPorDefecto
     {
         get => _cuentaProveedoresPorDefecto;
         set => SetPropertyValue(nameof(CuentaProveedoresPorDefecto), ref _cuentaProveedoresPorDefecto, value);
+    }
+
+    [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
+    [XafDisplayName("Cuenta de Pagos por Defecto")]
+    public Cuenta CuentaPagosPorDefecto
+    {
+        get => _cuentaPagosPorDefecto;
+        set => SetPropertyValue(nameof(CuentaPagosPorDefecto), ref _cuentaPagosPorDefecto, value);
     }
     
     [XafDisplayName("Condiciones de Pago por Defecto")]
@@ -109,11 +130,32 @@ public class InformacionEmpresa(Session session) : Contacto(session)
         set => SetPropertyValue(nameof(PrefijoFacturasVentaPorDefecto), ref _prefijoFacturasVentaPorDefecto, value);
     }
 
+    [XafDisplayName("Prefijo Facturas Simplificadas")]
+    public string PrefijoFacturasSimplificadasPorDefecto
+    {
+        get => _prefijoFacturasSimplificadasPorDefecto;
+        set => SetPropertyValue(nameof(PrefijoFacturasSimplificadasPorDefecto), ref _prefijoFacturasSimplificadasPorDefecto, value);
+    }
+
     [XafDisplayName("Prefijo Facturas Compra")]
     public string PrefijoFacturasCompraPorDefecto
     {
         get => _prefijoFacturasCompraPorDefecto;
         set => SetPropertyValue(nameof(PrefijoFacturasCompraPorDefecto), ref _prefijoFacturasCompraPorDefecto, value);
+    }
+
+    [XafDisplayName("Prefijo Pedidos")]
+    public string PrefijoPedidosPorDefecto
+    {
+        get => _prefijoPedidosPorDefecto;
+        set => SetPropertyValue(nameof(PrefijoPedidosPorDefecto), ref _prefijoPedidosPorDefecto, value);
+    }
+
+    [XafDisplayName("Prefijo Presupuestos")]
+    public string PrefijoPresupuestosPorDefecto
+    {
+        get => _prefijoPresupuestosPorDefecto;
+        set => SetPropertyValue(nameof(PrefijoPresupuestosPorDefecto), ref _prefijoPresupuestosPorDefecto, value);
     }
 
     [XafDisplayName("Prefijo Partes Diarios")]
