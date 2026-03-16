@@ -236,6 +236,37 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
+    <DetailView Id="Imagen_DetailView" FreezeLayout="True">
+      <Layout IsNewNode="True" Removed="True">
+        <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
+          <LayoutGroup Id="SimpleEditors" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
+            <LayoutGroup Id="Imagen" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
+              <LayoutItem Id="Nombre" ViewItem="Nombre" ShowCaption="" Index="0" RelativeSize="3.8415366146458583" IsNewNode="True" />
+              <LayoutItem Id="Notas" ViewItem="Notas" Index="1" RelativeSize="92.31692677070828" IsNewNode="True" />
+              <LayoutItem Id="MediaDataObject" ViewItem="MediaDataObject" ShowCaption="" Index="2" RelativeSize="3.8415366146458583" IsNewNode="True" />
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="Imagen_ListView" Caption="Imágenes" FreezeColumnIndices="True">
+      <Columns>
+        <ColumnInfo Id="Contacto" Index="-1" />
+        <ColumnInfo Id="DocumentoVenta" Index="-1" />
+        <ColumnInfo Id="MediaDataObject" Index="-1" />
+        <ColumnInfo Id="Notas" Index="-1" />
+        <ColumnInfo Id="Oid" Index="-1" />
+        <ColumnInfo Id="Oportunidad" Index="-1" />
+        <ColumnInfo Id="Producto" Index="-1" />
+        <ColumnInfo Id="Tarea" Index="-1" />
+        <ColumnInfo Id="Nombre" Index="0" />
+      </Columns>
+    </ListView>
+    <ListView Id="Imagen_LookupListView" Caption="Imágenes" FreezeColumnIndices="True">
+      <Columns>
+        <ColumnInfo Id="Nombre" Index="0" />
+      </Columns>
+    </ListView>
     <DetailView Id="InformacionEmpresa_DetailView" FreezeLayout="True">
       <Layout IsNewNode="True" Removed="True">
         <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">

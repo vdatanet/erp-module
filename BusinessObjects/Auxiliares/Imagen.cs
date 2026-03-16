@@ -35,19 +35,19 @@ public class Imagen(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
-    [XafDisplayName("Imagen")]
-    public MediaDataObject MediaDataObject
-    {
-        get => _mediaDataObject;
-        set => SetPropertyValue(nameof(MediaDataObject), ref _mediaDataObject, value);
-    }
-
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Notas")]
     public string Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
+    }
+
+    [XafDisplayName("Imagen")]
+    public MediaDataObject MediaDataObject
+    {
+        get => _mediaDataObject;
+        set => SetPropertyValue(nameof(MediaDataObject), ref _mediaDataObject, value);
     }
 
     [Association("Contacto-Fotos")]
