@@ -1,5 +1,6 @@
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
+using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Comun;
@@ -21,11 +22,11 @@ public enum EstadoOportunidad
 
 [DefaultClassOptions]
 [NavigationItem("Crm")]
-[XafDefaultProperty(nameof(Nombre))]
+[XafDefaultProperty(nameof(Titulo))]
 [ImageName("BO_Lead")]
 public class Oportunidad(Session session) : EntidadBase(session)
 {
-    private string _nombre;
+    private string _titulo;
     private string _descripcion;
     private Cliente _cliente;
     private Campana _campana;
@@ -39,11 +40,12 @@ public class Oportunidad(Session session) : EntidadBase(session)
     private string _notas;
 
     [Size(255)]
-    [XafDisplayName("Nombre")]
-    public string Nombre
+    [RuleRequiredField]
+    [XafDisplayName("Título")]
+    public string Titulo
     {
-        get => _nombre;
-        set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
+        get => _titulo;
+        set => SetPropertyValue(nameof(Titulo), ref _titulo, value);
     }
 
     [Size(SizeAttribute.Unlimited)]
@@ -54,6 +56,7 @@ public class Oportunidad(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
     }
 
+    [RuleRequiredField]
     [Association("Cliente-Oportunidades")]
     [XafDisplayName("Cliente")]
     public Cliente Cliente
