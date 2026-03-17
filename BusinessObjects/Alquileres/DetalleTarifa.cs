@@ -17,7 +17,7 @@ public class DetalleTarifa(Session session) : EntidadBase(session)
     private DateTime _fechaInicio;
     private DateTime _fechaFin;
     private decimal _precio;
-    private string? _observaciones;
+    private string? _notas;
     private int _temporada;
 
     [Association("Tarifa-Detalles")]
@@ -56,12 +56,12 @@ public class DetalleTarifa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Precio), ref _precio, value);
     }
 
-    [Size(255)]
-    [XafDisplayName("Observaciones")]
-    public string? Observaciones
+    [Size(SizeAttribute.Unlimited)]
+    [XafDisplayName("Notas")]
+    public string? Notas
     {
-        get => _observaciones;
-        set => SetPropertyValue(nameof(Observaciones), ref _observaciones, value);
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
     [ModelDefault("AllowEdit", "False")]

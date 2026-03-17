@@ -15,23 +15,23 @@ namespace erp.Module.BusinessObjects.Alquileres;
 public class Tarifa(Session session) : EntidadBase(session)
 {
     private string? _nombre;
-    private string? _observaciones;
+    private string? _notas;
 
     [Size(255)]
     [RuleRequiredField]
-    [XafDisplayName("Tipo")]
+    [XafDisplayName("Nombre")]
     public string? Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
-    [Size(255)]
-    [XafDisplayName("Observaciones")]
-    public string? Observaciones
+    [Size(SizeAttribute.Unlimited)]
+    [XafDisplayName("Notas")]
+    public string? Notas
     {
-        get => _observaciones;
-        set => SetPropertyValue(nameof(Observaciones), ref _observaciones, value);
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
     [Association("Tarifa-RecursosAlquilables")]

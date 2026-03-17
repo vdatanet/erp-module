@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using DevExpress.ExpressApp.DC;
-using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
@@ -15,14 +14,13 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [DefaultProperty(nameof(Nombre))]
 public class RecursoAlquilable(Session session) : RecursoBase(session)
 {
+    private string? _codigoRegistro;
+    private bool _estaActivo;
     private string? _notas;
     private Producto? _productoRelacionado;
-    private bool _estaActivo;
-    private string? _codigoRegistro;
-    private string? _observaciones;
-    private Ubicacion? _ubicacion;
     private int _secuencia;
     private Tarifa? _tarifa;
+    private Ubicacion? _ubicacion;
 
     [Size(255)]
     [RuleRequiredField]
@@ -40,7 +38,7 @@ public class RecursoAlquilable(Session session) : RecursoBase(session)
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
-    
+
     [XafDisplayName("Producto Relacionado")]
     [ToolTip("Producto utilizado para la facturación de este alquiler")]
     public Producto? ProductoRelacionado
@@ -55,21 +53,13 @@ public class RecursoAlquilable(Session session) : RecursoBase(session)
         get => _estaActivo;
         set => SetPropertyValue(nameof(EstaActivo), ref _estaActivo, value);
     }
-    
+
     [Size(255)]
     [XafDisplayName("Código de Registro")]
     public string? CodigoRegistro
     {
         get => _codigoRegistro;
         set => SetPropertyValue(nameof(CodigoRegistro), ref _codigoRegistro, value);
-    }
-
-    [Size(SizeAttribute.Unlimited)]
-    [XafDisplayName("Observaciones")]
-    public string? Observaciones
-    {
-        get => _observaciones;
-        set => SetPropertyValue(nameof(Observaciones), ref _observaciones, value);
     }
 
     [XafDisplayName("Ubicación")]
