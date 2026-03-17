@@ -20,17 +20,17 @@ public class Alquiler(Session session) : RecursoBase(session)
     private TipoAlquiler _tipoAlquiler;
     private Producto _productoRelacionado;
     private bool _estaActivo;
-    private Capacitats _capacitat;
+    private Capacidades _capacidad;
     private string _hut;
-    private string _observacions;
-    private Plantes _planta;
-    private int _sequencia;
+    private string _observaciones;
+    private Plantas _planta;
+    private int _secuencia;
     private Tarifa _tarifa;
-    private TipusAlquilerDetall _tipus;
+    private TiposAlquilerDetalle _tipoDetalle;
 
     [Size(255)]
     [RuleRequiredField]
-    [XafDisplayName("Nom")]
+    [XafDisplayName("Nombre")]
     public string Nombre
     {
         get => Caption;
@@ -38,7 +38,7 @@ public class Alquiler(Session session) : RecursoBase(session)
     }
 
     [Size(SizeAttribute.Unlimited)]
-    [XafDisplayName("Descripció")]
+    [XafDisplayName("Descripción")]
     public string Descripcion
     {
         get => _descripcion;
@@ -48,7 +48,7 @@ public class Alquiler(Session session) : RecursoBase(session)
     [ImmediatePostData]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
-    [XafDisplayName("Preu per Dia")]
+    [XafDisplayName("Precio por Día")]
     public decimal PrecioPorDia
     {
         get => _precioPorDia;
@@ -57,33 +57,33 @@ public class Alquiler(Session session) : RecursoBase(session)
 
     [Association("TipoAlquiler-Alquileres")]
     [RuleRequiredField]
-    [XafDisplayName("Tipus de Lloguer")]
+    [XafDisplayName("Tipo de Alquiler")]
     public TipoAlquiler TipoAlquiler
     {
         get => _tipoAlquiler;
         set => SetPropertyValue(nameof(TipoAlquiler), ref _tipoAlquiler, value);
     }
 
-    [XafDisplayName("Producte Relacionat")]
-    [ToolTip("Producte utilitzat per a la facturació d'aquest lloguer")]
+    [XafDisplayName("Producto Relacionado")]
+    [ToolTip("Producto utilizado para la facturación de este alquiler")]
     public Producto ProductoRelacionado
     {
         get => _productoRelacionado;
         set => SetPropertyValue(nameof(ProductoRelacionado), ref _productoRelacionado, value);
     }
 
-    [XafDisplayName("Actiu")]
+    [XafDisplayName("Activo")]
     public bool EstaActivo
     {
         get => _estaActivo;
         set => SetPropertyValue(nameof(EstaActivo), ref _estaActivo, value);
     }
 
-    [XafDisplayName("Capacitat")]
-    public Capacitats Capacitat
+    [XafDisplayName("Capacidad")]
+    public Capacidades Capacidad
     {
-        get => _capacitat;
-        set => SetPropertyValue(nameof(Capacitat), ref _capacitat, value);
+        get => _capacidad;
+        set => SetPropertyValue(nameof(Capacidad), ref _capacidad, value);
     }
 
     [Size(255)]
@@ -95,25 +95,25 @@ public class Alquiler(Session session) : RecursoBase(session)
     }
 
     [Size(SizeAttribute.Unlimited)]
-    [XafDisplayName("Observacions")]
-    public string Observacions
+    [XafDisplayName("Observaciones")]
+    public string Observaciones
     {
-        get => _observacions;
-        set => SetPropertyValue(nameof(Observacions), ref _observacions, value);
+        get => _observaciones;
+        set => SetPropertyValue(nameof(Observaciones), ref _observaciones, value);
     }
 
     [XafDisplayName("Planta")]
-    public Plantes Planta
+    public Plantas Planta
     {
         get => _planta;
         set => SetPropertyValue(nameof(Planta), ref _planta, value);
     }
 
-    [XafDisplayName("Seqüència")]
-    public int Sequencia
+    [XafDisplayName("Secuencia")]
+    public int Secuencia
     {
-        get => _sequencia;
-        set => SetPropertyValue(nameof(Sequencia), ref _sequencia, value);
+        get => _secuencia;
+        set => SetPropertyValue(nameof(Secuencia), ref _secuencia, value);
     }
 
     [Association("Tarifa-Alquileres")]
@@ -124,51 +124,51 @@ public class Alquiler(Session session) : RecursoBase(session)
         set => SetPropertyValue(nameof(Tarifa), ref _tarifa, value);
     }
 
-    [XafDisplayName("Tipus Detall")]
-    public TipusAlquilerDetall Tipus
+    [XafDisplayName("Tipo Detalle")]
+    public TiposAlquilerDetalle TipoDetalle
     {
-        get => _tipus;
-        set => SetPropertyValue(nameof(Tipus), ref _tipus, value);
+        get => _tipoDetalle;
+        set => SetPropertyValue(nameof(TipoDetalle), ref _tipoDetalle, value);
     }
 
     [Association("Alquiler-Reservas")]
-    [XafDisplayName("Reserves")]
+    [XafDisplayName("Reservas")]
     public XPCollection<Reserva> Reservas => GetCollection<Reserva>();
 
-    [Association("Alquiler-Simulacions")]
-    [XafDisplayName("Simulacions")]
-    public XPCollection<Simulacio> Simulacions => GetCollection<Simulacio>();
+    [Association("Alquiler-Simulaciones")]
+    [XafDisplayName("Simulaciones")]
+    public XPCollection<Simulacion> Simulaciones => GetCollection<Simulacion>();
 
     public override void AfterConstruction()
     {
         base.AfterConstruction();
         EstaActivo = true;
-        Tipus = TipusAlquilerDetall.A1;
-        Planta = Plantes.Baixa;
-        Capacitat = Capacitats.Dos;
+        TipoDetalle = TiposAlquilerDetalle.A1;
+        Planta = Plantas.Baja;
+        Capacidad = Capacidades.Dos;
     }
 
-    public enum Plantes
+    public enum Plantas
     {
-        [XafDisplayName("Baixa")]
-        Baixa,
+        [XafDisplayName("Baja")]
+        Baja,
         [XafDisplayName("Primera")]
         Primera,
-        [XafDisplayName("Segona")]
-        Segona,
+        [XafDisplayName("Segunda")]
+        Segunda,
         [XafDisplayName("Tercera")]
         Tercera
     }
 
-    public enum Capacitats
+    public enum Capacidades
     {
         [XafDisplayName("2/4")]
         Dos,
         [XafDisplayName("4/6")]
-        Quatre
+        Cuatro
     }
 
-    public enum TipusAlquilerDetall
+    public enum TiposAlquilerDetalle
     {
         [XafDisplayName("A0")]
         A0,

@@ -15,11 +15,11 @@ namespace erp.Module.BusinessObjects.Alquileres;
 public class Tarifa(Session session) : EntidadBase(session)
 {
     private string _nombre;
-    private string _observacions;
+    private string _observaciones;
 
     [Size(255)]
     [RuleRequiredField]
-    [XafDisplayName("Tipus")]
+    [XafDisplayName("Tipo")]
     public string Nombre
     {
         get => _nombre;
@@ -27,24 +27,24 @@ public class Tarifa(Session session) : EntidadBase(session)
     }
 
     [Size(255)]
-    [XafDisplayName("Observacions")]
-    public string Observacions
+    [XafDisplayName("Observaciones")]
+    public string Observaciones
     {
-        get => _observacions;
-        set => SetPropertyValue(nameof(Observacions), ref _observacions, value);
+        get => _observaciones;
+        set => SetPropertyValue(nameof(Observaciones), ref _observaciones, value);
     }
 
     [Association("Tarifa-Alquileres")]
-    [XafDisplayName("Lloguers")]
+    [XafDisplayName("Alquileres")]
     public XPCollection<Alquiler> Alquileres => GetCollection<Alquiler>();
 
-    [Association("Tarifa-Detalls")]
+    [Association("Tarifa-Detalles")]
     [DevExpress.Xpo.Aggregated]
-    [XafDisplayName("Detalls")]
-    public XPCollection<DetallTarifa> Detalls => GetCollection<DetallTarifa>();
+    [XafDisplayName("Detalles")]
+    public XPCollection<DetalleTarifa> Detalles => GetCollection<DetalleTarifa>();
 
-    [Association("Tarifa-PreusDiaris")]
+    [Association("Tarifa-PreciosDiarios")]
     [DevExpress.Xpo.Aggregated]
-    [XafDisplayName("Preus Diaris")]
-    public XPCollection<PreuDiari> PreusDiaris => GetCollection<PreuDiari>();
+    [XafDisplayName("Precios Diarios")]
+    public XPCollection<PrecioDiario> PreciosDiarios => GetCollection<PrecioDiario>();
 }

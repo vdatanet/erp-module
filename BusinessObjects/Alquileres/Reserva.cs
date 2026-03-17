@@ -17,39 +17,39 @@ namespace erp.Module.BusinessObjects.Alquileres;
 public class Reserva(Session session) : EventoBase(session)
 {
     private Alquiler _alquiler;
-    private decimal _totalPagat;
+    private decimal _totalPagado;
     private Cliente _cliente;
     private int _numero;
     private int _temporada;
     private string _referencia;
-    private DateTime _dataReserva;
-    private DateTime _validaFins;
-    private double _dies;
-    private bool _allotjament;
+    private DateTime _fechaReserva;
+    private DateTime _validaHasta;
+    private double _dias;
+    private bool _alojamiento;
     private bool _parking;
     private bool _ac;
-    private int _personesLlencols;
-    private int _personesSubjectes;
-    private int _personesExemptes;
-    private decimal _importAllotjament;
-    private decimal _importParking;
-    private decimal _importAc;
-    private decimal _importLlencols;
-    private decimal _importTaxaTuristica;
-    private decimal _importAltresExtres;
-    private decimal _importDescompte;
-    private decimal _perDescompte;
+    private int _personasSabanas;
+    private int _personasSujetas;
+    private int _personasExentas;
+    private decimal _importeAlojamiento;
+    private decimal _importeParking;
+    private decimal _importeAc;
+    private decimal _importeSabanas;
+    private decimal _importeTasaTuristica;
+    private decimal _importeOtrosExtras;
+    private decimal _importeDescuento;
+    private decimal _perDescuento;
     private decimal _subtotal;
     private decimal _total;
-    private decimal _totalTaxaTuristicaInclosa;
-    private decimal _importPendent;
+    private decimal _totalTasaTuristicaIncluida;
+    private decimal _importePendiente;
 
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        DataReserva = DateTime.Now.Date;
-        ValidaFins = DataReserva.AddDays(7);
-        Allotjament = true;
+        FechaReserva = DateTime.Now.Date;
+        ValidaHasta = FechaReserva.AddDays(7);
+        Alojamiento = true;
         Parking = false;
         Ac = false;
     }
@@ -73,14 +73,14 @@ public class Reserva(Session session) : EventoBase(session)
         base.OnChanged(propertyName, oldValue, newValue);
         if (!IsLoading && (propertyName == nameof(StartOn) || propertyName == nameof(EndOn)))
         {
-            Dies = (EndOn - StartOn).TotalDays;
+            Dias = (EndOn - StartOn).TotalDays;
             Temporada = StartOn.Year;
             Calcular();
         }
     }
 
     [Association("Alquiler-Reservas")]
-    [XafDisplayName("Lloguer")]
+    [XafDisplayName("Alquiler")]
     [ImmediatePostData]
     public Alquiler Alquiler
     {
@@ -93,18 +93,18 @@ public class Reserva(Session session) : EventoBase(session)
         }
     }
 
-    [Association("Cliente-Reserves")]
-    [XafDisplayName("Client")]
+    [Association("Cliente-Reservas")]
+    [XafDisplayName("Cliente")]
     [ImmediatePostData]
-    public Cliente Client
+    public Cliente Cliente
     {
         get => _cliente;
         set
         {
-            bool modified = SetPropertyValue(nameof(Client), ref _cliente, value);
-            if (modified && !IsLoading && Client != null)
+            bool modified = SetPropertyValue(nameof(Cliente), ref _cliente, value);
+            if (modified && !IsLoading && Cliente != null)
             {
-                Subject = Client.Nombre;
+                Subject = Cliente.Nombre;
             }
         }
     }
@@ -125,7 +125,7 @@ public class Reserva(Session session) : EventoBase(session)
         set => SetPropertyValue(nameof(Temporada), ref _temporada, value);
     }
 
-    [XafDisplayName("Referència")]
+    [XafDisplayName("Referencia")]
     [ModelDefault("AllowEdit", "False")]
     [Size(255)]
     public string Referencia
@@ -134,36 +134,36 @@ public class Reserva(Session session) : EventoBase(session)
         set => SetPropertyValue(nameof(Referencia), ref _referencia, value);
     }
 
-    [XafDisplayName("Data Reserva")]
-    public DateTime DataReserva
+    [XafDisplayName("Fecha Reserva")]
+    public DateTime FechaReserva
     {
-        get => _dataReserva;
-        set => SetPropertyValue(nameof(DataReserva), ref _dataReserva, value);
+        get => _fechaReserva;
+        set => SetPropertyValue(nameof(FechaReserva), ref _fechaReserva, value);
     }
 
-    [XafDisplayName("Vàlida fins")]
-    public DateTime ValidaFins
+    [XafDisplayName("Válida hasta")]
+    public DateTime ValidaHasta
     {
-        get => _validaFins;
-        set => SetPropertyValue(nameof(ValidaFins), ref _validaFins, value);
+        get => _validaHasta;
+        set => SetPropertyValue(nameof(ValidaHasta), ref _validaHasta, value);
     }
 
-    [XafDisplayName("Dies")]
+    [XafDisplayName("Días")]
     [ModelDefault("AllowEdit", "False")]
-    public double Dies
+    public double Dias
     {
-        get => _dies;
-        set => SetPropertyValue(nameof(Dies), ref _dies, value);
+        get => _dias;
+        set => SetPropertyValue(nameof(Dias), ref _dias, value);
     }
 
-    [XafDisplayName("Allotjament")]
+    [XafDisplayName("Alojamiento")]
     [ImmediatePostData]
-    public bool Allotjament
+    public bool Alojamiento
     {
-        get => _allotjament;
+        get => _alojamiento;
         set
         {
-            bool modified = SetPropertyValue(nameof(Allotjament), ref _allotjament, value);
+            bool modified = SetPropertyValue(nameof(Alojamiento), ref _alojamiento, value);
             if (modified && !IsLoading)
                 Calcular();
         }
@@ -182,7 +182,7 @@ public class Reserva(Session session) : EventoBase(session)
         }
     }
 
-    [XafDisplayName("Aire condicionat")]
+    [XafDisplayName("Aire acondicionado")]
     [ImmediatePostData]
     public bool Ac
     {
@@ -195,131 +195,131 @@ public class Reserva(Session session) : EventoBase(session)
         }
     }
 
-    [XafDisplayName("Persones llençols")]
+    [XafDisplayName("Personas sábanas")]
     [ImmediatePostData]
-    public int PersonesLlencols
+    public int PersonasSabanas
     {
-        get => _personesLlencols;
+        get => _personasSabanas;
         set
         {
-            bool modified = SetPropertyValue(nameof(PersonesLlencols), ref _personesLlencols, value);
+            bool modified = SetPropertyValue(nameof(PersonasSabanas), ref _personasSabanas, value);
             if (modified && !IsLoading)
                 Calcular();
         }
     }
 
-    [XafDisplayName("Persones subjectes")]
+    [XafDisplayName("Personas sujetas")]
     [ImmediatePostData]
-    public int PersonesSubjectes
+    public int PersonasSujetas
     {
-        get => _personesSubjectes;
+        get => _personasSujetas;
         set
         {
-            bool modified = SetPropertyValue(nameof(PersonesSubjectes), ref _personesSubjectes, value);
+            bool modified = SetPropertyValue(nameof(PersonasSujetas), ref _personasSujetas, value);
             if (modified && !IsLoading)
                 Calcular();
         }
     }
 
-    [XafDisplayName("Persones exemptes")]
-    public int PersonesExemptes
+    [XafDisplayName("Personas exentas")]
+    public int PersonasExentas
     {
-        get => _personesExemptes;
-        set => SetPropertyValue(nameof(PersonesExemptes), ref _personesExemptes, value);
+        get => _personasExentas;
+        set => SetPropertyValue(nameof(PersonasExentas), ref _personasExentas, value);
     }
 
-    [XafDisplayName("Import allotjament")]
+    [XafDisplayName("Importe alojamiento")]
     [ModelDefault("AllowEdit", "False")]
-    public decimal ImportAllotjament
+    public decimal ImporteAlojamiento
     {
-        get => _importAllotjament;
-        set => SetPropertyValue(nameof(ImportAllotjament), ref _importAllotjament, value);
+        get => _importeAlojamiento;
+        set => SetPropertyValue(nameof(ImporteAlojamiento), ref _importeAlojamiento, value);
     }
 
-    [XafDisplayName("Import parking")]
+    [XafDisplayName("Importe parking")]
     [ModelDefault("AllowEdit", "False")]
-    public decimal ImportParking
+    public decimal ImporteParking
     {
-        get => _importParking;
-        set => SetPropertyValue(nameof(ImportParking), ref _importParking, value);
+        get => _importeParking;
+        set => SetPropertyValue(nameof(ImporteParking), ref _importeParking, value);
     }
 
-    [XafDisplayName("Import aire condicionat")]
+    [XafDisplayName("Importe aire acondicionado")]
     [ModelDefault("AllowEdit", "False")]
-    public decimal ImportAc
+    public decimal ImporteAc
     {
-        get => _importAc;
-        set => SetPropertyValue(nameof(ImportAc), ref _importAc, value);
+        get => _importeAc;
+        set => SetPropertyValue(nameof(ImporteAc), ref _importeAc, value);
     }
 
-    [XafDisplayName("Import llençols")]
+    [XafDisplayName("Importe sábanas")]
     [ModelDefault("AllowEdit", "False")]
-    public decimal ImportLlencols
+    public decimal ImporteSabanas
     {
-        get => _importLlencols;
-        set => SetPropertyValue(nameof(ImportLlencols), ref _importLlencols, value);
+        get => _importeSabanas;
+        set => SetPropertyValue(nameof(ImporteSabanas), ref _importeSabanas, value);
     }
 
-    [XafDisplayName("Import taxa turística")]
+    [XafDisplayName("Importe tasa turística")]
     [ModelDefault("AllowEdit", "False")]
-    public decimal ImportTaxaTuristica
+    public decimal ImporteTasaTuristica
     {
-        get => _importTaxaTuristica;
-        set => SetPropertyValue(nameof(ImportTaxaTuristica), ref _importTaxaTuristica, value);
+        get => _importeTasaTuristica;
+        set => SetPropertyValue(nameof(ImporteTasaTuristica), ref _importeTasaTuristica, value);
     }
 
-    [XafDisplayName("Import altres extres")]
+    [XafDisplayName("Importe otros extras")]
     [ImmediatePostData]
-    public decimal ImportAltresExtres
+    public decimal ImporteOtrosExtras
     {
-        get => _importAltresExtres;
+        get => _importeOtrosExtras;
         set
         {
-            bool modified = SetPropertyValue(nameof(ImportAltresExtres), ref _importAltresExtres, value);
+            bool modified = SetPropertyValue(nameof(ImporteOtrosExtras), ref _importeOtrosExtras, value);
             if (modified && !IsLoading)
                 Calcular();
         }
     }
 
-    [XafDisplayName("Import descompte")]
+    [XafDisplayName("Importe descuento")]
     [ImmediatePostData]
-    public decimal ImportDescompte
+    public decimal ImporteDescuento
     {
-        get => _importDescompte;
+        get => _importeDescuento;
         set
         {
-            bool modified = SetPropertyValue(nameof(ImportDescompte), ref _importDescompte, value);
+            bool modified = SetPropertyValue(nameof(ImporteDescuento), ref _importeDescuento, value);
             if (modified && !IsLoading)
             {
                 if (Subtotal > 0)
-                    _perDescompte = MoneyMath.RoundMoney(ImportDescompte / Subtotal * 100);
+                    _perDescuento = MoneyMath.RoundMoney(ImporteDescuento / Subtotal * 100);
                 else
-                    _perDescompte = 0;
-                OnChanged(nameof(PerDescompte));
+                    _perDescuento = 0;
+                OnChanged(nameof(PerDescuento));
                 Calcular();
             }
         }
     }
 
-    [XafDisplayName("Descompte (%)")]
+    [XafDisplayName("Descuento (%)")]
     [ImmediatePostData]
     [ModelDefault("EditMask", "N2")]
     [ModelDefault("DisplayFormat", "{0:N2}%")]
-    public decimal PerDescompte
+    public decimal PerDescuento
     {
-        get => _perDescompte;
+        get => _perDescuento;
         set
         {
-            bool modified = SetPropertyValue(nameof(PerDescompte), ref _perDescompte, value);
+            bool modified = SetPropertyValue(nameof(PerDescuento), ref _perDescuento, value);
             if (modified && !IsLoading)
             {
-                ImportDescompte = MoneyMath.RoundMoney(Subtotal * PerDescompte / 100);
+                ImporteDescuento = MoneyMath.RoundMoney(Subtotal * PerDescuento / 100);
                 Calcular();
             }
         }
     }
 
-    [XafDisplayName("Import subtotal")]
+    [XafDisplayName("Importe subtotal")]
     [ModelDefault("AllowEdit", "False")]
     public decimal Subtotal
     {
@@ -327,7 +327,7 @@ public class Reserva(Session session) : EventoBase(session)
         set => SetPropertyValue(nameof(Subtotal), ref _subtotal, value);
     }
 
-    [XafDisplayName("Import total")]
+    [XafDisplayName("Importe total")]
     [ModelDefault("AllowEdit", "False")]
     public decimal Total
     {
@@ -335,63 +335,62 @@ public class Reserva(Session session) : EventoBase(session)
         set => SetPropertyValue(nameof(Total), ref _total, value);
     }
 
-    [XafDisplayName("Import amb taxes")]
+    [XafDisplayName("Total tasa turística incluida")]
     [ModelDefault("AllowEdit", "False")]
-    public decimal TotalTaxaTuristicaInclosa
+    public decimal TotalTasaTuristicaIncluida
     {
-        get => _totalTaxaTuristicaInclosa;
-        set => SetPropertyValue(nameof(TotalTaxaTuristicaInclosa), ref _totalTaxaTuristicaInclosa, value);
+        get => _totalTasaTuristicaIncluida;
+        set => SetPropertyValue(nameof(TotalTasaTuristicaIncluida), ref _totalTasaTuristicaIncluida, value);
     }
 
-    [XafDisplayName("Import pendent")]
+    [XafDisplayName("Importe pendiente")]
     [ModelDefault("AllowEdit", "False")]
-    public decimal ImportPendent
+    public decimal ImportePendiente
     {
-        get => _importPendent;
-        set => SetPropertyValue(nameof(ImportPendent), ref _importPendent, value);
+        get => _importePendiente;
+        set => SetPropertyValue(nameof(ImportePendiente), ref _importePendiente, value);
     }
 
-    [XafDisplayName("Total Pagat")]
+    [XafDisplayName("Total pagado")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     [ModelDefault("AllowEdit", "False")]
-    public decimal TotalPagat
+    public decimal TotalPagado
     {
-        get => _totalPagat;
-        set => SetPropertyValue(nameof(TotalPagat), ref _totalPagat, value);
+        get => _totalPagado;
+        set => SetPropertyValue(nameof(TotalPagado), ref _totalPagado, value);
     }
 
-    [Association("Reserva-Pagaments")]
+    [Association("Reserva-Pagos")]
     [DevExpress.Xpo.Aggregated]
-    [XafDisplayName("Pagaments")]
-    public XPCollection<Pagament> Pagaments => GetCollection<Pagament>();
+    [XafDisplayName("Pagos")]
+    public XPCollection<Pago> Pagos => GetCollection<Pago>();
 
-    [Association("Reserva-Viatgers")]
-    [DevExpress.Xpo.Aggregated]
-    [XafDisplayName("Viatgers")]
-    public XPCollection<Viatger> Viatgers => GetCollection<Viatger>();
+    [Association("Reserva-Viajeros")]
+    [XafDisplayName("Viajeros")]
+    public XPCollection<Viajero> Viajeros => GetCollection<Viajero>();
 
-    public void SumarPagaments(bool update)
+    public void SumarPagos(bool update)
     {
         if (IsLoading || IsSaving) return;
-        decimal totalPagat = 0;
-        foreach (var pagament in Pagaments)
+        decimal totalPagado = 0;
+        foreach (var pago in Pagos)
         {
-            totalPagat += pagament.Import;
+            totalPagado += pago.Importe;
         }
 
-        TotalPagat = totalPagat;
-        ImportPendent = Total - TotalPagat;
+        TotalPagado = totalPagado;
+        ImportePendiente = Total - TotalPagado;
         
-        if (TotalPagat > 0) 
-            Status = 1; // Ocupat/Confirmat
+        if (TotalPagado > 0) 
+            Status = 1; // Ocupado/Confirmado
         else 
-            Status = 0; // Pendent
+            Status = 0; // Pendiente
             
         if (update)
         {
-            OnChanged(nameof(TotalPagat));
-            OnChanged(nameof(ImportPendent));
+            OnChanged(nameof(TotalPagado));
+            OnChanged(nameof(ImportePendiente));
             OnChanged(nameof(Status));
         }
     }
@@ -400,80 +399,83 @@ public class Reserva(Session session) : EventoBase(session)
     {
         if (EndOn > StartOn)
         {
-            // Allotjament
-            if (Allotjament && Alquiler != null && Alquiler.Tarifa != null)
+            // Alojamiento
+            if (Alojamiento && Alquiler != null && Alquiler.Tarifa != null)
             {
                 object suma = Session.Evaluate(
-                    typeof(PreuDiari),
-                    CriteriaOperator.Parse("Sum(Preu)"),
+                    typeof(PrecioDiario),
+                    CriteriaOperator.Parse("Sum(Precio)"),
                     CriteriaOperator.Parse(
-                        "Tarifa.Oid = ? AND Data >= ? AND Data < ?",
+                        "Tarifa.Oid = ? AND Fecha >= ? AND Fecha < ?",
                         Alquiler.Tarifa.Oid,
                         StartOn.Date,
                         EndOn.Date));
-                ImportAllotjament = Convert.ToDecimal(suma);
+                ImporteAlojamiento = Convert.ToDecimal(suma);
             }
             else
             {
-                ImportAllotjament = 0;
+                ImporteAlojamiento = 0;
             }
 
             // Parking
             if (Parking)
             {
                 object suma = Session.Evaluate(
-                    typeof(PreuDiari),
-                    CriteriaOperator.Parse("Sum(Preu)"),
-                    CriteriaOperator.Parse("Tarifa.Nombre = 'P' AND Data >= ? AND Data < ?", StartOn.Date, EndOn.Date));
-                ImportParking = Convert.ToDecimal(suma);
+                    typeof(PrecioDiario),
+                    CriteriaOperator.Parse("Sum(Precio)"),
+                    CriteriaOperator.Parse("Tarifa.Nombre = 'P' AND Fecha >= ? AND Fecha < ?", StartOn.Date, EndOn.Date));
+                ImporteParking = Convert.ToDecimal(suma);
             }
             else
             {
-                ImportParking = 0;
+                ImporteParking = 0;
             }
 
-            // Aire condicionat
+            // Aire acondicionado
             if (Ac)
             {
-                var extraAc = Session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Aire condicionat'"));
+                var extraAc = Session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Aire acondicionado'"));
+                if (extraAc == null) extraAc = Session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Aire condicionat'"));
                 if (extraAc != null)
-                    ImportAc = MoneyMath.RoundMoney((decimal)Dies * extraAc.PreuDiari);
+                    ImporteAc = MoneyMath.RoundMoney((decimal)Dias * extraAc.PrecioDiario);
             }
             else
             {
-                ImportAc = 0;
+                ImporteAc = 0;
             }
 
-            // Llençols
-            if (PersonesLlencols > 0)
+            // Sábanas
+            if (PersonasSabanas > 0)
             {
-                var extraLlencols = Session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Llençols'"));
-                if (extraLlencols != null)
-                    ImportLlencols = MoneyMath.RoundMoney(PersonesLlencols * extraLlencols.PreuDiari);
+                var extraSabanas = Session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Sábanas'"));
+                if (extraSabanas == null) extraSabanas = Session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Llençols'"));
+                if (extraSabanas != null)
+                    ImporteSabanas = MoneyMath.RoundMoney(PersonasSabanas * extraSabanas.PrecioDiario);
             }
             else
             {
-                ImportLlencols = 0;
+                ImporteSabanas = 0;
             }
 
-            // Taxa turística (màxim 7 dies)
-            if (PersonesSubjectes > 0)
+            // Tasa turística (máximo 7 días)
+            if (PersonasSujetas > 0)
             {
-                var diesSubjectes = (decimal)Dies;
-                if (diesSubjectes > 7) diesSubjectes = 7;
-                var extraTaxa = Session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Taxa turística'"));
-                if (extraTaxa != null)
-                    ImportTaxaTuristica = MoneyMath.RoundMoney(diesSubjectes * PersonesSubjectes * extraTaxa.PreuDiari);
+                var diasSujetos = (decimal)Dias;
+                if (diasSujetos > 7) diasSujetos = 7;
+                var extraTasa = Session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Tasa turística'"));
+                if (extraTasa == null) extraTasa = Session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Taxa turística'"));
+                if (extraTasa != null)
+                    ImporteTasaTuristica = MoneyMath.RoundMoney(diasSujetos * PersonasSujetas * extraTasa.PrecioDiario);
             }
             else
             {
-                ImportTaxaTuristica = 0;
+                ImporteTasaTuristica = 0;
             }
 
-            Subtotal = ImportAllotjament + ImportParking;
-            Total = Subtotal + ImportAc + ImportLlencols + ImportAltresExtres - ImportDescompte;
-            TotalTaxaTuristicaInclosa = Total + ImportTaxaTuristica;
-            ImportPendent = Total - TotalPagat;
+            Subtotal = ImporteAlojamiento + ImporteParking;
+            Total = Subtotal + ImporteAc + ImporteSabanas + ImporteOtrosExtras - ImporteDescuento;
+            TotalTasaTuristicaIncluida = Total + ImporteTasaTuristica;
+            ImportePendiente = Total - TotalPagado;
         }
     }
 }

@@ -19,7 +19,7 @@ public class TipoAlquiler(Session session) : EntidadBase(session)
     [Size(255)]
     [RuleRequiredField]
     [RuleUniqueValue]
-    [XafDisplayName("Nom")]
+    [XafDisplayName("Nombre")]
     public string Nombre
     {
         get => _nombre;
@@ -27,7 +27,7 @@ public class TipoAlquiler(Session session) : EntidadBase(session)
     }
 
     [Size(SizeAttribute.Unlimited)]
-    [XafDisplayName("Descripció")]
+    [XafDisplayName("Descripción")]
     public string Descripcion
     {
         get => _descripcion;
@@ -35,6 +35,6 @@ public class TipoAlquiler(Session session) : EntidadBase(session)
     }
 
     [Association("TipoAlquiler-Alquileres")]
-    [XafDisplayName("Lloguers")]
+    [XafDisplayName("Alquileres")]
     public XPCollection<Alquiler> Alquileres => GetCollection<Alquiler>();
 }

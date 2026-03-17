@@ -7,14 +7,14 @@ namespace erp.Module.BusinessObjects.Alquileres;
 
 [DefaultClassOptions]
 [NavigationItem("Alquileres")]
-[XafDisplayName("Simulació")]
+[XafDisplayName("Simulación")]
 [ImageName("BO_Scheduler")]
-public class Simulacio(Session session) : EventoBase(session)
+public class Simulacion(Session session) : EventoBase(session)
 {
     private Alquiler _alquiler;
 
-    [Association("Alquiler-Simulacions")]
-    [XafDisplayName("Lloguer")]
+    [Association("Alquiler-Simulaciones")]
+    [XafDisplayName("Alquiler")]
     public Alquiler Alquiler
     {
         get => _alquiler;

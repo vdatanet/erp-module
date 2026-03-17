@@ -132,6 +132,9 @@ public class Cliente(Session session) : Tercero(session)
     [XafDisplayName("Contactos")]
     public XPCollection<Contacto> Contactos => GetCollection<Contacto>();
 
+    [XafDisplayName("Viajeros")]
+    public XPCollection<Viajero> Viajeros => new(Session, CriteriaOperator.Parse("Cliente = ?", this));
+
     [Association("Cliente-Domicilios")]
     [XafDisplayName("Domicilios")]
     public XPCollection<Domicilio> Domicilios => GetCollection<Domicilio>(nameof(Domicilios));
@@ -154,32 +157,28 @@ public class Cliente(Session session) : Tercero(session)
     [XafDisplayName("Facturas")]
     public XPCollection<Factura> Facturas => new(Session, CriteriaOperator.Parse("Cliente = ?", this));
 
-    [Association("Cliente-Reserves")]
-    [XafDisplayName("Reserves")]
-    public XPCollection<Reserva> Reserves => GetCollection<Reserva>();
-
-    [Association("Client-Viatgers")]
-    [XafDisplayName("Viatgers")]
-    public XPCollection<Viatger> Viatgers => GetCollection<Viatger>();
+    [Association("Cliente-Reservas")]
+    [XafDisplayName("Reservas")]
+    public XPCollection<Reserva> Reservas => GetCollection<Reserva>();
 
     public enum Sexes
     {
-        [XafDisplayName("Masculí")]
-        Masculi,
-        [XafDisplayName("Femení")]
-        Femeni
+        [XafDisplayName("Masculino")]
+        Masculino,
+        [XafDisplayName("Femenino")]
+        Femenino
     }
 
-    public enum TipusDocuments
+    public enum TiposDocumentos
     {
         [XafDisplayName("NIF")]
         Nif,
-        [XafDisplayName("Passaport")]
-        Passaport,
+        [XafDisplayName("Pasaporte")]
+        Pasaporte,
         [XafDisplayName("NIE")]
         Nie,
-        [XafDisplayName("Altres")]
-        Altres
+        [XafDisplayName("Otros")]
+        Otros
     }
     
     public override void AfterConstruction()

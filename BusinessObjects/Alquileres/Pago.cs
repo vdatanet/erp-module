@@ -11,54 +11,54 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [DefaultClassOptions]
 [NavigationItem("Alquileres")]
 [ImageName("Business_Money")]
-[XafDisplayName("Pagament")]
-public class Pagament(Session session) : EntidadBase(session)
+[XafDisplayName("Pago")]
+public class Pago(Session session) : EntidadBase(session)
 {
-    private DateTime _dataPagament;
-    private decimal _import;
-    private Mitjans _mitja;
+    private DateTime _fechaPago;
+    private decimal _importe;
+    private Medios _medio;
     private Reserva _reserva;
     private Factura _factura;
-    private string _observacions;
+    private string _observaciones;
 
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        DataPagament = DateTime.Now.Date;
-        Mitja = Mitjans.Transferencia;
+        FechaPago = DateTime.Now.Date;
+        Medio = Medios.Transferencia;
     }
 
-    [XafDisplayName("Data de pagament")]
-    public DateTime DataPagament
+    [XafDisplayName("Fecha de pago")]
+    public DateTime FechaPago
     {
-        get => _dataPagament;
-        set => SetPropertyValue(nameof(DataPagament), ref _dataPagament, value);
+        get => _fechaPago;
+        set => SetPropertyValue(nameof(FechaPago), ref _fechaPago, value);
     }
 
-    [XafDisplayName("Import")]
+    [XafDisplayName("Importe")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
-    public decimal Import
+    public decimal Importe
     {
-        get => _import;
+        get => _importe;
         set
         {
-            bool modified = SetPropertyValue(nameof(Import), ref _import, value);
+            bool modified = SetPropertyValue(nameof(Importe), ref _importe, value);
             if (!IsLoading && !IsSaving && Reserva != null && modified)
             {
-                Reserva.SumarPagaments(true);
+                Reserva.SumarPagos(true);
             }
         }
     }
 
-    [XafDisplayName("Mitjà de pagament")]
-    public Mitjans Mitja
+    [XafDisplayName("Medio de pago")]
+    public Medios Medio
     {
-        get => _mitja;
-        set => SetPropertyValue(nameof(Mitja), ref _mitja, value);
+        get => _medio;
+        set => SetPropertyValue(nameof(Medio), ref _medio, value);
     }
 
-    [Association("Reserva-Pagaments")]
+    [Association("Reserva-Pagos")]
     [XafDisplayName("Reserva")]
     public Reserva Reserva
     {
@@ -69,18 +69,18 @@ public class Pagament(Session session) : EntidadBase(session)
             bool modified = SetPropertyValue(nameof(Reserva), ref _reserva, value);
             if (!IsLoading && !IsSaving && modified)
             {
-                oldReserva?.SumarPagaments(true);
-                Reserva?.SumarPagaments(true);
+                oldReserva?.SumarPagos(true);
+                Reserva?.SumarPagos(true);
             }
         }
     }
 
     [Size(255)]
-    [XafDisplayName("Observacions")]
-    public string Observacions
+    [XafDisplayName("Observaciones")]
+    public string Observaciones
     {
-        get => _observacions;
-        set => SetPropertyValue(nameof(Observacions), ref _observacions, value);
+        get => _observaciones;
+        set => SetPropertyValue(nameof(Observaciones), ref _observaciones, value);
     }
 
     [XafDisplayName("Factura")]
@@ -90,13 +90,13 @@ public class Pagament(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Factura), ref _factura, value);
     }
 
-    public enum Mitjans
+    public enum Medios
     {
-        [XafDisplayName("Transferència bancària")]
+        [XafDisplayName("Transferencia bancaria")]
         Transferencia,
-        [XafDisplayName("Efectiu")]
+        [XafDisplayName("Efectivo")]
         Efectiu,
-        [XafDisplayName("Targeta de crèdit")]
+        [XafDisplayName("Tarjeta de crédito")]
         Targeta
     }
 }

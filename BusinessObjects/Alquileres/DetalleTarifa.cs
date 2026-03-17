@@ -10,17 +10,17 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [DefaultClassOptions]
 [NavigationItem("Alquileres")]
 [ImageName("BO_List")]
-[XafDisplayName("Detall de Tarifa")]
-public class DetallTarifa(Session session) : EntidadBase(session)
+[XafDisplayName("Detalle de Tarifa")]
+public class DetalleTarifa(Session session) : EntidadBase(session)
 {
     private Tarifa _tarifa;
-    private DateTime _dataInici;
-    private DateTime _dataFi;
-    private decimal _preu;
-    private string _observacions;
+    private DateTime _fechaInicio;
+    private DateTime _fechaFin;
+    private decimal _precio;
+    private string _observaciones;
     private int _temporada;
 
-    [Association("Tarifa-Detalls")]
+    [Association("Tarifa-Detalles")]
     [XafDisplayName("Tarifa")]
     public Tarifa Tarifa
     {
@@ -28,40 +28,40 @@ public class DetallTarifa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Tarifa), ref _tarifa, value);
     }
 
-    [XafDisplayName("Des del")]
+    [XafDisplayName("Desde")]
     [RuleRequiredField]
     public DateTime Desde
     {
-        get => _dataInici;
+        get => _fechaInicio;
         set
         {
-            bool modified = SetPropertyValue(nameof(Desde), ref _dataInici, value);
+            bool modified = SetPropertyValue(nameof(Desde), ref _fechaInicio, value);
             if (modified && !IsLoading)
-                Temporada = _dataInici.Year;
+                Temporada = _fechaInicio.Year;
         }
     }
 
-    [XafDisplayName("Fins")]
+    [XafDisplayName("Hasta")]
     [RuleRequiredField]
-    public DateTime Fins
+    public DateTime Hasta
     {
-        get => _dataFi;
-        set => SetPropertyValue(nameof(Fins), ref _dataFi, value);
+        get => _fechaFin;
+        set => SetPropertyValue(nameof(Hasta), ref _fechaFin, value);
     }
 
-    [XafDisplayName("Preu")]
-    public decimal Preu
+    [XafDisplayName("Precio")]
+    public decimal Precio
     {
-        get => _preu;
-        set => SetPropertyValue(nameof(Preu), ref _preu, value);
+        get => _precio;
+        set => SetPropertyValue(nameof(Precio), ref _precio, value);
     }
 
     [Size(255)]
-    [XafDisplayName("Observacions")]
-    public string Observacions
+    [XafDisplayName("Observaciones")]
+    public string Observaciones
     {
-        get => _observacions;
-        set => SetPropertyValue(nameof(Observacions), ref _observacions, value);
+        get => _observaciones;
+        set => SetPropertyValue(nameof(Observaciones), ref _observaciones, value);
     }
 
     [ModelDefault("AllowEdit", "False")]

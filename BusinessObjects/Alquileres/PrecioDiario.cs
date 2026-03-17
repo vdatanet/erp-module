@@ -11,19 +11,19 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [DefaultClassOptions]
 [NavigationItem("Alquileres")]
 [ImageName("BO_Today")]
-[XafDisplayName("Preu Diari")]
-public class PreuDiari(Session session) : EntidadBase(session)
+[XafDisplayName("Precio Diario")]
+public class PrecioDiario(Session session) : EntidadBase(session)
 {
     private Tarifa _tarifa;
-    private DateTime _data;
-    private decimal _preu;
-    private string _observacions;
+    private DateTime _fecha;
+    private decimal _precio;
+    private string _observaciones;
     private int _p1;
     private int _p2;
     private int _p3;
     private int _temporada;
 
-    [Association("Tarifa-PreusDiaris")]
+    [Association("Tarifa-PreciosDiarios")]
     [XafDisplayName("Tarifa")]
     public Tarifa Tarifa
     {
@@ -31,36 +31,36 @@ public class PreuDiari(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Tarifa), ref _tarifa, value);
     }
 
-    [XafDisplayName("Data")]
+    [XafDisplayName("Fecha")]
     [RuleRequiredField]
-    public DateTime Data
+    public DateTime Fecha
     {
-        get => _data;
+        get => _fecha;
         set
         {
-            var modified = SetPropertyValue(nameof(Data), ref _data, value);
+            var modified = SetPropertyValue(nameof(Fecha), ref _fecha, value);
             if (modified && !IsLoading && !IsSaving)
             {
-                Temporada = Data.Year;
-                CalcularPreu();
+                Temporada = Fecha.Year;
+                CalcularPrecio();
             }
         }
     }
 
-    [XafDisplayName("Preu")]
+    [XafDisplayName("Precio")]
     [ModelDefault("AllowEdit", "False")]
-    public decimal Preu
+    public decimal Precio
     {
-        get => _preu;
-        set => SetPropertyValue(nameof(Preu), ref _preu, value);
+        get => _precio;
+        set => SetPropertyValue(nameof(Precio), ref _precio, value);
     }
 
     [Size(255)]
-    [XafDisplayName("Observacions")]
-    public string Observacions
+    [XafDisplayName("Observaciones")]
+    public string Observaciones
     {
-        get => _observacions;
-        set => SetPropertyValue(nameof(Observacions), ref _observacions, value);
+        get => _observaciones;
+        set => SetPropertyValue(nameof(Observaciones), ref _observaciones, value);
     }
 
     [ModelDefault("AllowEdit", "False")]
@@ -92,12 +92,12 @@ public class PreuDiari(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Temporada), ref _temporada, value);
     }
 
-    private void CalcularPreu()
+    private void CalcularPrecio()
     {
         if (Tarifa == null) return;
-        var detallTarifa = Session.FindObject<DetallTarifa>(
-            CriteriaOperator.Parse("Tarifa.Oid = ? AND Desde <= ? AND Fins >= ?", Tarifa.Oid, Data, Data));
-        if (detallTarifa != null)
-            Preu = detallTarifa.Preu;
+        var detalleTarifa = Session.FindObject<DetalleTarifa>(
+            CriteriaOperator.Parse("Tarifa.Oid = ? AND Desde <= ? AND Hasta >= ?", Tarifa.Oid, Fecha, Fecha));
+        if (detalleTarifa != null)
+            Precio = detalleTarifa.Precio;
     }
 }
