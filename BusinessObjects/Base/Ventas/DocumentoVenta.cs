@@ -4,8 +4,8 @@ using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
-using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.Factories;
 using erp.Module.Helpers.Comun;
@@ -212,7 +212,8 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     {
         if (!string.IsNullOrEmpty(Serie))
         {
-            Numero = SequenceFactory.GetNextSequence(Session, $"{GetType().FullName}.{Serie}", out var formattedSequence,
+            Numero = SequenceFactory.GetNextSequence(Session, $"{GetType().FullName}.{Serie}",
+                out var formattedSequence,
                 Serie, 5);
             Secuencia = formattedSequence;
         }

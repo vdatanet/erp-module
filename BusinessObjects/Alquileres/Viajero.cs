@@ -17,23 +17,12 @@ public class Viajero(Session session) : Contacto(session)
 {
     public enum Sexos
     {
-        [XafDisplayName("Masculino")]
-        Masculino,
-        [XafDisplayName("Femenino")]
-        Femenino
+        [XafDisplayName("Masculino")] Masculino,
+        [XafDisplayName("Femenino")] Femenino
     }
 
     private Parentesco? _parentesco;
     private Sexos _sexo;
-
-    public override void AfterConstruction()
-    {
-        base.AfterConstruction();
-        Sexo = Sexos.Femenino;
-        TipoIdentificacion = IDType.NIF_IVA;
-        var nacionalidad = Session.FindObject<Nacionalidad>(CriteriaOperator.Parse("Nombre = 'Española'"));
-        if (nacionalidad != null) Nacionalidad = nacionalidad;
-    }
 
     [XafDisplayName("Sexo")]
     public Sexos Sexo
@@ -52,4 +41,13 @@ public class Viajero(Session session) : Contacto(session)
     [Association("Reserva-Viajeros")]
     [XafDisplayName("Reservas")]
     public XPCollection<Reserva> Reservas => GetCollection<Reserva>();
+
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        Sexo = Sexos.Femenino;
+        TipoIdentificacion = IDType.NIF_IVA;
+        var nacionalidad = Session.FindObject<Nacionalidad>(CriteriaOperator.Parse("Nombre = 'Española'"));
+        if (nacionalidad != null) Nacionalidad = nacionalidad;
+    }
 }

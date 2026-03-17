@@ -12,7 +12,8 @@ public static class SequenceFactory
         return formattedSequence;
     }
 
-    public static int GetNextSequence(Session session, string sequenceName, out string formattedSequence, string prefix = "", int padding = 6)
+    public static int GetNextSequence(Session session, string sequenceName, out string formattedSequence,
+        string prefix = "", int padding = 6)
     {
         var service = new SequenceService(session);
         return service.GetNextSequence(sequenceName, prefix, padding, out formattedSequence);

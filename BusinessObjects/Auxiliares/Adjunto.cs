@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
@@ -7,7 +8,6 @@ using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Productos;
-using System.ComponentModel;
 
 namespace erp.Module.BusinessObjects.Auxiliares;
 
@@ -20,13 +20,13 @@ namespace erp.Module.BusinessObjects.Auxiliares;
 public class Adjunto(Session session) : EntidadBase(session)
 {
     private Contacto? _contact;
-    private string? _nombre;
     private FileData? _fileData;
+    private string? _nombre;
+    private string? _notas;
     private Oportunidad? _opportunity;
     private Producto? _product;
     private DocumentoVenta? _salesDocument;
     private Tarea? _task;
-    private string? _notas;
 
     [Association("Contacto-Adjuntos")]
     [XafDisplayName("Contacto")]

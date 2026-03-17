@@ -16,51 +16,29 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [DefaultProperty(nameof(Nombre))]
 public class Simulacion(Session session) : EntidadBase(session), IReservaCalculable
 {
-    private RecursoAlquilable? _recursoAlquilable;
-    private string? _nombre;
-    private DateTime _startOn;
-    private DateTime _endOn;
-    private double _dias;
-    private bool _alojamiento;
-    private bool _parking;
     private bool _ac;
-    private int _personasSabanas;
-    private int _personasSujetas;
-    private int _personasExentas;
-    private decimal _importeAlojamiento;
-    private decimal _importeParking;
+    private bool _alojamiento;
+    private double _dias;
+    private DateTime _endOn;
     private decimal _importeAc;
+    private decimal _importeAlojamiento;
+    private decimal _importeDescuento;
+    private decimal _importeOtrosExtras;
+    private decimal _importeParking;
     private decimal _importeSabanas;
     private decimal _importeTasaTuristica;
-    private decimal _importeOtrosExtras;
-    private decimal _importeDescuento;
+    private string? _nombre;
+    private string? _notas;
+    private bool _parking;
     private decimal _perDescuento;
+    private int _personasExentas;
+    private int _personasSabanas;
+    private int _personasSujetas;
+    private RecursoAlquilable? _recursoAlquilable;
+    private DateTime _startOn;
     private decimal _subtotal;
     private decimal _total;
     private decimal _totalTasaTuristicaIncluida;
-    private string? _notas;
-
-    public override void AfterConstruction()
-    {
-        base.AfterConstruction();
-        StartOn = DateTime.Now.Date;
-        EndOn = StartOn.AddDays(1);
-        Alojamiento = false;
-        Parking = false;
-        Ac = false;
-    }
-
-    private void Calcular()
-    {
-        if (IsLoading || IsSaving) return;
-        Session.ServiceProvider.GetRequiredService<IReservaService>().Calcular(this);
-    }
-
-    private void CalcularDescuento()
-    {
-        if (IsLoading || IsSaving) return;
-        Session.ServiceProvider.GetRequiredService<IReservaService>().CalcularDescuento(this);
-    }
 
     [Size(255)]
     [XafDisplayName("Nombre")]
@@ -68,6 +46,21 @@ public class Simulacion(Session session) : EntidadBase(session), IReservaCalcula
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
+    }
+
+    [XafDisplayName("Personas exentas tasa")]
+    public int PersonasExentas
+    {
+        get => _personasExentas;
+        set => SetPropertyValue(nameof(PersonasExentas), ref _personasExentas, value);
+    }
+
+    [XafDisplayName("Notas")]
+    [Size(SizeAttribute.Unlimited)]
+    public string? Notas
+    {
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
     [Association("RecursoAlquilable-Simulaciones")]
@@ -78,7 +71,7 @@ public class Simulacion(Session session) : EntidadBase(session), IReservaCalcula
         get => _recursoAlquilable;
         set
         {
-            bool modified = SetPropertyValue(nameof(RecursoAlquilable), ref _recursoAlquilable, value);
+            var modified = SetPropertyValue(nameof(RecursoAlquilable), ref _recursoAlquilable, value);
             if (modified && !IsLoading)
                 Calcular();
         }
@@ -91,7 +84,7 @@ public class Simulacion(Session session) : EntidadBase(session), IReservaCalcula
         get => _startOn;
         set
         {
-            bool modified = SetPropertyValue(nameof(StartOn), ref _startOn, value);
+            var modified = SetPropertyValue(nameof(StartOn), ref _startOn, value);
             if (modified && !IsLoading)
             {
                 _dias = (EndOn - StartOn).TotalDays;
@@ -108,7 +101,7 @@ public class Simulacion(Session session) : EntidadBase(session), IReservaCalcula
         get => _endOn;
         set
         {
-            bool modified = SetPropertyValue(nameof(EndOn), ref _endOn, value);
+            var modified = SetPropertyValue(nameof(EndOn), ref _endOn, value);
             if (modified && !IsLoading)
             {
                 _dias = (EndOn - StartOn).TotalDays;
@@ -133,7 +126,7 @@ public class Simulacion(Session session) : EntidadBase(session), IReservaCalcula
         get => _alojamiento;
         set
         {
-            bool modified = SetPropertyValue(nameof(Alojamiento), ref _alojamiento, value);
+            var modified = SetPropertyValue(nameof(Alojamiento), ref _alojamiento, value);
             if (modified && !IsLoading)
                 Calcular();
         }
@@ -146,7 +139,7 @@ public class Simulacion(Session session) : EntidadBase(session), IReservaCalcula
         get => _parking;
         set
         {
-            bool modified = SetPropertyValue(nameof(Parking), ref _parking, value);
+            var modified = SetPropertyValue(nameof(Parking), ref _parking, value);
             if (modified && !IsLoading)
                 Calcular();
         }
@@ -159,7 +152,7 @@ public class Simulacion(Session session) : EntidadBase(session), IReservaCalcula
         get => _ac;
         set
         {
-            bool modified = SetPropertyValue(nameof(Ac), ref _ac, value);
+            var modified = SetPropertyValue(nameof(Ac), ref _ac, value);
             if (modified && !IsLoading)
                 Calcular();
         }
@@ -172,7 +165,7 @@ public class Simulacion(Session session) : EntidadBase(session), IReservaCalcula
         get => _personasSabanas;
         set
         {
-            bool modified = SetPropertyValue(nameof(PersonasSabanas), ref _personasSabanas, value);
+            var modified = SetPropertyValue(nameof(PersonasSabanas), ref _personasSabanas, value);
             if (modified && !IsLoading)
                 Calcular();
         }
@@ -185,25 +178,10 @@ public class Simulacion(Session session) : EntidadBase(session), IReservaCalcula
         get => _personasSujetas;
         set
         {
-            bool modified = SetPropertyValue(nameof(PersonasSujetas), ref _personasSujetas, value);
+            var modified = SetPropertyValue(nameof(PersonasSujetas), ref _personasSujetas, value);
             if (modified && !IsLoading)
                 Calcular();
         }
-    }
-
-    [XafDisplayName("Personas exentas tasa")]
-    public int PersonasExentas
-    {
-        get => _personasExentas;
-        set => SetPropertyValue(nameof(PersonasExentas), ref _personasExentas, value);
-    }
-
-    [XafDisplayName("Notas")]
-    [Size(SizeAttribute.Unlimited)]
-    public string? Notas
-    {
-        get => _notas;
-        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
     [ModelDefault("AllowEdit", "False")]
@@ -253,7 +231,7 @@ public class Simulacion(Session session) : EntidadBase(session), IReservaCalcula
         get => _importeOtrosExtras;
         set
         {
-            bool modified = SetPropertyValue(nameof(ImporteOtrosExtras), ref _importeOtrosExtras, value);
+            var modified = SetPropertyValue(nameof(ImporteOtrosExtras), ref _importeOtrosExtras, value);
             if (modified && !IsLoading)
                 Calcular();
         }
@@ -266,7 +244,7 @@ public class Simulacion(Session session) : EntidadBase(session), IReservaCalcula
         get => _importeDescuento;
         set
         {
-            bool modified = SetPropertyValue(nameof(ImporteDescuento), ref _importeDescuento, value);
+            var modified = SetPropertyValue(nameof(ImporteDescuento), ref _importeDescuento, value);
             if (modified && !IsLoading)
                 Calcular();
         }
@@ -281,7 +259,7 @@ public class Simulacion(Session session) : EntidadBase(session), IReservaCalcula
         get => _perDescuento;
         set
         {
-            bool modified = SetPropertyValue(nameof(PerDescuento), ref _perDescuento, value);
+            var modified = SetPropertyValue(nameof(PerDescuento), ref _perDescuento, value);
             if (modified && !IsLoading)
                 CalcularDescuento();
         }
@@ -309,5 +287,27 @@ public class Simulacion(Session session) : EntidadBase(session), IReservaCalcula
     {
         get => _totalTasaTuristicaIncluida;
         set => SetPropertyValue(nameof(TotalTasaTuristicaIncluida), ref _totalTasaTuristicaIncluida, value);
+    }
+
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        StartOn = DateTime.Now.Date;
+        EndOn = StartOn.AddDays(1);
+        Alojamiento = false;
+        Parking = false;
+        Ac = false;
+    }
+
+    private void Calcular()
+    {
+        if (IsLoading || IsSaving) return;
+        Session.ServiceProvider.GetRequiredService<IReservaService>().Calcular(this);
+    }
+
+    private void CalcularDescuento()
+    {
+        if (IsLoading || IsSaving) return;
+        Session.ServiceProvider.GetRequiredService<IReservaService>().CalcularDescuento(this);
     }
 }

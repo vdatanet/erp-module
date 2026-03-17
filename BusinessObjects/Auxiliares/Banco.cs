@@ -15,10 +15,10 @@ namespace erp.Module.BusinessObjects.Auxiliares;
 [DefaultProperty(nameof(Nombre))]
 public class Banco(Session session) : EntidadBase(session)
 {
-    private string? _nombre;
-    private string? _iban;
     private string? _bic;
     private Cliente? _cliente;
+    private string? _iban;
+    private string? _nombre;
     private string? _notas;
 
     [RuleRequiredField]

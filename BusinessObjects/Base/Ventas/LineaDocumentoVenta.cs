@@ -49,8 +49,6 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
         }
     }
 
-    protected virtual void OnProductoChanged() { }
-
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Nombre Producto")]
     public string? NombreProducto
@@ -82,8 +80,6 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
             OnCantidadChanged();
         }
     }
-
-    protected virtual void OnCantidadChanged() { }
 
     [ImmediatePostData]
     [ModelDefault("DisplayFormat", "{0:n2}")]
@@ -165,6 +161,14 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     [Association("LineaDocumentoVenta-Impuestos")]
     [XafDisplayName("Detalle Impuestos")]
     public XPCollection<ImpuestoLineaDocumentoVenta> Impuestos => GetCollection<ImpuestoLineaDocumentoVenta>();
+
+    protected virtual void OnProductoChanged()
+    {
+    }
+
+    protected virtual void OnCantidadChanged()
+    {
+    }
 
     private void TiposImpuestoVenta_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
     {

@@ -17,7 +17,6 @@ using DevExpress.ExpressApp.Validation;
 using DevExpress.ExpressApp.ViewVariantsModule;
 using DevExpress.ExpressApp.Xpo;
 using DevExpress.Persistent.BaseImpl;
-using erp.Module.BusinessObjects;
 using Updater = erp.Module.DatabaseUpdate.Updater;
 
 namespace erp.Module;

@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
@@ -7,7 +8,6 @@ using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Productos;
-using System.ComponentModel;
 
 namespace erp.Module.BusinessObjects.Auxiliares;
 
@@ -18,10 +18,10 @@ namespace erp.Module.BusinessObjects.Auxiliares;
 [DefaultProperty(nameof(Nombre))]
 public class Imagen(Session session) : EntidadBase(session)
 {
-    private string? _nombre;
-    private MediaDataObject? _mediaDataObject;
-    private string? _notas;
     private Contacto? _contact;
+    private MediaDataObject? _mediaDataObject;
+    private string? _nombre;
+    private string? _notas;
     private Oportunidad? _opportunity;
     private Producto? _product;
     private DocumentoVenta? _salesDocument;

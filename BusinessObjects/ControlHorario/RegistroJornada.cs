@@ -76,7 +76,7 @@ public class RegistroJornada(Session session) : EntidadBase(session)
             }
         }
     }
-    
+
     [Size(SizeAttribute.Unlimited)]
     [ModelDefault("RowCount", "3")]
     [XafDisplayName("Notas")]
@@ -173,10 +173,7 @@ public class RegistroJornada(Session session) : EntidadBase(session)
     private void InitValues()
     {
         var userId = Session.ServiceProvider.GetRequiredService<ISecurityStrategyBase>().UserId;
-        if (userId != null)
-        {
-            Empleado = Session.FindObject<Empleado>(new BinaryOperator("Usuario.Oid", userId));
-        }
+        if (userId != null) Empleado = Session.FindObject<Empleado>(new BinaryOperator("Usuario.Oid", userId));
     }
 
     protected override void OnSaving()

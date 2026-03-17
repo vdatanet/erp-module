@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel;
-using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Security;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
 using DevExpress.Xpo;
-using erp.Module.BusinessObjects.Contactos;
 
 namespace erp.Module.BusinessObjects;
 
@@ -14,13 +12,14 @@ public sealed class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLog
 {
     private int accessFailedCount;
     private DateTime lockoutEnd;
+
     public ApplicationUser(Session session) : base(session)
     {
     }
 
     [Browsable(false)]
     [NonCloneable]
-    [DevExpress.Xpo.Aggregated]
+    [Aggregated]
     [Association("User-LoginInfo")]
     public XPCollection<ApplicationUserLoginInfo> LoginInfo => GetCollection<ApplicationUserLoginInfo>();
 

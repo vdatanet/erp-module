@@ -1,22 +1,17 @@
+using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
-using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
-using DevExpress.Data.Filtering;
-using erp.Module.BusinessObjects.Base.Ventas;
+using erp.Module.BusinessObjects.Alquileres;
 using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Facturacion;
 using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.BusinessObjects.Ventas;
 using erp.Module.Helpers.Contactos;
-using erp.Module.BusinessObjects.Configuraciones;
-
-using erp.Module.Factories;
-
-using erp.Module.BusinessObjects.Alquileres;
 
 namespace erp.Module.BusinessObjects.Contactos;
 
@@ -26,13 +21,13 @@ namespace erp.Module.BusinessObjects.Contactos;
 public class Cliente(Session session) : Tercero(session)
 {
     private bool _activo;
+    private Banco? _bancoPredeterminado;
+    private CondicionPago? _condicionPago;
+    private Cuenta? _cuentaCobro;
+    private Cuenta? _cuentaContable;
+    private Diario? _diarioVentas;
     private DateTime _fechaAlta;
     private DateTime? _fechaBaja;
-    private CondicionPago? _condicionPago;
-    private Banco? _bancoPredeterminado;
-    private Cuenta? _cuentaContable;
-    private Cuenta? _cuentaCobro;
-    private Diario? _diarioVentas;
     private PosicionFiscal? _posicionFiscal;
     private Sector? _sector;
 
@@ -45,13 +40,9 @@ public class Cliente(Session session) : Tercero(session)
             if (!SetPropertyValue(nameof(Activo), ref _activo, value)) return;
             if (IsLoading || IsSaving) return;
             if (value)
-            {
                 FechaBaja = null;
-            }
             else
-            {
                 FechaBaja = DateTime.Now;
-            }
         }
     }
 
@@ -70,7 +61,7 @@ public class Cliente(Session session) : Tercero(session)
         get => _fechaBaja;
         set => SetPropertyValue(nameof(FechaBaja), ref _fechaBaja, value);
     }
-    
+
     [XafDisplayName("Cuenta Contable")]
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
     public Cuenta? CuentaContable
@@ -101,7 +92,7 @@ public class Cliente(Session session) : Tercero(session)
         get => _condicionPago;
         set => SetPropertyValue(nameof(CondicionPago), ref _condicionPago, value);
     }
-    
+
     [XafDisplayName("Banco Predeterminado")]
     [DataSourceProperty(nameof(Bancos))]
     public Banco? BancoPredeterminado
@@ -126,8 +117,8 @@ public class Cliente(Session session) : Tercero(session)
 
     [Association("Cliente-Bancos")]
     [XafDisplayName("Bancos")]
-    public XPCollection<Banco> Bancos => GetCollection<Banco>(nameof(Bancos));
-    
+    public XPCollection<Banco> Bancos => GetCollection<Banco>();
+
     [Association("Cliente-Contactos")]
     [XafDisplayName("Contactos")]
     public XPCollection<Contacto> Contactos => GetCollection<Contacto>();
@@ -137,7 +128,7 @@ public class Cliente(Session session) : Tercero(session)
 
     [Association("Cliente-Domicilios")]
     [XafDisplayName("Domicilios")]
-    public XPCollection<Domicilio> Domicilios => GetCollection<Domicilio>(nameof(Domicilios));
+    public XPCollection<Domicilio> Domicilios => GetCollection<Domicilio>();
 
     [Association("Cliente-Oportunidades")]
     [XafDisplayName("Oportunidades")]
@@ -147,7 +138,7 @@ public class Cliente(Session session) : Tercero(session)
     [XafDisplayName("Documentos de Venta")]
     [VisibleInDetailView(false)]
     public XPCollection<DocumentoVenta> DocumentosVenta => GetCollection<DocumentoVenta>();
-    
+
     [XafDisplayName("Presupuestos")]
     public XPCollection<Presupuesto> Presupuestos => new(Session, CriteriaOperator.Parse("Cliente = ?", this));
 

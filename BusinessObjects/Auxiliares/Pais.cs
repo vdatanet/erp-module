@@ -1,10 +1,9 @@
+using System.ComponentModel;
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
-using erp.Module.BusinessObjects.Auxiliares;
-using System.ComponentModel;
 
 namespace erp.Module.BusinessObjects.Auxiliares;
 

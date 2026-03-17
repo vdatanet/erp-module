@@ -18,27 +18,27 @@ namespace erp.Module.BusinessObjects.Contactos;
 [DefaultProperty(nameof(Nombre))]
 public class Contacto(Session session) : EntidadBase(session)
 {
+    private Cliente? _cliente;
     private string? _codigo;
-    private int _numero;
     private string? _codigoPostal;
     private string? _correoElectronico;
     private string? _direccion;
+    private DateTime _expedicion;
+    private DateTime? _fechaNacimiento;
     private MediaDataObject? _foto;
     private string? _movil;
-    private IDType _tipoIdentificacion;
+    private Nacionalidad? _nacionalidad;
     private string? _nif;
     private string? _nombre;
     private string? _nombreComercial;
     private string? _notas;
+    private int _numero;
     private Pais? _pais;
     private Poblacion? _poblacion;
     private Provincia? _provincia;
     private string? _sitioWeb;
     private string? _telefono;
-    private Cliente? _cliente;
-    private Nacionalidad? _nacionalidad;
-    private DateTime? _fechaNacimiento;
-    private DateTime _expedicion;
+    private IDType _tipoIdentificacion;
 
     [XafDisplayName("Cliente")]
     [Association("Cliente-Contactos")]
@@ -81,7 +81,7 @@ public class Contacto(Session session) : EntidadBase(session)
         get => _nombreComercial;
         set => SetPropertyValue(nameof(NombreComercial), ref _nombreComercial, value);
     }
-    
+
     [NonCloneable]
     [XafDisplayName("Tipo de Identificación")]
     public IDType TipoIdentificacion
@@ -218,7 +218,7 @@ public class Contacto(Session session) : EntidadBase(session)
     [Association("Contacto-Adjuntos")]
     [XafDisplayName("Adjuntos")]
     public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
-    
+
     public override void AfterConstruction()
     {
         base.AfterConstruction();

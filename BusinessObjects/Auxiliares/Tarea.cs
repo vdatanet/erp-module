@@ -1,3 +1,4 @@
+using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
@@ -16,17 +17,29 @@ namespace erp.Module.BusinessObjects.Auxiliares;
 
 public enum EstadoTarea
 {
-    [XafDisplayName("Pendiente"), ImageName("State_Task_NotStarted")] Pendiente,
-    [XafDisplayName("En Progreso"), ImageName("State_Task_InProgress")] EnProgreso,
-    [XafDisplayName("Completada"), ImageName("State_Task_Completed")] Completada,
-    [XafDisplayName("Cancelada"), ImageName("State_Task_Deferred")] Cancelada
+    [XafDisplayName("Pendiente")] [ImageName("State_Task_NotStarted")]
+    Pendiente,
+
+    [XafDisplayName("En Progreso")] [ImageName("State_Task_InProgress")]
+    EnProgreso,
+
+    [XafDisplayName("Completada")] [ImageName("State_Task_Completed")]
+    Completada,
+
+    [XafDisplayName("Cancelada")] [ImageName("State_Task_Deferred")]
+    Cancelada
 }
 
 public enum PrioridadTarea
 {
-    [XafDisplayName("Baja"), ImageName("State_Priority_Low")] Baja,
-    [XafDisplayName("Media"), ImageName("State_Priority_Normal")] Media,
-    [XafDisplayName("Alta"), ImageName("State_Priority_High")] Alta
+    [XafDisplayName("Baja")] [ImageName("State_Priority_Low")]
+    Baja,
+
+    [XafDisplayName("Media")] [ImageName("State_Priority_Normal")]
+    Media,
+
+    [XafDisplayName("Alta")] [ImageName("State_Priority_High")]
+    Alta
 }
 
 [DefaultClassOptions]
@@ -69,7 +82,6 @@ public class Tarea(Session session) : EntidadBase(session)
         set
         {
             if (SetPropertyValue(nameof(Estado), ref _estado, value))
-            {
                 if (!IsLoading && !IsSaving)
                 {
                     if (value == EstadoTarea.Completada)
@@ -83,7 +95,6 @@ public class Tarea(Session session) : EntidadBase(session)
                         PorcentajeCompletado = 0;
                     }
                 }
-            }
         }
     }
 
@@ -101,19 +112,12 @@ public class Tarea(Session session) : EntidadBase(session)
         set
         {
             if (SetPropertyValue(nameof(PorcentajeCompletado), ref _porcentajeCompletado, value))
-            {
                 if (!IsLoading && !IsSaving)
                 {
                     if (value == 100)
-                    {
                         Estado = EstadoTarea.Completada;
-                    }
-                    else if (value > 0 && Estado == EstadoTarea.Pendiente)
-                    {
-                        Estado = EstadoTarea.EnProgreso;
-                    }
+                    else if (value > 0 && Estado == EstadoTarea.Pendiente) Estado = EstadoTarea.EnProgreso;
                 }
-            }
         }
     }
 
@@ -244,10 +248,8 @@ public class Tarea(Session session) : EntidadBase(session)
             throw new UserFriendlyException("La Fecha de inicio no puede ser posterior a la Fecha de fin.");
 
         if (Propietario == null)
-        {
             // No usamos SecuredPropertySetter aquí para evitar dependencia; es suficiente asignar directamente
             SetPropertyValue(nameof(Propietario), ref _propietario, GetCurrentEmpleado());
-        }
 
         base.OnSaving();
     }
@@ -255,6 +257,6 @@ public class Tarea(Session session) : EntidadBase(session)
     private Empleado GetCurrentEmpleado()
     {
         var userId = Session.ServiceProvider.GetRequiredService<ISecurityStrategyBase>().UserId;
-        return Session.FindObject<Empleado>(new DevExpress.Data.Filtering.BinaryOperator("Usuario.Oid", userId));
+        return Session.FindObject<Empleado>(new BinaryOperator("Usuario.Oid", userId));
     }
 }

@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Editors;
 using DevExpress.Persistent.Base;
@@ -7,7 +8,6 @@ using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Impuestos;
-using System.ComponentModel;
 
 namespace erp.Module.BusinessObjects.Configuraciones;
 
@@ -22,25 +22,25 @@ namespace erp.Module.BusinessObjects.Configuraciones;
     CustomMessageTemplate = "No se puede eliminar la información de la empresa.")]
 public class InformacionEmpresa(Session session) : Contacto(session)
 {
+    private CondicionPago? _condicionPagoPorDefecto;
     private Cuenta? _cuentaClientesPorDefecto;
     private Cuenta? _cuentaCobrosPorDefecto;
     private Cuenta? _cuentaComprasPorDefecto;
     private Cuenta? _cuentaPagosPorDefecto;
     private Cuenta? _cuentaProveedoresPorDefecto;
     private Cuenta? _cuentaVentasPorDefecto;
-    private CondicionPago? _condicionPagoPorDefecto;
-    private PosicionFiscal? _posicionFiscalPorDefecto;
     private Diario? _diarioComprasPorDefecto;
     private Diario? _diarioVentasPorDefecto;
     private string? _nifAdministradorSistemaVeriFactu;
     private string? _nombreAdministradorSistemaVeriFactu;
     private string? _nombreArchivoConfigVeriFactu;
     private string? _nombreSistemaVeriFactu;
+    private PosicionFiscal? _posicionFiscalPorDefecto;
     private string? _prefijoFacturasCompraPorDefecto;
     private string? _prefijoFacturasSimplificadasPorDefecto;
     private string? _prefijoFacturasVentaPorDefecto;
-    private string? _prefijoPedidosPorDefecto;
     private string? _prefijoPartesDiariosPorDefecto;
+    private string? _prefijoPedidosPorDefecto;
     private string? _prefijoPresupuestosPorDefecto;
     private string? _prefijoUrlValidacionVeriFactu;
     private string? _prefijoUrlVeriFactu;
@@ -236,7 +236,8 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     public string? NombreAdministradorSistemaVeriFactu
     {
         get => _nombreAdministradorSistemaVeriFactu;
-        set => SetPropertyValue(nameof(NombreAdministradorSistemaVeriFactu), ref _nombreAdministradorSistemaVeriFactu, value);
+        set => SetPropertyValue(nameof(NombreAdministradorSistemaVeriFactu), ref _nombreAdministradorSistemaVeriFactu,
+            value);
     }
 
     [XafDisplayName("NIF Admin Sistema VeriFactu")]

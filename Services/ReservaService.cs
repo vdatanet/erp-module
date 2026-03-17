@@ -1,5 +1,6 @@
 using DevExpress.Data.Filtering;
 using DevExpress.Xpo;
+using DevExpress.Xpo.DB;
 using erp.Module.BusinessObjects.Alquileres;
 using erp.Module.Helpers.Comun;
 
@@ -48,13 +49,9 @@ public class ReservaService : IReservaService
 
             // Alojamiento
             if (objeto.Alojamiento && objeto.RecursoAlquilable != null && objeto.RecursoAlquilable.Tarifa != null)
-            {
                 objeto.ImporteAlojamiento = CalcularImporteTarifa(objeto.RecursoAlquilable.Tarifa, startOn, endOn);
-            }
             else
-            {
                 objeto.ImporteAlojamiento = 0;
-            }
 
             // Parking
             if (objeto.Parking)
@@ -74,8 +71,8 @@ public class ReservaService : IReservaService
             // Aire acondicionado
             if (objeto.Ac)
             {
-                var extraAc = session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Aire condicionat'")) 
-                             ?? session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Aire acondicionado'"));
+                var extraAc = session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Aire condicionat'"))
+                              ?? session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Aire acondicionado'"));
                 if (extraAc != null)
                     objeto.ImporteAc = MoneyMath.RoundMoney((decimal)objeto.Dias * extraAc.PrecioDiario);
                 else
@@ -90,7 +87,7 @@ public class ReservaService : IReservaService
             if (objeto.PersonasSabanas > 0)
             {
                 var extraSabanas = session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Llençols'"))
-                                  ?? session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Sábanas'"));
+                                   ?? session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Sábanas'"));
                 if (extraSabanas != null)
                     objeto.ImporteSabanas = MoneyMath.RoundMoney(objeto.PersonasSabanas * extraSabanas.PrecioDiario);
                 else
@@ -109,7 +106,8 @@ public class ReservaService : IReservaService
                 var extraTasa = session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Taxa turística'"))
                                 ?? session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Tasa turística'"));
                 if (extraTasa != null)
-                    objeto.ImporteTasaTuristica = MoneyMath.RoundMoney(diasSujetos * objeto.PersonasSujetas * extraTasa.PrecioDiario);
+                    objeto.ImporteTasaTuristica =
+                        MoneyMath.RoundMoney(diasSujetos * objeto.PersonasSujetas * extraTasa.PrecioDiario);
                 else
                     objeto.ImporteTasaTuristica = 0;
             }
@@ -119,9 +117,10 @@ public class ReservaService : IReservaService
             }
 
             objeto.Subtotal = objeto.ImporteAlojamiento + objeto.ImporteParking;
-            objeto.Total = objeto.Subtotal + objeto.ImporteAc + objeto.ImporteSabanas + objeto.ImporteOtrosExtras - objeto.ImporteDescuento;
+            objeto.Total = objeto.Subtotal + objeto.ImporteAc + objeto.ImporteSabanas + objeto.ImporteOtrosExtras -
+                           objeto.ImporteDescuento;
             objeto.TotalTasaTuristicaIncluida = objeto.Total + objeto.ImporteTasaTuristica;
-            
+
             if (objeto.Subtotal > 0)
                 objeto.PerDescuento = MoneyMath.RoundMoney(objeto.ImporteDescuento / objeto.Subtotal * 100);
         }
@@ -138,17 +137,17 @@ public class ReservaService : IReservaService
         decimal total = 0;
         var detalles = tarifa.Session.GetObjects(tarifa.Session.GetClassInfo<DetalleTarifa>(),
             CriteriaOperator.Parse("Tarifa.Oid = ? AND Desde < ? AND Hasta >= ?", tarifa.Oid, endOn, startOn),
-            new SortingCollection(new SortProperty(nameof(DetalleTarifa.Desde), DevExpress.Xpo.DB.SortingDirection.Ascending)),
+            new SortingCollection(new SortProperty(nameof(DetalleTarifa.Desde), SortingDirection.Ascending)),
             0, false, true);
 
         foreach (DetalleTarifa detalle in detalles)
         {
-            DateTime inicioTramo = detalle.Desde > startOn ? detalle.Desde : startOn;
-            DateTime finTramo = detalle.Hasta < endOn.AddDays(-1) ? detalle.Hasta : endOn.AddDays(-1);
+            var inicioTramo = detalle.Desde > startOn ? detalle.Desde : startOn;
+            var finTramo = detalle.Hasta < endOn.AddDays(-1) ? detalle.Hasta : endOn.AddDays(-1);
 
             if (finTramo >= inicioTramo)
             {
-                int dias = (finTramo - inicioTramo).Days + 1;
+                var dias = (finTramo - inicioTramo).Days + 1;
                 total += dias * detalle.Precio;
             }
         }

@@ -11,11 +11,11 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [XafDisplayName("Detalle Tarifa")]
 public class DetalleTarifa(Session session) : EntidadBase(session)
 {
-    private Tarifa? _tarifa;
-    private DateTime _fechaInicio;
     private DateTime _fechaFin;
-    private decimal _precio;
+    private DateTime _fechaInicio;
     private string? _notas;
+    private decimal _precio;
+    private Tarifa? _tarifa;
     private int _temporada;
 
     [Association("Tarifa-Detalles")]
@@ -25,7 +25,7 @@ public class DetalleTarifa(Session session) : EntidadBase(session)
         get => _tarifa;
         set => SetPropertyValue(nameof(Tarifa), ref _tarifa, value);
     }
-    
+
     [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Temporada")]
     public int Temporada
@@ -33,7 +33,7 @@ public class DetalleTarifa(Session session) : EntidadBase(session)
         get => _temporada;
         set => SetPropertyValue(nameof(Temporada), ref _temporada, value);
     }
-    
+
     [XafDisplayName("Desde")]
     [RuleRequiredField]
     public DateTime Desde
@@ -41,7 +41,7 @@ public class DetalleTarifa(Session session) : EntidadBase(session)
         get => _fechaInicio;
         set
         {
-            bool modified = SetPropertyValue(nameof(Desde), ref _fechaInicio, value);
+            var modified = SetPropertyValue(nameof(Desde), ref _fechaInicio, value);
             if (modified && !IsLoading)
                 Temporada = _fechaInicio.Year;
         }

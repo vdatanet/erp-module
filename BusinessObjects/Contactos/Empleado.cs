@@ -61,11 +61,6 @@ public class Empleado(Session session) : Contacto(session)
         set => SetPropertyValue(nameof(UltimoRegistroSalida), ref _ultimoRegistroSalida, value);
     }
 
-    public override string GetPrefijoCodigo()
-    {
-        return "E";
-    }
-
     [Association("Empleado-RegistrosJornada")]
     [XafDisplayName("Registros de Tiempo")]
     public XPCollection<RegistroJornada> RegistrosJornada => GetCollection<RegistroJornada>();
@@ -77,4 +72,9 @@ public class Empleado(Session session) : Contacto(session)
     [Association("Empleado-TareasAsignadas")]
     [XafDisplayName("Tareas Asignadas")]
     public XPCollection<Tarea> TareasAsignadas => GetCollection<Tarea>();
+
+    public override string GetPrefijoCodigo()
+    {
+        return "E";
+    }
 }

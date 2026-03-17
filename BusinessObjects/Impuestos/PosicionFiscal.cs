@@ -31,11 +31,13 @@ public class PosicionFiscal(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
-    [Association("PosicionFiscal-Mapeos"), DevExpress.Xpo.Aggregated]
+    [Association("PosicionFiscal-Mapeos")]
+    [DevExpress.Xpo.Aggregated]
     [XafDisplayName("Mapeos de Impuestos")]
-    public XPCollection<MapeoImpuesto> Mapeos => GetCollection<MapeoImpuesto>(nameof(Mapeos));
+    public XPCollection<MapeoImpuesto> Mapeos => GetCollection<MapeoImpuesto>();
 
-    [Association("PosicionFiscal-MapeosCuenta"), DevExpress.Xpo.Aggregated]
+    [Association("PosicionFiscal-MapeosCuenta")]
+    [DevExpress.Xpo.Aggregated]
     [XafDisplayName("Mapeos de Cuentas")]
-    public XPCollection<MapeoCuenta> MapeosCuenta => GetCollection<MapeoCuenta>(nameof(MapeosCuenta));
+    public XPCollection<MapeoCuenta> MapeosCuenta => GetCollection<MapeoCuenta>();
 }

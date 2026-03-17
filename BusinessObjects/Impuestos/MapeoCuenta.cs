@@ -12,9 +12,9 @@ namespace erp.Module.BusinessObjects.Impuestos;
 [ImageName("BO_List")]
 public class MapeoCuenta(Session session) : EntidadBase(session)
 {
-    private PosicionFiscal? _posicionFiscal;
-    private Cuenta? _cuentaOrigen;
     private Cuenta? _cuentaDestino;
+    private Cuenta? _cuentaOrigen;
+    private PosicionFiscal? _posicionFiscal;
 
     [Association("PosicionFiscal-MapeosCuenta")]
     [XafDisplayName("Posición Fiscal")]

@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
@@ -7,7 +6,6 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.Factories;
-using erp.Module.Helpers.Comun;
 using erp.Module.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,85 +18,34 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [DefaultProperty(nameof(Secuencia))]
 public class Reserva(Session session) : EventoBase(session), IReservaCalculable
 {
-    private RecursoAlquilable? _recursoAlquilable;
-    private decimal _totalPagado;
-    private string? _notas;
-    private Cliente? _cliente;
-    private int _numero;
-    private int _temporada;
-    private string? _secuencia;
-    private DateTime _fechaReserva;
-    private DateTime _validaHasta;
-    private double _dias;
-    private bool _alojamiento;
-    private bool _parking;
     private bool _ac;
-    private int _personasSabanas;
-    private int _personasSujetas;
-    private int _personasExentas;
-    private decimal _importeAlojamiento;
-    private decimal _importeParking;
+    private bool _alojamiento;
+    private Cliente? _cliente;
+    private double _dias;
+    private DateTime _fechaReserva;
     private decimal _importeAc;
+    private decimal _importeAlojamiento;
+    private decimal _importeDescuento;
+    private decimal _importeOtrosExtras;
+    private decimal _importeParking;
+    private decimal _importePendiente;
     private decimal _importeSabanas;
     private decimal _importeTasaTuristica;
-    private decimal _importeOtrosExtras;
-    private decimal _importeDescuento;
+    private string? _notas;
+    private int _numero;
+    private bool _parking;
     private decimal _perDescuento;
+    private int _personasExentas;
+    private int _personasSabanas;
+    private int _personasSujetas;
+    private RecursoAlquilable? _recursoAlquilable;
+    private string? _secuencia;
     private decimal _subtotal;
+    private int _temporada;
     private decimal _total;
+    private decimal _totalPagado;
     private decimal _totalTasaTuristicaIncluida;
-    private decimal _importePendiente;
-
-    public override void AfterConstruction()
-    {
-        base.AfterConstruction();
-        StartOn = DateTime.Now.Date;
-        EndOn = DateTime.Now.Date.AddDays(1);
-        FechaReserva = DateTime.Now.Date;
-        ValidaHasta = FechaReserva.AddDays(7);
-        Alojamiento = true;
-        Parking = false;
-        Ac = false;
-    }
-
-    protected override void OnSaving()
-    {
-        if (!IsLoading && Session.IsNewObject(this) && Numero == 0 && StartOn != DateTime.MinValue)
-        {
-            Temporada = StartOn.Year;
-            if (Temporada != 0)
-            {
-                Numero = SequenceFactory.GetNextSequence(Session, $"{GetType().FullName}-{Temporada}", out var formattedSequence, $"{Temporada}", 4);
-                Secuencia = formattedSequence;
-            }
-        }
-        base.OnSaving();
-    }
-
-    protected override void OnChanged(string propertyName, object oldValue, object newValue)
-    {
-        base.OnChanged(propertyName, oldValue, newValue);
-        if (!IsLoading && (propertyName == nameof(StartOn) || propertyName == nameof(EndOn)))
-        {
-            Dias = (EndOn - StartOn).TotalDays;
-            Temporada = StartOn.Year;
-            Calcular();
-        }
-    }
-
-    [Association("RecursoAlquilable-Reservas")]
-    [XafDisplayName("Recurso Alquilable")]
-    [ImmediatePostData]
-    public RecursoAlquilable? RecursoAlquilable
-    {
-        get => _recursoAlquilable;
-        set
-        {
-            bool modified = SetPropertyValue(nameof(RecursoAlquilable), ref _recursoAlquilable, value);
-            if (modified && !IsLoading)
-                Calcular();
-        }
-    }
+    private DateTime _validaHasta;
 
     [Association("Cliente-Reservas")]
     [XafDisplayName("Cliente")]
@@ -108,11 +55,8 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
         get => _cliente;
         set
         {
-            bool modified = SetPropertyValue(nameof(Cliente), ref _cliente, value);
-            if (modified && !IsLoading && Cliente != null)
-            {
-                Subject = Cliente.Nombre;
-            }
+            var modified = SetPropertyValue(nameof(Cliente), ref _cliente, value);
+            if (modified && !IsLoading && Cliente != null) Subject = Cliente.Nombre;
         }
     }
 
@@ -155,6 +99,62 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
         set => SetPropertyValue(nameof(ValidaHasta), ref _validaHasta, value);
     }
 
+    [XafDisplayName("Personas exentas")]
+    public int PersonasExentas
+    {
+        get => _personasExentas;
+        set => SetPropertyValue(nameof(PersonasExentas), ref _personasExentas, value);
+    }
+
+    [XafDisplayName("Importe pendiente")]
+    [ModelDefault("AllowEdit", "False")]
+    public decimal ImportePendiente
+    {
+        get => _importePendiente;
+        set => SetPropertyValue(nameof(ImportePendiente), ref _importePendiente, value);
+    }
+
+    [XafDisplayName("Total pagado")]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    [ModelDefault("AllowEdit", "False")]
+    public decimal TotalPagado
+    {
+        get => _totalPagado;
+        set => SetPropertyValue(nameof(TotalPagado), ref _totalPagado, value);
+    }
+
+    [Association("Reserva-Pagos")]
+    [DevExpress.Xpo.Aggregated]
+    [XafDisplayName("Pagos")]
+    public XPCollection<Pago> Pagos => GetCollection<Pago>();
+
+    [Association("Reserva-Viajeros")]
+    [XafDisplayName("Viajeros")]
+    public XPCollection<Viajero> Viajeros => GetCollection<Viajero>();
+
+    [XafDisplayName("Notas")]
+    [Size(SizeAttribute.Unlimited)]
+    public string? Notas
+    {
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
+    }
+
+    [Association("RecursoAlquilable-Reservas")]
+    [XafDisplayName("Recurso Alquilable")]
+    [ImmediatePostData]
+    public RecursoAlquilable? RecursoAlquilable
+    {
+        get => _recursoAlquilable;
+        set
+        {
+            var modified = SetPropertyValue(nameof(RecursoAlquilable), ref _recursoAlquilable, value);
+            if (modified && !IsLoading)
+                Calcular();
+        }
+    }
+
     [XafDisplayName("Días")]
     [ModelDefault("AllowEdit", "False")]
     public double Dias
@@ -170,7 +170,7 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
         get => _alojamiento;
         set
         {
-            bool modified = SetPropertyValue(nameof(Alojamiento), ref _alojamiento, value);
+            var modified = SetPropertyValue(nameof(Alojamiento), ref _alojamiento, value);
             if (modified && !IsLoading)
                 Calcular();
         }
@@ -183,7 +183,7 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
         get => _parking;
         set
         {
-            bool modified = SetPropertyValue(nameof(Parking), ref _parking, value);
+            var modified = SetPropertyValue(nameof(Parking), ref _parking, value);
             if (modified && !IsLoading)
                 Calcular();
         }
@@ -196,7 +196,7 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
         get => _ac;
         set
         {
-            bool modified = SetPropertyValue(nameof(Ac), ref _ac, value);
+            var modified = SetPropertyValue(nameof(Ac), ref _ac, value);
             if (modified && !IsLoading)
                 Calcular();
         }
@@ -209,7 +209,7 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
         get => _personasSabanas;
         set
         {
-            bool modified = SetPropertyValue(nameof(PersonasSabanas), ref _personasSabanas, value);
+            var modified = SetPropertyValue(nameof(PersonasSabanas), ref _personasSabanas, value);
             if (modified && !IsLoading)
                 Calcular();
         }
@@ -222,17 +222,10 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
         get => _personasSujetas;
         set
         {
-            bool modified = SetPropertyValue(nameof(PersonasSujetas), ref _personasSujetas, value);
+            var modified = SetPropertyValue(nameof(PersonasSujetas), ref _personasSujetas, value);
             if (modified && !IsLoading)
                 Calcular();
         }
-    }
-
-    [XafDisplayName("Personas exentas")]
-    public int PersonasExentas
-    {
-        get => _personasExentas;
-        set => SetPropertyValue(nameof(PersonasExentas), ref _personasExentas, value);
     }
 
     [XafDisplayName("Importe alojamiento")]
@@ -282,7 +275,7 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
         get => _importeOtrosExtras;
         set
         {
-            bool modified = SetPropertyValue(nameof(ImporteOtrosExtras), ref _importeOtrosExtras, value);
+            var modified = SetPropertyValue(nameof(ImporteOtrosExtras), ref _importeOtrosExtras, value);
             if (modified && !IsLoading)
                 Calcular();
         }
@@ -295,7 +288,7 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
         get => _importeDescuento;
         set
         {
-            bool modified = SetPropertyValue(nameof(ImporteDescuento), ref _importeDescuento, value);
+            var modified = SetPropertyValue(nameof(ImporteDescuento), ref _importeDescuento, value);
             if (modified && !IsLoading)
                 Calcular();
         }
@@ -310,7 +303,7 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
         get => _perDescuento;
         set
         {
-            bool modified = SetPropertyValue(nameof(PerDescuento), ref _perDescuento, value);
+            var modified = SetPropertyValue(nameof(PerDescuento), ref _perDescuento, value);
             if (modified && !IsLoading)
             {
                 Session.ServiceProvider.GetRequiredService<IReservaService>().CalcularDescuento(this);
@@ -343,58 +336,59 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
         set => SetPropertyValue(nameof(TotalTasaTuristicaIncluida), ref _totalTasaTuristicaIncluida, value);
     }
 
-    [XafDisplayName("Importe pendiente")]
-    [ModelDefault("AllowEdit", "False")]
-    public decimal ImportePendiente
+    public override void AfterConstruction()
     {
-        get => _importePendiente;
-        set => SetPropertyValue(nameof(ImportePendiente), ref _importePendiente, value);
+        base.AfterConstruction();
+        StartOn = DateTime.Now.Date;
+        EndOn = DateTime.Now.Date.AddDays(1);
+        FechaReserva = DateTime.Now.Date;
+        ValidaHasta = FechaReserva.AddDays(7);
+        Alojamiento = true;
+        Parking = false;
+        Ac = false;
     }
 
-    [XafDisplayName("Total pagado")]
-    [ModelDefault("DisplayFormat", "{0:n2}")]
-    [ModelDefault("EditMask", "n2")]
-    [ModelDefault("AllowEdit", "False")]
-    public decimal TotalPagado
+    protected override void OnSaving()
     {
-        get => _totalPagado;
-        set => SetPropertyValue(nameof(TotalPagado), ref _totalPagado, value);
+        if (!IsLoading && Session.IsNewObject(this) && Numero == 0 && StartOn != DateTime.MinValue)
+        {
+            Temporada = StartOn.Year;
+            if (Temporada != 0)
+            {
+                Numero = SequenceFactory.GetNextSequence(Session, $"{GetType().FullName}-{Temporada}",
+                    out var formattedSequence, $"{Temporada}", 4);
+                Secuencia = formattedSequence;
+            }
+        }
+
+        base.OnSaving();
     }
 
-    [Association("Reserva-Pagos")]
-    [DevExpress.Xpo.Aggregated]
-    [XafDisplayName("Pagos")]
-    public XPCollection<Pago> Pagos => GetCollection<Pago>();
-
-    [Association("Reserva-Viajeros")]
-    [XafDisplayName("Viajeros")]
-    public XPCollection<Viajero> Viajeros => GetCollection<Viajero>();
-
-    [XafDisplayName("Notas")]
-    [Size(SizeAttribute.Unlimited)]
-    public string? Notas
+    protected override void OnChanged(string propertyName, object oldValue, object newValue)
     {
-        get => _notas;
-        set => SetPropertyValue(nameof(Notas), ref _notas, value);
+        base.OnChanged(propertyName, oldValue, newValue);
+        if (!IsLoading && (propertyName == nameof(StartOn) || propertyName == nameof(EndOn)))
+        {
+            Dias = (EndOn - StartOn).TotalDays;
+            Temporada = StartOn.Year;
+            Calcular();
+        }
     }
 
     public void SumarPagos(bool update)
     {
         if (IsLoading || IsSaving) return;
         decimal totalPagado = 0;
-        foreach (var pago in Pagos)
-        {
-            totalPagado += pago.Importe;
-        }
+        foreach (var pago in Pagos) totalPagado += pago.Importe;
 
         TotalPagado = totalPagado;
         ImportePendiente = Total - TotalPagado;
-        
-        if (TotalPagado > 0) 
+
+        if (TotalPagado > 0)
             Status = 1; // Ocupado/Confirmado
-        else 
+        else
             Status = 0; // Pendiente
-            
+
         if (update)
         {
             OnChanged(nameof(TotalPagado));

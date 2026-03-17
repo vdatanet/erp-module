@@ -2,50 +2,54 @@ using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
-using System;
 using erp.Module.BusinessObjects.Base.Comun;
 
-namespace erp.Module.BusinessObjects.Imprenta
+namespace erp.Module.BusinessObjects.Imprenta;
+
+[DefaultClassOptions]
+[NavigationItem("Imprenta")]
+public class TamanoPapel : EntidadBase
 {
-    [DefaultClassOptions]
-    [NavigationItem("Imprenta")]
-    public class TamanoPapel : EntidadBase
+    private decimal _alto;
+
+    private decimal _ancho;
+
+    private string? _descripcion;
+
+    private string? _observaciones;
+
+    public TamanoPapel(Session session) : base(session)
     {
-        public TamanoPapel(Session session) : base(session) { }
+    }
 
-        private decimal _ancho;
-        [ImmediatePostData]
-        [RuleRange(0.01, 10000, CustomMessageTemplate = "El ancho debe ser mayor que 0")]
-        public decimal Ancho
-        {
-            get => _ancho;
-            set => SetPropertyValue(nameof(Ancho), ref _ancho, value);
-        }
+    [ImmediatePostData]
+    [RuleRange(0.01, 10000, CustomMessageTemplate = "El ancho debe ser mayor que 0")]
+    public decimal Ancho
+    {
+        get => _ancho;
+        set => SetPropertyValue(nameof(Ancho), ref _ancho, value);
+    }
 
-        private decimal _alto;
-        [ImmediatePostData]
-        [RuleRange(0.01, 10000, CustomMessageTemplate = "el alto debe ser mayor que 0")]
-        public decimal Alto
-        {
-            get => _alto;
-            set => SetPropertyValue(nameof(Alto), ref _alto, value);
-        }
+    [ImmediatePostData]
+    [RuleRange(0.01, 10000, CustomMessageTemplate = "el alto debe ser mayor que 0")]
+    public decimal Alto
+    {
+        get => _alto;
+        set => SetPropertyValue(nameof(Alto), ref _alto, value);
+    }
 
-        private string? _descripcion;
-        [Size(255)]
-        public string? Descripcion
-        {
-            get => _descripcion;
-            set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
-        }
+    [Size(255)]
+    public string? Descripcion
+    {
+        get => _descripcion;
+        set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
+    }
 
-        private string? _observaciones;
-        [ModelDefault("PropertyEditorType", "DevExpress.ExpressApp.Win.Editors.MemoEditStringPropertyEditor")]
-        [Size(4000)]
-        public string? Observaciones
-        {
-            get => _observaciones;
-            set => SetPropertyValue(nameof(Observaciones), ref _observaciones, value);
-        }
+    [ModelDefault("PropertyEditorType", "DevExpress.ExpressApp.Win.Editors.MemoEditStringPropertyEditor")]
+    [Size(4000)]
+    public string? Observaciones
+    {
+        get => _observaciones;
+        set => SetPropertyValue(nameof(Observaciones), ref _observaciones, value);
     }
 }

@@ -8,7 +8,10 @@ namespace erp.Module.Services;
 
 public class SequenceService(Session session)
 {
-    private static int GetJitter(int min, int max) => RandomNumberGenerator.GetInt32(min, max);
+    private static int GetJitter(int min, int max)
+    {
+        return RandomNumberGenerator.GetInt32(min, max);
+    }
 
     public int GetNextSequence(string sequenceName, string prefix, int padding, out string formattedSequence)
     {
@@ -20,7 +23,6 @@ public class SequenceService(Session session)
             {
                 var generator = uow.FindObject<Secuencia>(new BinaryOperator(nameof(Secuencia.Nombre), sequenceName));
                 if (generator == null)
-                {
                     generator = new Secuencia(uow)
                     {
                         Nombre = sequenceName,
@@ -28,7 +30,6 @@ public class SequenceService(Session session)
                         Prefijo = prefix,
                         Relleno = padding
                     };
-                }
 
                 generator.ValorActual++;
                 uow.CommitChanges();
@@ -60,7 +61,8 @@ public class SequenceService(Session session)
             }
         }
 
-        throw new InvalidOperationException("No se pudo obtener la secuencia por concurrencia tras múltiples reintentos.");
+        throw new InvalidOperationException(
+            "No se pudo obtener la secuencia por concurrencia tras múltiples reintentos.");
     }
 
     private static bool IsUniqueConstraintViolation(Exception ex)

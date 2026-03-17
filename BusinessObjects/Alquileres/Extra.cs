@@ -13,8 +13,8 @@ namespace erp.Module.BusinessObjects.Alquileres;
 public class Extra(Session session) : EntidadBase(session)
 {
     private string? _nombre;
-    private decimal _precioDiario;
     private string? _notas;
+    private decimal _precioDiario;
 
     [Size(255)]
     [RuleRequiredField]

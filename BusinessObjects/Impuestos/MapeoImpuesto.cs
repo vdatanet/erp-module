@@ -1,5 +1,5 @@
-using DevExpress.ExpressApp.Editors;
 using DevExpress.ExpressApp.DC;
+using DevExpress.ExpressApp.Editors;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
@@ -12,8 +12,8 @@ namespace erp.Module.BusinessObjects.Impuestos;
 [ImageName("BO_List")]
 public class MapeoImpuesto(Session session) : EntidadBase(session)
 {
-    private PosicionFiscal? _posicionFiscal;
     private TipoImpuesto? _impuestoOrigen;
+    private PosicionFiscal? _posicionFiscal;
 
     [Association("PosicionFiscal-Mapeos")]
     [XafDisplayName("Posición Fiscal")]
@@ -34,5 +34,5 @@ public class MapeoImpuesto(Session session) : EntidadBase(session)
     [XafDisplayName("Impuestos Destino")]
     [Association("MapeoImpuesto-ImpuestosDestino")]
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
-    public XPCollection<TipoImpuesto> ImpuestosDestino => GetCollection<TipoImpuesto>(nameof(ImpuestosDestino));
+    public XPCollection<TipoImpuesto> ImpuestosDestino => GetCollection<TipoImpuesto>();
 }

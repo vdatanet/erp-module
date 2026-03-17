@@ -12,6 +12,10 @@ namespace erp.Module.BusinessObjects.Facturacion;
 [DefaultProperty(nameof(Secuencia))]
 public class Factura(Session session) : FacturaBase(session)
 {
+    [XafDisplayName("Pagos")]
+    [Association("Factura-Pagos")]
+    public XPCollection<Pago> Pagos => GetCollection<Pago>();
+
     public override bool EsValida()
     {
         return EstadoVeriFactu != ValoresEstadoVeriFactu.Enviado
@@ -21,8 +25,4 @@ public class Factura(Session session) : FacturaBase(session)
                && !string.IsNullOrEmpty(Texto)
                && Impuestos.Count > 0;
     }
-
-    [XafDisplayName("Pagos")]
-    [Association("Factura-Pagos")]
-    public XPCollection<Pago> Pagos => GetCollection<Pago>(nameof(Pagos));
 }
