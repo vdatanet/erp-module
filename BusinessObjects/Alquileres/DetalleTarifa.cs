@@ -25,7 +25,15 @@ public class DetalleTarifa(Session session) : EntidadBase(session)
         get => _tarifa;
         set => SetPropertyValue(nameof(Tarifa), ref _tarifa, value);
     }
-
+    
+    [ModelDefault("AllowEdit", "False")]
+    [XafDisplayName("Temporada")]
+    public int Temporada
+    {
+        get => _temporada;
+        set => SetPropertyValue(nameof(Temporada), ref _temporada, value);
+    }
+    
     [XafDisplayName("Desde")]
     [RuleRequiredField]
     public DateTime Desde
@@ -60,13 +68,5 @@ public class DetalleTarifa(Session session) : EntidadBase(session)
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
-    }
-
-    [ModelDefault("AllowEdit", "False")]
-    [XafDisplayName("Temporada")]
-    public int Temporada
-    {
-        get => _temporada;
-        set => SetPropertyValue(nameof(Temporada), ref _temporada, value);
     }
 }

@@ -1,6 +1,8 @@
 using System.ComponentModel;
+using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Alquileres;
 
 namespace erp.Module.BusinessObjects.Facturacion;
 
@@ -18,5 +20,15 @@ public class Factura(Session session) : FacturaBase(session)
                && !string.IsNullOrEmpty(Cliente.Nif)
                && !string.IsNullOrEmpty(Texto)
                && Impuestos.Count > 0;
+    }
+
+    private Pago? _pago;
+
+    [Association("Factura-Pago")]
+    [XafDisplayName("Pago")]
+    public Pago? Pago
+    {
+        get => _pago;
+        set => SetPropertyValue(nameof(Pago), ref _pago, value);
     }
 }

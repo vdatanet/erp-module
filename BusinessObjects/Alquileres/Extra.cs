@@ -14,7 +14,7 @@ public class Extra(Session session) : EntidadBase(session)
 {
     private string? _nombre;
     private decimal _precioDiario;
-    private string? _descripcion;
+    private string? _notas;
 
     [Size(255)]
     [RuleRequiredField]
@@ -34,10 +34,10 @@ public class Extra(Session session) : EntidadBase(session)
     }
 
     [Size(SizeAttribute.Unlimited)]
-    [XafDisplayName("Descripción")]
-    public string? Descripcion
+    [XafDisplayName("Notas")]
+    public string? Notas
     {
-        get => _descripcion;
-        set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 }

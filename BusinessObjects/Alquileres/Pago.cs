@@ -20,7 +20,7 @@ public class Pago(Session session) : EntidadBase(session)
     private MedioPago? _medio;
     private Reserva? _reserva;
     private Factura? _factura;
-    private string? _observaciones;
+    private string? _notas;
 
     public override void AfterConstruction()
     {
@@ -75,15 +75,16 @@ public class Pago(Session session) : EntidadBase(session)
         }
     }
 
-    [Size(255)]
-    [XafDisplayName("Observaciones")]
-    public string? Observaciones
+    [Size(SizeAttribute.Unlimited)]
+    [XafDisplayName("Notas")]
+    public string? Notas
     {
-        get => _observaciones;
-        set => SetPropertyValue(nameof(Observaciones), ref _observaciones, value);
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
     [XafDisplayName("Factura")]
+    [Association("Factura-Pago")]
     public Factura? Factura
     {
         get => _factura;
