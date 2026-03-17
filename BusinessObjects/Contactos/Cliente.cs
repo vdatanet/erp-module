@@ -16,6 +16,8 @@ using erp.Module.BusinessObjects.Configuraciones;
 
 using erp.Module.Factories;
 
+using erp.Module.BusinessObjects.Alquileres;
+
 namespace erp.Module.BusinessObjects.Contactos;
 
 [DefaultClassOptions]
@@ -151,6 +153,34 @@ public class Cliente(Session session) : Tercero(session)
 
     [XafDisplayName("Facturas")]
     public XPCollection<Factura> Facturas => new(Session, CriteriaOperator.Parse("Cliente = ?", this));
+
+    [Association("Cliente-Reserves")]
+    [XafDisplayName("Reserves")]
+    public XPCollection<Reserva> Reserves => GetCollection<Reserva>();
+
+    [Association("Client-Viatgers")]
+    [XafDisplayName("Viatgers")]
+    public XPCollection<Viatger> Viatgers => GetCollection<Viatger>();
+
+    public enum Sexes
+    {
+        [XafDisplayName("Masculí")]
+        Masculi,
+        [XafDisplayName("Femení")]
+        Femeni
+    }
+
+    public enum TipusDocuments
+    {
+        [XafDisplayName("NIF")]
+        Nif,
+        [XafDisplayName("Passaport")]
+        Passaport,
+        [XafDisplayName("NIE")]
+        Nie,
+        [XafDisplayName("Altres")]
+        Altres
+    }
     
     public override void AfterConstruction()
     {
