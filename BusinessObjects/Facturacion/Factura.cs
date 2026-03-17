@@ -22,13 +22,7 @@ public class Factura(Session session) : FacturaBase(session)
                && Impuestos.Count > 0;
     }
 
-    private Pago? _pago;
-
-    [Association("Factura-Pago")]
-    [XafDisplayName("Pago")]
-    public Pago? Pago
-    {
-        get => _pago;
-        set => SetPropertyValue(nameof(Pago), ref _pago, value);
-    }
+    [XafDisplayName("Pagos")]
+    [Association("Factura-Pagos")]
+    public XPCollection<Pago> Pagos => GetCollection<Pago>(nameof(Pagos));
 }

@@ -72,7 +72,7 @@ public class Pago(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Factura")]
-    [Association("Factura-Pago")]
+    [Association("Factura-Pagos")]
     public Factura? Factura
     {
         get => _factura;
