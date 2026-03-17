@@ -15,7 +15,7 @@ namespace erp.Module.BusinessObjects.Contactos;
 [DefaultClassOptions]
 [NavigationItem("Contactos")]
 [ImageName("BO_Contact")]
-[DefaultProperty(nameof(Nombre))]
+[DefaultProperty(nameof(NombreCompleto))]
 public class Contacto(Session session) : EntidadBase(session)
 {
     private string _codigo;
@@ -36,6 +36,21 @@ public class Contacto(Session session) : EntidadBase(session)
     private string _sitioWeb;
     private string _telefono;
     private Cliente _cliente;
+    private Nacionalidad _nacionalidad;
+    private DateTime? _fechaNacimiento;
+    private string _nombreCompleto;
+
+    [XafDisplayName("Nombre Completo")]
+    public string NombreCompleto
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(_nombreCompleto))
+                _nombreCompleto = string.IsNullOrWhiteSpace(Nombre) ? "" : $"{Nombre} {NombreComercial}".Trim();
+            return _nombreCompleto;
+        }
+        set => SetPropertyValue(nameof(NombreCompleto), ref _nombreCompleto, value);
+    }
 
     [XafDisplayName("Cliente")]
     [Association("Cliente-Contactos")]
@@ -148,6 +163,21 @@ public class Contacto(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Movil), ref _movil, value);
     }
 
+    [Association("Nacionalidad-Contactos")]
+    [XafDisplayName("Nacionalidad")]
+    public Nacionalidad Nacionalidad
+    {
+        get => _nacionalidad;
+        set => SetPropertyValue(nameof(Nacionalidad), ref _nacionalidad, value);
+    }
+
+    [XafDisplayName("Fecha de nacimiento")]
+    public DateTime? FechaNacimiento
+    {
+        get => _fechaNacimiento;
+        set => SetPropertyValue(nameof(FechaNacimiento), ref _fechaNacimiento, value);
+    }
+
     [XafDisplayName("Correo Electrónico")]
     public string CorreoElectronico
     {
@@ -200,10 +230,18 @@ public class Contacto(Session session) : EntidadBase(session)
         InitValues();
     }
 
-    protected override void OnSaving()
+    protected override void OnChanged(string propertyName, object oldValue, object newValue)
     {
-        base.OnSaving();
-        if (string.IsNullOrEmpty(Codigo) && GetAsignarCodigoAlGuardar()) AsignarCodigo();
+        base.OnChanged(propertyName, oldValue, newValue);
+
+        if (!IsLoading && !IsSaving)
+        {
+            if (propertyName == nameof(Nombre) || propertyName == nameof(NombreComercial))
+            {
+                _nombreCompleto = null;
+                OnChanged(nameof(NombreCompleto));
+            }
+        }
     }
 
     public virtual bool GetAsignarCodigoAlGuardar()

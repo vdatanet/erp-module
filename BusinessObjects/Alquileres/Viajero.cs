@@ -3,6 +3,7 @@ using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Contactos;
 
 namespace erp.Module.BusinessObjects.Alquileres;
@@ -13,16 +14,11 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [DefaultProperty(nameof(NombreCompleto))]
 public class Viajero(Session session) : Contacto(session)
 {
-    private Parentescos? _parentesco;
-    private Nacionalidad _nacionalidad;
+    private Parentesco? _parentesco;
     private DateTime _expedicion;
-    private DateTime _nacimiento;
-    private string _nombreCompleto;
     private Cliente.Sexes _sexo;
     private Cliente.TiposDocumentos _tipoDocumento;
     private string _mail;
-
-    private string CalcularNombreCompleto() => string.IsNullOrWhiteSpace(Nombre) ? "" : $"{Nombre} {NombreComercial}".Trim();
 
     public override void AfterConstruction()
     {
@@ -53,13 +49,6 @@ public class Viajero(Session session) : Contacto(session)
         }
     }
 
-    [XafDisplayName("Fecha de nacimiento")]
-    public DateTime Nacimiento
-    {
-        get => _nacimiento;
-        set => SetPropertyValue(nameof(Nacimiento), ref _nacimiento, value);
-    }
-
     [XafDisplayName("Fecha expedición")]
     public DateTime Expedicion
     {
@@ -81,33 +70,12 @@ public class Viajero(Session session) : Contacto(session)
         set => SetPropertyValue(nameof(TipoDocumento), ref _tipoDocumento, value);
     }
 
-    [Association("Nacionalidad-Viajeros")]
-    [XafDisplayName("Nacionalidad")]
-    public Nacionalidad Nacionalidad
-    {
-        get => _nacionalidad;
-        set => SetPropertyValue(nameof(Nacionalidad), ref _nacionalidad, value);
-    }
-
     [XafDisplayName("Parentesco")]
-    public Parentescos? Parentesco
+    public Parentesco? Parentesco
     {
         get => _parentesco;
         set => SetPropertyValue(nameof(Parentesco), ref _parentesco, value);
     }
-
-    [XafDisplayName("Nombre Completo")]
-    public string NombreCompleto
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(_nombreCompleto))
-                _nombreCompleto = CalcularNombreCompleto();
-            return _nombreCompleto;
-        }
-        set => SetPropertyValue(nameof(NombreCompleto), ref _nombreCompleto, value);
-    }
-
 
     [XafDisplayName("Correo electrónico")]
     public string Email
@@ -119,10 +87,4 @@ public class Viajero(Session session) : Contacto(session)
     [Association("Reserva-Viajeros")]
     [XafDisplayName("Reservas")]
     public XPCollection<Reserva> Reservas => GetCollection<Reserva>();
-
-    public enum Parentescos
-    {
-        [XafDisplayName("Hijo/a")]
-        Hijo
-    }
 }

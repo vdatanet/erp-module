@@ -19,7 +19,7 @@ public class Alquiler(Session session) : RecursoBase(session)
     private Producto _productoRelacionado;
     private bool _estaActivo;
     private Capacidad _capacidad;
-    private string _hut;
+    private string _codigoRegistro;
     private string _observaciones;
     private Ubicacion _ubicacion;
     private int _secuencia;
@@ -66,11 +66,11 @@ public class Alquiler(Session session) : RecursoBase(session)
     }
 
     [Size(255)]
-    [XafDisplayName("HUT")]
-    public string Hut
+    [XafDisplayName("Código de Registro")]
+    public string CodigoRegistro
     {
-        get => _hut;
-        set => SetPropertyValue(nameof(Hut), ref _hut, value);
+        get => _codigoRegistro;
+        set => SetPropertyValue(nameof(CodigoRegistro), ref _codigoRegistro, value);
     }
 
     [Size(SizeAttribute.Unlimited)]

@@ -4,13 +4,13 @@ using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 
-namespace erp.Module.BusinessObjects.Alquileres;
+namespace erp.Module.BusinessObjects.Auxiliares;
 
 [DefaultClassOptions]
-[NavigationItem("Alquileres")]
-[ImageName("BO_Localization")]
+[NavigationItem("Configuraciones")]
+[XafDisplayName("Parentesco")]
 [DefaultProperty(nameof(Nombre))]
-public class Nacionalidad(Session session) : EntidadBase(session)
+public class Parentesco(Session session) : EntidadBase(session)
 {
     private string _nombre;
 
@@ -21,8 +21,4 @@ public class Nacionalidad(Session session) : EntidadBase(session)
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
-
-    [Association("Nacionalidad-Viajeros")]
-    [XafDisplayName("Viajeros")]
-    public XPCollection<Viajero> Viajeros => GetCollection<Viajero>();
 }
