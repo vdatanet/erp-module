@@ -494,6 +494,112 @@
         <ColumnInfo Id="Nombre" Index="0" />
       </Columns>
     </ListView>
+    <DetailView Id="Reserva_DetailView">
+      <Layout>
+        <LayoutGroup Id="Main" RelativeSize="100">
+          <TabbedGroup Id="Tabs" RelativeSize="100" Index="0">
+            <LayoutGroup Id="Reserva" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="0" ImageName="BO_Scheduler" RelativeSize="100" IsNewNode="True">
+              <LayoutGroup Id="col1" ShowCaption="False" Index="0" RelativeSize="49.953917050691246" IsNewNode="True">
+                <LayoutItem Id="RecursoAlquilable" ViewItem="RecursoAlquilable" Index="0" RelativeSize="4.086845466155811" IsNewNode="True" />
+                <LayoutItem Id="Cliente" ViewItem="Cliente" Index="1" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="Subject" ViewItem="Subject" Index="2" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="Secuencia" Index="3" ViewItem="Secuencia" ShowCaption="" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="FechaReserva" Index="4" ViewItem="FechaReserva" ShowCaption="" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="ValidaHasta" Index="5" ViewItem="ValidaHasta" ShowCaption="" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="StartOn" ViewItem="StartOn" Index="6" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="EndOn" ViewItem="EndOn" Index="7" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="Dias" Index="8" ViewItem="Dias" ShowCaption="" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="PersonasSabanas" Index="9" ViewItem="PersonasSabanas" ShowCaption="" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="PersonasSujetas" Index="10" ViewItem="PersonasSujetas" ShowCaption="" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="PersonasExentas" Index="11" ViewItem="PersonasExentas" ShowCaption="" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="Alojamiento" Index="12" ViewItem="Alojamiento" ShowCaption="" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="Parking" Index="13" ViewItem="Parking" ShowCaption="" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="Ac" ViewItem="Ac" ShowCaption="" Index="14" RelativeSize="56.06641123882503" IsNewNode="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="col2" ShowCaption="False" Index="1" RelativeSize="50.046082949308754" IsNewNode="True">
+                <LayoutItem Id="ImporteAlojamiento" ViewItem="ImporteAlojamiento" Index="0" RelativeSize="4.086845466155811" IsNewNode="True" />
+                <LayoutItem Id="ImporteParking" ViewItem="ImporteParking" Index="1" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="ImporteAc" ViewItem="ImporteAc" Index="2" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="ImporteSabanas" ViewItem="ImporteSabanas" Index="3" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="ImporteTasaTuristica" ViewItem="ImporteTasaTuristica" Index="4" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="ImporteOtrosExtras" ViewItem="ImporteOtrosExtras" Index="5" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="ImporteDescuento" ViewItem="ImporteDescuento" Index="6" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="PerDescuento" ViewItem="PerDescuento" Index="7" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="Subtotal" ViewItem="Subtotal" Index="8" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="Total" ViewItem="Total" Index="9" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="TotalTasaTuristicaIncluida" ViewItem="TotalTasaTuristicaIncluida" Index="10" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="ImportePendiente" ViewItem="ImportePendiente" Index="11" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="TotalPagado" ViewItem="TotalPagado" Index="12" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="Notas" ViewItem="Notas" Index="13" RelativeSize="59.13154533844189" IsNewNode="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+            <LayoutGroup Id="Pagos" RelativeSize="100" Index="1">
+              <LayoutItem Id="Pagos" RelativeSize="100" />
+            </LayoutGroup>
+            <LayoutGroup Id="Viajeros" RelativeSize="100" Index="2">
+              <LayoutItem Id="Viajeros" RelativeSize="100" />
+            </LayoutGroup>
+            <LayoutGroup Id="Resources" RelativeSize="0" Index="3" Direction="Horizontal" Removed="True">
+              <LayoutItem Id="Resources" RelativeSize="100" Removed="True" />
+            </LayoutGroup>
+          </TabbedGroup>
+          <LayoutGroup Id="SimpleEditors" RelativeSize="49.09963985594238" Removed="True">
+            <LayoutGroup Id="Event" Index="1" RelativeSize="27.083333333333332" Removed="True">
+              <LayoutGroup Id="Event_col1" RelativeSize="49.953917050691246">
+                <LayoutItem Id="AllDay" RelativeSize="28.571428571428573" />
+                <LayoutItem Id="EndOn" RelativeSize="21.428571428571427" />
+                <LayoutItem Id="StartOn" RelativeSize="21.428571428571427" />
+                <LayoutItem Id="Subject" RelativeSize="28.571428571428573" />
+              </LayoutGroup>
+              <LayoutGroup Id="Event_col2" RelativeSize="50.046082949308754">
+                <LayoutItem Id="Label" RelativeSize="21.428571428571427" />
+                <LayoutItem Id="Location" RelativeSize="28.571428571428573" />
+                <LayoutItem Id="RecurrencePattern" RelativeSize="28.571428571428573" />
+                <LayoutItem Id="Status" RelativeSize="21.428571428571427" />
+              </LayoutGroup>
+            </LayoutGroup>
+            <LayoutGroup Id="Reserva" RelativeSize="100" ShowCaption="False" Direction="Horizontal" Removed="True">
+              <LayoutGroup Id="Reserva_col2" RelativeSize="100" Caption="Reserva_col2" Index="0" Removed="True">
+                <LayoutItem Id="ImporteAc" RelativeSize="8.556149732620321" Index="0" Removed="True" />
+                <LayoutItem Id="ImporteDescuento" RelativeSize="8.556149732620321" Index="0" Removed="True" />
+                <LayoutItem Id="ImporteOtrosExtras" RelativeSize="8.556149732620321" Index="0" Removed="True" />
+                <LayoutItem Id="ImporteParking" RelativeSize="8.556149732620321" Index="0" Removed="True" />
+                <LayoutItem Id="ImportePendiente" RelativeSize="8.556149732620321" Index="0" Removed="True" />
+                <LayoutItem Id="ImporteSabanas" RelativeSize="8.556149732620321" Index="0" Removed="True" />
+                <LayoutItem Id="ImporteTasaTuristica" RelativeSize="8.556149732620321" Index="0" Removed="True" />
+                <LayoutItem Id="PerDescuento" RelativeSize="8.556149732620321" Index="0" Removed="True" />
+                <LayoutItem Id="Subtotal" RelativeSize="8.556149732620321" Index="0" Removed="True" />
+                <LayoutItem Id="Total" RelativeSize="8.556149732620321" Index="0" Removed="True" />
+                <LayoutItem Id="TotalPagado" RelativeSize="8.556149732620321" Index="0" Removed="True" />
+                <LayoutItem Id="TotalTasaTuristicaIncluida" RelativeSize="8.556149732620321" Index="0" Removed="True" />
+                <LayoutItem Id="ImporteAlojamiento" RelativeSize="8.421052631578947" Removed="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="Reserva_col1" RelativeSize="49.77416440831075" Removed="True">
+                <LayoutItem Id="Cliente" RelativeSize="9.142857142857142" Index="0" Removed="True" />
+                <LayoutItem Id="Secuencia" RelativeSize="7.361963190184049" Index="1" Removed="True" />
+                <LayoutItem Id="FechaReserva" RelativeSize="7.361963190184049" Index="2" Removed="True" />
+                <LayoutItem Id="Numero" RelativeSize="6.282722513089006" Index="2" Removed="True" />
+                <LayoutItem Id="Temporada" RelativeSize="6.282722513089006" Index="3" Removed="True" />
+                <LayoutItem Id="ValidaHasta" RelativeSize="7.361963190184049" Index="3" Removed="True" />
+                <LayoutItem Id="Dias" RelativeSize="7.361963190184049" Index="6" Removed="True" />
+                <LayoutItem Id="PersonasSabanas" RelativeSize="7.361963190184049" Index="7" Removed="True" />
+                <LayoutItem Id="PersonasSujetas" RelativeSize="7.361963190184049" Index="8" Removed="True" />
+                <LayoutItem Id="PersonasExentas" RelativeSize="7.361963190184049" Index="9" Removed="True" />
+                <LayoutItem Id="Alojamiento" RelativeSize="7.361963190184049" Index="10" Removed="True" />
+                <LayoutItem Id="Parking" RelativeSize="7.361963190184049" Index="11" Removed="True" />
+                <LayoutItem Id="Ac" RelativeSize="9.202453987730062" Index="12" Removed="True" />
+                <LayoutItem Id="RecursoAlquilable" RelativeSize="8.556149732620321" Removed="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+          <LayoutGroup Id="SizeableEditors" RelativeSize="27.52403846153846" Caption="SizeableEditors" Removed="True">
+            <LayoutItem Id="Description" Index="0" RelativeSize="62.732919254658384" Removed="True" />
+            <LayoutItem Id="RecurrenceInfoXml" Index="0" RelativeSize="100" Removed="True" />
+            <LayoutItem Id="Notas" Removed="True" />
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
     <DetailView Id="Sector_DetailView" FreezeLayout="True">
       <Layout IsNewNode="True" Removed="True">
         <LayoutGroup Id="Main" Index="0" ShowCaption="False" IsNewNode="True">
