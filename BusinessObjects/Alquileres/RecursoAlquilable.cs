@@ -15,10 +15,9 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [DefaultProperty(nameof(Nombre))]
 public class RecursoAlquilable(Session session) : RecursoBase(session)
 {
-    private string? _descripcion;
+    private string? _notas;
     private Producto? _productoRelacionado;
     private bool _estaActivo;
-    private Capacidad? _capacidad;
     private string? _codigoRegistro;
     private string? _observaciones;
     private Ubicacion? _ubicacion;
@@ -35,11 +34,11 @@ public class RecursoAlquilable(Session session) : RecursoBase(session)
     }
 
     [Size(SizeAttribute.Unlimited)]
-    [XafDisplayName("Descripción")]
-    public string? Descripcion
+    [XafDisplayName("Notas")]
+    public string? Notas
     {
-        get => _descripcion;
-        set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
     
     [XafDisplayName("Producto Relacionado")]
@@ -56,14 +55,7 @@ public class RecursoAlquilable(Session session) : RecursoBase(session)
         get => _estaActivo;
         set => SetPropertyValue(nameof(EstaActivo), ref _estaActivo, value);
     }
-
-    [XafDisplayName("Capacidad")]
-    public Capacidad? Capacidad
-    {
-        get => _capacidad;
-        set => SetPropertyValue(nameof(Capacidad), ref _capacidad, value);
-    }
-
+    
     [Size(255)]
     [XafDisplayName("Código de Registro")]
     public string? CodigoRegistro
