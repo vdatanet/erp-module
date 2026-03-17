@@ -57,11 +57,9 @@ public class Pago(Session session) : EntidadBase(session)
         {
             var oldReserva = _reserva;
             var modified = SetPropertyValue(nameof(Reserva), ref _reserva, value);
-            if (!IsLoading && !IsSaving && modified)
-            {
-                oldReserva?.SumarPagos(true);
-                Reserva?.SumarPagos(true);
-            }
+            if (IsLoading || IsSaving || !modified) return;
+            oldReserva?.SumarPagos(true);
+            Reserva?.SumarPagos(true);
         }
     }
 
