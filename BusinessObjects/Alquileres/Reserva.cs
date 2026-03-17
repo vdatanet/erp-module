@@ -52,6 +52,8 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
     public override void AfterConstruction()
     {
         base.AfterConstruction();
+        StartOn = DateTime.Now.Date;
+        EndOn = DateTime.Now.Date.AddDays(1);
         FechaReserva = DateTime.Now.Date;
         ValidaHasta = FechaReserva.AddDays(7);
         Alojamiento = true;
@@ -128,6 +130,24 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
     {
         get => _temporada;
         set => SetPropertyValue(nameof(Temporada), ref _temporada, value);
+    }
+
+    [XafDisplayName("Fecha de Inicio")]
+    [ModelDefault("DisplayFormat", "{0:d}")]
+    [ModelDefault("EditMask", "d")]
+    public DateTime StartOn
+    {
+        get => ((DevExpress.Persistent.BaseImpl.Event)this).StartOn;
+        set => ((DevExpress.Persistent.BaseImpl.Event)this).StartOn = value;
+    }
+
+    [XafDisplayName("Fecha de Fin")]
+    [ModelDefault("DisplayFormat", "{0:d}")]
+    [ModelDefault("EditMask", "d")]
+    public DateTime EndOn
+    {
+        get => ((DevExpress.Persistent.BaseImpl.Event)this).EndOn;
+        set => ((DevExpress.Persistent.BaseImpl.Event)this).EndOn = value;
     }
 
     [XafDisplayName("Secuencia")]
