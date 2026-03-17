@@ -548,6 +548,43 @@
         <ColumnInfo Id="Nombre" Index="0" />
       </Columns>
     </ListView>
+    <DetailView Id="Simulacion_DetailView" FreezeLayout="True">
+      <Layout IsNewNode="True" Removed="True">
+        <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
+          <LayoutGroup Id="SimpleEditors" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
+            <LayoutGroup Id="Simulacion" Index="0" Direction="Horizontal" ShowCaption="False" RelativeSize="100" IsNewNode="True">
+              <LayoutGroup Id="Simulacion_col1" Index="0" ShowCaption="False" RelativeSize="49.90272373540856" IsNewNode="True">
+                <LayoutItem Id="Nombre" ViewItem="Nombre" ShowCaption="" Index="0" RelativeSize="3.393425238600212" IsNewNode="True" />
+                <LayoutItem Id="RecursoAlquilable" ViewItem="RecursoAlquilable" ShowCaption="" Index="1" RelativeSize="2.545068928950159" IsNewNode="True" />
+                <LayoutItem Id="StartOn" ViewItem="StartOn" ShowCaption="" Index="2" RelativeSize="2.545068928950159" IsNewNode="True" />
+                <LayoutItem Id="EndOn" ViewItem="EndOn" ShowCaption="" Index="3" RelativeSize="2.545068928950159" IsNewNode="True" />
+                <LayoutItem Id="Dias" ViewItem="Dias" ShowCaption="" Index="4" RelativeSize="2.545068928950159" IsNewNode="True" />
+                <LayoutItem Id="PersonasSabanas" ViewItem="PersonasSabanas" ShowCaption="" Index="5" RelativeSize="2.545068928950159" IsNewNode="True" />
+                <LayoutItem Id="PersonasSujetas" ViewItem="PersonasSujetas" ShowCaption="" Index="6" RelativeSize="2.545068928950159" IsNewNode="True" />
+                <LayoutItem Id="PersonasExentas" ViewItem="PersonasExentas" ShowCaption="" Index="7" RelativeSize="2.545068928950159" IsNewNode="True" />
+                <LayoutItem Id="Alojamiento" ViewItem="Alojamiento" ShowCaption="" Index="8" RelativeSize="2.545068928950159" IsNewNode="True" />
+                <LayoutItem Id="Parking" ViewItem="Parking" ShowCaption="" Index="9" RelativeSize="2.545068928950159" IsNewNode="True" />
+                <LayoutItem Id="Ac" ViewItem="Ac" ShowCaption="" Index="10" RelativeSize="73.70095440084836" IsNewNode="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="Simulacion_col2" Index="1" ShowCaption="False" RelativeSize="50.09727626459144" IsNewNode="True">
+                <LayoutItem Id="ImporteAlojamiento" ViewItem="ImporteAlojamiento" ShowCaption="" Index="0" RelativeSize="3.393425238600212" IsNewNode="True" />
+                <LayoutItem Id="ImporteParking" ViewItem="ImporteParking" ShowCaption="" Index="1" RelativeSize="2.545068928950159" IsNewNode="True" />
+                <LayoutItem Id="ImporteAc" ViewItem="ImporteAc" ShowCaption="" Index="2" RelativeSize="2.545068928950159" IsNewNode="True" />
+                <LayoutItem Id="ImporteSabanas" ViewItem="ImporteSabanas" ShowCaption="" Index="3" RelativeSize="2.545068928950159" IsNewNode="True" />
+                <LayoutItem Id="ImporteTasaTuristica" ViewItem="ImporteTasaTuristica" ShowCaption="" Index="4" RelativeSize="2.545068928950159" IsNewNode="True" />
+                <LayoutItem Id="ImporteOtrosExtras" ViewItem="ImporteOtrosExtras" ShowCaption="" Index="5" RelativeSize="2.545068928950159" IsNewNode="True" />
+                <LayoutItem Id="ImporteDescuento" ViewItem="ImporteDescuento" ShowCaption="" Index="6" RelativeSize="2.545068928950159" IsNewNode="True" />
+                <LayoutItem Id="PerDescuento" ViewItem="PerDescuento" ShowCaption="" Index="7" RelativeSize="2.545068928950159" IsNewNode="True" />
+                <LayoutItem Id="Subtotal" ViewItem="Subtotal" ShowCaption="" Index="8" RelativeSize="2.545068928950159" IsNewNode="True" />
+                <LayoutItem Id="Total" ViewItem="Total" ShowCaption="" Index="9" RelativeSize="2.545068928950159" IsNewNode="True" />
+                <LayoutItem Id="TotalTasaTuristicaIncluida" ViewItem="TotalTasaTuristicaIncluida" ShowCaption="" Index="10" RelativeSize="2.545068928950159" IsNewNode="True" />
+                <LayoutItem Id="Notas" ViewItem="Notas" Index="11" RelativeSize="71.1558854718982" IsNewNode="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
     <DetailView Id="Tarea_DetailView" FreezeLayout="True">
       <Layout IsNewNode="True" Removed="True">
         <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">

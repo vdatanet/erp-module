@@ -38,6 +38,7 @@ public class Simulacion(Session session) : EntidadBase(session), IReservaCalcula
     private decimal _subtotal;
     private decimal _total;
     private decimal _totalTasaTuristicaIncluida;
+    private string? _notas;
 
     public override void AfterConstruction()
     {
@@ -195,6 +196,14 @@ public class Simulacion(Session session) : EntidadBase(session), IReservaCalcula
     {
         get => _personasExentas;
         set => SetPropertyValue(nameof(PersonasExentas), ref _personasExentas, value);
+    }
+
+    [XafDisplayName("Notas")]
+    [Size(SizeAttribute.Unlimited)]
+    public string? Notas
+    {
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
     [ModelDefault("AllowEdit", "False")]
