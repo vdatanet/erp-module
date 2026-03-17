@@ -1,6 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Application Title="erp">
   <BOModel>
+    <Class Name="DevExpress.Persistent.BaseImpl.Event">
+      <OwnMembers>
+        <Member Name="EndOn" Caption="Hasta" DisplayFormat="{0:d}" EditMask="d" />
+        <Member Name="StartOn" Caption="Desde" EditMask="d" DisplayFormat="{0:d}" />
+        <Member Name="Subject" Caption="Asunto" />
+      </OwnMembers>
+    </Class>
     <Class Name="DevExpress.Persistent.BaseImpl.PermissionPolicy.PermissionPolicyUser" Caption="Base User" />
   </BOModel>
   <NavigationItems StartupNavigationItem="" NavigationStyle="Accordion">
