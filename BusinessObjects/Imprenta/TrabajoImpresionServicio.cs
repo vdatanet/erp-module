@@ -12,6 +12,20 @@ namespace erp.Module.BusinessObjects.Imprenta
     [NavigationItem("Imprenta")]
     public class TrabajoImpresionServicio(Session session) : LineaDocumentoVenta(session)
     {
+        private TrabajoImpresion? _trabajoImpresion;
+        [Association("TrabajoImpresion-Servicios")]
+        public TrabajoImpresion? TrabajoImpresion
+        {
+            get => _trabajoImpresion;
+            set
+            {
+                if (SetPropertyValue(nameof(TrabajoImpresion), ref _trabajoImpresion, value) && !IsLoading && !IsSaving && value != null)
+                {
+                    DocumentoVenta = value;
+                }
+            }
+        }
+
         protected override void OnProductoChanged()
         {
             base.OnProductoChanged();

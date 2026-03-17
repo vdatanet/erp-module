@@ -305,16 +305,20 @@ namespace erp.Module.BusinessObjects.Imprenta
 
         #region Colecciones
         [DevExpress.Xpo.Aggregated]
-        public XPCollection<TrabajoImpresionPapel> Papeles => new XPCollection<TrabajoImpresionPapel>(Session, new BinaryOperator(nameof(LineaDocumentoVenta.DocumentoVenta), this));
+        [Association("TrabajoImpresion-Papeles")]
+        public XPCollection<TrabajoImpresionPapel> Papeles => GetCollection<TrabajoImpresionPapel>();
 
         [DevExpress.Xpo.Aggregated]
-        public XPCollection<TrabajoImpresionMaterial> Materiales => new XPCollection<TrabajoImpresionMaterial>(Session, new BinaryOperator(nameof(LineaDocumentoVenta.DocumentoVenta), this));
+        [Association("TrabajoImpresion-Materiales")]
+        public XPCollection<TrabajoImpresionMaterial> Materiales => GetCollection<TrabajoImpresionMaterial>();
 
         [DevExpress.Xpo.Aggregated]
-        public XPCollection<TrabajoImpresionServicio> Servicios => new XPCollection<TrabajoImpresionServicio>(Session, new BinaryOperator(nameof(LineaDocumentoVenta.DocumentoVenta), this));
+        [Association("TrabajoImpresion-Servicios")]
+        public XPCollection<TrabajoImpresionServicio> Servicios => GetCollection<TrabajoImpresionServicio>();
 
         [DevExpress.Xpo.Aggregated]
-        public XPCollection<TrabajoImpresionHora> Horas => new XPCollection<TrabajoImpresionHora>(Session, new BinaryOperator(nameof(LineaDocumentoVenta.DocumentoVenta), this));
+        [Association("TrabajoImpresion-Horas")]
+        public XPCollection<TrabajoImpresionHora> Horas => GetCollection<TrabajoImpresionHora>();
         #endregion
 
         public enum EstadosPresupuesto { Borrador, Presupuesto, Orden, Rechazado };
