@@ -3,6 +3,7 @@ using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Facturacion;
 
@@ -16,7 +17,7 @@ public class Pago(Session session) : EntidadBase(session)
 {
     private DateTime _fechaPago;
     private decimal _importe;
-    private Medios _medio;
+    private MedioPago? _medio;
     private Reserva? _reserva;
     private Factura? _factura;
     private string? _observaciones;
@@ -25,7 +26,6 @@ public class Pago(Session session) : EntidadBase(session)
     {
         base.AfterConstruction();
         FechaPago = DateTime.Now.Date;
-        Medio = Medios.Transferencia;
     }
 
     [XafDisplayName("Fecha de pago")]
@@ -52,7 +52,7 @@ public class Pago(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Medio de pago")]
-    public Medios Medio
+    public MedioPago? Medio
     {
         get => _medio;
         set => SetPropertyValue(nameof(Medio), ref _medio, value);
@@ -88,15 +88,5 @@ public class Pago(Session session) : EntidadBase(session)
     {
         get => _factura;
         set => SetPropertyValue(nameof(Factura), ref _factura, value);
-    }
-
-    public enum Medios
-    {
-        [XafDisplayName("Transferencia bancaria")]
-        Transferencia,
-        [XafDisplayName("Efectivo")]
-        Efectiu,
-        [XafDisplayName("Tarjeta de crédito")]
-        Targeta
     }
 }
