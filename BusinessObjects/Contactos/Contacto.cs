@@ -38,10 +38,11 @@ public class Contacto(Session session) : EntidadBase(session)
     private Cliente? _cliente;
     private Nacionalidad? _nacionalidad;
     private DateTime? _fechaNacimiento;
+    private DateTime _expedicion;
 
     [XafDisplayName("Cliente")]
     [Association("Cliente-Contactos")]
-    public Cliente Cliente
+    public Cliente? Cliente
     {
         get => _cliente;
         set => SetPropertyValue(nameof(Cliente), ref _cliente, value);
@@ -50,7 +51,7 @@ public class Contacto(Session session) : EntidadBase(session)
     [Size(50)]
     [XafDisplayName("Código")]
     [ModelDefault("AllowEdit", "False")]
-    public string Codigo
+    public string? Codigo
     {
         get => _codigo;
         set => SetPropertyValue(nameof(Codigo), ref _codigo, value);
@@ -67,7 +68,7 @@ public class Contacto(Session session) : EntidadBase(session)
     [Size(255)]
     [RuleRequiredField]
     [XafDisplayName("Nombre")]
-    public string Nombre
+    public string? Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
@@ -75,7 +76,7 @@ public class Contacto(Session session) : EntidadBase(session)
 
     [Size(255)]
     [XafDisplayName("Nombre Comercial")]
-    public string NombreComercial
+    public string? NombreComercial
     {
         get => _nombreComercial;
         set => SetPropertyValue(nameof(NombreComercial), ref _nombreComercial, value);
@@ -91,7 +92,7 @@ public class Contacto(Session session) : EntidadBase(session)
 
     [Size(50)]
     [XafDisplayName("NIF")]
-    public string Nif
+    public string? Nif
     {
         get => _nif;
         set => SetPropertyValue(nameof(Nif), ref _nif, value);
@@ -99,14 +100,14 @@ public class Contacto(Session session) : EntidadBase(session)
 
     [Size(255)]
     [XafDisplayName("Dirección")]
-    public string Direccion
+    public string? Direccion
     {
         get => _direccion;
         set => SetPropertyValue(nameof(Direccion), ref _direccion, value);
     }
 
     [XafDisplayName("País")]
-    public Pais Pais
+    public Pais? Pais
     {
         get => _pais;
         set => SetPropertyValue(nameof(Pais), ref _pais, value);
@@ -114,7 +115,7 @@ public class Contacto(Session session) : EntidadBase(session)
 
     [DataSourceProperty("Pais.Provincias")]
     [XafDisplayName("Provincia")]
-    public Provincia Provincia
+    public Provincia? Provincia
     {
         get => _provincia;
         set => SetPropertyValue(nameof(Provincia), ref _provincia, value);
@@ -122,7 +123,7 @@ public class Contacto(Session session) : EntidadBase(session)
 
     [DataSourceProperty("Provincia.Poblaciones")]
     [XafDisplayName("Población")]
-    public Poblacion Poblacion
+    public Poblacion? Poblacion
     {
         get => _poblacion;
         set => SetPropertyValue(nameof(Poblacion), ref _poblacion, value);
@@ -130,21 +131,21 @@ public class Contacto(Session session) : EntidadBase(session)
 
     [Size(10)]
     [XafDisplayName("Código Postal")]
-    public string CodigoPostal
+    public string? CodigoPostal
     {
         get => _codigoPostal;
         set => SetPropertyValue(nameof(CodigoPostal), ref _codigoPostal, value);
     }
 
     [XafDisplayName("Teléfono")]
-    public string Telefono
+    public string? Telefono
     {
         get => _telefono;
         set => SetPropertyValue(nameof(Telefono), ref _telefono, value);
     }
 
     [XafDisplayName("Móvil")]
-    public string Movil
+    public string? Movil
     {
         get => _movil;
         set => SetPropertyValue(nameof(Movil), ref _movil, value);
@@ -152,7 +153,7 @@ public class Contacto(Session session) : EntidadBase(session)
 
     [Association("Nacionalidad-Contactos")]
     [XafDisplayName("Nacionalidad")]
-    public Nacionalidad Nacionalidad
+    public Nacionalidad? Nacionalidad
     {
         get => _nacionalidad;
         set => SetPropertyValue(nameof(Nacionalidad), ref _nacionalidad, value);
@@ -165,15 +166,22 @@ public class Contacto(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(FechaNacimiento), ref _fechaNacimiento, value);
     }
 
+    [XafDisplayName("Fecha expedición")]
+    public DateTime Expedicion
+    {
+        get => _expedicion;
+        set => SetPropertyValue(nameof(Expedicion), ref _expedicion, value);
+    }
+
     [XafDisplayName("Correo Electrónico")]
-    public string CorreoElectronico
+    public string? CorreoElectronico
     {
         get => _correoElectronico;
         set => SetPropertyValue(nameof(CorreoElectronico), ref _correoElectronico, value);
     }
 
     [XafDisplayName("Sitio Web")]
-    public string SitioWeb
+    public string? SitioWeb
     {
         get => _sitioWeb;
         set => SetPropertyValue(nameof(SitioWeb), ref _sitioWeb, value);
@@ -182,7 +190,7 @@ public class Contacto(Session session) : EntidadBase(session)
     [VisibleInListView(false)]
     [VisibleInDetailView(false)]
     [XafDisplayName("Foto")]
-    public MediaDataObject Foto
+    public MediaDataObject? Foto
     {
         get => _foto;
         set => SetPropertyValue(nameof(Foto), ref _foto, value);
@@ -190,7 +198,7 @@ public class Contacto(Session session) : EntidadBase(session)
 
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Notas")]
-    public string Notas
+    public string? Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
@@ -231,7 +239,8 @@ public class Contacto(Session session) : EntidadBase(session)
     {
         var prefijo = GetPrefijoCodigo();
         if (string.IsNullOrEmpty(prefijo)) return;
-        Numero = SequenceFactory.GetNextSequence(Session, GetType().FullName, out var formattedSequence, prefijo, 5);
+        var nombreSecuencia = GetType().FullName ?? GetType().Name;
+        Numero = SequenceFactory.GetNextSequence(Session, nombreSecuencia, out var formattedSequence, prefijo, 5);
         Codigo = formattedSequence;
     }
 

@@ -23,6 +23,7 @@ public class VeriFactuController : ViewController
             TargetViewType = ViewType.DetailView
         };
         validateFactura.Execute += ValidateFactura_Execute;
+        Actions.Add(validateFactura);
     }
 
     protected override void OnActivated()
@@ -33,7 +34,7 @@ public class VeriFactuController : ViewController
 
     private void ValidateFactura_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
-        if (View.CurrentObject is not FacturaBase invoice) return;
+        if (View.CurrentObject is not FacturaBase invoice || _veriFactuService == null) return;
 
         _veriFactuService.SendFactura(ObjectSpace, invoice);
 

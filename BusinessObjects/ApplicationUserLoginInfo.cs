@@ -43,5 +43,5 @@ public class ApplicationUserLoginInfo : BaseObject, ISecurityUserLoginInfo
         set => SetPropertyValue(nameof(ProviderUserKey), ref providerUserKey, value);
     }
 
-    object ISecurityUserLoginInfo.User => User;
+    object? ISecurityUserLoginInfo.User => User;
 }

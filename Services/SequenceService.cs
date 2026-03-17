@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using DevExpress.Data.Filtering;
 using DevExpress.Xpo;
 using DevExpress.Xpo.DB.Exceptions;
@@ -7,11 +8,11 @@ namespace erp.Module.Services;
 
 public class SequenceService(Session session)
 {
-    private static readonly Random Jitter = new();
+    private static int GetJitter(int min, int max) => RandomNumberGenerator.GetInt32(min, max);
 
     public int GetNextSequence(string sequenceName, string prefix, int padding, out string formattedSequence)
     {
-        var maxRetries = 5;
+        const int maxRetries = 5;
         for (var attempt = 0; attempt < maxRetries; attempt++)
         {
             using var uow = new UnitOfWork(session.DataLayer);
@@ -19,6 +20,7 @@ public class SequenceService(Session session)
             {
                 var generator = uow.FindObject<Secuencia>(new BinaryOperator(nameof(Secuencia.Nombre), sequenceName));
                 if (generator == null)
+                {
                     generator = new Secuencia(uow)
                     {
                         Nombre = sequenceName,
@@ -26,6 +28,7 @@ public class SequenceService(Session session)
                         Prefijo = prefix,
                         Relleno = padding
                     };
+                }
 
                 generator.ValorActual++;
                 uow.CommitChanges();
@@ -38,7 +41,7 @@ public class SequenceService(Session session)
                     throw;
 
                 // Espera con jitter para evitar colisiones repetitivas
-                Thread.Sleep(50 + Jitter.Next(10, 50));
+                Thread.Sleep(50 + GetJitter(10, 50));
             }
             catch (Exception ex) when (IsUniqueConstraintViolation(ex))
             {
@@ -46,18 +49,18 @@ public class SequenceService(Session session)
                 if (attempt == maxRetries - 1)
                     throw;
 
-                Thread.Sleep(20 + Jitter.Next(5, 20));
+                Thread.Sleep(20 + GetJitter(5, 20));
             }
             catch (Exception)
             {
                 if (attempt == maxRetries - 1)
                     throw;
 
-                Thread.Sleep(50 + Jitter.Next(10, 50));
+                Thread.Sleep(50 + GetJitter(10, 50));
             }
         }
 
-        throw new Exception("No se pudo obtener la secuencia por concurrencia tras múltiples reintentos.");
+        throw new InvalidOperationException("No se pudo obtener la secuencia por concurrencia tras múltiples reintentos.");
     }
 
     private static bool IsUniqueConstraintViolation(Exception ex)

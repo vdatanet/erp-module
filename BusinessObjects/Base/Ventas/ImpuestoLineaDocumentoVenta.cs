@@ -39,7 +39,7 @@ public class ImpuestoLineaDocumentoVenta(Session session) : EntidadBase(session)
         get => _tipoImpuesto;
         set
         {
-            if (SetPropertyValue(nameof(TipoImpuesto), ref _tipoImpuesto, value))
+            if (SetPropertyValue(nameof(TipoImpuesto), ref _tipoImpuesto, value) && value != null)
                 AplicarInstantaneaTipoImpuesto(value);
         }
     }

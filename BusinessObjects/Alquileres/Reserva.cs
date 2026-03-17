@@ -82,7 +82,7 @@ public class Reserva(Session session) : EventoBase(session)
     [Association("Alquiler-Reservas")]
     [XafDisplayName("Alquiler")]
     [ImmediatePostData]
-    public Alquiler Alquiler
+    public Alquiler? Alquiler
     {
         get => _alquiler;
         set
@@ -96,7 +96,7 @@ public class Reserva(Session session) : EventoBase(session)
     [Association("Cliente-Reservas")]
     [XafDisplayName("Cliente")]
     [ImmediatePostData]
-    public Cliente Cliente
+    public Cliente? Cliente
     {
         get => _cliente;
         set
@@ -128,7 +128,7 @@ public class Reserva(Session session) : EventoBase(session)
     [XafDisplayName("Referencia")]
     [ModelDefault("AllowEdit", "False")]
     [Size(255)]
-    public string Referencia
+    public string? Referencia
     {
         get => _referencia;
         set => SetPropertyValue(nameof(Referencia), ref _referencia, value);

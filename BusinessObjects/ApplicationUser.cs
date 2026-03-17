@@ -10,7 +10,7 @@ namespace erp.Module.BusinessObjects;
 
 [MapInheritance(MapInheritanceType.ParentTable)]
 [DefaultProperty(nameof(UserName))]
-public class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLoginInfo, ISecurityUserLockout
+public sealed class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLoginInfo, ISecurityUserLockout
 {
     private int accessFailedCount;
     private DateTime lockoutEnd;

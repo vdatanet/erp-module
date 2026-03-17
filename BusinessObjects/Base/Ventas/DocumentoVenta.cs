@@ -147,7 +147,8 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     public void ReconstruirResumenImpuestos()
     {
         var groups = Lineas.SelectMany(l => l.Impuestos)
-            .GroupBy(t => t.TipoImpuesto)
+            .Where(t => t.TipoImpuesto != null)
+            .GroupBy(t => t.TipoImpuesto!)
             .Select(g => new
             {
                 TaxType = g.Key,
@@ -198,6 +199,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     public virtual void AsignarNumero()
     {
-        Numero = SequenceFactory.GetNextSequence(Session, $"{GetType().FullName}.{Serie}", Serie, 5);
+        if (!string.IsNullOrEmpty(Serie))
+            Numero = SequenceFactory.GetNextSequence(Session, $"{GetType().FullName}.{Serie}", Serie, 5);
     }
 }

@@ -20,7 +20,7 @@ public class Tarifa(Session session) : EntidadBase(session)
     [Size(255)]
     [RuleRequiredField]
     [XafDisplayName("Tipo")]
-    public string Nombre
+    public string? Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
@@ -28,7 +28,7 @@ public class Tarifa(Session session) : EntidadBase(session)
 
     [Size(255)]
     [XafDisplayName("Observaciones")]
-    public string Observaciones
+    public string? Observaciones
     {
         get => _observaciones;
         set => SetPropertyValue(nameof(Observaciones), ref _observaciones, value);

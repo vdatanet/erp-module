@@ -16,7 +16,6 @@ namespace erp.Module.BusinessObjects.Alquileres;
 public class Viajero(Session session) : Contacto(session)
 {
     private Parentesco? _parentesco;
-    private DateTime _expedicion;
     private Cliente.Sexes _sexo;
 
     public override void AfterConstruction()
@@ -26,13 +25,6 @@ public class Viajero(Session session) : Contacto(session)
         TipoIdentificacion = IDType.NIF_IVA;
         var nacionalidad = Session.FindObject<Nacionalidad>(CriteriaOperator.Parse("Nombre = 'Española'"));
         if (nacionalidad != null) Nacionalidad = nacionalidad;
-    }
-
-    [XafDisplayName("Fecha expedición")]
-    public DateTime Expedicion
-    {
-        get => _expedicion;
-        set => SetPropertyValue(nameof(Expedicion), ref _expedicion, value);
     }
 
     [XafDisplayName("Sexo")]

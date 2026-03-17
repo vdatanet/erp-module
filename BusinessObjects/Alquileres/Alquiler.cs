@@ -37,7 +37,7 @@ public class Alquiler(Session session) : RecursoBase(session)
 
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Descripción")]
-    public string Descripcion
+    public string? Descripcion
     {
         get => _descripcion;
         set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
@@ -45,7 +45,7 @@ public class Alquiler(Session session) : RecursoBase(session)
     
     [XafDisplayName("Producto Relacionado")]
     [ToolTip("Producto utilizado para la facturación de este alquiler")]
-    public Producto ProductoRelacionado
+    public Producto? ProductoRelacionado
     {
         get => _productoRelacionado;
         set => SetPropertyValue(nameof(ProductoRelacionado), ref _productoRelacionado, value);
@@ -59,7 +59,7 @@ public class Alquiler(Session session) : RecursoBase(session)
     }
 
     [XafDisplayName("Capacidad")]
-    public Capacidad Capacidad
+    public Capacidad? Capacidad
     {
         get => _capacidad;
         set => SetPropertyValue(nameof(Capacidad), ref _capacidad, value);
@@ -67,7 +67,7 @@ public class Alquiler(Session session) : RecursoBase(session)
 
     [Size(255)]
     [XafDisplayName("Código de Registro")]
-    public string CodigoRegistro
+    public string? CodigoRegistro
     {
         get => _codigoRegistro;
         set => SetPropertyValue(nameof(CodigoRegistro), ref _codigoRegistro, value);
@@ -75,14 +75,14 @@ public class Alquiler(Session session) : RecursoBase(session)
 
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Observaciones")]
-    public string Observaciones
+    public string? Observaciones
     {
         get => _observaciones;
         set => SetPropertyValue(nameof(Observaciones), ref _observaciones, value);
     }
 
     [XafDisplayName("Ubicación")]
-    public Ubicacion Ubicacion
+    public Ubicacion? Ubicacion
     {
         get => _ubicacion;
         set => SetPropertyValue(nameof(Ubicacion), ref _ubicacion, value);
@@ -97,14 +97,14 @@ public class Alquiler(Session session) : RecursoBase(session)
 
     [Association("Tarifa-Alquileres")]
     [XafDisplayName("Tarifa")]
-    public Tarifa Tarifa
+    public Tarifa? Tarifa
     {
         get => _tarifa;
         set => SetPropertyValue(nameof(Tarifa), ref _tarifa, value);
     }
 
     [XafDisplayName("Tipo Detalle")]
-    public TipoAlquilerDetalle TipoDetalle
+    public TipoAlquilerDetalle? TipoDetalle
     {
         get => _tipoDetalle;
         set => SetPropertyValue(nameof(TipoDetalle), ref _tipoDetalle, value);

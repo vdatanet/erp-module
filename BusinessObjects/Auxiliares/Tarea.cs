@@ -56,7 +56,7 @@ public class Tarea(Session session) : EntidadBase(session)
     [Size(255)]
     [RuleRequiredField]
     [XafDisplayName("Nombre")]
-    public string Nombre
+    public string? Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
@@ -141,7 +141,7 @@ public class Tarea(Session session) : EntidadBase(session)
 
     [XafDisplayName("Propietario")]
     [Association("Empleado-TareasPropias")]
-    public Empleado Propietario
+    public Empleado? Propietario
     {
         get => _propietario;
         set => SetPropertyValue(nameof(Propietario), ref _propietario, value);
@@ -149,7 +149,7 @@ public class Tarea(Session session) : EntidadBase(session)
 
     [XafDisplayName("Asignada A")]
     [Association("Empleado-TareasAsignadas")]
-    public Empleado AsignadaA
+    public Empleado? AsignadaA
     {
         get => _asignadaA;
         set => SetPropertyValue(nameof(AsignadaA), ref _asignadaA, value);
@@ -157,7 +157,7 @@ public class Tarea(Session session) : EntidadBase(session)
 
     [XafDisplayName("Completada Por")]
     [ModelDefault("AllowEdit", "False")]
-    public Empleado CompletadaPor
+    public Empleado? CompletadaPor
     {
         get => _completadaPor;
         set => SetPropertyValue(nameof(CompletadaPor), ref _completadaPor, value);
@@ -165,7 +165,7 @@ public class Tarea(Session session) : EntidadBase(session)
 
     [Association("Tarea-Subtareas")]
     [XafDisplayName("Tarea Padre")]
-    public Tarea TareaPadre
+    public Tarea? TareaPadre
     {
         get => _tareaPadre;
         set => SetPropertyValue(nameof(TareaPadre), ref _tareaPadre, value);
@@ -173,7 +173,7 @@ public class Tarea(Session session) : EntidadBase(session)
 
     [Association("Contacto-Tareas")]
     [XafDisplayName("Contacto")]
-    public Contacto Contacto
+    public Contacto? Contacto
     {
         get => _contacto;
         set => SetPropertyValue(nameof(Contacto), ref _contacto, value);
@@ -181,7 +181,7 @@ public class Tarea(Session session) : EntidadBase(session)
 
     [Association("Producto-Tareas")]
     [XafDisplayName("Producto")]
-    public Producto Producto
+    public Producto? Producto
     {
         get => _producto;
         set => SetPropertyValue(nameof(Producto), ref _producto, value);
@@ -189,7 +189,7 @@ public class Tarea(Session session) : EntidadBase(session)
 
     [Association("DocumentoVenta-Tareas")]
     [XafDisplayName("Documento Venta")]
-    public DocumentoVenta DocumentoVenta
+    public DocumentoVenta? DocumentoVenta
     {
         get => _documentoVenta;
         set => SetPropertyValue(nameof(DocumentoVenta), ref _documentoVenta, value);
@@ -197,7 +197,7 @@ public class Tarea(Session session) : EntidadBase(session)
 
     [Association("Oportunidad-Tareas")]
     [XafDisplayName("Oportunidad")]
-    public Oportunidad Oportunidad
+    public Oportunidad? Oportunidad
     {
         get => _oportunidad;
         set => SetPropertyValue(nameof(Oportunidad), ref _oportunidad, value);
@@ -205,7 +205,7 @@ public class Tarea(Session session) : EntidadBase(session)
 
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Notas")]
-    public string Notas
+    public string? Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);

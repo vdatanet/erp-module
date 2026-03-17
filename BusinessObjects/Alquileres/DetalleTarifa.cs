@@ -22,7 +22,7 @@ public class DetalleTarifa(Session session) : EntidadBase(session)
 
     [Association("Tarifa-Detalles")]
     [XafDisplayName("Tarifa")]
-    public Tarifa Tarifa
+    public Tarifa? Tarifa
     {
         get => _tarifa;
         set => SetPropertyValue(nameof(Tarifa), ref _tarifa, value);
@@ -58,7 +58,7 @@ public class DetalleTarifa(Session session) : EntidadBase(session)
 
     [Size(255)]
     [XafDisplayName("Observaciones")]
-    public string Observaciones
+    public string? Observaciones
     {
         get => _observaciones;
         set => SetPropertyValue(nameof(Observaciones), ref _observaciones, value);

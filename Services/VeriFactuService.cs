@@ -14,6 +14,9 @@ public class VeriFactuService
 {
     public void SendFactura(IObjectSpace objectSpace, FacturaBase invoice)
     {
+        ArgumentNullException.ThrowIfNull(objectSpace);
+        ArgumentNullException.ThrowIfNull(invoice);
+
         ConfigureVeriFactu(objectSpace);
 
         if (!invoice.EsValida())
