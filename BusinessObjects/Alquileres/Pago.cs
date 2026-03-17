@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
@@ -15,18 +14,12 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [XafDisplayName("Pago")]
 public class Pago(Session session) : EntidadBase(session)
 {
+    private Factura? _factura;
     private DateTime _fechaPago;
     private decimal _importe;
     private MedioPago? _medio;
-    private Reserva? _reserva;
-    private Factura? _factura;
     private string? _notas;
-
-    public override void AfterConstruction()
-    {
-        base.AfterConstruction();
-        FechaPago = DateTime.Now.Date;
-    }
+    private Reserva? _reserva;
 
     [XafDisplayName("Fecha de pago")]
     public DateTime FechaPago
@@ -43,11 +36,8 @@ public class Pago(Session session) : EntidadBase(session)
         get => _importe;
         set
         {
-            bool modified = SetPropertyValue(nameof(Importe), ref _importe, value);
-            if (!IsLoading && !IsSaving && Reserva != null && modified)
-            {
-                Reserva.SumarPagos(true);
-            }
+            var modified = SetPropertyValue(nameof(Importe), ref _importe, value);
+            if (!IsLoading && !IsSaving && Reserva != null && modified) Reserva.SumarPagos(true);
         }
     }
 
@@ -65,8 +55,8 @@ public class Pago(Session session) : EntidadBase(session)
         get => _reserva;
         set
         {
-            Reserva? oldReserva = _reserva;
-            bool modified = SetPropertyValue(nameof(Reserva), ref _reserva, value);
+            var oldReserva = _reserva;
+            var modified = SetPropertyValue(nameof(Reserva), ref _reserva, value);
             if (!IsLoading && !IsSaving && modified)
             {
                 oldReserva?.SumarPagos(true);
@@ -89,5 +79,11 @@ public class Pago(Session session) : EntidadBase(session)
     {
         get => _factura;
         set => SetPropertyValue(nameof(Factura), ref _factura, value);
+    }
+
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        FechaPago = DateTime.Now.Date;
     }
 }
