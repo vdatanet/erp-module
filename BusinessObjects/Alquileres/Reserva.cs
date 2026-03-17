@@ -7,6 +7,8 @@ using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.Factories;
 using erp.Module.Helpers.Comun;
+using erp.Module.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.BusinessObjects.Alquileres;
 
@@ -14,7 +16,7 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [NavigationItem("Alquileres")]
 [XafDisplayName("Reserva")]
 [ImageName("BO_Scheduler")]
-public class Reserva(Session session) : EventoBase(session)
+public class Reserva : EventoBase, IReservaCalculable
 {
     private Alquiler? _alquiler;
     private decimal _totalPagado;
@@ -43,6 +45,10 @@ public class Reserva(Session session) : EventoBase(session)
     private decimal _total;
     private decimal _totalTasaTuristicaIncluida;
     private decimal _importePendiente;
+
+    public Reserva(Session session) : base(session)
+    {
+    }
 
     public override void AfterConstruction()
     {
@@ -290,14 +296,7 @@ public class Reserva(Session session) : EventoBase(session)
         {
             bool modified = SetPropertyValue(nameof(ImporteDescuento), ref _importeDescuento, value);
             if (modified && !IsLoading)
-            {
-                if (Subtotal > 0)
-                    _perDescuento = MoneyMath.RoundMoney(ImporteDescuento / Subtotal * 100);
-                else
-                    _perDescuento = 0;
-                OnChanged(nameof(PerDescuento));
                 Calcular();
-            }
         }
     }
 
@@ -313,8 +312,8 @@ public class Reserva(Session session) : EventoBase(session)
             bool modified = SetPropertyValue(nameof(PerDescuento), ref _perDescuento, value);
             if (modified && !IsLoading)
             {
-                ImporteDescuento = MoneyMath.RoundMoney(Subtotal * PerDescuento / 100);
-                Calcular();
+                Session.ServiceProvider.GetRequiredService<IReservaService>().CalcularDescuento(this);
+                ImportePendiente = Total - TotalPagado;
             }
         }
     }
@@ -397,85 +396,8 @@ public class Reserva(Session session) : EventoBase(session)
 
     private void Calcular()
     {
-        if (EndOn > StartOn)
-        {
-            // Alojamiento
-            if (Alojamiento && Alquiler != null && Alquiler.Tarifa != null)
-            {
-                object suma = Session.Evaluate(
-                    typeof(PrecioDiario),
-                    CriteriaOperator.Parse("Sum(Precio)"),
-                    CriteriaOperator.Parse(
-                        "Tarifa.Oid = ? AND Fecha >= ? AND Fecha < ?",
-                        Alquiler.Tarifa.Oid,
-                        StartOn.Date,
-                        EndOn.Date));
-                ImporteAlojamiento = Convert.ToDecimal(suma);
-            }
-            else
-            {
-                ImporteAlojamiento = 0;
-            }
-
-            // Parking
-            if (Parking)
-            {
-                object suma = Session.Evaluate(
-                    typeof(PrecioDiario),
-                    CriteriaOperator.Parse("Sum(Precio)"),
-                    CriteriaOperator.Parse("Tarifa.Nombre = 'P' AND Fecha >= ? AND Fecha < ?", StartOn.Date, EndOn.Date));
-                ImporteParking = Convert.ToDecimal(suma);
-            }
-            else
-            {
-                ImporteParking = 0;
-            }
-
-            // Aire acondicionado
-            if (Ac)
-            {
-                var extraAc = Session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Aire acondicionado'"));
-                if (extraAc == null) extraAc = Session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Aire condicionat'"));
-                if (extraAc != null)
-                    ImporteAc = MoneyMath.RoundMoney((decimal)Dias * extraAc.PrecioDiario);
-            }
-            else
-            {
-                ImporteAc = 0;
-            }
-
-            // Sábanas
-            if (PersonasSabanas > 0)
-            {
-                var extraSabanas = Session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Sábanas'"));
-                if (extraSabanas == null) extraSabanas = Session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Llençols'"));
-                if (extraSabanas != null)
-                    ImporteSabanas = MoneyMath.RoundMoney(PersonasSabanas * extraSabanas.PrecioDiario);
-            }
-            else
-            {
-                ImporteSabanas = 0;
-            }
-
-            // Tasa turística (máximo 7 días)
-            if (PersonasSujetas > 0)
-            {
-                var diasSujetos = (decimal)Dias;
-                if (diasSujetos > 7) diasSujetos = 7;
-                var extraTasa = Session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Tasa turística'"));
-                if (extraTasa == null) extraTasa = Session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Taxa turística'"));
-                if (extraTasa != null)
-                    ImporteTasaTuristica = MoneyMath.RoundMoney(diasSujetos * PersonasSujetas * extraTasa.PrecioDiario);
-            }
-            else
-            {
-                ImporteTasaTuristica = 0;
-            }
-
-            Subtotal = ImporteAlojamiento + ImporteParking;
-            Total = Subtotal + ImporteAc + ImporteSabanas + ImporteOtrosExtras - ImporteDescuento;
-            TotalTasaTuristicaIncluida = Total + ImporteTasaTuristica;
-            ImportePendiente = Total - TotalPagado;
-        }
+        if (IsLoading || IsSaving) return;
+        Session.ServiceProvider.GetRequiredService<IReservaService>().Calcular(this);
+        ImportePendiente = Total - TotalPagado;
     }
 }
