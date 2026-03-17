@@ -61,7 +61,7 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
 
     protected override void OnSaving()
     {
-        if (!IsLoading && !IsSaving && Numero == 0 && StartOn != DateTime.MinValue)
+        if (!IsLoading && Session.IsNewObject(this) && Numero == 0 && StartOn != DateTime.MinValue)
         {
             Temporada = StartOn.Year;
             if (Temporada != 0)
