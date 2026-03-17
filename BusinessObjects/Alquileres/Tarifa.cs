@@ -14,8 +14,8 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [XafDisplayName("Tarifa")]
 public class Tarifa(Session session) : EntidadBase(session)
 {
-    private string _nombre;
-    private string _observaciones;
+    private string? _nombre;
+    private string? _observaciones;
 
     [Size(255)]
     [RuleRequiredField]

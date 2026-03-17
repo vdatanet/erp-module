@@ -12,12 +12,12 @@ namespace erp.Module.BusinessObjects.Impuestos;
 [ImageName("BO_List")]
 public class MapeoImpuesto(Session session) : EntidadBase(session)
 {
-    private PosicionFiscal _posicionFiscal;
-    private TipoImpuesto _impuestoOrigen;
+    private PosicionFiscal? _posicionFiscal;
+    private TipoImpuesto? _impuestoOrigen;
 
     [Association("PosicionFiscal-Mapeos")]
     [XafDisplayName("Posición Fiscal")]
-    public PosicionFiscal PosicionFiscal
+    public PosicionFiscal? PosicionFiscal
     {
         get => _posicionFiscal;
         set => SetPropertyValue(nameof(PosicionFiscal), ref _posicionFiscal, value);
@@ -25,7 +25,7 @@ public class MapeoImpuesto(Session session) : EntidadBase(session)
 
     [RuleRequiredField]
     [XafDisplayName("Impuesto Origen")]
-    public TipoImpuesto ImpuestoOrigen
+    public TipoImpuesto? ImpuestoOrigen
     {
         get => _impuestoOrigen;
         set => SetPropertyValue(nameof(ImpuestoOrigen), ref _impuestoOrigen, value);

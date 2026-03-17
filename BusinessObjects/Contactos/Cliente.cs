@@ -28,13 +28,13 @@ public class Cliente(Session session) : Tercero(session)
     private bool _activo;
     private DateTime _fechaAlta;
     private DateTime? _fechaBaja;
-    private CondicionPago _condicionPago;
-    private Banco _bancoPredeterminado;
-    private Cuenta _cuentaContable;
-    private Cuenta _cuentaCobro;
-    private Diario _diarioVentas;
-    private PosicionFiscal _posicionFiscal;
-    private Sector _sector;
+    private CondicionPago? _condicionPago;
+    private Banco? _bancoPredeterminado;
+    private Cuenta? _cuentaContable;
+    private Cuenta? _cuentaCobro;
+    private Diario? _diarioVentas;
+    private PosicionFiscal? _posicionFiscal;
+    private Sector? _sector;
 
     [XafDisplayName("Activo")]
     public bool Activo
@@ -73,7 +73,7 @@ public class Cliente(Session session) : Tercero(session)
     
     [XafDisplayName("Cuenta Contable")]
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    public Cuenta CuentaContable
+    public Cuenta? CuentaContable
     {
         get => _cuentaContable;
         set => SetPropertyValue(nameof(CuentaContable), ref _cuentaContable, value);
@@ -81,7 +81,7 @@ public class Cliente(Session session) : Tercero(session)
 
     [XafDisplayName("Cuenta de Cobro")]
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    public Cuenta CuentaCobro
+    public Cuenta? CuentaCobro
     {
         get => _cuentaCobro;
         set => SetPropertyValue(nameof(CuentaCobro), ref _cuentaCobro, value);
@@ -89,14 +89,14 @@ public class Cliente(Session session) : Tercero(session)
 
     [XafDisplayName("Diario de Ventas")]
     [DataSourceCriteria("EstaActivo = True")]
-    public Diario DiarioVentas
+    public Diario? DiarioVentas
     {
         get => _diarioVentas;
         set => SetPropertyValue(nameof(DiarioVentas), ref _diarioVentas, value);
     }
 
     [XafDisplayName("Condiciones de Pago")]
-    public CondicionPago CondicionPago
+    public CondicionPago? CondicionPago
     {
         get => _condicionPago;
         set => SetPropertyValue(nameof(CondicionPago), ref _condicionPago, value);
@@ -104,21 +104,21 @@ public class Cliente(Session session) : Tercero(session)
     
     [XafDisplayName("Banco Predeterminado")]
     [DataSourceProperty(nameof(Bancos))]
-    public Banco BancoPredeterminado
+    public Banco? BancoPredeterminado
     {
         get => _bancoPredeterminado;
         set => SetPropertyValue(nameof(BancoPredeterminado), ref _bancoPredeterminado, value);
     }
 
     [XafDisplayName("Posición Fiscal")]
-    public PosicionFiscal PosicionFiscal
+    public PosicionFiscal? PosicionFiscal
     {
         get => _posicionFiscal;
         set => SetPropertyValue(nameof(PosicionFiscal), ref _posicionFiscal, value);
     }
 
     [XafDisplayName("Sector")]
-    public Sector Sector
+    public Sector? Sector
     {
         get => _sector;
         set => SetPropertyValue(nameof(Sector), ref _sector, value);

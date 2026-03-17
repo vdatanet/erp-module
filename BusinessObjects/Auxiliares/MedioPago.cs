@@ -14,13 +14,13 @@ namespace erp.Module.BusinessObjects.Auxiliares;
 [DefaultProperty(nameof(Nombre))]
 public class MedioPago(Session session) : EntidadBase(session)
 {
-    private string _nombre;
-    private string _notas;
+    private string? _nombre;
+    private string? _notas;
 
     [RuleRequiredField]
     [XafDisplayName("Nombre")]
     [Size(255)]
-    public string Nombre
+    public string? Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
@@ -28,7 +28,7 @@ public class MedioPago(Session session) : EntidadBase(session)
 
     [XafDisplayName("Notas")]
     [Size(SizeAttribute.Unlimited)]
-    public string Notas
+    public string? Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);

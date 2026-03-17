@@ -19,24 +19,24 @@ namespace erp.Module.BusinessObjects.Productos;
 [DefaultProperty(nameof(Codigo))]
 public class Producto(Session session) : EntidadBase(session)
 {
-    private Categoria _categoria;
-    private string _codigo;
-    private string _codigoBarras;
+    private Categoria? _categoria;
+    private string? _codigo;
+    private string? _codigoBarras;
     private decimal _costeEstandar;
-    private Cuenta _cuentaCompras;
-    private Cuenta _cuentaVentas;
+    private Cuenta? _cuentaCompras;
+    private Cuenta? _cuentaVentas;
     private bool _disponibleEnCompras;
     private bool _disponibleEnTpv;
     private bool _disponibleEnVentas;
     private bool _estaActivo;
-    private MediaDataObject _foto;
-    private string _nombre;
-    private string _notas;
+    private MediaDataObject? _foto;
+    private string? _nombre;
+    private string? _notas;
     private decimal _precioVenta;
 
     [RuleUniqueValue]
     [XafDisplayName("Código")]
-    public string Codigo
+    public string? Codigo
     {
         get => _codigo;
         set => SetPropertyValue(nameof(Codigo), ref _codigo, value);
@@ -44,7 +44,7 @@ public class Producto(Session session) : EntidadBase(session)
 
     [RuleUniqueValue]
     [XafDisplayName("Código Barras")]
-    public string CodigoBarras
+    public string? CodigoBarras
     {
         get => _codigoBarras;
         set => SetPropertyValue(nameof(CodigoBarras), ref _codigoBarras, value);
@@ -54,7 +54,7 @@ public class Producto(Session session) : EntidadBase(session)
     [RuleRequiredField]
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Nombre")]
-    public string Nombre
+    public string? Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
@@ -63,7 +63,7 @@ public class Producto(Session session) : EntidadBase(session)
     [Association("Categoria-Productos")]
     [DataSourceCriteria("EstaActivo = True")]
     [XafDisplayName("Categoría")]
-    public Categoria Categoria
+    public Categoria? Categoria
     {
         get => _categoria;
         set => SetPropertyValue(nameof(Categoria), ref _categoria, value);
@@ -84,14 +84,14 @@ public class Producto(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Cuenta Ventas")]
-    public Cuenta CuentaVentas
+    public Cuenta? CuentaVentas
     {
         get => _cuentaVentas;
         set => SetPropertyValue(nameof(CuentaVentas), ref _cuentaVentas, value);
     }
 
     [XafDisplayName("Cuenta Compras")]
-    public Cuenta CuentaCompras
+    public Cuenta? CuentaCompras
     {
         get => _cuentaCompras;
         set => SetPropertyValue(nameof(CuentaCompras), ref _cuentaCompras, value);
@@ -127,14 +127,14 @@ public class Producto(Session session) : EntidadBase(session)
 
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Notas")]
-    public string Notas
+    public string? Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
     [XafDisplayName("Foto")]
-    public MediaDataObject Foto
+    public MediaDataObject? Foto
     {
         get => _foto;
         set => SetPropertyValue(nameof(Foto), ref _foto, value);

@@ -14,15 +14,15 @@ namespace erp.Module.BusinessObjects.Base.Comun;
 public abstract class RecursoBase(Session session) : Resource(session)
 {
     private DateTime? _creadoEl;
-    private ApplicationUser _creadoPor;
+    private ApplicationUser? _creadoPor;
     private DateTime? _modificadoEl;
-    private ApplicationUser _modificadoPor;
+    private ApplicationUser? _modificadoPor;
 
     [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
     [NonCloneable]
     [XafDisplayName("Creado por")]
-    public ApplicationUser CreadoPor
+    public ApplicationUser? CreadoPor
     {
         get => _creadoPor;
         set => SetPropertyValue(nameof(CreadoPor), ref _creadoPor, value);
@@ -32,7 +32,7 @@ public abstract class RecursoBase(Session session) : Resource(session)
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
     [NonCloneable]
     [XafDisplayName("Modificado por")]
-    public ApplicationUser ModificadoPor
+    public ApplicationUser? ModificadoPor
     {
         get => _modificadoPor;
         set => SetPropertyValue(nameof(ModificadoPor), ref _modificadoPor, value);

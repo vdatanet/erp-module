@@ -14,27 +14,27 @@ namespace erp.Module.BusinessObjects.Base.Ventas;
 public class ImpuestoLineaDocumentoVenta(Session session) : EntidadBase(session)
 {
     private decimal _baseImponible;
-    private Cuenta _cuenta;
+    private Cuenta? _cuenta;
     private bool _esCompuesto;
     private bool _esRetencion;
     private decimal _importeImpuestos;
-    private LineaDocumentoVenta _lineaDocumentoVenta;
-    private string _nombre;
-    private string _notas;
+    private LineaDocumentoVenta? _lineaDocumentoVenta;
+    private string? _nombre;
+    private string? _notas;
     private int _secuencia;
     private decimal _tipo;
-    private TipoImpuesto _tipoImpuesto;
+    private TipoImpuesto? _tipoImpuesto;
 
     [Association("LineaDocumentoVenta-Impuestos")]
     [XafDisplayName("Línea Documento Venta")]
-    public LineaDocumentoVenta LineaDocumentoVenta
+    public LineaDocumentoVenta? LineaDocumentoVenta
     {
         get => _lineaDocumentoVenta;
         set => SetPropertyValue(nameof(LineaDocumentoVenta), ref _lineaDocumentoVenta, value);
     }
 
     [XafDisplayName("Tipo Impuesto")]
-    public TipoImpuesto TipoImpuesto
+    public TipoImpuesto? TipoImpuesto
     {
         get => _tipoImpuesto;
         set
@@ -46,7 +46,7 @@ public class ImpuestoLineaDocumentoVenta(Session session) : EntidadBase(session)
 
     [Size(255)]
     [XafDisplayName("Nombre")]
-    public string Nombre
+    public string? Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
@@ -54,7 +54,7 @@ public class ImpuestoLineaDocumentoVenta(Session session) : EntidadBase(session)
 
     [Size(1000)]
     [XafDisplayName("Notas")]
-    public string Notas
+    public string? Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
@@ -68,7 +68,7 @@ public class ImpuestoLineaDocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Cuenta")]
-    public Cuenta Cuenta
+    public Cuenta? Cuenta
     {
         get => _cuenta;
         set => SetPropertyValue(nameof(Cuenta), ref _cuenta, value);

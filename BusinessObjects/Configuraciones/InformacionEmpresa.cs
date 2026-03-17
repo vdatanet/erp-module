@@ -22,35 +22,35 @@ namespace erp.Module.BusinessObjects.Configuraciones;
     CustomMessageTemplate = "No se puede eliminar la información de la empresa.")]
 public class InformacionEmpresa(Session session) : Contacto(session)
 {
-    private Cuenta _cuentaClientesPorDefecto;
-    private Cuenta _cuentaCobrosPorDefecto;
-    private Cuenta _cuentaComprasPorDefecto;
-    private Cuenta _cuentaPagosPorDefecto;
-    private Cuenta _cuentaProveedoresPorDefecto;
-    private Cuenta _cuentaVentasPorDefecto;
-    private CondicionPago _condicionPagoPorDefecto;
-    private PosicionFiscal _posicionFiscalPorDefecto;
-    private Diario _diarioComprasPorDefecto;
-    private Diario _diarioVentasPorDefecto;
-    private string _nifAdministradorSistemaVeriFactu;
-    private string _nombreAdministradorSistemaVeriFactu;
-    private string _nombreArchivoConfigVeriFactu;
-    private string _nombreSistemaVeriFactu;
-    private string _prefijoFacturasCompraPorDefecto;
-    private string _prefijoFacturasSimplificadasPorDefecto;
-    private string _prefijoFacturasVentaPorDefecto;
-    private string _prefijoPedidosPorDefecto;
-    private string _prefijoPartesDiariosPorDefecto;
-    private string _prefijoPresupuestosPorDefecto;
-    private string _prefijoUrlValidacionVeriFactu;
-    private string _prefijoUrlVeriFactu;
-    private string _serieCertificadoVeriFactu;
-    private string _textoDefectoVeriFactu;
-    private string _versionSistemaVeriFactu;
+    private Cuenta? _cuentaClientesPorDefecto;
+    private Cuenta? _cuentaCobrosPorDefecto;
+    private Cuenta? _cuentaComprasPorDefecto;
+    private Cuenta? _cuentaPagosPorDefecto;
+    private Cuenta? _cuentaProveedoresPorDefecto;
+    private Cuenta? _cuentaVentasPorDefecto;
+    private CondicionPago? _condicionPagoPorDefecto;
+    private PosicionFiscal? _posicionFiscalPorDefecto;
+    private Diario? _diarioComprasPorDefecto;
+    private Diario? _diarioVentasPorDefecto;
+    private string? _nifAdministradorSistemaVeriFactu;
+    private string? _nombreAdministradorSistemaVeriFactu;
+    private string? _nombreArchivoConfigVeriFactu;
+    private string? _nombreSistemaVeriFactu;
+    private string? _prefijoFacturasCompraPorDefecto;
+    private string? _prefijoFacturasSimplificadasPorDefecto;
+    private string? _prefijoFacturasVentaPorDefecto;
+    private string? _prefijoPedidosPorDefecto;
+    private string? _prefijoPartesDiariosPorDefecto;
+    private string? _prefijoPresupuestosPorDefecto;
+    private string? _prefijoUrlValidacionVeriFactu;
+    private string? _prefijoUrlVeriFactu;
+    private string? _serieCertificadoVeriFactu;
+    private string? _textoDefectoVeriFactu;
+    private string? _versionSistemaVeriFactu;
 
     [DataSourceCriteria("EstaActivo = True")]
     [XafDisplayName("Diario Ventas por Defecto")]
-    public Diario DiarioVentasPorDefecto
+    public Diario? DiarioVentasPorDefecto
     {
         get => _diarioVentasPorDefecto;
         set => SetPropertyValue(nameof(DiarioVentasPorDefecto), ref _diarioVentasPorDefecto, value);
@@ -58,7 +58,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
 
     [DataSourceCriteria("EstaActivo = True")]
     [XafDisplayName("Diario Compras por Defecto")]
-    public Diario DiarioComprasPorDefecto
+    public Diario? DiarioComprasPorDefecto
     {
         get => _diarioComprasPorDefecto;
         set => SetPropertyValue(nameof(DiarioComprasPorDefecto), ref _diarioComprasPorDefecto, value);
@@ -66,7 +66,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
     [XafDisplayName("Cuenta Ventas por Defecto")]
-    public Cuenta CuentaVentasPorDefecto
+    public Cuenta? CuentaVentasPorDefecto
     {
         get => _cuentaVentasPorDefecto;
         set => SetPropertyValue(nameof(CuentaVentasPorDefecto), ref _cuentaVentasPorDefecto, value);
@@ -74,7 +74,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
     [XafDisplayName("Cuenta Compras por Defecto")]
-    public Cuenta CuentaComprasPorDefecto
+    public Cuenta? CuentaComprasPorDefecto
     {
         get => _cuentaComprasPorDefecto;
         set => SetPropertyValue(nameof(CuentaComprasPorDefecto), ref _cuentaComprasPorDefecto, value);
@@ -82,7 +82,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
     [XafDisplayName("Cuenta Clientes por Defecto")]
-    public Cuenta CuentaClientesPorDefecto
+    public Cuenta? CuentaClientesPorDefecto
     {
         get => _cuentaClientesPorDefecto;
         set => SetPropertyValue(nameof(CuentaClientesPorDefecto), ref _cuentaClientesPorDefecto, value);
@@ -90,7 +90,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
     [XafDisplayName("Cuenta de Cobros por Defecto")]
-    public Cuenta CuentaCobrosPorDefecto
+    public Cuenta? CuentaCobrosPorDefecto
     {
         get => _cuentaCobrosPorDefecto;
         set => SetPropertyValue(nameof(CuentaCobrosPorDefecto), ref _cuentaCobrosPorDefecto, value);
@@ -98,7 +98,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
     [XafDisplayName("Cuenta Proveedores por Defecto")]
-    public Cuenta CuentaProveedoresPorDefecto
+    public Cuenta? CuentaProveedoresPorDefecto
     {
         get => _cuentaProveedoresPorDefecto;
         set => SetPropertyValue(nameof(CuentaProveedoresPorDefecto), ref _cuentaProveedoresPorDefecto, value);
@@ -106,35 +106,35 @@ public class InformacionEmpresa(Session session) : Contacto(session)
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
     [XafDisplayName("Cuenta de Pagos por Defecto")]
-    public Cuenta CuentaPagosPorDefecto
+    public Cuenta? CuentaPagosPorDefecto
     {
         get => _cuentaPagosPorDefecto;
         set => SetPropertyValue(nameof(CuentaPagosPorDefecto), ref _cuentaPagosPorDefecto, value);
     }
 
     [XafDisplayName("Condiciones de Pago por Defecto")]
-    public CondicionPago CondicionPagoPorDefecto
+    public CondicionPago? CondicionPagoPorDefecto
     {
         get => _condicionPagoPorDefecto;
         set => SetPropertyValue(nameof(CondicionPagoPorDefecto), ref _condicionPagoPorDefecto, value);
     }
 
     [XafDisplayName("Posición Fiscal por Defecto")]
-    public PosicionFiscal PosicionFiscalPorDefecto
+    public PosicionFiscal? PosicionFiscalPorDefecto
     {
         get => _posicionFiscalPorDefecto;
         set => SetPropertyValue(nameof(PosicionFiscalPorDefecto), ref _posicionFiscalPorDefecto, value);
     }
 
     [XafDisplayName("Prefijo Facturas Venta")]
-    public string PrefijoFacturasVentaPorDefecto
+    public string? PrefijoFacturasVentaPorDefecto
     {
         get => _prefijoFacturasVentaPorDefecto;
         set => SetPropertyValue(nameof(PrefijoFacturasVentaPorDefecto), ref _prefijoFacturasVentaPorDefecto, value);
     }
 
     [XafDisplayName("Prefijo Facturas Simplificadas")]
-    public string PrefijoFacturasSimplificadasPorDefecto
+    public string? PrefijoFacturasSimplificadasPorDefecto
     {
         get => _prefijoFacturasSimplificadasPorDefecto;
         set => SetPropertyValue(nameof(PrefijoFacturasSimplificadasPorDefecto),
@@ -142,28 +142,28 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     }
 
     [XafDisplayName("Prefijo Facturas Compra")]
-    public string PrefijoFacturasCompraPorDefecto
+    public string? PrefijoFacturasCompraPorDefecto
     {
         get => _prefijoFacturasCompraPorDefecto;
         set => SetPropertyValue(nameof(PrefijoFacturasCompraPorDefecto), ref _prefijoFacturasCompraPorDefecto, value);
     }
 
     [XafDisplayName("Prefijo Pedidos")]
-    public string PrefijoPedidosPorDefecto
+    public string? PrefijoPedidosPorDefecto
     {
         get => _prefijoPedidosPorDefecto;
         set => SetPropertyValue(nameof(PrefijoPedidosPorDefecto), ref _prefijoPedidosPorDefecto, value);
     }
 
     [XafDisplayName("Prefijo Presupuestos")]
-    public string PrefijoPresupuestosPorDefecto
+    public string? PrefijoPresupuestosPorDefecto
     {
         get => _prefijoPresupuestosPorDefecto;
         set => SetPropertyValue(nameof(PrefijoPresupuestosPorDefecto), ref _prefijoPresupuestosPorDefecto, value);
     }
 
     [XafDisplayName("Prefijo Partes Diarios")]
-    public string PrefijoPartesDiariosPorDefecto
+    public string? PrefijoPartesDiariosPorDefecto
     {
         get => _prefijoPartesDiariosPorDefecto;
         set => SetPropertyValue(nameof(PrefijoPartesDiariosPorDefecto), ref _prefijoPartesDiariosPorDefecto, value);
@@ -183,35 +183,35 @@ public class InformacionEmpresa(Session session) : Contacto(session)
 
     [Size(500)]
     [XafDisplayName("Texto Defecto VeriFactu")]
-    public string TextoDefectoVeriFactu
+    public string? TextoDefectoVeriFactu
     {
         get => _textoDefectoVeriFactu;
         set => SetPropertyValue(nameof(TextoDefectoVeriFactu), ref _textoDefectoVeriFactu, value);
     }
 
     [XafDisplayName("Archivo Config VeriFactu")]
-    public string NombreArchivoConfigVeriFactu
+    public string? NombreArchivoConfigVeriFactu
     {
         get => _nombreArchivoConfigVeriFactu;
         set => SetPropertyValue(nameof(NombreArchivoConfigVeriFactu), ref _nombreArchivoConfigVeriFactu, value);
     }
 
     [XafDisplayName("Serie Certificado VeriFactu")]
-    public string SerieCertificadoVeriFactu
+    public string? SerieCertificadoVeriFactu
     {
         get => _serieCertificadoVeriFactu;
         set => SetPropertyValue(nameof(SerieCertificadoVeriFactu), ref _serieCertificadoVeriFactu, value);
     }
 
     [XafDisplayName("URL VeriFactu")]
-    public string PrefijoUrlVeriFactu
+    public string? PrefijoUrlVeriFactu
     {
         get => _prefijoUrlVeriFactu;
         set => SetPropertyValue(nameof(PrefijoUrlVeriFactu), ref _prefijoUrlVeriFactu, value);
     }
 
     [XafDisplayName("URL Validación VeriFactu")]
-    public string PrefijoUrlValidacionVeriFactu
+    public string? PrefijoUrlValidacionVeriFactu
     {
         get => _prefijoUrlValidacionVeriFactu;
         set => SetPropertyValue(nameof(PrefijoUrlValidacionVeriFactu), ref _prefijoUrlValidacionVeriFactu, value);
@@ -219,29 +219,28 @@ public class InformacionEmpresa(Session session) : Contacto(session)
 
     [Size(30)]
     [XafDisplayName("Nombre Sistema VeriFactu")]
-    public string NombreSistemaVeriFactu
+    public string? NombreSistemaVeriFactu
     {
         get => _nombreSistemaVeriFactu;
         set => SetPropertyValue(nameof(NombreSistemaVeriFactu), ref _nombreSistemaVeriFactu, value);
     }
 
     [XafDisplayName("Versión Sistema VeriFactu")]
-    public string VersionSistemaVeriFactu
+    public string? VersionSistemaVeriFactu
     {
         get => _versionSistemaVeriFactu;
         set => SetPropertyValue(nameof(VersionSistemaVeriFactu), ref _versionSistemaVeriFactu, value);
     }
 
     [XafDisplayName("Nombre Admin Sistema VeriFactu")]
-    public string NombreAdministradorSistemaVeriFactu
+    public string? NombreAdministradorSistemaVeriFactu
     {
         get => _nombreAdministradorSistemaVeriFactu;
-        set => SetPropertyValue(nameof(NombreAdministradorSistemaVeriFactu), ref _nombreAdministradorSistemaVeriFactu,
-            value);
+        set => SetPropertyValue(nameof(NombreAdministradorSistemaVeriFactu), ref _nombreAdministradorSistemaVeriFactu, value);
     }
 
     [XafDisplayName("NIF Admin Sistema VeriFactu")]
-    public string NifAdministradorSistemaVeriFactu
+    public string? NifAdministradorSistemaVeriFactu
     {
         get => _nifAdministradorSistemaVeriFactu;
         set => SetPropertyValue(nameof(NifAdministradorSistemaVeriFactu), ref _nifAdministradorSistemaVeriFactu, value);

@@ -15,13 +15,13 @@ namespace erp.Module.BusinessObjects.Auxiliares;
 [ImageName("MapIt")]
 public class Poblacion(Session session) : EntidadBase(session)
 {
-    private string _nombre;
-    private Provincia _provincia;
+    private string? _nombre;
+    private Provincia? _provincia;
 
     [RuleRequiredField]
     [Association("Provincia-Poblaciones")]
     [XafDisplayName("Provincia")]
-    public Provincia Provincia
+    public Provincia? Provincia
     {
         get => _provincia;
         set => SetPropertyValue(nameof(Provincia), ref _provincia, value);
@@ -30,7 +30,7 @@ public class Poblacion(Session session) : EntidadBase(session)
     [RuleRequiredField]
     [RuleUniqueValue]
     [XafDisplayName("Nombre")]
-    public string Nombre
+    public string? Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);

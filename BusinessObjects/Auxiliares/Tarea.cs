@@ -36,22 +36,22 @@ public enum PrioridadTarea
 [ImageName("BO_Task")]
 public class Tarea(Session session) : EntidadBase(session)
 {
-    private Empleado _asignadaA;
-    private Empleado _completadaPor;
-    private Contacto _contacto;
-    private DocumentoVenta _documentoVenta;
+    private Empleado? _asignadaA;
+    private Empleado? _completadaPor;
+    private Contacto? _contacto;
+    private DocumentoVenta? _documentoVenta;
     private EstadoTarea _estado;
     private DateTime _fechaFin;
     private DateTime _fechaInicio;
     private DateTime _fechaVencimiento;
-    private string _nombre;
-    private string _notas;
-    private Oportunidad _oportunidad;
+    private string? _nombre;
+    private string? _notas;
+    private Oportunidad? _oportunidad;
     private int _porcentajeCompletado;
     private PrioridadTarea _prioridad;
-    private Producto _producto;
-    private Empleado _propietario;
-    private Tarea _tareaPadre;
+    private Producto? _producto;
+    private Empleado? _propietario;
+    private Tarea? _tareaPadre;
 
     [Size(255)]
     [RuleRequiredField]

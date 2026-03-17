@@ -14,10 +14,10 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [XafDisplayName("Precio Diario")]
 public class PrecioDiario(Session session) : EntidadBase(session)
 {
-    private Tarifa _tarifa;
+    private Tarifa? _tarifa;
     private DateTime _fecha;
     private decimal _precio;
-    private string _observaciones;
+    private string? _observaciones;
     private int _p1;
     private int _p2;
     private int _p3;

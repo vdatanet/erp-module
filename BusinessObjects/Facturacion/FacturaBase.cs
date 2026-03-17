@@ -24,18 +24,18 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
         Enviado
     }
 
-    private string _codigoErrorEntradaFactura;
-    private string _csv;
+    private string? _codigoErrorEntradaFactura;
+    private string? _csv;
     private bool _esSubsanacion;
-    private string _estadoEntradaFactura;
+    private string? _estadoEntradaFactura;
     private ValoresEstadoVeriFactu _estadoVeriFactu;
-    private MediaDataObject _qr;
-    private string _respuestaAgenciaTributaria;
-    private string _texto;
+    private MediaDataObject? _qr;
+    private string? _respuestaAgenciaTributaria;
+    private string? _texto;
     private TipoFactura _tipoFactura;
     private TipoRectificativa _tipoRectificativa;
-    private string _urlValidacion;
-    private string _xmlAgenciaTributaria;
+    private string? _urlValidacion;
+    private string? _xmlAgenciaTributaria;
 
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
@@ -49,7 +49,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
     [XafDisplayName("Estado Entrada Factura")]
-    public string EstadoEntradaFactura
+    public string? EstadoEntradaFactura
     {
         get => _estadoEntradaFactura;
         set => SetPropertyValue(nameof(EstadoEntradaFactura), ref _estadoEntradaFactura, value);
@@ -58,7 +58,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
     [XafDisplayName("Código Error Entrada Factura")]
-    public string CodigoErrorEntradaFactura
+    public string? CodigoErrorEntradaFactura
     {
         get => _codigoErrorEntradaFactura;
         set => SetPropertyValue(nameof(CodigoErrorEntradaFactura), ref _codigoErrorEntradaFactura, value);
@@ -90,7 +90,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
 
     [Size(500)]
     [XafDisplayName("Texto")]
-    public string Texto
+    public string? Texto
     {
         get => _texto;
         set => SetPropertyValue(nameof(Texto), ref _texto, value);
@@ -100,7 +100,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
     [XafDisplayName("Respuesta Agencia Tributaria")]
-    public string RespuestaAgenciaTributaria
+    public string? RespuestaAgenciaTributaria
     {
         get => _respuestaAgenciaTributaria;
         set => SetPropertyValue(nameof(RespuestaAgenciaTributaria), ref _respuestaAgenciaTributaria, value);
@@ -110,7 +110,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
     [XafDisplayName("XML Agencia Tributaria")]
-    public string XmlAgenciaTributaria
+    public string? XmlAgenciaTributaria
     {
         get => _xmlAgenciaTributaria;
         set => SetPropertyValue(nameof(XmlAgenciaTributaria), ref _xmlAgenciaTributaria, value);
@@ -119,7 +119,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
     [XafDisplayName("CSV")]
-    public string Csv
+    public string? Csv
     {
         get => _csv;
         set => SetPropertyValue(nameof(Csv), ref _csv, value);
@@ -129,7 +129,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
     [XafDisplayName("URL Validación")]
-    public string UrlValidacion
+    public string? UrlValidacion
     {
         get => _urlValidacion;
         set => SetPropertyValue(nameof(UrlValidacion), ref _urlValidacion, value);
@@ -138,7 +138,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
     [XafDisplayName("QR")]
-    public MediaDataObject Qr
+    public MediaDataObject? Qr
     {
         get => _qr;
         set => SetPropertyValue(nameof(Qr), ref _qr, value);

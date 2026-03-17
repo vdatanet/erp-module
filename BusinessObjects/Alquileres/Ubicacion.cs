@@ -13,12 +13,12 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [DefaultProperty(nameof(Nombre))]
 public class Ubicacion(Session session) : EntidadBase(session)
 {
-    private string _nombre;
+    private string? _nombre;
 
     [Size(255)]
     [RuleRequiredField]
     [XafDisplayName("Nombre")]
-    public string Nombre
+    public string? Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);

@@ -21,15 +21,15 @@ namespace erp.Module.BusinessObjects.Impuestos;
 public class TipoImpuesto(Session session) : EntidadBase(session)
 {
     private CausaExencion? _causaExencion;
-    private string _codigo;
-    private Cuenta _cuenta;
+    private string? _codigo;
+    private Cuenta? _cuenta;
     private bool _disponibleEnCompras;
     private bool _disponibleEnVentas;
     private bool _esRetencion;
     private bool _estaActivo;
     private Impuesto? _impuesto;
-    private string _nombre;
-    private string _notas;
+    private string? _nombre;
+    private string? _notas;
     private ClaveRegimen? _regimenFiscal;
     private int _secuencia;
     private decimal _tipo;
@@ -38,7 +38,7 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
     [RuleRequiredField]
     [RuleUniqueValue]
     [XafDisplayName("Código")]
-    public string Codigo
+    public string? Codigo
     {
         get => _codigo;
         set => SetPropertyValue(nameof(Codigo), ref _codigo, value);
@@ -47,7 +47,7 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
     [Size(255)]
     [RuleRequiredField]
     [XafDisplayName("Nombre")]
-    public string Nombre
+    public string? Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
@@ -55,7 +55,7 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
 
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Notas")]
-    public string Notas
+    public string? Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
@@ -69,7 +69,7 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Cuenta")]
-    public Cuenta Cuenta
+    public Cuenta? Cuenta
     {
         get => _cuenta;
         set => SetPropertyValue(nameof(Cuenta), ref _cuenta, value);

@@ -16,12 +16,12 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [ImageName("BO_Scheduler")]
 public class Reserva(Session session) : EventoBase(session)
 {
-    private Alquiler _alquiler;
+    private Alquiler? _alquiler;
     private decimal _totalPagado;
-    private Cliente _cliente;
+    private Cliente? _cliente;
     private int _numero;
     private int _temporada;
-    private string _referencia;
+    private string? _referencia;
     private DateTime _fechaReserva;
     private DateTime _validaHasta;
     private double _dias;

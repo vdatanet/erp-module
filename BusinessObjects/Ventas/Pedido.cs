@@ -11,11 +11,11 @@ namespace erp.Module.BusinessObjects.Ventas;
 [ImageName("BO_Order")]
 public class Pedido(Session session) : DocumentoVenta(session)
 {
-    private Oportunidad _oportunidad;
+    private Oportunidad? _oportunidad;
 
     [Association("Oportunidad-Pedidos")]
     [XafDisplayName("Oportunidad")]
-    public Oportunidad Oportunidad
+    public Oportunidad? Oportunidad
     {
         get => _oportunidad;
         set

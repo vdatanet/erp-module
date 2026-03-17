@@ -21,22 +21,22 @@ namespace erp.Module.BusinessObjects.ControlHorario;
 public class RegistroJornada(Session session) : EntidadBase(session)
 {
     private TimeSpan _duracion;
-    private Empleado _empleado;
+    private Empleado? _empleado;
     private DateTime? _fechaFin;
     private DateTime _fechaInicio;
     private double? _latitudFin;
     private double? _latitudInicio;
     private double? _longitudFin;
     private double? _longitudInicio;
-    private string _notas;
-    private string _ubicacionFin;
-    private string _ubicacionInicio;
+    private string? _notas;
+    private string? _ubicacionFin;
+    private string? _ubicacionInicio;
 
     [RuleRequiredField]
     [Association("Empleado-RegistrosJornada")]
     [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Empleado")]
-    public Empleado Empleado
+    public Empleado? Empleado
     {
         get => _empleado;
         set => SetPropertyValue(nameof(Empleado), ref _empleado, value);
@@ -80,7 +80,7 @@ public class RegistroJornada(Session session) : EntidadBase(session)
     [Size(SizeAttribute.Unlimited)]
     [ModelDefault("RowCount", "3")]
     [XafDisplayName("Notas")]
-    public string Notas
+    public string? Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
@@ -142,7 +142,7 @@ public class RegistroJornada(Session session) : EntidadBase(session)
     [XafDisplayName("Ubicación Inicio")]
     [ModelDefault("AllowEdit", "False")]
     [Size(SizeAttribute.Unlimited)]
-    public string UbicacionInicio
+    public string? UbicacionInicio
     {
         get => _ubicacionInicio;
         set
@@ -154,7 +154,7 @@ public class RegistroJornada(Session session) : EntidadBase(session)
     [XafDisplayName("Ubicación Fin")]
     [ModelDefault("AllowEdit", "False")]
     [Size(SizeAttribute.Unlimited)]
-    public string UbicacionFin
+    public string? UbicacionFin
     {
         get => _ubicacionFin;
         set

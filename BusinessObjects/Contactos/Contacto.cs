@@ -18,27 +18,27 @@ namespace erp.Module.BusinessObjects.Contactos;
 [DefaultProperty(nameof(NombreCompleto))]
 public class Contacto(Session session) : EntidadBase(session)
 {
-    private string _codigo;
+    private string? _codigo;
     private int _numero;
-    private string _codigoPostal;
-    private string _correoElectronico;
-    private string _direccion;
-    private MediaDataObject _foto;
-    private string _movil;
+    private string? _codigoPostal;
+    private string? _correoElectronico;
+    private string? _direccion;
+    private MediaDataObject? _foto;
+    private string? _movil;
     private IDType _tipoIdentificacion;
-    private string _nif;
-    private string _nombre;
-    private string _nombreComercial;
-    private string _notas;
-    private Pais _pais;
-    private Poblacion _poblacion;
-    private Provincia _provincia;
-    private string _sitioWeb;
-    private string _telefono;
-    private Cliente _cliente;
-    private Nacionalidad _nacionalidad;
+    private string? _nif;
+    private string? _nombre;
+    private string? _nombreComercial;
+    private string? _notas;
+    private Pais? _pais;
+    private Poblacion? _poblacion;
+    private Provincia? _provincia;
+    private string? _sitioWeb;
+    private string? _telefono;
+    private Cliente? _cliente;
+    private Nacionalidad? _nacionalidad;
     private DateTime? _fechaNacimiento;
-    private string _nombreCompleto;
+    private string? _nombreCompleto;
 
     [XafDisplayName("Nombre Completo")]
     public string NombreCompleto

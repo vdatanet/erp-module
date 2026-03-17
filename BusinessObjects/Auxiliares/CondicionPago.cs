@@ -14,24 +14,24 @@ namespace erp.Module.BusinessObjects.Auxiliares;
 [DefaultProperty(nameof(Nombre))]
 public class CondicionPago(Session session) : EntidadBase(session)
 {
-    private string _nombre;
-    private MedioPago _medioPago;
+    private string? _nombre;
+    private MedioPago? _medioPago;
     private int _plazoPrimerPago;
     private int _diasEntrePlazos;
     private int _numeroPlazos;
-    private string _notas;
+    private string? _notas;
 
     [RuleRequiredField]
     [Size(255)]
     [XafDisplayName("Nombre")]
-    public string Nombre
+    public string? Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
     [XafDisplayName("Medio de Pago")]
-    public MedioPago MedioPago
+    public MedioPago? MedioPago
     {
         get => _medioPago;
         set => SetPropertyValue(nameof(MedioPago), ref _medioPago, value);
@@ -60,7 +60,7 @@ public class CondicionPago(Session session) : EntidadBase(session)
     
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Notas")]
-    public string Notas
+    public string? Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);

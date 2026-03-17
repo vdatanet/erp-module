@@ -18,7 +18,7 @@ public class Viajero(Session session) : Contacto(session)
     private DateTime _expedicion;
     private Cliente.Sexes _sexo;
     private Cliente.TiposDocumentos _tipoDocumento;
-    private string _mail;
+    private string? _mail;
 
     public override void AfterConstruction()
     {

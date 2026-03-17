@@ -12,15 +12,15 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [XafDisplayName("Extra")]
 public class Extra(Session session) : EntidadBase(session)
 {
-    private string _nombre;
+    private string? _nombre;
     private decimal _precioDiario;
-    private string _descripcion;
+    private string? _descripcion;
 
     [Size(255)]
     [RuleRequiredField]
     [RuleUniqueValue]
     [XafDisplayName("Nombre")]
-    public string Nombre
+    public string? Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
@@ -35,7 +35,7 @@ public class Extra(Session session) : EntidadBase(session)
 
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Descripción")]
-    public string Descripcion
+    public string? Descripcion
     {
         get => _descripcion;
         set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);

@@ -12,12 +12,12 @@ namespace erp.Module.BusinessObjects.Crm;
 [ImageName("Datasource")]
 public class Fuente(Session session) : EntidadBase(session)
 {
-    private string _name;
-    private string _notas;
+    private string? _name;
+    private string? _notas;
 
     [Size(255)]
     [XafDisplayName("Nombre")]
-    public string Name
+    public string? Name
     {
         get => _name;
         set => SetPropertyValue(nameof(Name), ref _name, value);
@@ -25,7 +25,7 @@ public class Fuente(Session session) : EntidadBase(session)
 
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Notas")]
-    public string Notas
+    public string? Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);

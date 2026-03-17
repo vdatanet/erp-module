@@ -15,18 +15,18 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
 {
     private decimal _baseImponible;
     private decimal _cantidad;
-    private DocumentoVenta _documentoVenta;
+    private DocumentoVenta? _documentoVenta;
     private decimal _importeImpuestos;
     private decimal _importeTotal;
-    private string _nombreProducto;
-    private string _notas;
+    private string? _nombreProducto;
+    private string? _notas;
     private decimal _porcentajeDescuento;
     private decimal _precioUnitario;
-    private Producto _producto;
+    private Producto? _producto;
 
     [Association("DocumentoVenta-Lineas")]
     [XafDisplayName("Documento Venta")]
-    public DocumentoVenta DocumentoVenta
+    public DocumentoVenta? DocumentoVenta
     {
         get => _documentoVenta;
         set => SetPropertyValue(nameof(DocumentoVenta), ref _documentoVenta, value);
@@ -35,7 +35,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     [ImmediatePostData]
     [LookupEditorMode(LookupEditorMode.Search)]
     [XafDisplayName("Producto")]
-    public Producto Producto
+    public Producto? Producto
     {
         get => _producto;
         set
@@ -50,7 +50,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
 
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Nombre Producto")]
-    public string NombreProducto
+    public string? NombreProducto
     {
         get => _nombreProducto;
         set => SetPropertyValue(nameof(NombreProducto), ref _nombreProducto, value);
@@ -58,7 +58,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
 
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Notas")]
-    public string Notas
+    public string? Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);

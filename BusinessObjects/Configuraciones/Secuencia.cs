@@ -13,19 +13,19 @@ namespace erp.Module.BusinessObjects.Configuraciones;
 [ImageName("Number")]
 public class Secuencia(Session session) : BaseObject(session)
 {
-    private string _nombre;
-    private string _prefijo;
+    private string? _nombre;
+    private string? _prefijo;
     private int _relleno;
     private int _valorActual;
 
     [Indexed(Unique = true)]
-    public string Nombre
+    public string? Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
-    public string Prefijo
+    public string? Prefijo
     {
         get => _prefijo;
         set => SetPropertyValue(nameof(Prefijo), ref _prefijo, value);

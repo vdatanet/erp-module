@@ -15,30 +15,30 @@ namespace erp.Module.BusinessObjects.Auxiliares;
 [DefaultProperty(nameof(Nombre))]
 public class Banco(Session session) : EntidadBase(session)
 {
-    private string _nombre;
-    private string _iban;
-    private string _bic;
-    private Cliente _cliente;
-    private string _notas;
+    private string? _nombre;
+    private string? _iban;
+    private string? _bic;
+    private Cliente? _cliente;
+    private string? _notas;
 
     [RuleRequiredField]
     [Size(255)]
     [XafDisplayName("Nombre")]
-    public string Nombre
+    public string? Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
     [XafDisplayName("IBAN")]
-    public string Iban
+    public string? Iban
     {
         get => _iban;
         set => SetPropertyValue(nameof(Iban), ref _iban, value);
     }
 
     [XafDisplayName("BIC")]
-    public string Bic
+    public string? Bic
     {
         get => _bic;
         set => SetPropertyValue(nameof(Bic), ref _bic, value);
@@ -46,7 +46,7 @@ public class Banco(Session session) : EntidadBase(session)
 
     [Association("Cliente-Bancos")]
     [XafDisplayName("Cliente")]
-    public Cliente Cliente
+    public Cliente? Cliente
     {
         get => _cliente;
         set => SetPropertyValue(nameof(Cliente), ref _cliente, value);
@@ -54,7 +54,7 @@ public class Banco(Session session) : EntidadBase(session)
 
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Notas")]
-    public string Notas
+    public string? Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);

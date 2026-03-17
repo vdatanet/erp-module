@@ -30,19 +30,19 @@ public class Cuenta(Session session) : EntidadBase(session)
         Resultados
     }
 
-    private string _codigo;
-    private Cuenta _cuentaPadre;
+    private string? _codigo;
+    private Cuenta? _cuentaPadre;
     private bool _esAsentable;
     private bool _estaActiva;
     private NaturalezaCuenta _naturaleza;
-    private string _nombre;
-    private string _notas;
+    private string? _nombre;
+    private string? _notas;
     private TipoCuenta _tipo;
 
     [RuleRequiredField]
     [RuleUniqueValue]
     [XafDisplayName("Código")]
-    public string Codigo
+    public string? Codigo
     {
         get => _codigo;
         set => SetPropertyValue(nameof(Codigo), ref _codigo, value);
@@ -51,7 +51,7 @@ public class Cuenta(Session session) : EntidadBase(session)
     [Size(255)]
     [RuleRequiredField]
     [XafDisplayName("Nombre")]
-    public string Nombre
+    public string? Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
@@ -59,7 +59,7 @@ public class Cuenta(Session session) : EntidadBase(session)
 
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Notas")]
-    public string Notas
+    public string? Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
@@ -67,7 +67,7 @@ public class Cuenta(Session session) : EntidadBase(session)
 
     [Association("CuentaPadre-CuentasHijas")]
     [XafDisplayName("Cuenta Padre")]
-    public Cuenta CuentaPadre
+    public Cuenta? CuentaPadre
     {
         get => _cuentaPadre;
         set => SetPropertyValue(nameof(CuentaPadre), ref _cuentaPadre, value);

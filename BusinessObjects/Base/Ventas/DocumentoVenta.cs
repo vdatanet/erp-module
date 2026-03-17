@@ -16,20 +16,20 @@ namespace erp.Module.BusinessObjects.Base.Ventas;
 public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 {
     private decimal _baseImponible;
-    private Cliente _cliente;
+    private Cliente? _cliente;
     private DateTime _fecha;
     private decimal _importeImpuestos;
     private decimal _importeTotal;
-    private string _notas;
-    private string _numero;
-    private string _serie;
+    private string? _notas;
+    private string? _numero;
+    private string? _serie;
 
     [RuleRequiredField("erp.Module.BusinessObjects.Facturacion.Factura.Cliente_Required", DefaultContexts.Save,
         TargetCriteria =
             "IsInstanceOfType(this, 'erp.Module.BusinessObjects.Facturacion.Factura') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Presupuesto')")]
     [Association("Cliente-DocumentosVenta")]
     [XafDisplayName("Cliente")]
-    public Cliente Cliente
+    public Cliente? Cliente
     {
         get => _cliente;
         set => SetPropertyValue(nameof(Cliente), ref _cliente, value);
@@ -39,7 +39,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     [RuleRequiredField]
     [Appearance("BlockSerieWhenNumeroIsSet", Enabled = false,
         Criteria = "!IsNewObject(this) and !IsNullOrEmpty(Numero)", Context = "Any")]
-    public string Serie
+    public string? Serie
     {
         get => _serie;
         set => SetPropertyValue(nameof(Serie), ref _serie, value);
@@ -48,7 +48,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     [NonCloneable]
     [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Número")]
-    public string Numero
+    public string? Numero
     {
         get => _numero;
         set => SetPropertyValue(nameof(Numero), ref _numero, value);
@@ -63,7 +63,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Notas")]
-    public string Notas
+    public string? Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);

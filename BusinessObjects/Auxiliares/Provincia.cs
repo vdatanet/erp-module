@@ -13,13 +13,13 @@ namespace erp.Module.BusinessObjects.Auxiliares;
 [ImageName("Travel_Map")]
 public class Provincia(Session session) : EntidadBase(session)
 {
-    private string _nombre;
-    private Pais _pais;
+    private string? _nombre;
+    private Pais? _pais;
 
     [RuleRequiredField]
     [Association("Pais-Provincias")]
     [XafDisplayName("País")]
-    public Pais Pais
+    public Pais? Pais
     {
         get => _pais;
         set => SetPropertyValue(nameof(Pais), ref _pais, value);
@@ -28,7 +28,7 @@ public class Provincia(Session session) : EntidadBase(session)
     [RuleRequiredField]
     [RuleUniqueValue]
     [XafDisplayName("Nombre")]
-    public string Nombre
+    public string? Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);

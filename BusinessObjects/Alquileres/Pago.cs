@@ -17,9 +17,9 @@ public class Pago(Session session) : EntidadBase(session)
     private DateTime _fechaPago;
     private decimal _importe;
     private Medios _medio;
-    private Reserva _reserva;
-    private Factura _factura;
-    private string _observaciones;
+    private Reserva? _reserva;
+    private Factura? _factura;
+    private string? _observaciones;
 
     public override void AfterConstruction()
     {
@@ -60,12 +60,12 @@ public class Pago(Session session) : EntidadBase(session)
 
     [Association("Reserva-Pagos")]
     [XafDisplayName("Reserva")]
-    public Reserva Reserva
+    public Reserva? Reserva
     {
         get => _reserva;
         set
         {
-            Reserva oldReserva = _reserva;
+            Reserva? oldReserva = _reserva;
             bool modified = SetPropertyValue(nameof(Reserva), ref _reserva, value);
             if (!IsLoading && !IsSaving && modified)
             {
@@ -84,7 +84,7 @@ public class Pago(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Factura")]
-    public Factura Factura
+    public Factura? Factura
     {
         get => _factura;
         set => SetPropertyValue(nameof(Factura), ref _factura, value);

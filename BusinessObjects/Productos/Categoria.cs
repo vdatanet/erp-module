@@ -13,17 +13,17 @@ namespace erp.Module.BusinessObjects.Productos;
 [ImageName("BO_Product_Group")]
 public class Categoria(Session session) : EntidadBase(session)
 {
-    private Categoria _categoriaPadre;
+    private Categoria? _categoriaPadre;
     private bool _disponibleEnTpV;
     private bool _estaActivo;
-    private string _nombre;
-    private string _notas;
+    private string? _nombre;
+    private string? _notas;
 
     [Size(255)]
     [RuleRequiredField]
     [RuleUniqueValue]
     [XafDisplayName("Nombre")]
-    public string Nombre
+    public string? Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
@@ -31,7 +31,7 @@ public class Categoria(Session session) : EntidadBase(session)
 
     [Association("Categoria-Subcategorias")]
     [XafDisplayName("Categoría Padre")]
-    public Categoria CategoriaPadre
+    public Categoria? CategoriaPadre
     {
         get => _categoriaPadre;
         set => SetPropertyValue(nameof(CategoriaPadre), ref _categoriaPadre, value);
@@ -53,7 +53,7 @@ public class Categoria(Session session) : EntidadBase(session)
 
     [Size(1000)]
     [XafDisplayName("Notas")]
-    public string Notas
+    public string? Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);

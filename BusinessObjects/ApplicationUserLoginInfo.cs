@@ -9,16 +9,16 @@ namespace erp.Module.BusinessObjects;
 [Persistent("PermissionPolicyUserLoginInfo")]
 public class ApplicationUserLoginInfo : BaseObject, ISecurityUserLoginInfo
 {
-    private string loginProviderName;
-    private string providerUserKey;
-    private ApplicationUser user;
+    private string? loginProviderName;
+    private string? providerUserKey;
+    private ApplicationUser? user;
 
     public ApplicationUserLoginInfo(Session session) : base(session)
     {
     }
 
     [Association("User-LoginInfo")]
-    public ApplicationUser User
+    public ApplicationUser? User
     {
         get => user;
         set => SetPropertyValue(nameof(User), ref user, value);
@@ -28,7 +28,7 @@ public class ApplicationUserLoginInfo : BaseObject, ISecurityUserLoginInfo
     [Appearance("PasswordProvider", Enabled = false,
         Criteria = "!(IsNewObject(this)) and LoginProviderName == '" + SecurityDefaults.PasswordAuthentication + "'",
         Context = "DetailView")]
-    public string LoginProviderName
+    public string? LoginProviderName
     {
         get => loginProviderName;
         set => SetPropertyValue(nameof(LoginProviderName), ref loginProviderName, value);
@@ -37,7 +37,7 @@ public class ApplicationUserLoginInfo : BaseObject, ISecurityUserLoginInfo
     [Appearance("PasswordProviderUserKey", Enabled = false,
         Criteria = "!(IsNewObject(this)) and LoginProviderName == '" + SecurityDefaults.PasswordAuthentication + "'",
         Context = "DetailView")]
-    public string ProviderUserKey
+    public string? ProviderUserKey
     {
         get => providerUserKey;
         set => SetPropertyValue(nameof(ProviderUserKey), ref providerUserKey, value);

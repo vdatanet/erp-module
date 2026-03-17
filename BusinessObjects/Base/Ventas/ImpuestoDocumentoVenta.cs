@@ -18,20 +18,20 @@ public class ImpuestoDocumentoVenta(Session session) : EntidadBase(session)
 {
     private decimal _baseImponible;
     private CausaExencion? _causaExencion;
-    private Cuenta _cuenta;
-    private DocumentoVenta _documentoVenta;
+    private Cuenta? _cuenta;
+    private DocumentoVenta? _documentoVenta;
     private bool _esRetencion;
     private decimal _importeImpuestos;
     private Impuesto? _impuesto;
     private ClaveRegimen? _regimenFiscal;
     private int _secuencia;
     private decimal _tipo;
-    private TipoImpuesto _tipoImpuesto;
+    private TipoImpuesto? _tipoImpuesto;
     private CalificacionOperacion? _tipoOperacion;
 
     [Association("DocumentoVenta-Impuestos")]
     [XafDisplayName("Documento Venta")]
-    public DocumentoVenta DocumentoVenta
+    public DocumentoVenta? DocumentoVenta
     {
         get => _documentoVenta;
         set => SetPropertyValue(nameof(DocumentoVenta), ref _documentoVenta, value);
@@ -46,7 +46,7 @@ public class ImpuestoDocumentoVenta(Session session) : EntidadBase(session)
 
     [ImmediatePostData]
     [XafDisplayName("Tipo Impuesto")]
-    public TipoImpuesto TipoImpuesto
+    public TipoImpuesto? TipoImpuesto
     {
         get => _tipoImpuesto;
         set
@@ -58,7 +58,7 @@ public class ImpuestoDocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Cuenta")]
-    public Cuenta Cuenta
+    public Cuenta? Cuenta
     {
         get => _cuenta;
         set => SetPropertyValue(nameof(Cuenta), ref _cuenta, value);

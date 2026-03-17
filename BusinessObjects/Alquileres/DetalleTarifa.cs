@@ -13,11 +13,11 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [XafDisplayName("Detalle de Tarifa")]
 public class DetalleTarifa(Session session) : EntidadBase(session)
 {
-    private Tarifa _tarifa;
+    private Tarifa? _tarifa;
     private DateTime _fechaInicio;
     private DateTime _fechaFin;
     private decimal _precio;
-    private string _observaciones;
+    private string? _observaciones;
     private int _temporada;
 
     [Association("Tarifa-Detalles")]

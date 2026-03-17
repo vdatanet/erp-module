@@ -12,11 +12,11 @@ namespace erp.Module.BusinessObjects.Auxiliares;
 [DefaultProperty(nameof(Nombre))]
 public class Parentesco(Session session) : EntidadBase(session)
 {
-    private string _nombre;
+    private string? _nombre;
 
     [Size(255)]
     [XafDisplayName("Nombre")]
-    public string Nombre
+    public string? Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);

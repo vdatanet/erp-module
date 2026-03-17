@@ -9,7 +9,7 @@ namespace erp.Module.Controllers.Invoicing;
 
 public class VeriFactuController : ViewController
 {
-    private VeriFactuService _veriFactuService;
+    private VeriFactuService? _veriFactuService;
 
     public VeriFactuController()
     {

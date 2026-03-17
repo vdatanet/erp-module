@@ -13,11 +13,11 @@ namespace erp.Module.BusinessObjects.Contactos;
 [ImageName("BO_Address")]
 public class Domicilio(Session session) : Contacto(session)
 {
-    private Cliente _clienteDomicilio;
+    private Cliente? _clienteDomicilio;
 
     [XafDisplayName("Cliente")]
     [Association("Cliente-Domicilios")]
-    public Cliente ClienteDomicilio
+    public Cliente? ClienteDomicilio
     {
         get => _clienteDomicilio;
         set => SetPropertyValue(nameof(ClienteDomicilio), ref _clienteDomicilio, value);

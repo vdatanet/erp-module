@@ -15,14 +15,14 @@ namespace erp.Module.BusinessObjects.Contabilidad;
 public class Diario(Session session) : EntidadBase(session)
 {
     private bool _estaActivo;
-    private string _nombre;
-    private string _notas;
+    private string? _nombre;
+    private string? _notas;
 
     [RuleRequiredField]
     [RuleUniqueValue]
     [Size(255)]
     [XafDisplayName("Nombre")]
-    public string Nombre
+    public string? Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
@@ -30,7 +30,7 @@ public class Diario(Session session) : EntidadBase(session)
 
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Notas")]
-    public string Notas
+    public string? Notas
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);

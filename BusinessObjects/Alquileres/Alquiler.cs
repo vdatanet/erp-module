@@ -15,16 +15,16 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [DefaultProperty(nameof(Nombre))]
 public class Alquiler(Session session) : RecursoBase(session)
 {
-    private string _descripcion;
-    private Producto _productoRelacionado;
+    private string? _descripcion;
+    private Producto? _productoRelacionado;
     private bool _estaActivo;
-    private Capacidad _capacidad;
-    private string _codigoRegistro;
-    private string _observaciones;
-    private Ubicacion _ubicacion;
+    private Capacidad? _capacidad;
+    private string? _codigoRegistro;
+    private string? _observaciones;
+    private Ubicacion? _ubicacion;
     private int _secuencia;
-    private Tarifa _tarifa;
-    private TipoAlquilerDetalle _tipoDetalle;
+    private Tarifa? _tarifa;
+    private TipoAlquilerDetalle? _tipoDetalle;
 
     [Size(255)]
     [RuleRequiredField]

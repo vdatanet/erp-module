@@ -12,13 +12,13 @@ namespace erp.Module.BusinessObjects.Impuestos;
 [ImageName("BO_List")]
 public class MapeoCuenta(Session session) : EntidadBase(session)
 {
-    private PosicionFiscal _posicionFiscal;
-    private Cuenta _cuentaOrigen;
-    private Cuenta _cuentaDestino;
+    private PosicionFiscal? _posicionFiscal;
+    private Cuenta? _cuentaOrigen;
+    private Cuenta? _cuentaDestino;
 
     [Association("PosicionFiscal-MapeosCuenta")]
     [XafDisplayName("Posición Fiscal")]
-    public PosicionFiscal PosicionFiscal
+    public PosicionFiscal? PosicionFiscal
     {
         get => _posicionFiscal;
         set => SetPropertyValue(nameof(PosicionFiscal), ref _posicionFiscal, value);
@@ -27,7 +27,7 @@ public class MapeoCuenta(Session session) : EntidadBase(session)
     [RuleRequiredField]
     [XafDisplayName("Cuenta Origen")]
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    public Cuenta CuentaOrigen
+    public Cuenta? CuentaOrigen
     {
         get => _cuentaOrigen;
         set => SetPropertyValue(nameof(CuentaOrigen), ref _cuentaOrigen, value);
@@ -36,7 +36,7 @@ public class MapeoCuenta(Session session) : EntidadBase(session)
     [RuleRequiredField]
     [XafDisplayName("Cuenta Destino")]
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    public Cuenta CuentaDestino
+    public Cuenta? CuentaDestino
     {
         get => _cuentaDestino;
         set => SetPropertyValue(nameof(CuentaDestino), ref _cuentaDestino, value);
