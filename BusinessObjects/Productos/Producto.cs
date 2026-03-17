@@ -167,6 +167,11 @@ public class Producto(Session session) : EntidadBase(session)
     [XafDisplayName("Adjuntos")]
     public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
 
+    [DevExpress.Xpo.Aggregated]
+    [Association("Producto-PreciosPorCantidad")]
+    [XafDisplayName("Precios por Cantidad")]
+    public XPCollection<PrecioPorCantidad> PreciosPorCantidad => GetCollection<PrecioPorCantidad>();
+
     public override void AfterConstruction()
     {
         base.AfterConstruction();
