@@ -15,20 +15,28 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [DefaultProperty(nameof(Nombre))]
 public class Viajero(Session session) : Contacto(session)
 {
+    public enum Sexos
+    {
+        [XafDisplayName("Masculino")]
+        Masculino,
+        [XafDisplayName("Femenino")]
+        Femenino
+    }
+
     private Parentesco? _parentesco;
-    private Cliente.Sexes _sexo;
+    private Sexos _sexo;
 
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        Sexo = Cliente.Sexes.Femenino;
+        Sexo = Sexos.Femenino;
         TipoIdentificacion = IDType.NIF_IVA;
         var nacionalidad = Session.FindObject<Nacionalidad>(CriteriaOperator.Parse("Nombre = 'Española'"));
         if (nacionalidad != null) Nacionalidad = nacionalidad;
     }
 
     [XafDisplayName("Sexo")]
-    public Cliente.Sexes Sexo
+    public Sexos Sexo
     {
         get => _sexo;
         set => SetPropertyValue(nameof(Sexo), ref _sexo, value);

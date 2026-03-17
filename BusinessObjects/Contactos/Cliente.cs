@@ -161,15 +161,6 @@ public class Cliente(Session session) : Tercero(session)
     [XafDisplayName("Reservas")]
     public XPCollection<Reserva> Reservas => GetCollection<Reserva>();
 
-    public enum Sexes
-    {
-        [XafDisplayName("Masculino")]
-        Masculino,
-        [XafDisplayName("Femenino")]
-        Femenino
-    }
-
-    
     public override void AfterConstruction()
     {
         base.AfterConstruction();
