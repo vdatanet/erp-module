@@ -70,8 +70,8 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         {
             adminRole = objectSpace.CreateObject<PermissionPolicyRole>();
             adminRole.Name = "Administrators";
-            adminRole.IsAdministrative = true;
         }
+        adminRole.IsAdministrative = true;
         return adminRole;
     }
 
@@ -82,27 +82,28 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         {
             defaultRole = objectSpace.CreateObject<PermissionPolicyRole>();
             defaultRole.Name = "Default";
-
-            defaultRole.AddObjectPermissionFromLambda<ApplicationUser>(SecurityOperations.Read,
-                cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
-            defaultRole.AddNavigationPermission(@"Application/NavigationItems/Items/Default/Items/MyDetails",
-                SecurityPermissionState.Allow);
-            defaultRole.AddMemberPermissionFromLambda<ApplicationUser>(SecurityOperations.Write,
-                "ChangePasswordOnFirstLogon", cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(),
-                SecurityPermissionState.Allow);
-            defaultRole.AddMemberPermissionFromLambda<ApplicationUser>(SecurityOperations.Write, "StoredPassword",
-                cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
-            defaultRole.AddTypePermissionsRecursively<PermissionPolicyRole>(SecurityOperations.Read,
-                SecurityPermissionState.Deny);
-            defaultRole.AddObjectPermission<ModelDifference>(SecurityOperations.ReadWriteAccess,
-                "UserId = ToStr(CurrentUserId())", SecurityPermissionState.Allow);
-            defaultRole.AddObjectPermission<ModelDifferenceAspect>(SecurityOperations.ReadWriteAccess,
-                "Owner.UserId = ToStr(CurrentUserId())", SecurityPermissionState.Allow);
-            defaultRole.AddTypePermissionsRecursively<ModelDifference>(SecurityOperations.Create,
-                SecurityPermissionState.Allow);
-            defaultRole.AddTypePermissionsRecursively<ModelDifferenceAspect>(SecurityOperations.Create,
-                SecurityPermissionState.Allow);
         }
+
+        defaultRole.AddObjectPermissionFromLambda<ApplicationUser>(SecurityOperations.Read,
+            cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
+        defaultRole.AddNavigationPermission(@"Application/NavigationItems/Items/Default/Items/MyDetails",
+            SecurityPermissionState.Allow);
+        defaultRole.AddMemberPermissionFromLambda<ApplicationUser>(SecurityOperations.Write,
+            "ChangePasswordOnFirstLogon", cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(),
+            SecurityPermissionState.Allow);
+        defaultRole.AddMemberPermissionFromLambda<ApplicationUser>(SecurityOperations.Write, "StoredPassword",
+            cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
+        defaultRole.AddTypePermissionsRecursively<PermissionPolicyRole>(SecurityOperations.Read,
+            SecurityPermissionState.Deny);
+        defaultRole.AddObjectPermission<ModelDifference>(SecurityOperations.ReadWriteAccess,
+            "UserId = ToStr(CurrentUserId())", SecurityPermissionState.Allow);
+        defaultRole.AddObjectPermission<ModelDifferenceAspect>(SecurityOperations.ReadWriteAccess,
+            "Owner.UserId = ToStr(CurrentUserId())", SecurityPermissionState.Allow);
+        defaultRole.AddTypePermissionsRecursively<ModelDifference>(SecurityOperations.Create,
+            SecurityPermissionState.Allow);
+        defaultRole.AddTypePermissionsRecursively<ModelDifferenceAspect>(SecurityOperations.Create,
+            SecurityPermissionState.Allow);
+
         return defaultRole;
     }
 
@@ -113,16 +114,17 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         {
             imprentaRole = objectSpace.CreateObject<PermissionPolicyRole>();
             imprentaRole.Name = "Imprenta";
-
-            imprentaRole.AddTypePermissionsRecursively<TrabajoImpresion>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-            imprentaRole.AddTypePermissionsRecursively<TrabajoImpresionHora>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-            imprentaRole.AddTypePermissionsRecursively<TamanoPapel>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-            imprentaRole.AddTypePermissionsRecursively<TrabajoImpresionMaterial>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-            imprentaRole.AddTypePermissionsRecursively<TrabajoImpresionPapel>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-            imprentaRole.AddTypePermissionsRecursively<TrabajoImpresionServicio>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-            
-            imprentaRole.AddNavigationPermission(@"Application/NavigationItems/Items/Imprenta", SecurityPermissionState.Allow);
         }
+
+        imprentaRole.AddTypePermissionsRecursively<TrabajoImpresion>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        imprentaRole.AddTypePermissionsRecursively<TrabajoImpresionHora>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        imprentaRole.AddTypePermissionsRecursively<TamanoPapel>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        imprentaRole.AddTypePermissionsRecursively<TrabajoImpresionMaterial>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        imprentaRole.AddTypePermissionsRecursively<TrabajoImpresionPapel>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        imprentaRole.AddTypePermissionsRecursively<TrabajoImpresionServicio>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        
+        imprentaRole.AddNavigationPermission(@"Application/NavigationItems/Items/Imprenta", SecurityPermissionState.Allow);
+
         return imprentaRole;
     }
 
@@ -133,16 +135,17 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         {
             contactosRole = objectSpace.CreateObject<PermissionPolicyRole>();
             contactosRole.Name = "Contactos";
-
-            contactosRole.AddTypePermissionsRecursively<Cliente>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-            contactosRole.AddTypePermissionsRecursively<Contacto>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-            contactosRole.AddTypePermissionsRecursively<Domicilio>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-            contactosRole.AddTypePermissionsRecursively<Empleado>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-            contactosRole.AddTypePermissionsRecursively<Proveedor>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-            contactosRole.AddTypePermissionsRecursively<Tercero>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-
-            contactosRole.AddNavigationPermission(@"Application/NavigationItems/Items/Contactos", SecurityPermissionState.Allow);
         }
+
+        contactosRole.AddTypePermissionsRecursively<Cliente>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        contactosRole.AddTypePermissionsRecursively<Contacto>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        contactosRole.AddTypePermissionsRecursively<Domicilio>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        contactosRole.AddTypePermissionsRecursively<Empleado>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        contactosRole.AddTypePermissionsRecursively<Proveedor>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        contactosRole.AddTypePermissionsRecursively<Tercero>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+
+        contactosRole.AddNavigationPermission(@"Application/NavigationItems/Items/Contactos", SecurityPermissionState.Allow);
+
         return contactosRole;
     }
 
@@ -153,12 +156,13 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         {
             ventasRole = objectSpace.CreateObject<PermissionPolicyRole>();
             ventasRole.Name = "Ventas";
-
-            ventasRole.AddTypePermissionsRecursively<Pedido>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-            ventasRole.AddTypePermissionsRecursively<Presupuesto>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-
-            ventasRole.AddNavigationPermission(@"Application/NavigationItems/Items/Ventas", SecurityPermissionState.Allow);
         }
+
+        ventasRole.AddTypePermissionsRecursively<Pedido>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        ventasRole.AddTypePermissionsRecursively<Presupuesto>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+
+        ventasRole.AddNavigationPermission(@"Application/NavigationItems/Items/Ventas", SecurityPermissionState.Allow);
+
         return ventasRole;
     }
 
@@ -169,19 +173,20 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         {
             alquileresRole = objectSpace.CreateObject<PermissionPolicyRole>();
             alquileresRole.Name = "Alquileres";
-
-            alquileresRole.AddTypePermissionsRecursively<DetalleTarifa>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-            alquileresRole.AddTypePermissionsRecursively<Extra>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-            alquileresRole.AddTypePermissionsRecursively<Pago>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-            alquileresRole.AddTypePermissionsRecursively<RecursoAlquilable>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-            alquileresRole.AddTypePermissionsRecursively<Reserva>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-            alquileresRole.AddTypePermissionsRecursively<Simulacion>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-            alquileresRole.AddTypePermissionsRecursively<Tarifa>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-            alquileresRole.AddTypePermissionsRecursively<Ubicacion>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-            alquileresRole.AddTypePermissionsRecursively<Viajero>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-
-            alquileresRole.AddNavigationPermission(@"Application/NavigationItems/Items/Alquileres", SecurityPermissionState.Allow);
         }
+
+        alquileresRole.AddTypePermissionsRecursively<DetalleTarifa>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        alquileresRole.AddTypePermissionsRecursively<Extra>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        alquileresRole.AddTypePermissionsRecursively<Pago>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        alquileresRole.AddTypePermissionsRecursively<RecursoAlquilable>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        alquileresRole.AddTypePermissionsRecursively<Reserva>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        alquileresRole.AddTypePermissionsRecursively<Simulacion>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        alquileresRole.AddTypePermissionsRecursively<Tarifa>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        alquileresRole.AddTypePermissionsRecursively<Ubicacion>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        alquileresRole.AddTypePermissionsRecursively<Viajero>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+
+        alquileresRole.AddNavigationPermission(@"Application/NavigationItems/Items/Alquileres", SecurityPermissionState.Allow);
+
         return alquileresRole;
     }
 
@@ -192,11 +197,12 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         {
             reportsRole = objectSpace.CreateObject<PermissionPolicyRole>();
             reportsRole.Name = "Reports";
-
-            reportsRole.AddTypePermissionsRecursively<ReportDataV2>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-
-            reportsRole.AddNavigationPermission(@"Application/NavigationItems/Items/Reports", SecurityPermissionState.Allow);
         }
+
+        reportsRole.AddTypePermissionsRecursively<ReportDataV2>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+
+        reportsRole.AddNavigationPermission(@"Application/NavigationItems/Items/Reports", SecurityPermissionState.Allow);
+
         return reportsRole;
     }
 }
