@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
@@ -16,14 +17,15 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [NavigationItem("Alquileres")]
 [XafDisplayName("Reserva")]
 [ImageName("BO_Scheduler")]
-public class Reserva : EventoBase, IReservaCalculable
+[DefaultProperty(nameof(Secuencia))]
+public class Reserva(Session session) : EventoBase(session), IReservaCalculable
 {
     private RecursoAlquilable? _recursoAlquilable;
     private decimal _totalPagado;
     private Cliente? _cliente;
     private int _numero;
     private int _temporada;
-    private string? _referencia;
+    private string? _secuencia;
     private DateTime _fechaReserva;
     private DateTime _validaHasta;
     private double _dias;
@@ -46,10 +48,6 @@ public class Reserva : EventoBase, IReservaCalculable
     private decimal _totalTasaTuristicaIncluida;
     private decimal _importePendiente;
 
-    public Reserva(Session session) : base(session)
-    {
-    }
-
     public override void AfterConstruction()
     {
         base.AfterConstruction();
@@ -68,7 +66,7 @@ public class Reserva : EventoBase, IReservaCalculable
             if (Temporada != 0)
             {
                 Numero = SequenceFactory.GetNextSequence(Session, $"{GetType().FullName}-{Temporada}", out var formattedSequence, $"{Temporada}/", 4);
-                Referencia = formattedSequence;
+                Secuencia = formattedSequence;
             }
         }
         base.OnSaving();
@@ -131,13 +129,13 @@ public class Reserva : EventoBase, IReservaCalculable
         set => SetPropertyValue(nameof(Temporada), ref _temporada, value);
     }
 
-    [XafDisplayName("Referencia")]
+    [XafDisplayName("Secuencia")]
     [ModelDefault("AllowEdit", "False")]
     [Size(255)]
-    public string? Referencia
+    public string? Secuencia
     {
-        get => _referencia;
-        set => SetPropertyValue(nameof(Referencia), ref _referencia, value);
+        get => _secuencia;
+        set => SetPropertyValue(nameof(Secuencia), ref _secuencia, value);
     }
 
     [XafDisplayName("Fecha Reserva")]

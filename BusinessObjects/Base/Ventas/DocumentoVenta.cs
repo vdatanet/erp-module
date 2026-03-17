@@ -21,7 +21,8 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private decimal _importeImpuestos;
     private decimal _importeTotal;
     private string? _notas;
-    private string? _numero;
+    private int _numero;
+    private string? _secuencia;
     private string? _serie;
 
     [RuleRequiredField("erp.Module.BusinessObjects.Facturacion.Factura.Cliente_Required", DefaultContexts.Save,
@@ -38,7 +39,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     [XafDisplayName("Serie")]
     [RuleRequiredField]
     [Appearance("BlockSerieWhenNumeroIsSet", Enabled = false,
-        Criteria = "!IsNewObject(this) and !IsNullOrEmpty(Numero)", Context = "Any")]
+        Criteria = "!IsNewObject(this) and !IsNullOrEmpty(Secuencia)", Context = "Any")]
     public string? Serie
     {
         get => _serie;
@@ -48,10 +49,19 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     [NonCloneable]
     [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Número")]
-    public string? Numero
+    public int Numero
     {
         get => _numero;
         set => SetPropertyValue(nameof(Numero), ref _numero, value);
+    }
+
+    [NonCloneable]
+    [ModelDefault("AllowEdit", "False")]
+    [XafDisplayName("Secuencia")]
+    public string? Secuencia
+    {
+        get => _secuencia;
+        set => SetPropertyValue(nameof(Secuencia), ref _secuencia, value);
     }
 
     [XafDisplayName("Fecha")]
@@ -193,13 +203,17 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     protected override void OnSaving()
     {
         base.OnSaving();
-        if (GetAsignarNumeroAlGuardar() && string.IsNullOrEmpty(Numero) && !string.IsNullOrEmpty(Serie))
+        if (GetAsignarNumeroAlGuardar() && string.IsNullOrEmpty(Secuencia) && !string.IsNullOrEmpty(Serie))
             AsignarNumero();
     }
 
     public virtual void AsignarNumero()
     {
         if (!string.IsNullOrEmpty(Serie))
-            Numero = SequenceFactory.GetNextSequence(Session, $"{GetType().FullName}.{Serie}", Serie, 5);
+        {
+            Numero = SequenceFactory.GetNextSequence(Session, $"{GetType().FullName}.{Serie}", out var formattedSequence,
+                Serie, 5);
+            Secuencia = formattedSequence;
+        }
     }
 }

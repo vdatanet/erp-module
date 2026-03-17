@@ -24,7 +24,7 @@ public class VeriFactuService
                 "La factura no es válida para el envío a VeriFactu. Revise que tenga Cliente, Texto e Impuestos.");
 
         if (invoice.Fecha == DateTime.MinValue) invoice.Fecha = DateTime.Now.Date;
-        if (string.IsNullOrEmpty(invoice.Numero)) invoice.AsignarNumero();
+        if (string.IsNullOrEmpty(invoice.Secuencia)) invoice.AsignarNumero();
 
         var companyInfo = objectSpace.FindObject<InformacionEmpresa>(null);
 
@@ -77,7 +77,7 @@ public class VeriFactuService
 
     private Invoice MapToVeriFactuInvoice(FacturaBase invoice, InformacionEmpresa companyInfo)
     {
-        var veriFactuFactura = new Invoice(invoice.Numero, invoice.Fecha, companyInfo.Nif)
+        var veriFactuFactura = new Invoice(invoice.Secuencia, invoice.Fecha, companyInfo.Nif)
         {
             InvoiceType = invoice.TipoFactura,
             SellerName = companyInfo.Nombre,

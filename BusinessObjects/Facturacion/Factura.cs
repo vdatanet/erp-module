@@ -9,7 +9,7 @@ namespace erp.Module.BusinessObjects.Facturacion;
 [DefaultClassOptions]
 [NavigationItem("Facturacion")]
 [ImageName("BO_Factura")]
-[DefaultProperty(nameof(Numero))]
+[DefaultProperty(nameof(Secuencia))]
 public class Factura(Session session) : FacturaBase(session)
 {
     public override bool EsValida()
