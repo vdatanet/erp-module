@@ -8,6 +8,7 @@ using System.Linq;
 namespace erp.Module.BusinessObjects.Imprenta
 {
     [DefaultClassOptions]
+    [NavigationItem("Imprenta")]
     public class TrabajoImpresionHora(Session session) : LineaDocumentoVenta(session)
     {
         private void TotalizarLinea()

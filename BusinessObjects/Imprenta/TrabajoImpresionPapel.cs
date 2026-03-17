@@ -8,6 +8,7 @@ using System.Linq;
 namespace erp.Module.BusinessObjects.Imprenta
 {
     [DefaultClassOptions]
+    [NavigationItem("Imprenta")]
     public class TrabajoImpresionPapel(Session session) : LineaDocumentoVenta(session)
     {
         private TamanoPapel? _tamanoPapel;
@@ -75,7 +76,7 @@ namespace erp.Module.BusinessObjects.Imprenta
         {
             if (Producto != null && DocumentoVenta is TrabajoImpresion trabajoImpresion)
             {
-                decimal ctd = trabajoImpresion.Quantitat;
+                decimal ctd = trabajoImpresion.Cantidad;
                 if (ctd != 0)
                 {
                     var precio = Producto.PreciosPorCantidad

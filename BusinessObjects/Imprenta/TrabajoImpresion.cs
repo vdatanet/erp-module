@@ -10,7 +10,7 @@ using System;
 namespace erp.Module.BusinessObjects.Imprenta
 {
     [DefaultClassOptions]
-    [NavigationItem("Ventas")]
+    [NavigationItem("Imprenta")]
     [XafDisplayName("Trabajo de Impresión")]
     [ImageName("BO_Order")]
     public class TrabajoImpresion : Presupuesto
@@ -20,7 +20,7 @@ namespace erp.Module.BusinessObjects.Imprenta
         private string? _descripcion;
         [ModelDefault("PropertyEditorType", "DevExpress.ExpressApp.Win.Editors.MemoEditStringPropertyEditor")]
         [Size(4000)]
-        [XafDisplayName("Feina")]
+        [XafDisplayName("Trabajo")]
         public string? Descripcion
         {
             get => _descripcion;
@@ -30,55 +30,55 @@ namespace erp.Module.BusinessObjects.Imprenta
         private string? _observaciones;
         [ModelDefault("PropertyEditorType", "DevExpress.ExpressApp.Win.Editors.MemoEditStringPropertyEditor")]
         [Size(4000)]
-        [XafDisplayName("Observacions")]
+        [XafDisplayName("Observaciones")]
         public string? Observaciones
         {
             get => _observaciones;
             set => SetPropertyValue(nameof(Observaciones), ref _observaciones, value);
         }
 
-        private EstatsPressupost? _estat;
-        public EstatsPressupost? Estat
+        private EstadosPresupuesto? _estado;
+        public EstadosPresupuesto? Estado
         {
-            get => _estat;
-            set => SetPropertyValue(nameof(Estat), ref _estat, value);
+            get => _estado;
+            set => SetPropertyValue(nameof(Estado), ref _estado, value);
         }
 
-        private DateTime _dataEntrega;
-        [XafDisplayName("Entrega / Data compromís")]
-        public DateTime DataEntrega
+        private DateTime _fechaEntrega;
+        [XafDisplayName("Entrega / Fecha compromiso")]
+        public DateTime FechaEntrega
         {
-            get => _dataEntrega;
-            set => SetPropertyValue(nameof(DataEntrega), ref _dataEntrega, value);
+            get => _fechaEntrega;
+            set => SetPropertyValue(nameof(FechaEntrega), ref _fechaEntrega, value);
         }
         
-        private decimal _compte;
-        [XafDisplayName("A compte")]
-        public decimal Compte
+        private decimal _acuenta;
+        [XafDisplayName("A cuenta")]
+        public decimal Acuenta
         {
-            get => _compte;
-            set => SetPropertyValue(nameof(Compte), ref _compte, value);
+            get => _acuenta;
+            set => SetPropertyValue(nameof(Acuenta), ref _acuenta, value);
         }
 
-        private decimal _quantitat;
-        public decimal Quantitat
+        private decimal _cantidad;
+        public decimal Cantidad
         {
-            get => _quantitat;
-            set => SetPropertyValue(nameof(Quantitat), ref _quantitat, value);
+            get => _cantidad;
+            set => SetPropertyValue(nameof(Cantidad), ref _cantidad, value);
         }
 
-        private string? _paper;
-        public string? Paper
+        private string? _papel;
+        public string? Papel
         {
-            get => _paper;
-            set => SetPropertyValue(nameof(Paper), ref _paper, value);
+            get => _papel;
+            set => SetPropertyValue(nameof(Papel), ref _papel, value);
         }
 
-        private string? _tintes;
-        public string? Tintes
+        private string? _tintas;
+        public string? Tintas
         {
-            get => _tintes;
-            set => SetPropertyValue(nameof(Tintes), ref _tintes, value);
+            get => _tintas;
+            set => SetPropertyValue(nameof(Tintas), ref _tintas, value);
         }
 
         private bool _bDigitalC;
@@ -145,68 +145,68 @@ namespace erp.Module.BusinessObjects.Imprenta
             set => SetPropertyValue(nameof(bDigital2), ref _bDigital2, value);
         }
 
-        private bool _bGrapat;
-        [XafDisplayName("Grapat")]
-        public bool bGrapat
+        private bool _bGrapado;
+        [XafDisplayName("Grapado")]
+        public bool bGrapado
         {
-            get => _bGrapat;
-            set => SetPropertyValue(nameof(bGrapat), ref _bGrapat, value);
+            get => _bGrapado;
+            set => SetPropertyValue(nameof(bGrapado), ref _bGrapado, value);
         }
         
-        private bool _bTaladrat;
-        [XafDisplayName("Taladrat")]
-        public bool bTaladrat
+        private bool _bTaladrado;
+        [XafDisplayName("Taladrado")]
+        public bool bTaladrado
         {
-            get => _bTaladrat;
-            set => SetPropertyValue(nameof(bTaladrat), ref _bTaladrat, value);
+            get => _bTaladrado;
+            set => SetPropertyValue(nameof(bTaladrado), ref _bTaladrado, value);
         }
 
-        private bool _bEncolat;
-        [XafDisplayName("Encolat")]
-        public bool bEncolat
+        private bool _bEncolado;
+        [XafDisplayName("Encolado")]
+        public bool bEncolado
         {
-            get => _bEncolat;
-            set => SetPropertyValue(nameof(bEncolat), ref _bEncolat, value);
+            get => _bEncolado;
+            set => SetPropertyValue(nameof(bEncolado), ref _bEncolado, value);
         }
 
-        private bool _bTroquelat;
-        [XafDisplayName("Troquelat")]
-        public bool bTroquelat
+        private bool _bTroquelado;
+        [XafDisplayName("Troquelado")]
+        public bool bTroquelado
         {
-            get => _bTroquelat;
-            set => SetPropertyValue(nameof(bTroquelat), ref _bTroquelat, value);
+            get => _bTroquelado;
+            set => SetPropertyValue(nameof(bTroquelado), ref _bTroquelado, value);
         }
 
-        private bool _bDoblegat;
-        [XafDisplayName("Doblegat")]
-        public bool bDoblegat
+        private bool _bDoblado;
+        [XafDisplayName("Doblado")]
+        public bool bDoblado
         {
-            get => _bDoblegat;
-            set => SetPropertyValue(nameof(bDoblegat), ref _bDoblegat, value);
+            get => _bDoblado;
+            set => SetPropertyValue(nameof(bDoblado), ref _bDoblado, value);
         }
         
-        private bool _bEnquadernat;
-        [XafDisplayName("Enquadernat")]
-        public bool bEnquadernat
+        private bool _bEncuadernado;
+        [XafDisplayName("Encuadernado")]
+        public bool bEncuadernado
         {
-            get => _bEnquadernat;
-            set => SetPropertyValue(nameof(bEnquadernat), ref _bEnquadernat, value);
+            get => _bEncuadernado;
+            set => SetPropertyValue(nameof(bEncuadernado), ref _bEncuadernado, value);
         }
 
-        private bool _bForadat;
-        [XafDisplayName("Foradat")]
-        public bool bForadat
+        private bool _bPerforado;
+        [XafDisplayName("Perforado")]
+        public bool bPerforado
         {
-            get => _bForadat;
-            set => SetPropertyValue(nameof(bForadat), ref _bForadat, value);
+            get => _bPerforado;
+            set => SetPropertyValue(nameof(bPerforado), ref _bPerforado, value);
         }
 
-        private int _mmForadat;
-        [XafDisplayName("Foradat (mm)")]
-        public int mmForadat
+        private int _mmPerforado;
+        [XafDisplayName("Perforado (mm)")]
+        public int mmPerforado
         {
-            get => _mmForadat;
-            set => SetPropertyValue(nameof(mmForadat), ref _mmForadat, value);
+            get => _mmPerforado;
+            set => SetPropertyValue(nameof(mmPerforado), ref _mmPerforado, value);
         }
 
         private bool _bTroqueladora;
@@ -217,52 +217,52 @@ namespace erp.Module.BusinessObjects.Imprenta
             set => SetPropertyValue(nameof(bTroqueladora), ref _bTroqueladora, value);
         }
 
-        private bool _bNumerat;
-        [XafDisplayName("Numerat")]
-        public bool bNumerat
+        private bool _bNumerado;
+        [XafDisplayName("Numerado")]
+        public bool bNumerado
         {
-            get => _bNumerat;
-            set => SetPropertyValue(nameof(bNumerat), ref _bNumerat, value);
+            get => _bNumerado;
+            set => SetPropertyValue(nameof(bNumerado), ref _bNumerado, value);
         }
 
         private string? _numeratString;
-        [XafDisplayName("Tipus Numerat")]
+        [XafDisplayName("Tipo Numerado")]
         public string? NumeratString
         {
             get => _numeratString;
             set => SetPropertyValue(nameof(NumeratString), ref _numeratString, value);
         }
 
-        private bool _bEncolatQ;
-        [XafDisplayName("Encolat Q")]
-        public bool bEncolatQ
+        private bool _bEncoladoQ;
+        [XafDisplayName("Encolado Q")]
+        public bool bEncoladoQ
         {
-            get => _bEncolatQ;
-            set => SetPropertyValue(nameof(bEncolatQ), ref _bEncolatQ, value);
+            get => _bEncoladoQ;
+            set => SetPropertyValue(nameof(bEncoladoQ), ref _bEncoladoQ, value);
         }
 
-        private bool _bPlatificat;
-        [XafDisplayName("Plastificat")]
-        public bool bPlatificat
+        private bool _bPlastificado;
+        [XafDisplayName("Plastificado")]
+        public bool bPlastificado
         {
-            get => _bPlatificat;
-            set => SetPropertyValue(nameof(bPlatificat), ref _bPlatificat, value);
+            get => _bPlastificado;
+            set => SetPropertyValue(nameof(bPlastificado), ref _bPlastificado, value);
         }
 
-        private bool _bEndit;
-        [XafDisplayName("Endit")]
-        public bool bEndit
+        private bool _bHendido;
+        [XafDisplayName("Hendido")]
+        public bool bHendido
         {
-            get => _bEndit;
-            set => SetPropertyValue(nameof(bEndit), ref _bEndit, value);
+            get => _bHendido;
+            set => SetPropertyValue(nameof(bHendido), ref _bHendido, value);
         }
 
-        private bool _bLaminat;
-        [XafDisplayName("Laminat")]
-        public bool bLaminat
+        private bool _bLaminado;
+        [XafDisplayName("Laminado")]
+        public bool bLaminado
         {
-            get => _bLaminat;
-            set => SetPropertyValue(nameof(bLaminat), ref _bLaminat, value);
+            get => _bLaminado;
+            set => SetPropertyValue(nameof(bLaminado), ref _bLaminado, value);
         }
 
         private bool _bM;
@@ -317,12 +317,12 @@ namespace erp.Module.BusinessObjects.Imprenta
         [DevExpress.Xpo.Aggregated]
         public XPCollection<TrabajoImpresionHora> Horas => new XPCollection<TrabajoImpresionHora>(Session, new BinaryOperator(nameof(LineaDocumentoVenta.DocumentoVenta), this));
 
-        public enum EstatsPressupost { Esborrany, Pressupost, Ordre, Rebubjat };
+        public enum EstadosPresupuesto { Borrador, Presupuesto, Orden, Rechazado };
 
         public override void AfterConstruction()
         {
             base.AfterConstruction();
-            Estat = EstatsPressupost.Esborrany;
+            Estado = EstadosPresupuesto.Borrador;
         }
     }
 }

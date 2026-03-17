@@ -7,7 +7,7 @@ using erp.Module.BusinessObjects.Base.Comun;
 namespace erp.Module.BusinessObjects.Imprenta
 {
     [DefaultClassOptions]
-    [NavigationItem("Ventas")]
+    [NavigationItem("Imprenta")]
     public class TamanoPapel : EntidadBase
     {
         public TamanoPapel(Session session) : base(session) { }
