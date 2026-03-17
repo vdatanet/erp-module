@@ -17,7 +17,7 @@ public interface IReservaCalculable
     DateTime StartOn { get; }
     DateTime EndOn { get; }
     double Dias { get; }
-    Alquiler? Alquiler { get; }
+    RecursoAlquilable? RecursoAlquilable { get; }
     bool Alojamiento { get; }
     bool Parking { get; }
     bool Ac { get; }
@@ -47,14 +47,14 @@ public class ReservaService : IReservaService
             var endOn = objeto.EndOn.Date;
 
             // Alojamiento
-            if (objeto.Alojamiento && objeto.Alquiler != null && objeto.Alquiler.Tarifa != null)
+            if (objeto.Alojamiento && objeto.RecursoAlquilable != null && objeto.RecursoAlquilable.Tarifa != null)
             {
                 object suma = session.Evaluate(
                     typeof(PrecioDiario),
                     CriteriaOperator.Parse("Sum(Precio)"),
                     CriteriaOperator.Parse(
                         "Tarifa.Oid = ? AND Fecha >= ? AND Fecha < ?",
-                        objeto.Alquiler.Tarifa.Oid,
+                        objeto.RecursoAlquilable.Tarifa.Oid,
                         startOn,
                         endOn));
                 objeto.ImporteAlojamiento = Convert.ToDecimal(suma);

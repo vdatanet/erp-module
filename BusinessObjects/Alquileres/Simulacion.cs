@@ -16,7 +16,7 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [DefaultProperty(nameof(Nombre))]
 public class Simulacion(Session session) : EntidadBase(session), IReservaCalculable
 {
-    private Alquiler? _alquiler;
+    private RecursoAlquilable? _recursoAlquilable;
     private string? _nombre;
     private DateTime _startOn;
     private DateTime _endOn;
@@ -69,15 +69,15 @@ public class Simulacion(Session session) : EntidadBase(session), IReservaCalcula
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
-    [Association("Alquiler-Simulaciones")]
-    [XafDisplayName("Alquiler")]
+    [Association("RecursoAlquilable-Simulaciones")]
+    [XafDisplayName("Recurso Alquilable")]
     [ImmediatePostData]
-    public Alquiler? Alquiler
+    public RecursoAlquilable? RecursoAlquilable
     {
-        get => _alquiler;
+        get => _recursoAlquilable;
         set
         {
-            bool modified = SetPropertyValue(nameof(Alquiler), ref _alquiler, value);
+            bool modified = SetPropertyValue(nameof(RecursoAlquilable), ref _recursoAlquilable, value);
             if (modified && !IsLoading)
                 Calcular();
         }

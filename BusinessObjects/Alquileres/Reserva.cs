@@ -18,7 +18,7 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [ImageName("BO_Scheduler")]
 public class Reserva : EventoBase, IReservaCalculable
 {
-    private Alquiler? _alquiler;
+    private RecursoAlquilable? _recursoAlquilable;
     private decimal _totalPagado;
     private Cliente? _cliente;
     private int _numero;
@@ -85,15 +85,15 @@ public class Reserva : EventoBase, IReservaCalculable
         }
     }
 
-    [Association("Alquiler-Reservas")]
-    [XafDisplayName("Alquiler")]
+    [Association("RecursoAlquilable-Reservas")]
+    [XafDisplayName("Recurso Alquilable")]
     [ImmediatePostData]
-    public Alquiler? Alquiler
+    public RecursoAlquilable? RecursoAlquilable
     {
-        get => _alquiler;
+        get => _recursoAlquilable;
         set
         {
-            bool modified = SetPropertyValue(nameof(Alquiler), ref _alquiler, value);
+            bool modified = SetPropertyValue(nameof(RecursoAlquilable), ref _recursoAlquilable, value);
             if (modified && !IsLoading)
                 Calcular();
         }

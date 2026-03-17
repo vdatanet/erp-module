@@ -9,9 +9,9 @@ namespace erp.Module.BusinessObjects.Alquileres;
 
 [DefaultClassOptions]
 [NavigationItem("Configuraciones")]
-[XafDisplayName("Tipo de Alquiler Detalle")]
+[XafDisplayName("Tipo de Recurso Alquilable Detalle")]
 [DefaultProperty(nameof(Nombre))]
-public class TipoAlquilerDetalle(Session session) : EntidadBase(session)
+public class TipoRecursoAlquilableDetalle(Session session) : EntidadBase(session)
 {
     private string? _nombre;
 

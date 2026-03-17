@@ -13,7 +13,7 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [NavigationItem("Alquileres")]
 [ImageName("BO_Product")]
 [DefaultProperty(nameof(Nombre))]
-public class Alquiler(Session session) : RecursoBase(session)
+public class RecursoAlquilable(Session session) : RecursoBase(session)
 {
     private string? _descripcion;
     private Producto? _productoRelacionado;
@@ -24,7 +24,7 @@ public class Alquiler(Session session) : RecursoBase(session)
     private Ubicacion? _ubicacion;
     private int _secuencia;
     private Tarifa? _tarifa;
-    private TipoAlquilerDetalle? _tipoDetalle;
+    private TipoRecursoAlquilableDetalle? _tipoDetalle;
 
     [Size(255)]
     [RuleRequiredField]
@@ -95,7 +95,7 @@ public class Alquiler(Session session) : RecursoBase(session)
         set => SetPropertyValue(nameof(Secuencia), ref _secuencia, value);
     }
 
-    [Association("Tarifa-Alquileres")]
+    [Association("Tarifa-RecursosAlquilables")]
     [XafDisplayName("Tarifa")]
     public Tarifa? Tarifa
     {
@@ -104,17 +104,17 @@ public class Alquiler(Session session) : RecursoBase(session)
     }
 
     [XafDisplayName("Tipo Detalle")]
-    public TipoAlquilerDetalle? TipoDetalle
+    public TipoRecursoAlquilableDetalle? TipoDetalle
     {
         get => _tipoDetalle;
         set => SetPropertyValue(nameof(TipoDetalle), ref _tipoDetalle, value);
     }
 
-    [Association("Alquiler-Reservas")]
+    [Association("RecursoAlquilable-Reservas")]
     [XafDisplayName("Reservas")]
     public XPCollection<Reserva> Reservas => GetCollection<Reserva>();
 
-    [Association("Alquiler-Simulaciones")]
+    [Association("RecursoAlquilable-Simulaciones")]
     [XafDisplayName("Simulaciones")]
     public XPCollection<Simulacion> Simulaciones => GetCollection<Simulacion>();
 

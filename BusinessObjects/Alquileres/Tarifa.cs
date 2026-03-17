@@ -34,9 +34,9 @@ public class Tarifa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Observaciones), ref _observaciones, value);
     }
 
-    [Association("Tarifa-Alquileres")]
-    [XafDisplayName("Alquileres")]
-    public XPCollection<Alquiler> Alquileres => GetCollection<Alquiler>();
+    [Association("Tarifa-RecursosAlquilables")]
+    [XafDisplayName("Recursos Alquilables")]
+    public XPCollection<RecursoAlquilable> RecursosAlquilables => GetCollection<RecursoAlquilable>();
 
     [Association("Tarifa-Detalles")]
     [DevExpress.Xpo.Aggregated]
