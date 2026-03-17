@@ -116,7 +116,8 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         get
         {
             var collection = GetCollection<LineaDocumentoVenta>();
-            if (!collection.IsLoaded) collection.CollectionChanged += Lineas_CollectionChanged;
+            collection.CollectionChanged -= Lineas_CollectionChanged;
+            collection.CollectionChanged += Lineas_CollectionChanged;
             return collection;
         }
     }

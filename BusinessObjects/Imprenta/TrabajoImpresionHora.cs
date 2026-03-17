@@ -19,9 +19,12 @@ namespace erp.Module.BusinessObjects.Imprenta
             get => _trabajoImpresion;
             set
             {
-                if (SetPropertyValue(nameof(TrabajoImpresion), ref _trabajoImpresion, value) && !IsLoading && !IsSaving && value != null)
+                if (SetPropertyValue(nameof(TrabajoImpresion), ref _trabajoImpresion, value) && !IsLoading && !IsSaving)
                 {
-                    DocumentoVenta = value;
+                    if (value != null && DocumentoVenta != value)
+                    {
+                        DocumentoVenta = value;
+                    }
                 }
             }
         }

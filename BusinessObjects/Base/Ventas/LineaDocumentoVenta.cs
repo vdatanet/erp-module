@@ -154,7 +154,8 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
         get
         {
             var collection = GetCollection<TipoImpuesto>();
-            if (!collection.IsLoaded) collection.CollectionChanged += TiposImpuestoVenta_CollectionChanged;
+            collection.CollectionChanged -= TiposImpuestoVenta_CollectionChanged;
+            collection.CollectionChanged += TiposImpuestoVenta_CollectionChanged;
             return collection;
         }
     }
