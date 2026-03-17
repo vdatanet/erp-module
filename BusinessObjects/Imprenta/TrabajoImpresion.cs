@@ -19,22 +19,12 @@ namespace erp.Module.BusinessObjects.Imprenta
 
         private string? _descripcion;
         [ModelDefault("PropertyEditorType", "DevExpress.ExpressApp.Win.Editors.MemoEditStringPropertyEditor")]
-        [Size(4000)]
+        [Size(SizeAttribute.Unlimited)]
         [XafDisplayName("Trabajo")]
         public string? Descripcion
         {
             get => _descripcion;
             set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
-        }
-
-        private string? _observaciones;
-        [ModelDefault("PropertyEditorType", "DevExpress.ExpressApp.Win.Editors.MemoEditStringPropertyEditor")]
-        [Size(4000)]
-        [XafDisplayName("Observaciones")]
-        public string? Observaciones
-        {
-            get => _observaciones;
-            set => SetPropertyValue(nameof(Observaciones), ref _observaciones, value);
         }
 
         private EstadosPresupuesto? _estado;
