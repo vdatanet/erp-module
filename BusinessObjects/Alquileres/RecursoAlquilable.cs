@@ -24,7 +24,6 @@ public class RecursoAlquilable(Session session) : RecursoBase(session)
     private Ubicacion? _ubicacion;
     private int _secuencia;
     private Tarifa? _tarifa;
-    private TipoRecursoAlquilableDetalle? _tipoDetalle;
 
     [Size(255)]
     [RuleRequiredField]
@@ -101,13 +100,6 @@ public class RecursoAlquilable(Session session) : RecursoBase(session)
     {
         get => _tarifa;
         set => SetPropertyValue(nameof(Tarifa), ref _tarifa, value);
-    }
-
-    [XafDisplayName("Tipo Detalle")]
-    public TipoRecursoAlquilableDetalle? TipoDetalle
-    {
-        get => _tipoDetalle;
-        set => SetPropertyValue(nameof(TipoDetalle), ref _tipoDetalle, value);
     }
 
     [Association("RecursoAlquilable-Reservas")]
