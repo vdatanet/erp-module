@@ -16,17 +16,15 @@ namespace erp.Module.BusinessObjects.Alquileres;
 public class Alquiler(Session session) : RecursoBase(session)
 {
     private string _descripcion;
-    private decimal _precioPorDia;
-    private TipoAlquiler _tipoAlquiler;
     private Producto _productoRelacionado;
     private bool _estaActivo;
-    private Capacidades _capacidad;
+    private Capacidad _capacidad;
     private string _hut;
     private string _observaciones;
-    private Plantas _planta;
+    private Ubicacion _ubicacion;
     private int _secuencia;
     private Tarifa _tarifa;
-    private TiposAlquilerDetalle _tipoDetalle;
+    private TipoAlquilerDetalle _tipoDetalle;
 
     [Size(255)]
     [RuleRequiredField]
@@ -44,26 +42,7 @@ public class Alquiler(Session session) : RecursoBase(session)
         get => _descripcion;
         set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
     }
-
-    [ImmediatePostData]
-    [ModelDefault("DisplayFormat", "{0:n2}")]
-    [ModelDefault("EditMask", "n2")]
-    [XafDisplayName("Precio por Día")]
-    public decimal PrecioPorDia
-    {
-        get => _precioPorDia;
-        set => SetPropertyValue(nameof(PrecioPorDia), ref _precioPorDia, value);
-    }
-
-    [Association("TipoAlquiler-Alquileres")]
-    [RuleRequiredField]
-    [XafDisplayName("Tipo de Alquiler")]
-    public TipoAlquiler TipoAlquiler
-    {
-        get => _tipoAlquiler;
-        set => SetPropertyValue(nameof(TipoAlquiler), ref _tipoAlquiler, value);
-    }
-
+    
     [XafDisplayName("Producto Relacionado")]
     [ToolTip("Producto utilizado para la facturación de este alquiler")]
     public Producto ProductoRelacionado
@@ -80,7 +59,7 @@ public class Alquiler(Session session) : RecursoBase(session)
     }
 
     [XafDisplayName("Capacidad")]
-    public Capacidades Capacidad
+    public Capacidad Capacidad
     {
         get => _capacidad;
         set => SetPropertyValue(nameof(Capacidad), ref _capacidad, value);
@@ -102,11 +81,11 @@ public class Alquiler(Session session) : RecursoBase(session)
         set => SetPropertyValue(nameof(Observaciones), ref _observaciones, value);
     }
 
-    [XafDisplayName("Planta")]
-    public Plantas Planta
+    [XafDisplayName("Ubicación")]
+    public Ubicacion Ubicacion
     {
-        get => _planta;
-        set => SetPropertyValue(nameof(Planta), ref _planta, value);
+        get => _ubicacion;
+        set => SetPropertyValue(nameof(Ubicacion), ref _ubicacion, value);
     }
 
     [XafDisplayName("Secuencia")]
@@ -125,7 +104,7 @@ public class Alquiler(Session session) : RecursoBase(session)
     }
 
     [XafDisplayName("Tipo Detalle")]
-    public TiposAlquilerDetalle TipoDetalle
+    public TipoAlquilerDetalle TipoDetalle
     {
         get => _tipoDetalle;
         set => SetPropertyValue(nameof(TipoDetalle), ref _tipoDetalle, value);
@@ -143,46 +122,5 @@ public class Alquiler(Session session) : RecursoBase(session)
     {
         base.AfterConstruction();
         EstaActivo = true;
-        TipoDetalle = TiposAlquilerDetalle.A1;
-        Planta = Plantas.Baja;
-        Capacidad = Capacidades.Dos;
-    }
-
-    public enum Plantas
-    {
-        [XafDisplayName("Baja")]
-        Baja,
-        [XafDisplayName("Primera")]
-        Primera,
-        [XafDisplayName("Segunda")]
-        Segunda,
-        [XafDisplayName("Tercera")]
-        Tercera
-    }
-
-    public enum Capacidades
-    {
-        [XafDisplayName("2/4")]
-        Dos,
-        [XafDisplayName("4/6")]
-        Cuatro
-    }
-
-    public enum TiposAlquilerDetalle
-    {
-        [XafDisplayName("A0")]
-        A0,
-        [XafDisplayName("A1")]
-        A1,
-        [XafDisplayName("B1")]
-        B1,
-        [XafDisplayName("A2")]
-        A2,
-        [XafDisplayName("B2")]
-        B2,
-        [XafDisplayName("A3")]
-        A3,
-        [XafDisplayName("B3")]
-        B3
     }
 }
