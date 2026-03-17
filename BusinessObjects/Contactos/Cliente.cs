@@ -169,17 +169,6 @@ public class Cliente(Session session) : Tercero(session)
         Femenino
     }
 
-    public enum TiposDocumentos
-    {
-        [XafDisplayName("NIF")]
-        Nif,
-        [XafDisplayName("Pasaporte")]
-        Pasaporte,
-        [XafDisplayName("NIE")]
-        Nie,
-        [XafDisplayName("Otros")]
-        Otros
-    }
     
     public override void AfterConstruction()
     {

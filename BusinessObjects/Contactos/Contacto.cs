@@ -15,7 +15,7 @@ namespace erp.Module.BusinessObjects.Contactos;
 [DefaultClassOptions]
 [NavigationItem("Contactos")]
 [ImageName("BO_Contact")]
-[DefaultProperty(nameof(NombreCompleto))]
+[DefaultProperty(nameof(Nombre))]
 public class Contacto(Session session) : EntidadBase(session)
 {
     private string? _codigo;
@@ -38,19 +38,6 @@ public class Contacto(Session session) : EntidadBase(session)
     private Cliente? _cliente;
     private Nacionalidad? _nacionalidad;
     private DateTime? _fechaNacimiento;
-    private string? _nombreCompleto;
-
-    [XafDisplayName("Nombre Completo")]
-    public string NombreCompleto
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(_nombreCompleto))
-                _nombreCompleto = string.IsNullOrWhiteSpace(Nombre) ? "" : $"{Nombre} {NombreComercial}".Trim();
-            return _nombreCompleto;
-        }
-        set => SetPropertyValue(nameof(NombreCompleto), ref _nombreCompleto, value);
-    }
 
     [XafDisplayName("Cliente")]
     [Association("Cliente-Contactos")]
@@ -233,15 +220,6 @@ public class Contacto(Session session) : EntidadBase(session)
     protected override void OnChanged(string propertyName, object oldValue, object newValue)
     {
         base.OnChanged(propertyName, oldValue, newValue);
-
-        if (!IsLoading && !IsSaving)
-        {
-            if (propertyName == nameof(Nombre) || propertyName == nameof(NombreComercial))
-            {
-                _nombreCompleto = null;
-                OnChanged(nameof(NombreCompleto));
-            }
-        }
     }
 
     public virtual bool GetAsignarCodigoAlGuardar()
