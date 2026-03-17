@@ -23,6 +23,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         var contactosRole = CreateContactosRole();
         var ventasRole = CreateVentasRole();
         var alquileresRole = CreateAlquileresRole();
+        var reportsRole = CreateReportsRole();
 
         var userManager = objectSpace.ServiceProvider.GetRequiredService<UserManager>();
 
@@ -33,6 +34,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             var contactosRole_User = CreateContactosRole();
             var ventasRole_User = CreateVentasRole();
             var alquileresRole_User = CreateAlquileresRole();
+            var reportsRole_User = CreateReportsRole();
 
             var userName = $"User@{tenantName}";
             if (userManager.FindUserByName<ApplicationUser>(objectSpace, userName) == null)
@@ -45,6 +47,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
                     user.Roles.Add(contactosRole_User);
                     user.Roles.Add(ventasRole_User);
                     user.Roles.Add(alquileresRole_User);
+                    user.Roles.Add(reportsRole_User);
                 });
             }
         }
@@ -180,5 +183,20 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             alquileresRole.AddNavigationPermission(@"Application/NavigationItems/Items/Alquileres", SecurityPermissionState.Allow);
         }
         return alquileresRole;
+    }
+
+    private PermissionPolicyRole CreateReportsRole()
+    {
+        var reportsRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Reports");
+        if (reportsRole == null)
+        {
+            reportsRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            reportsRole.Name = "Reports";
+
+            reportsRole.AddTypePermissionsRecursively<ReportDataV2>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+
+            reportsRole.AddNavigationPermission(@"Application/NavigationItems/Items/Reports", SecurityPermissionState.Allow);
+        }
+        return reportsRole;
     }
 }
