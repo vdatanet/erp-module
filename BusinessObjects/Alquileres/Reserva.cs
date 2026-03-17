@@ -66,7 +66,7 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
             Temporada = StartOn.Year;
             if (Temporada != 0)
             {
-                Numero = SequenceFactory.GetNextSequence(Session, $"{GetType().FullName}-{Temporada}", out var formattedSequence, $"{Temporada}/", 4);
+                Numero = SequenceFactory.GetNextSequence(Session, $"{GetType().FullName}-{Temporada}", out var formattedSequence, $"{Temporada}", 4);
                 Secuencia = formattedSequence;
             }
         }
