@@ -9,6 +9,7 @@ using DevExpress.Persistent.BaseImpl.MultiTenancy;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
 using erp.Module.BusinessObjects;
 using erp.Module.BusinessObjects.Configuraciones;
+using erp.Module.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.DatabaseUpdate;
@@ -44,43 +45,7 @@ public class Updater : ModuleUpdater
         }
 #endif
 
-        // The code below creates users and roles for testing purposes only.
-        // In production code, you can create users and assign roles to them automatically, as described in the following help topic:
-        // https://docs.devexpress.com/eXpressAppFramework/119064/data-security-and-safety/security-system/authentication
-        // If a role doesn't exist in the database, create this role
-        var adminRole = CreateAdminRole();
-
-        var userManager = ObjectSpace.ServiceProvider.GetRequiredService<UserManager>();
-
-        if (TenantName != null)
-        {
-            var defaultRole = CreateDefaultRole();
-
-            var userName = $"User@{TenantName}";
-            // If a user named 'userName' doesn't exist in the database, create this user
-            if (userManager.FindUserByName<ApplicationUser>(ObjectSpace, userName) == null)
-            {
-                // Set a password if the standard authentication type is used
-                var EmptyPassword = "";
-                _ = userManager.CreateUser<ApplicationUser>(ObjectSpace, userName, EmptyPassword, user =>
-                {
-                    // Add the Users role to the user
-                    user.Roles.Add(defaultRole);
-                });
-            }
-        }
-
-        var adminUserName = TenantName != null ? $"Admin@{TenantName}" : "Admin";
-        if (userManager.FindUserByName<ApplicationUser>(ObjectSpace, adminUserName) == null)
-        {
-            // Set a password if the standard authentication type is used
-            var EmptyPassword = "";
-            _ = userManager.CreateUser<ApplicationUser>(ObjectSpace, adminUserName, EmptyPassword, user =>
-            {
-                // Add the Administrators role to the user
-                user.Roles.Add(adminRole);
-            });
-        }
+        new SecuritySetupService(ObjectSpace).CreateRolesAndUsers(TenantName);
 
         ObjectSpace.CommitChanges(); //This line persists created object(s).
         if (TenantId != null)
@@ -116,50 +81,5 @@ public class Updater : ModuleUpdater
         }
 
         return tenant;
-    }
-
-    private PermissionPolicyRole CreateAdminRole()
-    {
-        var adminRole = ObjectSpace.FirstOrDefault<PermissionPolicyRole>(r => r.Name == "Administrators");
-        if (adminRole == null)
-        {
-            adminRole = ObjectSpace.CreateObject<PermissionPolicyRole>();
-            adminRole.Name = "Administrators";
-            adminRole.IsAdministrative = true;
-        }
-
-        return adminRole;
-    }
-
-    private PermissionPolicyRole CreateDefaultRole()
-    {
-        var defaultRole = ObjectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Default");
-        if (defaultRole == null)
-        {
-            defaultRole = ObjectSpace.CreateObject<PermissionPolicyRole>();
-            defaultRole.Name = "Default";
-
-            defaultRole.AddObjectPermissionFromLambda<ApplicationUser>(SecurityOperations.Read,
-                cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
-            defaultRole.AddNavigationPermission(@"Application/NavigationItems/Items/Default/Items/MyDetails",
-                SecurityPermissionState.Allow);
-            defaultRole.AddMemberPermissionFromLambda<ApplicationUser>(SecurityOperations.Write,
-                "ChangePasswordOnFirstLogon", cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(),
-                SecurityPermissionState.Allow);
-            defaultRole.AddMemberPermissionFromLambda<ApplicationUser>(SecurityOperations.Write, "StoredPassword",
-                cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
-            defaultRole.AddTypePermissionsRecursively<PermissionPolicyRole>(SecurityOperations.Read,
-                SecurityPermissionState.Deny);
-            defaultRole.AddObjectPermission<ModelDifference>(SecurityOperations.ReadWriteAccess,
-                "UserId = ToStr(CurrentUserId())", SecurityPermissionState.Allow);
-            defaultRole.AddObjectPermission<ModelDifferenceAspect>(SecurityOperations.ReadWriteAccess,
-                "Owner.UserId = ToStr(CurrentUserId())", SecurityPermissionState.Allow);
-            defaultRole.AddTypePermissionsRecursively<ModelDifference>(SecurityOperations.Create,
-                SecurityPermissionState.Allow);
-            defaultRole.AddTypePermissionsRecursively<ModelDifferenceAspect>(SecurityOperations.Create,
-                SecurityPermissionState.Allow);
-        }
-
-        return defaultRole;
     }
 }
