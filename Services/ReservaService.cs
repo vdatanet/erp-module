@@ -49,15 +49,7 @@ public class ReservaService : IReservaService
             // Alojamiento
             if (objeto.Alojamiento && objeto.RecursoAlquilable != null && objeto.RecursoAlquilable.Tarifa != null)
             {
-                object suma = session.Evaluate(
-                    typeof(PrecioDiario),
-                    CriteriaOperator.Parse("Sum(Precio)"),
-                    CriteriaOperator.Parse(
-                        "Tarifa.Oid = ? AND Fecha >= ? AND Fecha < ?",
-                        objeto.RecursoAlquilable.Tarifa.Oid,
-                        startOn,
-                        endOn));
-                objeto.ImporteAlojamiento = Convert.ToDecimal(suma);
+                objeto.ImporteAlojamiento = CalcularImporteTarifa(objeto.RecursoAlquilable.Tarifa, startOn, endOn);
             }
             else
             {
@@ -67,11 +59,11 @@ public class ReservaService : IReservaService
             // Parking
             if (objeto.Parking)
             {
-                object suma = session.Evaluate(
-                    typeof(PrecioDiario),
-                    CriteriaOperator.Parse("Sum(Precio)"),
-                    CriteriaOperator.Parse("Tarifa.Nombre = 'P' AND Fecha >= ? AND Fecha < ?", startOn, endOn));
-                objeto.ImporteParking = Convert.ToDecimal(suma);
+                var tarifaParking = session.FindObject<Tarifa>(CriteriaOperator.Parse("Nombre = 'P'"));
+                if (tarifaParking != null)
+                    objeto.ImporteParking = CalcularImporteTarifa(tarifaParking, startOn, endOn);
+                else
+                    objeto.ImporteParking = 0;
             }
             else
             {
@@ -138,5 +130,28 @@ public class ReservaService : IReservaService
     {
         objeto.ImporteDescuento = MoneyMath.RoundMoney(objeto.Subtotal * objeto.PerDescuento / 100);
         Calcular(objeto);
+    }
+
+    private decimal CalcularImporteTarifa(Tarifa tarifa, DateTime startOn, DateTime endOn)
+    {
+        decimal total = 0;
+        var detalles = tarifa.Session.GetObjects(tarifa.Session.GetClassInfo<DetalleTarifa>(),
+            CriteriaOperator.Parse("Tarifa.Oid = ? AND Desde < ? AND Hasta >= ?", tarifa.Oid, endOn, startOn),
+            new SortingCollection(new SortProperty(nameof(DetalleTarifa.Desde), DevExpress.Xpo.DB.SortingDirection.Ascending)),
+            0, false, true);
+
+        foreach (DetalleTarifa detalle in detalles)
+        {
+            DateTime inicioTramo = detalle.Desde > startOn ? detalle.Desde : startOn;
+            DateTime finTramo = detalle.Hasta < endOn.AddDays(-1) ? detalle.Hasta : endOn.AddDays(-1);
+
+            if (finTramo >= inicioTramo)
+            {
+                int dias = (finTramo - inicioTramo).Days + 1;
+                total += dias * detalle.Precio;
+            }
+        }
+
+        return total;
     }
 }

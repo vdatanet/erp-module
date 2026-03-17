@@ -7,10 +7,8 @@ using erp.Module.BusinessObjects.Base.Comun;
 
 namespace erp.Module.BusinessObjects.Alquileres;
 
-[DefaultClassOptions]
-[NavigationItem("Alquileres")]
 [ImageName("BO_List")]
-[XafDisplayName("Detalle de Tarifa")]
+[XafDisplayName("Detalle Tarifa")]
 public class DetalleTarifa(Session session) : EntidadBase(session)
 {
     private Tarifa? _tarifa;
