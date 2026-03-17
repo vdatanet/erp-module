@@ -22,6 +22,7 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
 {
     private RecursoAlquilable? _recursoAlquilable;
     private decimal _totalPagado;
+    private string? _notas;
     private Cliente? _cliente;
     private int _numero;
     private int _temporada;
@@ -366,6 +367,14 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
     [Association("Reserva-Viajeros")]
     [XafDisplayName("Viajeros")]
     public XPCollection<Viajero> Viajeros => GetCollection<Viajero>();
+
+    [XafDisplayName("Notas")]
+    [Size(SizeAttribute.Unlimited)]
+    public string? Notas
+    {
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
+    }
 
     public void SumarPagos(bool update)
     {
