@@ -70,22 +70,5 @@ public sealed class erpModule : ModuleBase
     {
         base.CustomizeTypesInfo(typesInfo);
         CalculatedPersistentAliasHelper.CustomizeTypesInfo(typesInfo);
-
-        var reservaInfo = typesInfo.FindTypeInfo(typeof(BusinessObjects.Alquileres.Reserva));
-        if (reservaInfo != null)
-        {
-            var startOnInfo = reservaInfo.FindMember("StartOn");
-            startOnInfo?.AddAttribute(new DevExpress.ExpressApp.Model.ModelDefaultAttribute("DisplayFormat", "{0:d}"));
-            startOnInfo?.AddAttribute(new DevExpress.ExpressApp.Model.ModelDefaultAttribute("EditMask", "d"));
-            startOnInfo?.AddAttribute(new DevExpress.ExpressApp.DC.XafDisplayNameAttribute("Desde"));
-
-            var endOnInfo = reservaInfo.FindMember("EndOn");
-            endOnInfo?.AddAttribute(new DevExpress.ExpressApp.Model.ModelDefaultAttribute("DisplayFormat", "{0:d}"));
-            endOnInfo?.AddAttribute(new DevExpress.ExpressApp.Model.ModelDefaultAttribute("EditMask", "d"));
-            endOnInfo?.AddAttribute(new DevExpress.ExpressApp.DC.XafDisplayNameAttribute("Hasta"));
-
-            var subjectInfo = reservaInfo.FindMember("Subject");
-            subjectInfo?.AddAttribute(new DevExpress.ExpressApp.DC.XafDisplayNameAttribute("Asunto"));
-        }
     }
 }
