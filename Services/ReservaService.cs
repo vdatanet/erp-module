@@ -59,7 +59,8 @@ public class ReservaService : IReservaService
             // Parking
             if (objeto.Parking)
             {
-                var tarifaParking = session.FindObject<Tarifa>(CriteriaOperator.Parse("Nombre = 'P'"));
+                var tarifaParking = session.FindObject<Tarifa>(CriteriaOperator.Parse("Nombre = 'Parking'"))
+                                    ?? session.FindObject<Tarifa>(CriteriaOperator.Parse("Nombre = 'P'"));
                 if (tarifaParking != null)
                     objeto.ImporteParking = CalcularImporteTarifa(tarifaParking, startOn, endOn);
                 else
@@ -73,8 +74,8 @@ public class ReservaService : IReservaService
             // Aire acondicionado
             if (objeto.Ac)
             {
-                var extraAc = session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Aire acondicionado'")) 
-                             ?? session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Aire condicionat'"));
+                var extraAc = session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Aire condicionat'")) 
+                             ?? session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Aire acondicionado'"));
                 if (extraAc != null)
                     objeto.ImporteAc = MoneyMath.RoundMoney((decimal)objeto.Dias * extraAc.PrecioDiario);
                 else
@@ -88,8 +89,8 @@ public class ReservaService : IReservaService
             // Sábanas / Llençols
             if (objeto.PersonasSabanas > 0)
             {
-                var extraSabanas = session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Sábanas'"))
-                                  ?? session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Llençols'"));
+                var extraSabanas = session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Llençols'"))
+                                  ?? session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Sábanas'"));
                 if (extraSabanas != null)
                     objeto.ImporteSabanas = MoneyMath.RoundMoney(objeto.PersonasSabanas * extraSabanas.PrecioDiario);
                 else
@@ -105,8 +106,8 @@ public class ReservaService : IReservaService
             {
                 var diasSujetos = (decimal)objeto.Dias;
                 if (diasSujetos > 7) diasSujetos = 7;
-                var extraTasa = session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Tasa turística'"))
-                                ?? session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Taxa turística'"));
+                var extraTasa = session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Taxa turística'"))
+                                ?? session.FindObject<Extra>(CriteriaOperator.Parse("Nombre = 'Tasa turística'"));
                 if (extraTasa != null)
                     objeto.ImporteTasaTuristica = MoneyMath.RoundMoney(diasSujetos * objeto.PersonasSujetas * extraTasa.PrecioDiario);
                 else
