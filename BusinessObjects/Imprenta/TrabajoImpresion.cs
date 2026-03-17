@@ -17,6 +17,7 @@ namespace erp.Module.BusinessObjects.Imprenta
     {
         public TrabajoImpresion(Session session) : base(session) { }
 
+        #region Datos Generales
         private string? _descripcion;
         [ModelDefault("PropertyEditorType", "DevExpress.ExpressApp.Win.Editors.MemoEditStringPropertyEditor")]
         [Size(SizeAttribute.Unlimited)]
@@ -70,231 +71,239 @@ namespace erp.Module.BusinessObjects.Imprenta
             get => _tintas;
             set => SetPropertyValue(nameof(Tintas), ref _tintas, value);
         }
+        #endregion
 
-        private bool _bDigitalC;
+        #region Impresión Digital
+        private bool _digitalColor;
         [XafDisplayName("Digital Color")]
-        public bool bDigitalC
+        public bool DigitalColor
         {
-            get => _bDigitalC;
-            set => SetPropertyValue(nameof(bDigitalC), ref _bDigitalC, value);
+            get => _digitalColor;
+            set => SetPropertyValue(nameof(DigitalColor), ref _digitalColor, value);
         }
 
-        private bool _bDigitalC1;
+        private bool _digitalColor1c;
         [XafDisplayName("Digital Color 1c.")]
-        public bool bDigitalC1
+        public bool DigitalColor1c
         {
-            get => _bDigitalC1;
-            set => SetPropertyValue(nameof(bDigitalC1), ref _bDigitalC1, value);
+            get => _digitalColor1c;
+            set => SetPropertyValue(nameof(DigitalColor1c), ref _digitalColor1c, value);
         }
 
-        private bool _bDigitalC2;
+        private bool _digitalColor2c;
         [XafDisplayName("Digital Color 2c.")]
-        public bool bDigitalC2
+        public bool DigitalColor2c
         {
-            get => _bDigitalC2;
-            set => SetPropertyValue(nameof(bDigitalC2), ref _bDigitalC2, value);
+            get => _digitalColor2c;
+            set => SetPropertyValue(nameof(DigitalColor2c), ref _digitalColor2c, value);
         }
 
-        private bool _bDigitalBN;
+        private bool _digitalBN;
         [XafDisplayName("Digital B/N")]
-        public bool bDigitalBN
+        public bool DigitalBN
         {
-            get => _bDigitalBN;
-            set => SetPropertyValue(nameof(bDigitalBN), ref _bDigitalBN, value);
+            get => _digitalBN;
+            set => SetPropertyValue(nameof(DigitalBN), ref _digitalBN, value);
         }
 
-        private bool _bDigitalBN1;
+        private bool _digitalBN1c;
         [XafDisplayName("Digital B/N 1c.")]
-        public bool bDigitalBN1
+        public bool DigitalBN1c
         {
-            get => _bDigitalBN1;
-            set => SetPropertyValue(nameof(bDigitalBN1), ref _bDigitalBN1, value);
+            get => _digitalBN1c;
+            set => SetPropertyValue(nameof(DigitalBN1c), ref _digitalBN1c, value);
         }
 
-        private bool _bDigitalBN2;
+        private bool _digitalBN2c;
         [XafDisplayName("Digital B/N 2c.")]
-        public bool bDigitalBN2
+        public bool DigitalBN2c
         {
-            get => _bDigitalBN2;
-            set => SetPropertyValue(nameof(bDigitalBN2), ref _bDigitalBN2, value);
+            get => _digitalBN2c;
+            set => SetPropertyValue(nameof(DigitalBN2c), ref _digitalBN2c, value);
         }
 
-        private bool _bDigital1;
+        private bool _digital1c;
         [XafDisplayName("Digital 1c.")]
-        public bool bDigital1
+        public bool Digital1c
         {
-            get => _bDigital1;
-            set => SetPropertyValue(nameof(bDigital1), ref _bDigital1, value);
+            get => _digital1c;
+            set => SetPropertyValue(nameof(Digital1c), ref _digital1c, value);
         }
 
-        private bool _bDigital2;
+        private bool _digital2c;
         [XafDisplayName("Digital 2c.")]
-        public bool bDigital2
+        public bool Digital2c
         {
-            get => _bDigital2;
-            set => SetPropertyValue(nameof(bDigital2), ref _bDigital2, value);
+            get => _digital2c;
+            set => SetPropertyValue(nameof(Digital2c), ref _digital2c, value);
         }
+        #endregion
 
-        private bool _bGrapado;
+        #region Acabados
+        private bool _grapado;
         [XafDisplayName("Grapado")]
-        public bool bGrapado
+        public bool Grapado
         {
-            get => _bGrapado;
-            set => SetPropertyValue(nameof(bGrapado), ref _bGrapado, value);
+            get => _grapado;
+            set => SetPropertyValue(nameof(Grapado), ref _grapado, value);
         }
         
-        private bool _bTaladrado;
+        private bool _taladrado;
         [XafDisplayName("Taladrado")]
-        public bool bTaladrado
+        public bool Taladrado
         {
-            get => _bTaladrado;
-            set => SetPropertyValue(nameof(bTaladrado), ref _bTaladrado, value);
+            get => _taladrado;
+            set => SetPropertyValue(nameof(Taladrado), ref _taladrado, value);
         }
 
-        private bool _bEncolado;
+        private bool _encolado;
         [XafDisplayName("Encolado")]
-        public bool bEncolado
+        public bool Encolado
         {
-            get => _bEncolado;
-            set => SetPropertyValue(nameof(bEncolado), ref _bEncolado, value);
+            get => _encolado;
+            set => SetPropertyValue(nameof(Encolado), ref _encolado, value);
         }
 
-        private bool _bTroquelado;
+        private bool _troquelado;
         [XafDisplayName("Troquelado")]
-        public bool bTroquelado
+        public bool Troquelado
         {
-            get => _bTroquelado;
-            set => SetPropertyValue(nameof(bTroquelado), ref _bTroquelado, value);
+            get => _troquelado;
+            set => SetPropertyValue(nameof(Troquelado), ref _troquelado, value);
         }
 
-        private bool _bDoblado;
+        private bool _doblado;
         [XafDisplayName("Doblado")]
-        public bool bDoblado
+        public bool Doblado
         {
-            get => _bDoblado;
-            set => SetPropertyValue(nameof(bDoblado), ref _bDoblado, value);
+            get => _doblado;
+            set => SetPropertyValue(nameof(Doblado), ref _doblado, value);
         }
         
-        private bool _bEncuadernado;
+        private bool _encuadernado;
         [XafDisplayName("Encuadernado")]
-        public bool bEncuadernado
+        public bool Encuadernado
         {
-            get => _bEncuadernado;
-            set => SetPropertyValue(nameof(bEncuadernado), ref _bEncuadernado, value);
+            get => _encuadernado;
+            set => SetPropertyValue(nameof(Encuadernado), ref _encuadernado, value);
         }
 
-        private bool _bPerforado;
+        private bool _perforado;
         [XafDisplayName("Perforado")]
-        public bool bPerforado
+        public bool Perforado
         {
-            get => _bPerforado;
-            set => SetPropertyValue(nameof(bPerforado), ref _bPerforado, value);
+            get => _perforado;
+            set => SetPropertyValue(nameof(Perforado), ref _perforado, value);
         }
 
-        private int _mmPerforado;
+        private int _perforadoMm;
         [XafDisplayName("Perforado (mm)")]
-        public int mmPerforado
+        public int PerforadoMm
         {
-            get => _mmPerforado;
-            set => SetPropertyValue(nameof(mmPerforado), ref _mmPerforado, value);
+            get => _perforadoMm;
+            set => SetPropertyValue(nameof(PerforadoMm), ref _perforadoMm, value);
         }
 
-        private bool _bTroqueladora;
+        private bool _troqueladora;
         [XafDisplayName("Troqueladora")]
-        public bool bTroqueladora
+        public bool Troqueladora
         {
-            get => _bTroqueladora;
-            set => SetPropertyValue(nameof(bTroqueladora), ref _bTroqueladora, value);
+            get => _troqueladora;
+            set => SetPropertyValue(nameof(Troqueladora), ref _troqueladora, value);
         }
 
-        private bool _bNumerado;
+        private bool _numerado;
         [XafDisplayName("Numerado")]
-        public bool bNumerado
+        public bool Numerado
         {
-            get => _bNumerado;
-            set => SetPropertyValue(nameof(bNumerado), ref _bNumerado, value);
+            get => _numerado;
+            set => SetPropertyValue(nameof(Numerado), ref _numerado, value);
         }
 
-        private string? _numeratString;
+        private string? _numeracion;
         [XafDisplayName("Tipo Numerado")]
-        public string? NumeratString
+        public string? Numeracion
         {
-            get => _numeratString;
-            set => SetPropertyValue(nameof(NumeratString), ref _numeratString, value);
+            get => _numeracion;
+            set => SetPropertyValue(nameof(Numeracion), ref _numeracion, value);
         }
 
-        private bool _bEncoladoQ;
+        private bool _encoladoQ;
         [XafDisplayName("Encolado Q")]
-        public bool bEncoladoQ
+        public bool EncoladoQ
         {
-            get => _bEncoladoQ;
-            set => SetPropertyValue(nameof(bEncoladoQ), ref _bEncoladoQ, value);
+            get => _encoladoQ;
+            set => SetPropertyValue(nameof(EncoladoQ), ref _encoladoQ, value);
         }
 
-        private bool _bPlastificado;
+        private bool _plastificado;
         [XafDisplayName("Plastificado")]
-        public bool bPlastificado
+        public bool Plastificado
         {
-            get => _bPlastificado;
-            set => SetPropertyValue(nameof(bPlastificado), ref _bPlastificado, value);
+            get => _plastificado;
+            set => SetPropertyValue(nameof(Plastificado), ref _plastificado, value);
         }
 
-        private bool _bHendido;
+        private bool _hendido;
         [XafDisplayName("Hendido")]
-        public bool bHendido
+        public bool Hendido
         {
-            get => _bHendido;
-            set => SetPropertyValue(nameof(bHendido), ref _bHendido, value);
+            get => _hendido;
+            set => SetPropertyValue(nameof(Hendido), ref _hendido, value);
         }
 
-        private bool _bLaminado;
+        private bool _laminado;
         [XafDisplayName("Laminado")]
-        public bool bLaminado
+        public bool Laminado
         {
-            get => _bLaminado;
-            set => SetPropertyValue(nameof(bLaminado), ref _bLaminado, value);
+            get => _laminado;
+            set => SetPropertyValue(nameof(Laminado), ref _laminado, value);
         }
+        #endregion
 
-        private bool _bM;
+        #region Otros Flags
+        private bool _m;
         [XafDisplayName("M.")]
-        public bool bM
+        public bool M
         {
-            get => _bM;
-            set => SetPropertyValue(nameof(bM), ref _bM, value);
+            get => _m;
+            set => SetPropertyValue(nameof(M), ref _m, value);
         }
 
-        private bool _bB;
+        private bool _b;
         [XafDisplayName("B.")]
-        public bool bB
+        public bool B
         {
-            get => _bB;
-            set => SetPropertyValue(nameof(bB), ref _bB, value);
+            get => _b;
+            set => SetPropertyValue(nameof(B), ref _b, value);
         }
 
-        private bool _bV;
+        private bool _v;
         [XafDisplayName("V.")]
-        public bool bV
+        public bool V
         {
-            get => _bV;
-            set => SetPropertyValue(nameof(bV), ref _bV, value);
+            get => _v;
+            set => SetPropertyValue(nameof(V), ref _v, value);
         }
 
-        private bool _b1c;
+        private bool _c1;
         [XafDisplayName("1 c.")]
-        public bool b1c
+        public bool C1
         {
-            get => _b1c;
-            set => SetPropertyValue(nameof(b1c), ref _b1c, value);
+            get => _c1;
+            set => SetPropertyValue(nameof(C1), ref _c1, value);
         }
 
-        private bool _b2c;
+        private bool _c2;
         [XafDisplayName("2 c.")]
-        public bool b2c
+        public bool C2
         {
-            get => _b2c;
-            set => SetPropertyValue(nameof(b2c), ref _b2c, value);
+            get => _c2;
+            set => SetPropertyValue(nameof(C2), ref _c2, value);
         }
+        #endregion
 
+        #region Colecciones
         [DevExpress.Xpo.Aggregated]
         public XPCollection<TrabajoImpresionPapel> Papeles => new XPCollection<TrabajoImpresionPapel>(Session, new BinaryOperator(nameof(LineaDocumentoVenta.DocumentoVenta), this));
 
@@ -306,6 +315,7 @@ namespace erp.Module.BusinessObjects.Imprenta
 
         [DevExpress.Xpo.Aggregated]
         public XPCollection<TrabajoImpresionHora> Horas => new XPCollection<TrabajoImpresionHora>(Session, new BinaryOperator(nameof(LineaDocumentoVenta.DocumentoVenta), this));
+        #endregion
 
         public enum EstadosPresupuesto { Borrador, Presupuesto, Orden, Rechazado };
 

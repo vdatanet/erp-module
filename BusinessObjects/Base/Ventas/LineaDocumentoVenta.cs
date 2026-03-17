@@ -45,8 +45,11 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
             BorrarImpuestosProducto();
             AplicarInstantaneaProducto();
             ReconstruirImpuestos();
+            OnProductoChanged();
         }
     }
+
+    protected virtual void OnProductoChanged() { }
 
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Nombre Producto")]
@@ -76,8 +79,11 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
             var modified = SetPropertyValue(nameof(Cantidad), ref _cantidad, value);
             if (!modified || IsLoading || IsSaving || IsDeleted) return;
             EstablecerBaseImponible();
+            OnCantidadChanged();
         }
     }
+
+    protected virtual void OnCantidadChanged() { }
 
     [ImmediatePostData]
     [ModelDefault("DisplayFormat", "{0:n2}")]

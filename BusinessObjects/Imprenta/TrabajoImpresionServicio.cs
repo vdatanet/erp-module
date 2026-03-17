@@ -2,6 +2,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Base.Ventas;
+using erp.Module.Helpers.Imprenta;
 using System;
 using System.Linq;
 
@@ -11,19 +12,38 @@ namespace erp.Module.BusinessObjects.Imprenta
     [NavigationItem("Imprenta")]
     public class TrabajoImpresionServicio(Session session) : LineaDocumentoVenta(session)
     {
+        protected override void OnProductoChanged()
+        {
+            base.OnProductoChanged();
+            if (Producto != null)
+            {
+                TotalizarLinea();
+            }
+        }
+
+        protected override void OnCantidadChanged()
+        {
+            base.OnCantidadChanged();
+            TotalizarLinea();
+        }
+
+        private bool SetAndRecalculate<T>(string propertyName, ref T field, T value, bool buscarTramo = false)
+        {
+            bool modified = SetPropertyValue(propertyName, ref field, value);
+            if (modified && !IsLoading && !IsSaving)
+            {
+                if (buscarTramo) TotalizarLinea();
+                else TotalizarLineaSinCambiarPrecio();
+            }
+            return modified;
+        }
+
         private decimal _precio;
         [ImmediatePostData]
         public decimal Precio
         {
             get => _precio;
-            set
-            {
-                bool modified = SetPropertyValue(nameof(Precio), ref _precio, value);
-                if (!IsLoading && !IsSaving && modified)
-                {
-                    TotalizarLineaSinCambiarPrecio();
-                }
-            }
+            set => SetAndRecalculate(nameof(Precio), ref _precio, value);
         }
 
         private decimal _numEntradasMaq;
@@ -31,14 +51,7 @@ namespace erp.Module.BusinessObjects.Imprenta
         public decimal NumEntradasMaq
         {
             get => _numEntradasMaq;
-            set
-            {
-                bool modified = SetPropertyValue(nameof(NumEntradasMaq), ref _numEntradasMaq, value);
-                if (!IsLoading && !IsSaving && modified)
-                {
-                    TotalizarLinea();
-                }
-            }
+            set => SetAndRecalculate(nameof(NumEntradasMaq), ref _numEntradasMaq, value, true);
         }
 
         private decimal _precioEntrada;
@@ -46,36 +59,18 @@ namespace erp.Module.BusinessObjects.Imprenta
         public decimal PrecioEntrada
         {
             get => _precioEntrada;
-            set
-            {
-                bool modified = SetPropertyValue(nameof(PrecioEntrada), ref _precioEntrada, value);
-                if (!IsLoading && !IsSaving && modified)
-                {
-                    TotalizarLineaSinCambiarPrecio();
-                }
-            }
+            set => SetAndRecalculate(nameof(PrecioEntrada), ref _precioEntrada, value);
         }
 
         private void TotalizarLinea()
         {
-            decimal ctd = Cantidad;
-            if (Producto != null && ctd != 0)
+            if (Producto != null && Cantidad != 0)
             {
-                var precio = Producto.PreciosPorCantidad
-                    .FirstOrDefault(p => ctd >= p.InicioIntervalo && ctd <= p.FinIntervalo);
-
-                if (precio != null)
+                var tramo = ImprentaHelper.BuscarTramoDePrecio(Producto, Cantidad);
+                if (tramo != null)
                 {
-                    if (ctd * precio.PrecioUnitario > precio.ImporteMinimo)
-                    {
-                        Precio = precio.PrecioUnitario;
-                        PrecioEntrada = precio.PrecioEntrada;
-                    }
-                    else
-                    {
-                        Precio = precio.ImporteMinimo / ctd;
-                        PrecioEntrada = precio.PrecioEntrada;
-                    }
+                    Precio = ImprentaHelper.CalcularPrecioUnitario(Cantidad, tramo);
+                    PrecioEntrada = tramo.PrecioEntrada;
                 }
             }
             TotalizarLineaSinCambiarPrecio();

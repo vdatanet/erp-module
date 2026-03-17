@@ -1,5 +1,6 @@
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
+using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using System;
 using erp.Module.BusinessObjects.Base.Comun;
@@ -14,6 +15,7 @@ namespace erp.Module.BusinessObjects.Imprenta
 
         private decimal _ancho;
         [ImmediatePostData]
+        [RuleRange(0.01, 10000, CustomMessageTemplate = "El ancho debe ser mayor que 0")]
         public decimal Ancho
         {
             get => _ancho;
@@ -22,6 +24,7 @@ namespace erp.Module.BusinessObjects.Imprenta
 
         private decimal _alto;
         [ImmediatePostData]
+        [RuleRange(0.01, 10000, CustomMessageTemplate = "el alto debe ser mayor que 0")]
         public decimal Alto
         {
             get => _alto;

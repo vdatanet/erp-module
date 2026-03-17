@@ -2,6 +2,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Base.Ventas;
+using erp.Module.Helpers.Imprenta;
 using System;
 using System.Linq;
 
@@ -11,6 +12,25 @@ namespace erp.Module.BusinessObjects.Imprenta
     [NavigationItem("Imprenta")]
     public class TrabajoImpresionPapel(Session session) : LineaDocumentoVenta(session)
     {
+        protected override void OnProductoChanged()
+        {
+            base.OnProductoChanged();
+            if (Producto != null)
+            {
+                TotalizarLinea();
+            }
+        }
+
+        private bool SetAndRecalculate<T>(string propertyName, ref T field, T value)
+        {
+            bool modified = SetPropertyValue(propertyName, ref field, value);
+            if (modified && !IsLoading && !IsSaving)
+            {
+                TotalizarLinea();
+            }
+            return modified;
+        }
+
         private TamanoPapel? _tamanoPapel;
         [ImmediatePostData]
         public TamanoPapel? TamanoPapel
@@ -32,14 +52,7 @@ namespace erp.Module.BusinessObjects.Imprenta
         public decimal Ancho
         {
             get => _ancho;
-            set
-            {
-                bool modified = SetPropertyValue(nameof(Ancho), ref _ancho, value);
-                if (!IsLoading && !IsSaving && modified)
-                {
-                    TotalizarLinea();
-                }
-            }
+            set => SetAndRecalculate(nameof(Ancho), ref _ancho, value);
         }
 
         private decimal _alto;
@@ -47,14 +60,7 @@ namespace erp.Module.BusinessObjects.Imprenta
         public decimal Alto
         {
             get => _alto;
-            set
-            {
-                bool modified = SetPropertyValue(nameof(Alto), ref _alto, value);
-                if (!IsLoading && !IsSaving && modified)
-                {
-                    TotalizarLinea();
-                }
-            }
+            set => SetAndRecalculate(nameof(Alto), ref _alto, value);
         }
 
         private decimal _gramaje;
@@ -62,14 +68,7 @@ namespace erp.Module.BusinessObjects.Imprenta
         public decimal Gramaje
         {
             get => _gramaje;
-            set
-            {
-                bool modified = SetPropertyValue(nameof(Gramaje), ref _gramaje, value);
-                if (!IsLoading && !IsSaving && modified)
-                {
-                    TotalizarLinea();
-                }
-            }
+            set => SetAndRecalculate(nameof(Gramaje), ref _gramaje, value);
         }
 
         private void TotalizarLinea()
@@ -77,22 +76,10 @@ namespace erp.Module.BusinessObjects.Imprenta
             if (Producto != null && DocumentoVenta is TrabajoImpresion trabajoImpresion)
             {
                 decimal ctd = trabajoImpresion.Cantidad;
-                if (ctd != 0)
+                var tramo = ImprentaHelper.BuscarTramoDePrecio(Producto, ctd);
+                if (tramo != null)
                 {
-                    var precio = Producto.PreciosPorCantidad
-                        .FirstOrDefault(p => ctd >= p.InicioIntervalo && ctd < p.FinIntervalo);
-
-                    if (precio != null)
-                    {
-                        if (ctd * precio.PrecioUnitario > precio.ImporteMinimo)
-                        {
-                            PrecioUnitario = precio.PrecioUnitario;
-                        }
-                        else
-                        {
-                            PrecioUnitario = precio.ImporteMinimo / ctd;
-                        }
-                    }
+                    PrecioUnitario = ImprentaHelper.CalcularPrecioUnitario(ctd, tramo);
                 }
             }
         }

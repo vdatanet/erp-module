@@ -4,6 +4,7 @@ using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Base.Ventas;
 using System;
 using System.Linq;
+using erp.Module.Helpers.Imprenta;
 
 namespace erp.Module.BusinessObjects.Imprenta
 {
@@ -11,24 +12,29 @@ namespace erp.Module.BusinessObjects.Imprenta
     [NavigationItem("Imprenta")]
     public class TrabajoImpresionHora(Session session) : LineaDocumentoVenta(session)
     {
+        protected override void OnProductoChanged()
+        {
+            base.OnProductoChanged();
+            if (Producto != null)
+            {
+                TotalizarLinea();
+            }
+        }
+
+        protected override void OnCantidadChanged()
+        {
+            base.OnCantidadChanged();
+            TotalizarLinea();
+        }
+
         private void TotalizarLinea()
         {
-            decimal ctd = Cantidad;
-            if (Producto != null && ctd != 0)
+            if (Producto != null)
             {
-                var precio = Producto.PreciosPorCantidad
-                    .FirstOrDefault(p => ctd >= p.InicioIntervalo && ctd < p.FinIntervalo);
-
-                if (precio != null)
+                var tramo = ImprentaHelper.BuscarTramoDePrecio(Producto, Cantidad);
+                if (tramo != null)
                 {
-                    if (ctd * precio.PrecioUnitario > precio.ImporteMinimo)
-                    {
-                        PrecioUnitario = precio.PrecioUnitario;
-                    }
-                    else
-                    {
-                        PrecioUnitario = precio.ImporteMinimo / ctd;
-                    }
+                    PrecioUnitario = ImprentaHelper.CalcularPrecioUnitario(Cantidad, tramo);
                 }
             }
         }
