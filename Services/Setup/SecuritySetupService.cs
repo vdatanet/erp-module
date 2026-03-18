@@ -41,6 +41,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
                 var EmptyPassword = "";
                 _ = userManager.CreateUser<ApplicationUser>(objectSpace, userName, EmptyPassword, user =>
                 {
+                    user.ChangePasswordOnFirstLogon = true;
                     user.Roles.Add(defaultRole);
                     user.Roles.Add(imprentaRole_User);
                     user.Roles.Add(contactosRole_User);
@@ -56,7 +57,11 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         {
             var EmptyPassword = "";
             _ = userManager.CreateUser<ApplicationUser>(objectSpace, adminUserName, EmptyPassword,
-                user => { user.Roles.Add(adminRole); });
+                user =>
+                {
+                    user.ChangePasswordOnFirstLogon = true;
+                    user.Roles.Add(adminRole);
+                });
         }
     }
 
