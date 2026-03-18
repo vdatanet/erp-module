@@ -31,6 +31,8 @@ public class Updater : ModuleUpdater
 
         new SecuritySetupService(ObjectSpace).CreateRolesAndUsers(TenantName);
 
+        new CuentaSetupService(ObjectSpace).CreateInitialCuentas();
+
         ObjectSpace.CommitChanges(); //This line persists created object(s).
         if (TenantId != null)
         {
