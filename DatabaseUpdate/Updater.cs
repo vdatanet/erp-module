@@ -24,21 +24,10 @@ public class Updater : ModuleUpdater
     public override void UpdateDatabaseAfterUpdateSchema()
     {
         base.UpdateDatabaseAfterUpdateSchema();
-        //string name = "MyName";
-        //DomainObject1 theObject = ObjectSpace.FirstOrDefault<DomainObject1>(u => u.Name == name);
-        //if(theObject == null) {
-        //    theObject = ObjectSpace.CreateObject<DomainObject1>();
-        //    theObject.Name = name;
-        //}
+
         if (!ObjectSpace.CanInstantiate(typeof(ApplicationUser))) return;
 
-#if DEBUG
-        if (TenantName == null)
-        {
-            _ = CreateTenant("demo", "erp_demo");
-            ObjectSpace.CommitChanges();
-        }
-#endif
+        new TenantSetupService(ObjectSpace).CreateInitialTenants(TenantName);
 
         new SecuritySetupService(ObjectSpace).CreateRolesAndUsers(TenantName);
 
@@ -62,19 +51,5 @@ public class Updater : ModuleUpdater
         //if(CurrentDBVersion < new Version("1.1.0.0") && CurrentDBVersion > new Version("0.0.0.0")) {
         //    RenameColumn("DomainObject1Table", "OldColumnName", "NewColumnName");
         //}
-    }
-
-    private Tenant CreateTenant(string tenantName, string databaseName)
-    {
-        var tenant = ObjectSpace.FirstOrDefault<Tenant>(t => t.Name == tenantName);
-        if (tenant == null)
-        {
-            tenant = ObjectSpace.CreateObject<Tenant>();
-            tenant.Name = tenantName;
-            tenant.ConnectionString =
-                $"XpoProvider=Postgres;Server=db-local;User ID=postgres;Password=;database={databaseName}";
-        }
-
-        return tenant;
     }
 }
