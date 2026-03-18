@@ -4,7 +4,7 @@ using DevExpress.Xpo;
 using DevExpress.Xpo.DB.Exceptions;
 using erp.Module.BusinessObjects.Configuraciones;
 
-namespace erp.Module.Services.Sequences;
+namespace erp.Module.Services.Secuencias;
 
 public class SequenceService(Session session)
 {

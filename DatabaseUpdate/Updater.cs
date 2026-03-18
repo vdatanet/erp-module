@@ -34,6 +34,7 @@ public class Updater : ModuleUpdater
         if (TenantId != null)
         {
             new CuentaSetupService(ObjectSpace).CreateInitialCuentas();
+            new ImpuestoSetupService(ObjectSpace).CreateInitialImpuestos();
             new InformacionEmpresaSetupService(ObjectSpace).CreateInitialInformacionEmpresa();
         }
 
