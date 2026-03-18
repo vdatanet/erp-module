@@ -31,20 +31,13 @@ public class Updater : ModuleUpdater
 
         new SecuritySetupService(ObjectSpace).CreateRolesAndUsers(TenantName);
 
-        new CuentaSetupService(ObjectSpace).CreateInitialCuentas();
-
-        ObjectSpace.CommitChanges(); //This line persists created object(s).
         if (TenantId != null)
         {
-            var informacionEmpresa = ObjectSpace.FirstOrDefault<InformacionEmpresa>(i => true);
-            if (informacionEmpresa == null)
-            {
-                informacionEmpresa = ObjectSpace.CreateObject<InformacionEmpresa>();
-                informacionEmpresa.Nombre = "Empresa por Defecto";
-                informacionEmpresa.Nif = "B00000000";
-                ObjectSpace.CommitChanges();
-            }
+            new CuentaSetupService(ObjectSpace).CreateInitialCuentas();
+            new InformacionEmpresaSetupService(ObjectSpace).CreateInitialInformacionEmpresa();
         }
+
+        ObjectSpace.CommitChanges(); //This line persists created object(s).
     }
 
     public override void UpdateDatabaseBeforeUpdateSchema()
