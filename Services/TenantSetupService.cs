@@ -17,7 +17,7 @@ public class TenantSetupService(IObjectSpace objectSpace)
             {
                 "Postgres" => $"XpoProvider=Postgres;Server=db-local;User ID=postgres;Password=;database={databaseName}",
                 "MSSqlServer" => $"XpoProvider=MSSqlServer;data source=(localdb)\\mssqllocaldb;integrated security=SSPI;initial catalog={databaseName}",
-                "MySql" => $"XpoProvider=MySql;Server=db-local;User ID=root;Password=;database={databaseName}",
+                "MySql" => $"XpoProvider=MySql;Server=db-local;User ID=devuser;Password=;database={databaseName}",
                 _ => $"XpoProvider=Postgres;Server=db-local;User ID=postgres;Password=;database={databaseName}"
             };
             
