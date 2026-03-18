@@ -1,5 +1,5 @@
 using DevExpress.Xpo;
-using erp.Module.Services;
+using erp.Module.Services.Sequences;
 
 namespace erp.Module.Factories;
 

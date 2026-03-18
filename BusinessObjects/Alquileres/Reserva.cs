@@ -6,7 +6,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.Factories;
-using erp.Module.Services;
+using erp.Module.Services.Reserva;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.BusinessObjects.Alquileres;

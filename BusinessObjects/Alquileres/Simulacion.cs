@@ -4,7 +4,7 @@ using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
-using erp.Module.Services;
+using erp.Module.Services.Reserva;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.BusinessObjects.Alquileres;

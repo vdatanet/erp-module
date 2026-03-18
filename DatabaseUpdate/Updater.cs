@@ -4,7 +4,7 @@ using DevExpress.ExpressApp.Updating;
 using DevExpress.Persistent.BaseImpl.MultiTenancy;
 using erp.Module.BusinessObjects;
 using erp.Module.BusinessObjects.Configuraciones;
-using erp.Module.Services;
+using erp.Module.Services.Setup;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.DatabaseUpdate;
