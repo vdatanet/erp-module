@@ -16,7 +16,7 @@ public class TenantSetupService(IObjectSpace objectSpace)
             var connectionString = provider switch
             {
                 "Postgres" => $"XpoProvider=Postgres;Server=db-local;User ID=postgres;Password=;database={databaseName}",
-                "MSSqlServer" => $"XpoProvider=MSSqlServer;data source=(localdb)\\mssqllocaldb;integrated security=SSPI;initial catalog={databaseName}",
+                "MSSqlServer" => $"XpoProvider=MSSqlServer;data source=.\\SQLEXPRESS;integrated security=SSPI;initial catalog={databaseName};TrustServerCertificate=True",
                 "MySql" => $"XpoProvider=MySql;Server=db-local;User ID=devuser;Password=;database={databaseName}",
                 _ => $"XpoProvider=Postgres;Server=db-local;User ID=postgres;Password=;database={databaseName}"
             };
