@@ -32,7 +32,7 @@ public class TenantSetupService(IObjectSpace objectSpace)
 #if DEBUG
         if (currentTenantName == null)
         {
-            _ = CreateTenant("demo-postgres", "erp_demo_postgres", "Postgres");
+            _ = CreateTenant("demo", "erp_demo", "Postgres");
             _ = CreateTenant("demo-mssql", "erp_demo_mssql", "MSSqlServer");
             _ = CreateTenant("demo-mysql", "erp_demo_mysql", "MySql");
             objectSpace.CommitChanges();
