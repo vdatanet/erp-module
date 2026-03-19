@@ -28,16 +28,4 @@ public class TenantSetupService(IObjectSpace objectSpace)
 
         return tenant;
     }
-
-    public void CreateInitialTenants(string? currentTenantName)
-    {
-#if DEBUG
-        if (currentTenantName == null)
-        {
-            _ = CreateTenant("demo", "erp_demo");
-            _ = CreateTenant("demo-mssql", "erp_demo_mssql", "MSSqlServer");
-            _ = CreateTenant("demo-mysql", "erp_demo_mysql", "MySql");
-        }
-#endif
-    }
 }

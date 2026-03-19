@@ -19,6 +19,7 @@ using erp.Module.BusinessObjects.Produccion;
 using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Tpv;
 using erp.Module.BusinessObjects.Ventas;
+using erp.Module.Helpers.Comun;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.Services.Setup;
@@ -28,88 +29,89 @@ public class SecuritySetupService(IObjectSpace objectSpace)
     public void CreateRolesAndUsers(string? tenantName)
     {
         var adminRole = CreateAdminRole();
-        var imprentaRole = CreateImprentaRole();
-        var contactosRole = CreateContactosRole();
-        var ventasRole = CreateVentasRole();
-        var comprasRole = CreateComprasRole();
-        var produccionRole = CreateProduccionRole();
-        var tpvRole = CreateTpvRole();
-        var contabilidadRole = CreateContabilidadRole();
-        var auxiliaresRole = CreateAuxiliaresRole();
-        var configuracionesRole = CreateConfiguracionesRole();
-        var controlHorarioRole = CreateControlHorarioRole();
-        var crmRole = CreateCrmRole();
-        var impuestosRole = CreateImpuestosRole();
-        var productosRole = CreateProductosRole();
-        var alquileresRole = CreateAlquileresRole();
-        var reportsRole = CreateReportsRole();
-
-        Console.WriteLine("[DEBUG_LOG] Roles base creados/obtenidos. Obteniendo UserManager...");
-        var userManager = objectSpace.ServiceProvider?.GetService<UserManager>();
-
-        if (userManager == null)
-        {
-            Console.WriteLine("[DEBUG_LOG] UserManager es nulo. No se pueden crear usuarios.");
-            return;
-        }
-        Console.WriteLine("[DEBUG_LOG] UserManager obtenido.");
-
+        
+        // Solo creamos roles funcionales y usuario de tenant si NO estamos en el host
         if (tenantName != null)
         {
-            var defaultRole = CreateDefaultRole();
-            var imprentaRole_User = CreateImprentaRole();
-            var contactosRole_User = CreateContactosRole();
-            var ventasRole_User = CreateVentasRole();
-            var comprasRole_User = CreateComprasRole();
-            var produccionRole_User = CreateProduccionRole();
-            var tpvRole_User = CreateTpvRole();
-            var contabilidadRole_User = CreateContabilidadRole();
-            var auxiliaresRole_User = CreateAuxiliaresRole();
-            var configuracionesRole_User = CreateConfiguracionesRole();
-            var controlHorarioRole_User = CreateControlHorarioRole();
-            var crmRole_User = CreateCrmRole();
-            var impuestosRole_User = CreateImpuestosRole();
-            var productosRole_User = CreateProductosRole();
-            var alquileresRole_User = CreateAlquileresRole();
-            var reportsRole_User = CreateReportsRole();
+            var imprentaRole = CreateImprentaRole();
+            var contactosRole = CreateContactosRole();
+            var ventasRole = CreateVentasRole();
+            var comprasRole = CreateComprasRole();
+            var produccionRole = CreateProduccionRole();
+            var tpvRole = CreateTpvRole();
+            var contabilidadRole = CreateContabilidadRole();
+            var auxiliaresRole = CreateAuxiliaresRole();
+            var configuracionesRole = CreateConfiguracionesRole();
+            var controlHorarioRole = CreateControlHorarioRole();
+            var crmRole = CreateCrmRole();
+            var impuestosRole = CreateImpuestosRole();
+            var productosRole = CreateProductosRole();
+            var alquileresRole = CreateAlquileresRole();
+            var reportsRole = CreateReportsRole();
 
+            Console.WriteLine("[DEBUG_LOG] Roles base creados/obtenidos. Intentando obtener UserManager...");
+            var userManagerTenant = objectSpace.ServiceProvider?.GetService<UserManager>();
+
+            var defaultRole = CreateDefaultRole();
             var userName = $"User@{tenantName}";
-            if (userManager.FindUserByName<ApplicationUser>(objectSpace, userName) == null)
+            
+            var user = objectSpace.FirstOrDefault<ApplicationUser>(u => u.UserName == userName);
+            if (user == null)
             {
-                var EmptyPassword = "";
-                _ = userManager.CreateUser<ApplicationUser>(objectSpace, userName, EmptyPassword, user =>
+                var emptyPassword = "";
+                if (userManagerTenant != null)
                 {
+                    _ = userManagerTenant.CreateUser<ApplicationUser>(objectSpace, userName, emptyPassword, u =>
+                    {
+                        u.ChangePasswordOnFirstLogon = true;
+                        AddTenantRoles(u, defaultRole, imprentaRole, contactosRole, ventasRole, comprasRole, produccionRole, tpvRole, contabilidadRole, auxiliaresRole, configuracionesRole, controlHorarioRole, crmRole, impuestosRole, productosRole, alquileresRole, reportsRole);
+                    });
+                }
+                else
+                {
+                    user = objectSpace.CreateObject<ApplicationUser>();
+                    user.UserName = userName;
+                    user.SetPassword(DevExpressPasswordHelper.HashPassword(emptyPassword));
                     user.ChangePasswordOnFirstLogon = true;
-                    user.Roles.Add(defaultRole);
-                    user.Roles.Add(imprentaRole_User);
-                    user.Roles.Add(contactosRole_User);
-                    user.Roles.Add(ventasRole_User);
-                    user.Roles.Add(comprasRole_User);
-                    user.Roles.Add(produccionRole_User);
-                    user.Roles.Add(tpvRole_User);
-                    user.Roles.Add(contabilidadRole_User);
-                    user.Roles.Add(auxiliaresRole_User);
-                    user.Roles.Add(configuracionesRole_User);
-                    user.Roles.Add(controlHorarioRole_User);
-                    user.Roles.Add(crmRole_User);
-                    user.Roles.Add(impuestosRole_User);
-                    user.Roles.Add(productosRole_User);
-                    user.Roles.Add(alquileresRole_User);
-                    user.Roles.Add(reportsRole_User);
-                });
+                    AddTenantRoles(user, defaultRole, imprentaRole, contactosRole, ventasRole, comprasRole, produccionRole, tpvRole, contabilidadRole, auxiliaresRole, configuracionesRole, controlHorarioRole, crmRole, impuestosRole, productosRole, alquileresRole, reportsRole);
+                }
             }
         }
 
         var adminUserName = tenantName != null ? $"Admin@{tenantName}" : "Admin";
-        if (userManager.FindUserByName<ApplicationUser>(objectSpace, adminUserName) == null)
+        var adminUser = objectSpace.FirstOrDefault<ApplicationUser>(u => u.UserName == adminUserName);
+        if (adminUser == null)
         {
-            var EmptyPassword = "";
-            _ = userManager.CreateUser<ApplicationUser>(objectSpace, adminUserName, EmptyPassword,
-                user =>
-                {
-                    user.ChangePasswordOnFirstLogon = true;
-                    user.Roles.Add(adminRole);
-                });
+            var userManager = objectSpace.ServiceProvider?.GetService<UserManager>();
+            var emptyPassword = "";
+            if (userManager != null)
+            {
+                _ = userManager.CreateUser<ApplicationUser>(objectSpace, adminUserName, emptyPassword,
+                    u =>
+                    {
+                        u.ChangePasswordOnFirstLogon = true;
+                        u.Roles.Add(adminRole);
+                    });
+            }
+            else
+            {
+                adminUser = objectSpace.CreateObject<ApplicationUser>();
+                adminUser.UserName = adminUserName;
+                adminUser.SetPassword(DevExpressPasswordHelper.HashPassword(emptyPassword));
+                adminUser.ChangePasswordOnFirstLogon = true;
+                adminUser.Roles.Add(adminRole);
+            }
+        }
+    }
+
+    private void AddTenantRoles(ApplicationUser user, params PermissionPolicyRole[] roles)
+    {
+        foreach (var role in roles)
+        {
+            if (role != null)
+            {
+                user.Roles.Add(role);
+            }
         }
     }
 

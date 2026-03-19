@@ -32,10 +32,9 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
         }
 
         try {
-            new TenantSetupService(objectSpace).CreateInitialTenants(tenantName ?? "Default");
-            new SecuritySetupService(objectSpace).CreateRolesAndUsers(tenantName ?? "Default");
+            new SecuritySetupService(objectSpace).CreateRolesAndUsers(tenantName);
             
-            if (tenantId != null)
+            if (tenantId != null || tenantName != null)
             {
                 new CuentaSetupService(objectSpace).CreateInitialCuentas();
                 new ImpuestoSetupService(objectSpace).CreateInitialImpuestos();
