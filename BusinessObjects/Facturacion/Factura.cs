@@ -9,7 +9,7 @@ namespace erp.Module.BusinessObjects.Facturacion;
 
 [DefaultClassOptions]
 [NavigationItem("Facturacion")]
-[ImageName("BO_Factura")]
+[ImageName("BO_Invoice")]
 [DefaultProperty(nameof(Secuencia))]
 public class Factura(Session session) : FacturaBase(session)
 {
