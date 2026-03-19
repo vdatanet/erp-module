@@ -37,6 +37,9 @@ public sealed class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLog
         set => SetPropertyValue(nameof(LockoutEnd), ref lockoutEnd, value);
     }
 
+    [Browsable(false)]
+    public string Password => StoredPassword;
+
     IEnumerable<ISecurityUserLoginInfo> IOAuthSecurityUser.UserLogins => LoginInfo.OfType<ISecurityUserLoginInfo>();
 
     ISecurityUserLoginInfo ISecurityUserWithLoginInfo.CreateUserLoginInfo(string loginProviderName,
