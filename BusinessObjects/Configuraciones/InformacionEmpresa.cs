@@ -36,11 +36,14 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     private string? _nombreArchivoConfigVeriFactu;
     private string? _nombreSistemaVeriFactu;
     private PosicionFiscal? _posicionFiscalPorDefecto;
+    private string? _prefijoAlbaranesCompraPorDefecto;
     private string? _prefijoFacturasCompraPorDefecto;
     private string? _prefijoFacturasSimplificadasPorDefecto;
     private string? _prefijoFacturasVentaPorDefecto;
     private string? _prefijoPartesDiariosPorDefecto;
+    private string? _prefijoPedidosCompraPorDefecto;
     private string? _prefijoPedidosPorDefecto;
+    private string? _prefijoPresupuestosCompraPorDefecto;
     private string? _prefijoPresupuestosPorDefecto;
     private string? _prefijoUrlValidacionVeriFactu;
     private string? _prefijoUrlVeriFactu;
@@ -146,6 +149,27 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     {
         get => _prefijoFacturasCompraPorDefecto;
         set => SetPropertyValue(nameof(PrefijoFacturasCompraPorDefecto), ref _prefijoFacturasCompraPorDefecto, value);
+    }
+
+    [XafDisplayName("Prefijo Pedidos Compra")]
+    public string? PrefijoPedidosCompraPorDefecto
+    {
+        get => _prefijoPedidosCompraPorDefecto;
+        set => SetPropertyValue(nameof(PrefijoPedidosCompraPorDefecto), ref _prefijoPedidosCompraPorDefecto, value);
+    }
+
+    [XafDisplayName("Prefijo Presupuestos Compra")]
+    public string? PrefijoPresupuestosCompraPorDefecto
+    {
+        get => _prefijoPresupuestosCompraPorDefecto;
+        set => SetPropertyValue(nameof(PrefijoPresupuestosCompraPorDefecto), ref _prefijoPresupuestosCompraPorDefecto, value);
+    }
+
+    [XafDisplayName("Prefijo Albaranes Compra")]
+    public string? PrefijoAlbaranesCompraPorDefecto
+    {
+        get => _prefijoAlbaranesCompraPorDefecto;
+        set => SetPropertyValue(nameof(PrefijoAlbaranesCompraPorDefecto), ref _prefijoAlbaranesCompraPorDefecto, value);
     }
 
     [XafDisplayName("Prefijo Pedidos")]

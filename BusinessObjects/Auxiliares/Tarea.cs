@@ -7,6 +7,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Base.Compras;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
@@ -52,6 +53,7 @@ public class Tarea(Session session) : EntidadBase(session)
     private Empleado? _asignadaA;
     private Empleado? _completadaPor;
     private Contacto? _contacto;
+    private DocumentoCompra? _documentoCompra;
     private DocumentoVenta? _documentoVenta;
     private EstadoTarea _estado;
     private DateTime _fechaFin;
@@ -197,6 +199,14 @@ public class Tarea(Session session) : EntidadBase(session)
     {
         get => _documentoVenta;
         set => SetPropertyValue(nameof(DocumentoVenta), ref _documentoVenta, value);
+    }
+
+    [Association("DocumentoCompra-Tareas")]
+    [XafDisplayName("Documento Compra")]
+    public DocumentoCompra? DocumentoCompra
+    {
+        get => _documentoCompra;
+        set => SetPropertyValue(nameof(DocumentoCompra), ref _documentoCompra, value);
     }
 
     [Association("Oportunidad-Tareas")]

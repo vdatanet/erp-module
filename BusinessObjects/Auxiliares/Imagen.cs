@@ -3,6 +3,7 @@ using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Base.Compras;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
@@ -24,6 +25,7 @@ public class Imagen(Session session) : EntidadBase(session)
     private string? _notas;
     private Oportunidad? _opportunity;
     private Producto? _product;
+    private DocumentoCompra? _purchaseDocument;
     private DocumentoVenta? _salesDocument;
     private Tarea? _task;
 
@@ -72,6 +74,14 @@ public class Imagen(Session session) : EntidadBase(session)
     {
         get => _salesDocument;
         set => SetPropertyValue(nameof(DocumentoVenta), ref _salesDocument, value);
+    }
+
+    [Association("DocumentoCompra-Fotos")]
+    [XafDisplayName("Documento Compra")]
+    public DocumentoCompra? DocumentoCompra
+    {
+        get => _purchaseDocument;
+        set => SetPropertyValue(nameof(DocumentoCompra), ref _purchaseDocument, value);
     }
 
     [Association("Tarea-Fotos")]
