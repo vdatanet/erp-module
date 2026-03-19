@@ -44,12 +44,15 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         var alquileresRole = CreateAlquileresRole();
         var reportsRole = CreateReportsRole();
 
+        Console.WriteLine("[DEBUG_LOG] Roles base creados/obtenidos. Obteniendo UserManager...");
         var userManager = objectSpace.ServiceProvider?.GetService<UserManager>();
 
         if (userManager == null)
         {
+            Console.WriteLine("[DEBUG_LOG] UserManager es nulo. No se pueden crear usuarios.");
             return;
         }
+        Console.WriteLine("[DEBUG_LOG] UserManager obtenido.");
 
         if (tenantName != null)
         {
