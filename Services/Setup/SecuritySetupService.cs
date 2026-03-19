@@ -66,6 +66,9 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             var alquileresRole_User = CreateAlquileresRole();
             var reportsRole_User = CreateReportsRole();
 
+            /* 
+            // Comentamos la creación automática del usuario para que el usuario pueda crearlos manualmente
+            // tal como se solicita en el issue.
             var userName = $"User@{tenantName}";
             
             if (userManager != null)
@@ -129,8 +132,12 @@ public class SecuritySetupService(IObjectSpace objectSpace)
                     ((ISecurityUserWithLoginInfo)user).CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, userName);
                 }
             }
+            */
         }
 
+        /*
+        // Comentamos la creación automática del Admin para que el usuario pueda crearlos manualmente
+        // tal como se solicita en el issue.
         var adminUserName = tenantName != null ? $"Admin@{tenantName}" : "Admin";
         
         if (userManager != null)
@@ -164,15 +171,16 @@ public class SecuritySetupService(IObjectSpace objectSpace)
                 ((ISecurityUserWithLoginInfo)adminUser).CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, adminUserName);
             }
         }
+        */
     }
 
     private PermissionPolicyRole CreateAdminRole()
     {
-        var adminRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(r => r.Name == "Administrators");
+        var adminRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(r => r.Name == "Administradores");
         if (adminRole == null)
         {
             adminRole = objectSpace.CreateObject<PermissionPolicyRole>();
-            adminRole.Name = "Administrators";
+            adminRole.Name = "Administradores";
         }
 
         adminRole.IsAdministrative = true;
@@ -181,11 +189,11 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     private PermissionPolicyRole CreateDefaultRole()
     {
-        var defaultRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Default");
+        var defaultRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Predeterminado");
         if (defaultRole == null)
         {
             defaultRole = objectSpace.CreateObject<PermissionPolicyRole>();
-            defaultRole.Name = "Default";
+            defaultRole.Name = "Predeterminado";
         }
 
         defaultRole.AddObjectPermission<ApplicationUser>(SecurityOperations.Read,
