@@ -3,7 +3,7 @@ using DevExpress.ExpressApp.Actions;
 using DevExpress.Persistent.Base;
 using erp.Module.Services.Facturacion;
 using Microsoft.Extensions.DependencyInjection;
-using FacturaBase = erp.Module.BusinessObjects.Facturacion.FacturaBase;
+using FacturaBase = erp.Module.BusinessObjects.Base.Facturacion.FacturaBase;
 
 namespace erp.Module.Controllers.Facturacion;
 

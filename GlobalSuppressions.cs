@@ -48,6 +48,10 @@ using System.Diagnostics.CodeAnalysis;
 [assembly:
     SuppressMessage("Naming", "CA1716:Identifiers should not match keywords",
         Justification = "The project uses 'Module' as part of its core naming convention.", Scope = "namespace",
+        Target = "~N:erp.Module.BusinessObjects.Base.Facturacion")]
+[assembly:
+    SuppressMessage("Naming", "CA1716:Identifiers should not match keywords",
+        Justification = "The project uses 'Module' as part of its core naming convention.", Scope = "namespace",
         Target = "~N:erp.Module.BusinessObjects.Facturacion")]
 [assembly:
     SuppressMessage("Naming", "CA1716:Identifiers should not match keywords",

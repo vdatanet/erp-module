@@ -8,7 +8,7 @@ using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.Helpers.Contactos;
 using VeriFactu.Xml.Factu.Alta;
 
-namespace erp.Module.BusinessObjects.Facturacion;
+namespace erp.Module.BusinessObjects.Base.Facturacion;
 
 [Appearance("BlockEditingWhenSent", AppearanceItemType = "ViewItem", TargetItems = "*",
     Criteria = "EstadoVeriFactu = 'Enviado'", Context = "Any", Enabled = false)]
