@@ -17,6 +17,8 @@ using erp.Module.BusinessObjects.ControlHorario;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.BusinessObjects.Productos;
+using erp.Module.BusinessObjects.Compras;
+using erp.Module.BusinessObjects.Produccion;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.Services.Setup;
@@ -29,6 +31,8 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         var imprentaRole = CreateImprentaRole();
         var contactosRole = CreateContactosRole();
         var ventasRole = CreateVentasRole();
+        var comprasRole = CreateComprasRole();
+        var produccionRole = CreateProduccionRole();
         var tpvRole = CreateTpvRole();
         var contabilidadRole = CreateContabilidadRole();
         var auxiliaresRole = CreateAuxiliaresRole();
@@ -48,6 +52,8 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             var imprentaRole_User = CreateImprentaRole();
             var contactosRole_User = CreateContactosRole();
             var ventasRole_User = CreateVentasRole();
+            var comprasRole_User = CreateComprasRole();
+            var produccionRole_User = CreateProduccionRole();
             var tpvRole_User = CreateTpvRole();
             var contabilidadRole_User = CreateContabilidadRole();
             var auxiliaresRole_User = CreateAuxiliaresRole();
@@ -70,6 +76,8 @@ public class SecuritySetupService(IObjectSpace objectSpace)
                     user.Roles.Add(imprentaRole_User);
                     user.Roles.Add(contactosRole_User);
                     user.Roles.Add(ventasRole_User);
+                    user.Roles.Add(comprasRole_User);
+                    user.Roles.Add(produccionRole_User);
                     user.Roles.Add(tpvRole_User);
                     user.Roles.Add(contabilidadRole_User);
                     user.Roles.Add(auxiliaresRole_User);
@@ -217,6 +225,43 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         ventasRole.AddNavigationPermission(@"Application/NavigationItems/Items/Ventas", SecurityPermissionState.Allow);
 
         return ventasRole;
+    }
+
+    private PermissionPolicyRole CreateComprasRole()
+    {
+        var comprasRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Compras");
+        if (comprasRole == null)
+        {
+            comprasRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            comprasRole.Name = "Compras";
+        }
+
+        comprasRole.AddTypePermissionsRecursively<PedidoCompra>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        comprasRole.AddTypePermissionsRecursively<AlbaranCompra>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        comprasRole.AddTypePermissionsRecursively<PresupuestoCompra>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        comprasRole.AddTypePermissionsRecursively<FacturaCompra>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+
+        comprasRole.AddNavigationPermission(@"Application/NavigationItems/Items/Compras", SecurityPermissionState.Allow);
+
+        return comprasRole;
+    }
+
+    private PermissionPolicyRole CreateProduccionRole()
+    {
+        var produccionRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Producción");
+        if (produccionRole == null)
+        {
+            produccionRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            produccionRole.Name = "Producción";
+        }
+
+        produccionRole.AddTypePermissionsRecursively<Parte>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+
+        produccionRole.AddNavigationPermission(@"Application/NavigationItems/Items/Producción", SecurityPermissionState.Allow);
+
+        return produccionRole;
     }
 
     private PermissionPolicyRole CreateTpvRole()
