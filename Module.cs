@@ -17,6 +17,8 @@ using DevExpress.ExpressApp.Validation;
 using DevExpress.ExpressApp.ViewVariantsModule;
 using DevExpress.ExpressApp.Xpo;
 using DevExpress.Persistent.BaseImpl;
+using DevExpress.ExpressApp.MultiTenancy;
+using Microsoft.Extensions.DependencyInjection;
 using Updater = erp.Module.DatabaseUpdate.Updater;
 
 namespace erp.Module;
@@ -55,7 +57,22 @@ public sealed class erpModule : ModuleBase
 
     public override IEnumerable<ModuleUpdater> GetModuleUpdaters(IObjectSpace objectSpace, Version versionFromDB)
     {
-        ModuleUpdater updater = new Updater(objectSpace, versionFromDB);
+        var updater = new Updater(objectSpace, versionFromDB);
+
+        try
+        {
+            var tenantProvider = objectSpace.ServiceProvider?.GetService<ITenantProvider>();
+            if (tenantProvider != null)
+            {
+                updater.TenantIdOverride = tenantProvider.TenantId;
+                updater.TenantNameOverride = tenantProvider.TenantName;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[DEBUG_LOG] Error al intentar obtener ITenantProvider en GetModuleUpdaters: {ex.Message}");
+        }
+
         return new[] { updater };
     }
 

@@ -15,28 +15,18 @@ public class Updater : ModuleUpdater
     {
     }
 
-    private Guid? TenantId => ObjectSpace.ServiceProvider.GetRequiredService<ITenantProvider>().TenantId;
+    public Guid? TenantIdOverride { get; set; }
+    public string? TenantNameOverride { get; set; }
 
-    private string TenantName => ObjectSpace.ServiceProvider.GetRequiredService<ITenantProvider>().TenantName;
+    private Guid? TenantId => TenantIdOverride ?? ObjectSpace.ServiceProvider?.GetService<ITenantProvider>()?.TenantId;
+
+    private string? TenantName => TenantNameOverride ?? ObjectSpace.ServiceProvider?.GetService<ITenantProvider>()?.TenantName;
 
     public override void UpdateDatabaseAfterUpdateSchema()
     {
+        Console.WriteLine($"[DEBUG_LOG] Iniciando UpdateDatabaseAfterUpdateSchema para Tenant: {TenantName ?? "N/A"}");
         base.UpdateDatabaseAfterUpdateSchema();
-
-        if (!ObjectSpace.CanInstantiate(typeof(ApplicationUser))) return;
-
-        new TenantSetupService(ObjectSpace).CreateInitialTenants(TenantName);
-
-        new SecuritySetupService(ObjectSpace).CreateRolesAndUsers(TenantName);
-
-        if (TenantId != null)
-        {
-            new CuentaSetupService(ObjectSpace).CreateInitialCuentas();
-            new ImpuestoSetupService(ObjectSpace).CreateInitialImpuestos();
-            new InformacionEmpresaSetupService(ObjectSpace).CreateInitialInformacionEmpresa();
-        }
-
-        ObjectSpace.CommitChanges(); //This line persists created object(s).
+        Console.WriteLine("[DEBUG_LOG] UpdateDatabaseAfterUpdateSchema finalizado. La siembra de datos se realizará externamente si es necesario.");
     }
 
     public override void UpdateDatabaseBeforeUpdateSchema()

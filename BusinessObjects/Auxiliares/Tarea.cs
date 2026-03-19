@@ -258,15 +258,22 @@ public class Tarea(Session session) : EntidadBase(session)
             throw new UserFriendlyException("La Fecha de inicio no puede ser posterior a la Fecha de fin.");
 
         if (Propietario == null)
-            // No usamos SecuredPropertySetter aquí para evitar dependencia; es suficiente asignar directamente
-            SetPropertyValue(nameof(Propietario), ref _propietario, GetCurrentEmpleado());
+            Propietario = GetCurrentEmpleado();
 
         base.OnSaving();
     }
 
-    private Empleado GetCurrentEmpleado()
+    private Empleado? GetCurrentEmpleado()
     {
-        var userId = Session.ServiceProvider.GetRequiredService<ISecurityStrategyBase>().UserId;
-        return Session.FindObject<Empleado>(new BinaryOperator("Usuario.Oid", userId));
+        try
+        {
+            var security = Session.ServiceProvider?.GetService<ISecurityStrategyBase>();
+            if (security == null || security.UserId == null) return null;
+            return Session.FindObject<Empleado>(new BinaryOperator("Usuario.Oid", security.UserId));
+        }
+        catch
+        {
+            return null;
+        }
     }
 }

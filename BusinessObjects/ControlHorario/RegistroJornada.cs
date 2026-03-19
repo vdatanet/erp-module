@@ -172,8 +172,16 @@ public class RegistroJornada(Session session) : EntidadBase(session)
 
     private void InitValues()
     {
-        var userId = Session.ServiceProvider.GetRequiredService<ISecurityStrategyBase>().UserId;
-        if (userId != null) Empleado = Session.FindObject<Empleado>(new BinaryOperator("Usuario.Oid", userId));
+        try
+        {
+            var security = Session.ServiceProvider?.GetService<ISecurityStrategyBase>();
+            if (security == null || security.UserId == null) return;
+            Empleado = Session.FindObject<Empleado>(new BinaryOperator("Usuario.Oid", security.UserId));
+        }
+        catch
+        {
+            // Ignorar en contextos sin seguridad o actualización de BD
+        }
     }
 
     protected override void OnSaving()
@@ -189,10 +197,18 @@ public class RegistroJornada(Session session) : EntidadBase(session)
             : TimeSpan.Zero;
     }
 
-    private ApplicationUser GetCurrentUser()
+    private ApplicationUser? GetCurrentUser()
     {
-        return Session.GetObjectByKey<ApplicationUser>(
-            Session.ServiceProvider.GetRequiredService<ISecurityStrategyBase>().UserId);
+        try
+        {
+            var security = Session.ServiceProvider?.GetService<ISecurityStrategyBase>();
+            if (security == null || security.UserId == null) return null;
+            return Session.GetObjectByKey<ApplicationUser>(security.UserId);
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     private void ActualizarUbicacionInicio()

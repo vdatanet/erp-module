@@ -44,7 +44,13 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         var alquileresRole = CreateAlquileresRole();
         var reportsRole = CreateReportsRole();
 
-        var userManager = objectSpace.ServiceProvider.GetRequiredService<UserManager>();
+        var userManager = objectSpace.ServiceProvider?.GetService<UserManager>();
+
+        if (userManager == null)
+        {
+            Console.WriteLine("[DEBUG_LOG] UserManager no disponible en el ServiceProvider. No se pueden crear usuarios.");
+            return;
+        }
 
         if (tenantName != null)
         {
@@ -127,15 +133,15 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             defaultRole.Name = "Default";
         }
 
-        defaultRole.AddObjectPermissionFromLambda<ApplicationUser>(SecurityOperations.Read,
-            cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
+        defaultRole.AddObjectPermission<ApplicationUser>(SecurityOperations.Read,
+            "Oid = CurrentUserId()", SecurityPermissionState.Allow);
         defaultRole.AddNavigationPermission(@"Application/NavigationItems/Items/Default/Items/MyDetails",
             SecurityPermissionState.Allow);
-        defaultRole.AddMemberPermissionFromLambda<ApplicationUser>(SecurityOperations.Write,
-            "ChangePasswordOnFirstLogon", cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(),
+        defaultRole.AddMemberPermission<ApplicationUser>(SecurityOperations.Write,
+            "ChangePasswordOnFirstLogon", "Oid = CurrentUserId()",
             SecurityPermissionState.Allow);
-        defaultRole.AddMemberPermissionFromLambda<ApplicationUser>(SecurityOperations.Write, "StoredPassword",
-            cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
+        defaultRole.AddMemberPermission<ApplicationUser>(SecurityOperations.Write, "StoredPassword",
+            "Oid = CurrentUserId()", SecurityPermissionState.Allow);
         defaultRole.AddTypePermissionsRecursively<PermissionPolicyRole>(SecurityOperations.Read,
             SecurityPermissionState.Deny);
         defaultRole.AddObjectPermission<ModelDifference>(SecurityOperations.ReadWriteAccess,

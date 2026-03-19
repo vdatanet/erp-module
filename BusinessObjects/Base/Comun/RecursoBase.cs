@@ -63,21 +63,41 @@ public abstract class RecursoBase(Session session) : Resource(session)
     protected override void OnSaving()
     {
         base.OnSaving();
-        if (Session.IsNewObject(this))
+        try
         {
-            SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(CreadoEl), DateTime.Now);
-            SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(CreadoPor), GetCurrentUser());
+            if (Session.IsNewObject(this))
+            {
+                CreadoEl = DateTime.Now;
+                CreadoPor = GetCurrentUser();
+            }
+            else
+            {
+                ModificadoEl = DateTime.Now;
+                ModificadoPor = GetCurrentUser();
+            }
         }
-        else
+        catch (Exception ex)
         {
-            SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(ModificadoEl), DateTime.Now);
-            SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(ModificadoPor), GetCurrentUser());
+            Console.WriteLine($"[DEBUG_LOG] Error en OnSaving de RecursoBase ({GetType().Name}): {ex.Message}");
         }
     }
 
-    private ApplicationUser GetCurrentUser()
+    private ApplicationUser? GetCurrentUser()
     {
-        return Session.GetObjectByKey<ApplicationUser>(
-            Session.ServiceProvider.GetRequiredService<ISecurityStrategyBase>().UserId);
+        try
+        {
+            var serviceProvider = Session.ServiceProvider;
+            if (serviceProvider == null) return null;
+
+            var security = serviceProvider.GetService<ISecurityStrategyBase>();
+            if (security == null || security.UserId == null) return null;
+
+            return Session.GetObjectByKey<ApplicationUser>(security.UserId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[DEBUG_LOG] Excepción en GetCurrentUser de RecursoBase ({GetType().Name}): {ex.Message}");
+            return null;
+        }
     }
 }

@@ -63,21 +63,57 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
     protected override void OnSaving()
     {
         base.OnSaving();
-        if (Session.IsNewObject(this))
+        try
         {
-            SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(CreadoEl), DateTime.Now);
-            SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(CreadoPor), GetCurrentUser());
+            if (Session.IsNewObject(this))
+            {
+                CreadoEl = DateTime.Now;
+                CreadoPor = GetCurrentUser();
+            }
+            else
+            {
+                ModificadoEl = DateTime.Now;
+                ModificadoPor = GetCurrentUser();
+            }
         }
-        else
+        catch (Exception ex)
         {
-            SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(ModificadoEl), DateTime.Now);
-            SecuredPropertySetter.SetPropertyValueWithSecurityBypass(this, nameof(ModificadoPor), GetCurrentUser());
+            Console.WriteLine($"[DEBUG_LOG] Error en OnSaving de EntidadBase ({GetType().Name}): {ex.Message}");
         }
     }
 
-    private ApplicationUser GetCurrentUser()
+    private ApplicationUser? GetCurrentUser()
     {
-        return Session.GetObjectByKey<ApplicationUser>(
-            Session.ServiceProvider.GetRequiredService<ISecurityStrategyBase>().UserId);
+        try
+        {
+            var serviceProvider = Session.ServiceProvider;
+            if (serviceProvider == null)
+            {
+                // Console.WriteLine("[DEBUG_LOG] GetCurrentUser: ServiceProvider es nulo.");
+                return null;
+            }
+
+            var security = serviceProvider.GetService<ISecurityStrategyBase>();
+            if (security == null)
+            {
+                // Console.WriteLine("[DEBUG_LOG] GetCurrentUser: ISecurityStrategyBase no encontrado.");
+                return null;
+            }
+
+            if (security.UserId == null)
+            {
+                // Console.WriteLine("[DEBUG_LOG] GetCurrentUser: UserId es nulo.");
+                return null;
+            }
+
+            // Aquí es donde podría fallar si UserId no es Guid, 
+            // aunque GetObjectByKey maneja object.
+            return Session.GetObjectByKey<ApplicationUser>(security.UserId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[DEBUG_LOG] Excepción en GetCurrentUser de EntidadBase ({GetType().Name}): {ex.Message}");
+            return null;
+        }
     }
 }
