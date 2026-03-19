@@ -37,8 +37,6 @@ public class Oportunidad(Session session) : EntidadBase(session)
     private string? _notas;
     private double _probabilidad;
     private ApplicationUser? _responsable;
-    private decimal _sumaPedidos;
-    private decimal _sumaPresupuestos;
     private string? _titulo;
     private decimal _valorEstimado;
 
@@ -114,24 +112,6 @@ public class Oportunidad(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(ValorEstimado), ref _valorEstimado, value);
     }
 
-    [XafDisplayName("Suma Presupuestos")]
-    [DbType("decimal(18,2)")]
-    [ModelDefault("AllowEdit", "False")]
-    public decimal SumaPresupuestos
-    {
-        get => _sumaPresupuestos;
-        set => SetPropertyValue(nameof(SumaPresupuestos), ref _sumaPresupuestos, value);
-    }
-
-    [XafDisplayName("Suma Pedidos")]
-    [DbType("decimal(18,2)")]
-    [ModelDefault("AllowEdit", "False")]
-    public decimal SumaPedidos
-    {
-        get => _sumaPedidos;
-        set => SetPropertyValue(nameof(SumaPedidos), ref _sumaPedidos, value);
-    }
-
     [XafDisplayName("Fecha Cierre Estimada")]
     public DateTime FechaCierreEstimada
     {
@@ -153,8 +133,7 @@ public class Oportunidad(Session session) : EntidadBase(session)
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
-
-    [DevExpress.Xpo.Aggregated]
+    
     [Association("Oportunidad-Presupuestos")]
     [XafDisplayName("Presupuestos")]
     public XPCollection<Presupuesto> Presupuestos
@@ -162,12 +141,10 @@ public class Oportunidad(Session session) : EntidadBase(session)
         get
         {
             var collection = GetCollection<Presupuesto>();
-            if (!collection.IsLoaded) collection.CollectionChanged += Presupuestos_CollectionChanged;
             return collection;
         }
     }
-
-    [DevExpress.Xpo.Aggregated]
+    
     [Association("Oportunidad-Pedidos")]
     [XafDisplayName("Pedidos")]
     public XPCollection<Pedido> Pedidos
@@ -175,7 +152,6 @@ public class Oportunidad(Session session) : EntidadBase(session)
         get
         {
             var collection = GetCollection<Pedido>();
-            if (!collection.IsLoaded) collection.CollectionChanged += Pedidos_CollectionChanged;
             return collection;
         }
     }
@@ -193,32 +169,6 @@ public class Oportunidad(Session session) : EntidadBase(session)
     [Association("Oportunidad-Adjuntos")]
     [XafDisplayName("Adjuntos")]
     public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
-
-    public void ActualizarSumaPresupuestos(bool forceChangeEvents)
-    {
-        if (IsLoading || IsSaving) return;
-        var newSuma = MoneyMath.RoundMoney(Presupuestos.Sum(p => p.BaseImponible));
-        if (SumaPresupuestos != newSuma) SumaPresupuestos = newSuma;
-    }
-
-    public void ActualizarSumaPedidos(bool forceChangeEvents)
-    {
-        if (IsLoading || IsSaving) return;
-        var newSuma = MoneyMath.RoundMoney(Pedidos.Sum(p => p.BaseImponible));
-        if (SumaPedidos != newSuma) SumaPedidos = newSuma;
-    }
-
-    private void Presupuestos_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
-    {
-        if (IsLoading || IsSaving || IsDeleted) return;
-        ActualizarSumaPresupuestos(true);
-    }
-
-    private void Pedidos_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
-    {
-        if (IsLoading || IsSaving || IsDeleted) return;
-        ActualizarSumaPedidos(true);
-    }
 
     public override void AfterConstruction()
     {

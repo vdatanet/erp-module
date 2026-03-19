@@ -20,19 +20,8 @@ public class Pedido(Session session) : DocumentoVenta(session)
         get => _oportunidad;
         set
         {
-            var oldOportunidad = _oportunidad;
             if (!SetPropertyValue(nameof(Oportunidad), ref _oportunidad, value) || IsLoading || IsSaving) return;
             if (value != null && value.Cliente != null) Cliente = value.Cliente;
-
-            oldOportunidad?.ActualizarSumaPedidos(true);
-            _oportunidad?.ActualizarSumaPedidos(true);
         }
-    }
-
-    protected override void OnChanged(string propertyName, object oldValue, object newValue)
-    {
-        base.OnChanged(propertyName, oldValue, newValue);
-        if (IsLoading || IsSaving || IsDeleted) return;
-        if (propertyName == nameof(BaseImponible)) Oportunidad?.ActualizarSumaPedidos(true);
     }
 }
