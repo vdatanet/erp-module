@@ -10,7 +10,6 @@ using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Imprenta;
 using erp.Module.BusinessObjects.Tpv;
 using erp.Module.BusinessObjects.Ventas;
-using erp.Module.BusinessObjects.Facturacion;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Configuraciones;
@@ -30,7 +29,6 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         var imprentaRole = CreateImprentaRole();
         var contactosRole = CreateContactosRole();
         var ventasRole = CreateVentasRole();
-        var facturacionRole = CreateFacturacionRole();
         var tpvRole = CreateTpvRole();
         var contabilidadRole = CreateContabilidadRole();
         var auxiliaresRole = CreateAuxiliaresRole();
@@ -50,7 +48,6 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             var imprentaRole_User = CreateImprentaRole();
             var contactosRole_User = CreateContactosRole();
             var ventasRole_User = CreateVentasRole();
-            var facturacionRole_User = CreateFacturacionRole();
             var tpvRole_User = CreateTpvRole();
             var contabilidadRole_User = CreateContabilidadRole();
             var auxiliaresRole_User = CreateAuxiliaresRole();
@@ -73,7 +70,6 @@ public class SecuritySetupService(IObjectSpace objectSpace)
                     user.Roles.Add(imprentaRole_User);
                     user.Roles.Add(contactosRole_User);
                     user.Roles.Add(ventasRole_User);
-                    user.Roles.Add(facturacionRole_User);
                     user.Roles.Add(tpvRole_User);
                     user.Roles.Add(contabilidadRole_User);
                     user.Roles.Add(auxiliaresRole_User);
@@ -212,30 +208,15 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         }
 
         ventasRole.AddTypePermissionsRecursively<Pedido>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        ventasRole.AddTypePermissionsRecursively<Albaran>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
         ventasRole.AddTypePermissionsRecursively<Presupuesto>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        ventasRole.AddTypePermissionsRecursively<Factura>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
 
         ventasRole.AddNavigationPermission(@"Application/NavigationItems/Items/Ventas", SecurityPermissionState.Allow);
 
         return ventasRole;
-    }
-
-    private PermissionPolicyRole CreateFacturacionRole()
-    {
-        var facturacionRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Facturacion");
-        if (facturacionRole == null)
-        {
-            facturacionRole = objectSpace.CreateObject<PermissionPolicyRole>();
-            facturacionRole.Name = "Facturacion";
-        }
-
-        facturacionRole.AddTypePermissionsRecursively<Factura>(SecurityOperations.FullAccess,
-            SecurityPermissionState.Allow);
-
-        facturacionRole.AddNavigationPermission(@"Application/NavigationItems/Items/Facturacion",
-            SecurityPermissionState.Allow);
-
-        return facturacionRole;
     }
 
     private PermissionPolicyRole CreateTpvRole()

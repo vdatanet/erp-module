@@ -5,10 +5,10 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Alquileres;
 
-namespace erp.Module.BusinessObjects.Facturacion;
+namespace erp.Module.BusinessObjects.Ventas;
 
 [DefaultClassOptions]
-[NavigationItem("Facturacion")]
+[NavigationItem("Ventas")]
 [ImageName("BO_Invoice")]
 [DefaultProperty(nameof(Secuencia))]
 public class Factura(Session session) : FacturaBase(session)

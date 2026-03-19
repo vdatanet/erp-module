@@ -5,7 +5,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Base.Facturacion;
-using erp.Module.BusinessObjects.Facturacion;
+using erp.Module.BusinessObjects.Ventas;
 
 namespace erp.Module.BusinessObjects.Alquileres;
 

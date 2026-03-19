@@ -52,10 +52,6 @@ using System.Diagnostics.CodeAnalysis;
 [assembly:
     SuppressMessage("Naming", "CA1716:Identifiers should not match keywords",
         Justification = "The project uses 'Module' as part of its core naming convention.", Scope = "namespace",
-        Target = "~N:erp.Module.BusinessObjects.Facturacion")]
-[assembly:
-    SuppressMessage("Naming", "CA1716:Identifiers should not match keywords",
-        Justification = "The project uses 'Module' as part of its core naming convention.", Scope = "namespace",
         Target = "~N:erp.Module.BusinessObjects.Impuestos")]
 [assembly:
     SuppressMessage("Naming", "CA1716:Identifiers should not match keywords",
@@ -89,14 +85,6 @@ using System.Diagnostics.CodeAnalysis;
     SuppressMessage("Naming", "CA1716:Identifiers should not match keywords",
         Justification = "The project uses 'Module' as part of its core naming convention.", Scope = "namespace",
         Target = "~N:erp.Module.Services.Reserva")]
-[assembly:
-    SuppressMessage("Naming", "CA1716:Identifiers should not match keywords",
-        Justification = "The project uses 'Module' as part of its core naming convention.", Scope = "namespace",
-        Target = "~N:erp.Module.Services.Secuencias")]
-[assembly:
-    SuppressMessage("Naming", "CA1716:Identifiers should not match keywords",
-        Justification = "The project uses 'Module' as part of its core naming convention.", Scope = "namespace",
-        Target = "~N:erp.Module.Services.Facturacion")]
 [assembly:
     SuppressMessage("Naming", "CA1716:Identifiers should not match keywords",
         Justification = "The project uses 'Module' as part of its core naming convention.", Scope = "namespace",

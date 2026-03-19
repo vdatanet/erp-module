@@ -25,9 +25,9 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private string? _secuencia;
     private string? _serie;
 
-    [RuleRequiredField("erp.Module.BusinessObjects.Base.Facturacion.Factura.Cliente_Required", DefaultContexts.Save,
+    [RuleRequiredField("erp.Module.BusinessObjects.Ventas.Factura.Cliente_Required", DefaultContexts.Save,
         TargetCriteria =
-            "IsInstanceOfType(this, 'erp.Module.BusinessObjects.Facturacion.Factura') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Presupuesto')")]
+            "IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Factura') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Presupuesto') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Albaran')")]
     [Association("Cliente-DocumentosVenta")]
     [XafDisplayName("Cliente")]
     public Cliente? Cliente

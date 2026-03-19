@@ -9,7 +9,6 @@ using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Base.Facturacion;
-using erp.Module.BusinessObjects.Facturacion;
 using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.BusinessObjects.Ventas;
 using erp.Module.Helpers.Contactos;
@@ -145,6 +144,9 @@ public class Cliente(Session session) : Tercero(session)
 
     [XafDisplayName("Pedidos")]
     public XPCollection<Pedido> Pedidos => new(Session, CriteriaOperator.Parse("Cliente = ?", this));
+
+    [XafDisplayName("Albaranes")]
+    public XPCollection<Albaran> Albaranes => new(Session, CriteriaOperator.Parse("Cliente = ?", this));
 
     [XafDisplayName("Facturas")]
     public XPCollection<Factura> Facturas => new(Session, CriteriaOperator.Parse("Cliente = ?", this));
