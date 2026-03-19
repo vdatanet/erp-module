@@ -9,6 +9,7 @@ namespace erp.Module.Services.Setup;
 public interface IDatabaseService
 {
     bool DatabaseExists(string provider, string databaseName);
+    void CreateDatabase(string provider, string databaseName);
 }
 
 public class DatabaseService(IConfiguration configuration) : IDatabaseService
@@ -27,6 +28,29 @@ public class DatabaseService(IConfiguration configuration) : IDatabaseService
         };
     }
 
+    public void CreateDatabase(string provider, string databaseName)
+    {
+        var hostConnectionString = configuration.GetConnectionString("ConnectionString");
+        if (string.IsNullOrEmpty(hostConnectionString)) 
+            throw new Exception("Cadena de conexión del host no encontrada.");
+
+        switch (provider.ToLower())
+        {
+            case "postgres":
+                CreatePostgresDatabase(hostConnectionString, databaseName);
+                break;
+            case "mssqlserver":
+                CreateMsSqlDatabase(hostConnectionString, databaseName);
+                break;
+            case "mysql":
+                CreateMySqlDatabase(hostConnectionString, databaseName);
+                break;
+            default:
+                CreatePostgresDatabase(hostConnectionString, databaseName);
+                break;
+        }
+    }
+
     private string CleanConnectionString(string connectionString)
     {
         var parts = connectionString.Split(';', StringSplitOptions.RemoveEmptyEntries)
@@ -40,27 +64,36 @@ public class DatabaseService(IConfiguration configuration) : IDatabaseService
         try
         {
             var cleanConnectionString = CleanConnectionString(connectionString);
-            Console.WriteLine($"[DEBUG_LOG] Postgres: cleanConnectionString='{cleanConnectionString}'");
             // Extraer la parte de la conexión sin el nombre de la base de datos para conectar al servidor de administración
             var builder = new NpgsqlConnectionStringBuilder(cleanConnectionString);
             builder.Database = "postgres"; // Conectamos a la DB por defecto del sistema
             
             using var conn = new NpgsqlConnection(builder.ConnectionString);
             conn.Open();
-            Console.WriteLine($"[DEBUG_LOG] Postgres: Conectado para comprobar existencia de '{databaseName}'");
             using var cmd = new NpgsqlCommand("SELECT 1 FROM pg_database WHERE datname = @dbName", conn);
             cmd.Parameters.AddWithValue("dbName", databaseName.ToLower());
             var result = cmd.ExecuteScalar();
-            Console.WriteLine($"[DEBUG_LOG] Postgres: Resultado de búsqueda '{databaseName}': {result}");
             return result != null;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[DEBUG_LOG] Error comprobando DB Postgres '{databaseName}': {ex.Message}");
-            if (ex.InnerException != null)
-                Console.WriteLine($"[DEBUG_LOG] Inner Error: {ex.InnerException.Message}");
             throw; // Propagamos el error para que el controlador no asuma que no existe si hay un fallo de conexión
         }
+    }
+
+    private void CreatePostgresDatabase(string connectionString, string databaseName)
+    {
+        var cleanConnectionString = CleanConnectionString(connectionString);
+        var builder = new NpgsqlConnectionStringBuilder(cleanConnectionString);
+        builder.Database = "postgres";
+        
+        using var conn = new NpgsqlConnection(builder.ConnectionString);
+        conn.Open();
+        
+        // PostgreSQL no permite CREATE DATABASE dentro de una transacción o con parámetros para el nombre de la DB
+        var cmdText = $"CREATE DATABASE \"{databaseName.ToLower()}\"";
+        using var cmd = new NpgsqlCommand(cmdText, conn);
+        cmd.ExecuteNonQuery();
     }
 
     private bool CheckMsSqlDatabase(string connectionString, string databaseName)
@@ -80,9 +113,22 @@ public class DatabaseService(IConfiguration configuration) : IDatabaseService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[DEBUG_LOG] Error comprobando DB SQL Server '{databaseName}': {ex.Message}");
             throw;
         }
+    }
+
+    private void CreateMsSqlDatabase(string connectionString, string databaseName)
+    {
+        var cleanConnectionString = CleanConnectionString(connectionString);
+        var builder = new SqlConnectionStringBuilder(cleanConnectionString);
+        builder.InitialCatalog = "master";
+        
+        using var conn = new SqlConnection(builder.ConnectionString);
+        conn.Open();
+        
+        var cmdText = $"CREATE DATABASE [{databaseName}]";
+        using var cmd = new SqlCommand(cmdText, conn);
+        cmd.ExecuteNonQuery();
     }
 
     private bool CheckMySqlDatabase(string connectionString, string databaseName)
@@ -102,8 +148,21 @@ public class DatabaseService(IConfiguration configuration) : IDatabaseService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[DEBUG_LOG] Error comprobando DB MySQL '{databaseName}': {ex.Message}");
             throw;
         }
+    }
+
+    private void CreateMySqlDatabase(string connectionString, string databaseName)
+    {
+        var cleanConnectionString = CleanConnectionString(connectionString);
+        var builder = new MySqlConnectionStringBuilder(cleanConnectionString);
+        builder.Database = "mysql";
+        
+        using var conn = new MySqlConnection(builder.ConnectionString);
+        conn.Open();
+        
+        var cmdText = $"CREATE DATABASE `{databaseName}`";
+        using var cmd = new MySqlCommand(cmdText, conn);
+        cmd.ExecuteNonQuery();
     }
 }

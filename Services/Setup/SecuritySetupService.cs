@@ -19,7 +19,6 @@ using erp.Module.BusinessObjects.Produccion;
 using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Tpv;
 using erp.Module.BusinessObjects.Ventas;
-using erp.Module.Helpers.Comun;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.Services.Setup;
@@ -49,55 +48,77 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             var alquileresRole = CreateAlquileresRole();
             var reportsRole = CreateReportsRole();
 
-            Console.WriteLine("[DEBUG_LOG] Roles base creados/obtenidos. Intentando obtener UserManager...");
             var userManagerTenant = objectSpace.ServiceProvider?.GetService<UserManager>();
 
             var defaultRole = CreateDefaultRole();
-            var userName = $"User@{tenantName}";
+            var fullUserName = $"User@{tenantName}"; // Nombre completo con dominio para el login
+            var baseUserName = fullUserName; // Antes se usaba "User", pero XAF espera el nombre completo si usamos el resolvedor por email
             
-            var user = objectSpace.FirstOrDefault<ApplicationUser>(u => u.UserName == userName);
+            var user = objectSpace.FirstOrDefault<ApplicationUser>(u => u.UserName == baseUserName);
             if (user == null)
             {
                 var emptyPassword = "";
                 if (userManagerTenant != null)
                 {
-                    _ = userManagerTenant.CreateUser<ApplicationUser>(objectSpace, userName, emptyPassword, u =>
+                    _ = userManagerTenant.CreateUser<ApplicationUser>(objectSpace, baseUserName, emptyPassword, u =>
                     {
                         u.ChangePasswordOnFirstLogon = true;
                         AddTenantRoles(u, defaultRole, imprentaRole, contactosRole, ventasRole, comprasRole, produccionRole, tpvRole, contabilidadRole, auxiliaresRole, configuracionesRole, controlHorarioRole, crmRole, impuestosRole, productosRole, alquileresRole, reportsRole);
                     });
+                    user = objectSpace.FirstOrDefault<ApplicationUser>(u => u.UserName == baseUserName);
+                    if (user != null)
+                    {
+                        ((ISecurityUserWithLoginInfo)user).CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication,
+                            fullUserName);
+                    }
                 }
                 else
                 {
                     user = objectSpace.CreateObject<ApplicationUser>();
-                    user.UserName = userName;
-                    user.SetPassword(DevExpressPasswordHelper.HashPassword(emptyPassword));
+                    user.UserName = baseUserName;
+                    user.SetPassword(emptyPassword);
+                    ((ISecurityUserWithLoginInfo)user).CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication,
+                        fullUserName);
                     user.ChangePasswordOnFirstLogon = true;
-                    AddTenantRoles(user, defaultRole, imprentaRole, contactosRole, ventasRole, comprasRole, produccionRole, tpvRole, contabilidadRole, auxiliaresRole, configuracionesRole, controlHorarioRole, crmRole, impuestosRole, productosRole, alquileresRole, reportsRole);
+                    AddTenantRoles(user, defaultRole, imprentaRole, contactosRole, ventasRole, comprasRole,
+                        produccionRole, tpvRole, contabilidadRole, auxiliaresRole, configuracionesRole,
+                        controlHorarioRole, crmRole, impuestosRole, productosRole, alquileresRole, reportsRole);
                 }
             }
         }
 
-        var adminUserName = tenantName != null ? $"Admin@{tenantName}" : "Admin";
-        var adminUser = objectSpace.FirstOrDefault<ApplicationUser>(u => u.UserName == adminUserName);
+        var baseAdminUserName = "Admin";
+        var fullAdminUserName = tenantName != null ? $"Admin@{tenantName}" : "Admin";
+        // En la base de datos del tenant, el UserName DEBE ser el nombre completo si usamos TenantByEmailResolver.
+        var effectiveAdminUserName = fullAdminUserName;
+        
+        var adminUser = objectSpace.FirstOrDefault<ApplicationUser>(u => u.UserName == effectiveAdminUserName);
         if (adminUser == null)
         {
             var userManager = objectSpace.ServiceProvider?.GetService<UserManager>();
             var emptyPassword = "";
             if (userManager != null)
             {
-                _ = userManager.CreateUser<ApplicationUser>(objectSpace, adminUserName, emptyPassword,
+                _ = userManager.CreateUser<ApplicationUser>(objectSpace, effectiveAdminUserName, emptyPassword,
                     u =>
                     {
                         u.ChangePasswordOnFirstLogon = true;
                         u.Roles.Add(adminRole);
                     });
+                adminUser = objectSpace.FirstOrDefault<ApplicationUser>(u => u.UserName == effectiveAdminUserName);
+                if (adminUser != null)
+                {
+                    ((ISecurityUserWithLoginInfo)adminUser).CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication,
+                        fullAdminUserName);
+                }
             }
             else
             {
                 adminUser = objectSpace.CreateObject<ApplicationUser>();
-                adminUser.UserName = adminUserName;
-                adminUser.SetPassword(DevExpressPasswordHelper.HashPassword(emptyPassword));
+                adminUser.UserName = effectiveAdminUserName;
+                adminUser.SetPassword(emptyPassword);
+                ((ISecurityUserWithLoginInfo)adminUser).CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication,
+                    fullAdminUserName);
                 adminUser.ChangePasswordOnFirstLogon = true;
                 adminUser.Roles.Add(adminRole);
             }
