@@ -197,20 +197,6 @@ public class RegistroJornada(Session session) : EntidadBase(session)
             : TimeSpan.Zero;
     }
 
-    private ApplicationUser? GetCurrentUser()
-    {
-        try
-        {
-            var security = Session.ServiceProvider?.GetService<ISecurityStrategyBase>();
-            if (security == null || security.UserId == null) return null;
-            return Session.GetObjectByKey<ApplicationUser>(security.UserId);
-        }
-        catch
-        {
-            return null;
-        }
-    }
-
     private void ActualizarUbicacionInicio()
     {
         if (IsLoading || IsSaving || !LatitudInicio.HasValue || !LongitudInicio.HasValue) return;

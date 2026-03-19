@@ -15,18 +15,9 @@ public class Updater : ModuleUpdater
     {
     }
 
-    public Guid? TenantIdOverride { get; set; }
-    public string? TenantNameOverride { get; set; }
-
-    private Guid? TenantId => TenantIdOverride ?? ObjectSpace.ServiceProvider?.GetService<ITenantProvider>()?.TenantId;
-
-    private string? TenantName => TenantNameOverride ?? ObjectSpace.ServiceProvider?.GetService<ITenantProvider>()?.TenantName;
-
     public override void UpdateDatabaseAfterUpdateSchema()
     {
-        Console.WriteLine($"[DEBUG_LOG] Iniciando UpdateDatabaseAfterUpdateSchema para Tenant: {TenantName ?? "N/A"}");
         base.UpdateDatabaseAfterUpdateSchema();
-        Console.WriteLine("[DEBUG_LOG] UpdateDatabaseAfterUpdateSchema finalizado. La siembra de datos se realizará externamente si es necesario.");
     }
 
     public override void UpdateDatabaseBeforeUpdateSchema()

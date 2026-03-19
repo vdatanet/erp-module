@@ -48,7 +48,6 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
         if (userManager == null)
         {
-            Console.WriteLine("[DEBUG_LOG] UserManager no disponible en el ServiceProvider. No se pueden crear usuarios.");
             return;
         }
 

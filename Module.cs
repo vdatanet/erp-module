@@ -57,23 +57,7 @@ public sealed class erpModule : ModuleBase
 
     public override IEnumerable<ModuleUpdater> GetModuleUpdaters(IObjectSpace objectSpace, Version versionFromDB)
     {
-        var updater = new Updater(objectSpace, versionFromDB);
-
-        try
-        {
-            var tenantProvider = objectSpace.ServiceProvider?.GetService<ITenantProvider>();
-            if (tenantProvider != null)
-            {
-                updater.TenantIdOverride = tenantProvider.TenantId;
-                updater.TenantNameOverride = tenantProvider.TenantName;
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[DEBUG_LOG] Error al intentar obtener ITenantProvider en GetModuleUpdaters: {ex.Message}");
-        }
-
-        return new[] { updater };
+        return new[] { new Updater(objectSpace, versionFromDB) };
     }
 
     public override void Setup(XafApplication application)

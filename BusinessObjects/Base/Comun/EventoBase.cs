@@ -63,22 +63,15 @@ public abstract class EventoBase(Session session) : Event(session)
     protected override void OnSaving()
     {
         base.OnSaving();
-        try
+        if (Session.IsNewObject(this))
         {
-            if (Session.IsNewObject(this))
-            {
-                CreadoEl = DateTime.Now;
-                CreadoPor = GetCurrentUser();
-            }
-            else
-            {
-                ModificadoEl = DateTime.Now;
-                ModificadoPor = GetCurrentUser();
-            }
+            CreadoEl = DateTime.Now;
+            CreadoPor = GetCurrentUser();
         }
-        catch (Exception ex)
+        else
         {
-            Console.WriteLine($"[DEBUG_LOG] Error en OnSaving de EventoBase ({GetType().Name}): {ex.Message}");
+            ModificadoEl = DateTime.Now;
+            ModificadoPor = GetCurrentUser();
         }
     }
 
@@ -94,9 +87,8 @@ public abstract class EventoBase(Session session) : Event(session)
 
             return Session.GetObjectByKey<ApplicationUser>(security.UserId);
         }
-        catch (Exception ex)
+        catch
         {
-            Console.WriteLine($"[DEBUG_LOG] Excepción en GetCurrentUser de EventoBase ({GetType().Name}): {ex.Message}");
             return null;
         }
     }
