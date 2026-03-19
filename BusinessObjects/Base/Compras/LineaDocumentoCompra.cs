@@ -1,10 +1,8 @@
 using DevExpress.ExpressApp.DC;
-using DevExpress.ExpressApp.Editors;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
-using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.BusinessObjects.Productos;
 using erp.Module.Helpers.Comun;
 
@@ -161,6 +159,7 @@ public class LineaDocumentoCompra(Session session) : EntidadBase(session)
             };
             Impuestos.Add(tax);
         }
+
         EstablecerBaseImponible();
     }
 
@@ -182,6 +181,7 @@ public class LineaDocumentoCompra(Session session) : EntidadBase(session)
             tax.BaseImponible = BaseImponible;
             tax.ImporteImpuestos = AmountCalculator.GetTaxAmount(BaseImponible, tax.Tipo, tax.EsRetencion);
         }
+
         DocumentoCompra?.ReconstruirResumenImpuestos();
     }
 

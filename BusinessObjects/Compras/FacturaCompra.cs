@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Compras;

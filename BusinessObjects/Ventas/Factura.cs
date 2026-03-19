@@ -2,8 +2,8 @@ using System.ComponentModel;
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
-using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Alquileres;
+using erp.Module.BusinessObjects.Base.Facturacion;
 
 namespace erp.Module.BusinessObjects.Ventas;
 

@@ -12,8 +12,8 @@ namespace erp.Module.BusinessObjects.Tpv;
 [DefaultProperty(nameof(Secuencia))]
 public class FacturaSimplificada(Session session) : FacturaBase(session)
 {
-    private Tpv? _tpv;
     private SesionTpv? _sesionTpv;
+    private Tpv? _tpv;
 
     [XafDisplayName("TPV")]
     [Association("Tpv-FacturasSimplificadas")]

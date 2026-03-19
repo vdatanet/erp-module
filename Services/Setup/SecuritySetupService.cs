@@ -6,19 +6,19 @@ using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
 using erp.Module.BusinessObjects;
 using erp.Module.BusinessObjects.Alquileres;
-using erp.Module.BusinessObjects.Contactos;
-using erp.Module.BusinessObjects.Imprenta;
-using erp.Module.BusinessObjects.Tpv;
-using erp.Module.BusinessObjects.Ventas;
-using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.BusinessObjects.Compras;
 using erp.Module.BusinessObjects.Configuraciones;
+using erp.Module.BusinessObjects.Contabilidad;
+using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.ControlHorario;
 using erp.Module.BusinessObjects.Crm;
+using erp.Module.BusinessObjects.Imprenta;
 using erp.Module.BusinessObjects.Impuestos;
-using erp.Module.BusinessObjects.Productos;
-using erp.Module.BusinessObjects.Compras;
 using erp.Module.BusinessObjects.Produccion;
+using erp.Module.BusinessObjects.Productos;
+using erp.Module.BusinessObjects.Tpv;
+using erp.Module.BusinessObjects.Ventas;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.Services.Setup;
@@ -236,14 +236,17 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             comprasRole.Name = "Compras";
         }
 
-        comprasRole.AddTypePermissionsRecursively<PedidoCompra>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-        comprasRole.AddTypePermissionsRecursively<AlbaranCompra>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        comprasRole.AddTypePermissionsRecursively<PedidoCompra>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        comprasRole.AddTypePermissionsRecursively<AlbaranCompra>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
         comprasRole.AddTypePermissionsRecursively<PresupuestoCompra>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
         comprasRole.AddTypePermissionsRecursively<FacturaCompra>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
 
-        comprasRole.AddNavigationPermission(@"Application/NavigationItems/Items/Compras", SecurityPermissionState.Allow);
+        comprasRole.AddNavigationPermission(@"Application/NavigationItems/Items/Compras",
+            SecurityPermissionState.Allow);
 
         return comprasRole;
     }
@@ -257,9 +260,11 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             produccionRole.Name = "Producción";
         }
 
-        produccionRole.AddTypePermissionsRecursively<Parte>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        produccionRole.AddTypePermissionsRecursively<Parte>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
 
-        produccionRole.AddNavigationPermission(@"Application/NavigationItems/Items/Producción", SecurityPermissionState.Allow);
+        produccionRole.AddNavigationPermission(@"Application/NavigationItems/Items/Producción",
+            SecurityPermissionState.Allow);
 
         return produccionRole;
     }
@@ -313,53 +318,73 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             auxiliaresRole.Name = "Auxiliares";
         }
 
-        auxiliaresRole.AddTypePermissionsRecursively<Adjunto>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-        auxiliaresRole.AddTypePermissionsRecursively<Banco>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-        auxiliaresRole.AddTypePermissionsRecursively<CondicionPago>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-        auxiliaresRole.AddTypePermissionsRecursively<Imagen>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-        auxiliaresRole.AddTypePermissionsRecursively<MedioPago>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-        auxiliaresRole.AddTypePermissionsRecursively<Nacionalidad>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-        auxiliaresRole.AddTypePermissionsRecursively<Pais>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-        auxiliaresRole.AddTypePermissionsRecursively<Parentesco>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-        auxiliaresRole.AddTypePermissionsRecursively<Poblacion>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-        auxiliaresRole.AddTypePermissionsRecursively<Provincia>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-        auxiliaresRole.AddTypePermissionsRecursively<Sector>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-        auxiliaresRole.AddTypePermissionsRecursively<Tarea>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        auxiliaresRole.AddTypePermissionsRecursively<Adjunto>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        auxiliaresRole.AddTypePermissionsRecursively<Banco>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        auxiliaresRole.AddTypePermissionsRecursively<CondicionPago>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        auxiliaresRole.AddTypePermissionsRecursively<Imagen>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        auxiliaresRole.AddTypePermissionsRecursively<MedioPago>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        auxiliaresRole.AddTypePermissionsRecursively<Nacionalidad>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        auxiliaresRole.AddTypePermissionsRecursively<Pais>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        auxiliaresRole.AddTypePermissionsRecursively<Parentesco>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        auxiliaresRole.AddTypePermissionsRecursively<Poblacion>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        auxiliaresRole.AddTypePermissionsRecursively<Provincia>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        auxiliaresRole.AddTypePermissionsRecursively<Sector>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        auxiliaresRole.AddTypePermissionsRecursively<Tarea>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
 
-        auxiliaresRole.AddNavigationPermission(@"Application/NavigationItems/Items/Auxiliares", SecurityPermissionState.Allow);
+        auxiliaresRole.AddNavigationPermission(@"Application/NavigationItems/Items/Auxiliares",
+            SecurityPermissionState.Allow);
 
         return auxiliaresRole;
     }
 
     private PermissionPolicyRole CreateConfiguracionesRole()
     {
-        var configuracionesRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Configuraciones");
+        var configuracionesRole =
+            objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Configuraciones");
         if (configuracionesRole == null)
         {
             configuracionesRole = objectSpace.CreateObject<PermissionPolicyRole>();
             configuracionesRole.Name = "Configuraciones";
         }
 
-        configuracionesRole.AddTypePermissionsRecursively<InformacionEmpresa>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-        configuracionesRole.AddTypePermissionsRecursively<Secuencia>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        configuracionesRole.AddTypePermissionsRecursively<InformacionEmpresa>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        configuracionesRole.AddTypePermissionsRecursively<Secuencia>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
 
-        configuracionesRole.AddNavigationPermission(@"Application/NavigationItems/Items/Configuraciones", SecurityPermissionState.Allow);
+        configuracionesRole.AddNavigationPermission(@"Application/NavigationItems/Items/Configuraciones",
+            SecurityPermissionState.Allow);
 
         return configuracionesRole;
     }
 
     private PermissionPolicyRole CreateControlHorarioRole()
     {
-        var controlHorarioRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "ControlHorario");
+        var controlHorarioRole =
+            objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "ControlHorario");
         if (controlHorarioRole == null)
         {
             controlHorarioRole = objectSpace.CreateObject<PermissionPolicyRole>();
             controlHorarioRole.Name = "ControlHorario";
         }
 
-        controlHorarioRole.AddTypePermissionsRecursively<RegistroJornada>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        controlHorarioRole.AddTypePermissionsRecursively<RegistroJornada>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
 
-        controlHorarioRole.AddNavigationPermission(@"Application/NavigationItems/Items/ControlHorario", SecurityPermissionState.Allow);
+        controlHorarioRole.AddNavigationPermission(@"Application/NavigationItems/Items/ControlHorario",
+            SecurityPermissionState.Allow);
 
         return controlHorarioRole;
     }
@@ -376,7 +401,8 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         crmRole.AddTypePermissionsRecursively<Campana>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
         crmRole.AddTypePermissionsRecursively<Fuente>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
         crmRole.AddTypePermissionsRecursively<Medio>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-        crmRole.AddTypePermissionsRecursively<Oportunidad>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        crmRole.AddTypePermissionsRecursively<Oportunidad>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
 
         crmRole.AddNavigationPermission(@"Application/NavigationItems/Items/Crm", SecurityPermissionState.Allow);
 
@@ -392,12 +418,17 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             impuestosRole.Name = "Impuestos";
         }
 
-        impuestosRole.AddTypePermissionsRecursively<MapeoCuenta>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-        impuestosRole.AddTypePermissionsRecursively<MapeoImpuesto>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-        impuestosRole.AddTypePermissionsRecursively<PosicionFiscal>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-        impuestosRole.AddTypePermissionsRecursively<TipoImpuesto>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        impuestosRole.AddTypePermissionsRecursively<MapeoCuenta>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        impuestosRole.AddTypePermissionsRecursively<MapeoImpuesto>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        impuestosRole.AddTypePermissionsRecursively<PosicionFiscal>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        impuestosRole.AddTypePermissionsRecursively<TipoImpuesto>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
 
-        impuestosRole.AddNavigationPermission(@"Application/NavigationItems/Items/Impuestos", SecurityPermissionState.Allow);
+        impuestosRole.AddNavigationPermission(@"Application/NavigationItems/Items/Impuestos",
+            SecurityPermissionState.Allow);
 
         return impuestosRole;
     }
@@ -411,11 +442,15 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             productosRole.Name = "Productos";
         }
 
-        productosRole.AddTypePermissionsRecursively<Categoria>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-        productosRole.AddTypePermissionsRecursively<PrecioPorCantidad>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-        productosRole.AddTypePermissionsRecursively<Producto>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        productosRole.AddTypePermissionsRecursively<Categoria>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        productosRole.AddTypePermissionsRecursively<PrecioPorCantidad>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        productosRole.AddTypePermissionsRecursively<Producto>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
 
-        productosRole.AddNavigationPermission(@"Application/NavigationItems/Items/Productos", SecurityPermissionState.Allow);
+        productosRole.AddNavigationPermission(@"Application/NavigationItems/Items/Productos",
+            SecurityPermissionState.Allow);
 
         return productosRole;
     }

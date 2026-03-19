@@ -4,7 +4,6 @@ using DevExpress.ExpressApp;
 using DevExpress.Persistent.BaseImpl;
 using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Configuraciones;
-using erp.Module.BusinessObjects.Ventas;
 using erp.Module.Helpers.Comun;
 using VeriFactu.Business;
 using VeriFactu.Config;

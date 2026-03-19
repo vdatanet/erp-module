@@ -23,6 +23,8 @@ public sealed class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLog
     [Association("User-LoginInfo")]
     public XPCollection<ApplicationUserLoginInfo> LoginInfo => GetCollection<ApplicationUserLoginInfo>();
 
+    [Browsable(false)] public string Password => StoredPassword;
+
     [Browsable(false)]
     public int AccessFailedCount
     {
@@ -36,9 +38,6 @@ public sealed class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLog
         get => lockoutEnd;
         set => SetPropertyValue(nameof(LockoutEnd), ref lockoutEnd, value);
     }
-
-    [Browsable(false)]
-    public string Password => StoredPassword;
 
     IEnumerable<ISecurityUserLoginInfo> IOAuthSecurityUser.UserLogins => LoginInfo.OfType<ISecurityUserLoginInfo>();
 

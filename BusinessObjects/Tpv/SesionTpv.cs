@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.DC;
+using DevExpress.ExpressApp.Editors;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
@@ -24,10 +25,10 @@ public class SesionTpv(Session session) : EntidadBase(session)
 {
     private DateTime _apertura;
     private DateTime? _cierre;
+    private EstadoSesionTpv _estado;
     private decimal _importeApertura;
     private decimal _importeCierre;
     private string? _observaciones;
-    private EstadoSesionTpv _estado;
     private Tpv? _tpv;
     private ApplicationUser? _usuario;
 
@@ -57,7 +58,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Cierre")]
-    [Appearance("CierreVisibleWhenClosed", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Criteria = "Estado = 'Abierta'")]
+    [Appearance("CierreVisibleWhenClosed", Visibility = ViewItemVisibility.Hide, Criteria = "Estado = 'Abierta'")]
     public DateTime? Cierre
     {
         get => _cierre;
@@ -76,7 +77,8 @@ public class SesionTpv(Session session) : EntidadBase(session)
     [XafDisplayName("Importe Cierre")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
-    [Appearance("ImporteCierreVisibleWhenClosed", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Criteria = "Estado = 'Abierta'")]
+    [Appearance("ImporteCierreVisibleWhenClosed", Visibility = ViewItemVisibility.Hide,
+        Criteria = "Estado = 'Abierta'")]
     public decimal ImporteCierre
     {
         get => _importeCierre;
@@ -101,7 +103,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
 
     [Association("SesionTpv-FacturasSimplificadas")]
     [XafDisplayName("Facturas Simplificadas")]
-    public XPCollection<FacturaSimplificada> FacturasSimplificadas => GetCollection<FacturaSimplificada>(nameof(FacturasSimplificadas));
+    public XPCollection<FacturaSimplificada> FacturasSimplificadas => GetCollection<FacturaSimplificada>();
 
     public override void AfterConstruction()
     {
@@ -110,7 +112,8 @@ public class SesionTpv(Session session) : EntidadBase(session)
         Estado = EstadoSesionTpv.Abierta;
     }
 
-    [Action(Caption = "Cerrar Sesión", TargetObjectsCriteria = "Estado = 'Abierta'", ConfirmationMessage = "¿Desea cerrar la sesión?", ImageName = "Action_Close")]
+    [Action(Caption = "Cerrar Sesión", TargetObjectsCriteria = "Estado = 'Abierta'",
+        ConfirmationMessage = "¿Desea cerrar la sesión?", ImageName = "Action_Close")]
     public void CerrarSesion()
     {
         Estado = EstadoSesionTpv.Cerrada;

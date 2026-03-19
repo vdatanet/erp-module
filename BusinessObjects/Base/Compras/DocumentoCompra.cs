@@ -16,12 +16,12 @@ namespace erp.Module.BusinessObjects.Base.Compras;
 public abstract class DocumentoCompra(Session session) : EntidadBase(session)
 {
     private decimal _baseImponible;
-    private Proveedor? _proveedor;
     private DateTime _fecha;
     private decimal _importeImpuestos;
     private decimal _importeTotal;
     private string? _notas;
     private int _numero;
+    private Proveedor? _proveedor;
     private string? _secuencia;
     private string? _serie;
 

@@ -16,7 +16,8 @@ public class ImpuestoSetupService(IObjectSpace objectSpace)
         CreateTipoImpuesto("EXENTO", "Exento", 0, true, true, Impuesto.IVA);
     }
 
-    private void CreateTipoImpuesto(string codigo, string nombre, decimal tipo, bool enVentas, bool enCompras, Impuesto? impuestoVeriFactu)
+    private void CreateTipoImpuesto(string codigo, string nombre, decimal tipo, bool enVentas, bool enCompras,
+        Impuesto? impuestoVeriFactu)
     {
         var tipoImpuesto = objectSpace.CreateObject<TipoImpuesto>();
         tipoImpuesto.Codigo = codigo;

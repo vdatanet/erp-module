@@ -12,10 +12,10 @@ namespace erp.Module.BusinessObjects.Tpv;
 [Persistent("Tpv")]
 public class Tpv(Session session) : EntidadBase(session)
 {
-    private string? _nombre;
-    private string? _codigo;
-    private string? _seriePorDefecto;
     private bool _activo;
+    private string? _codigo;
+    private string? _nombre;
+    private string? _seriePorDefecto;
 
     [Size(100)]
     [RuleRequiredField]
@@ -53,11 +53,11 @@ public class Tpv(Session session) : EntidadBase(session)
 
     [Association("Tpv-FacturasSimplificadas")]
     [XafDisplayName("Facturas Simplificadas")]
-    public XPCollection<FacturaSimplificada> FacturasSimplificadas => GetCollection<FacturaSimplificada>(nameof(FacturasSimplificadas));
+    public XPCollection<FacturaSimplificada> FacturasSimplificadas => GetCollection<FacturaSimplificada>();
 
     [Association("Tpv-Sesiones")]
     [XafDisplayName("Sesiones")]
-    public XPCollection<SesionTpv> Sesiones => GetCollection<SesionTpv>(nameof(Sesiones));
+    public XPCollection<SesionTpv> Sesiones => GetCollection<SesionTpv>();
 
     public override void AfterConstruction()
     {

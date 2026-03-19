@@ -16,7 +16,8 @@ public class CuentaSetupService(IObjectSpace objectSpace)
         CreateCuenta("7000", "Ventas", Cuenta.TipoCuenta.Ingresos, Cuenta.NaturalezaCuenta.Acreedora, true);
     }
 
-    private void CreateCuenta(string codigo, string nombre, Cuenta.TipoCuenta tipo, Cuenta.NaturalezaCuenta naturaleza, bool esAsentable = false)
+    private void CreateCuenta(string codigo, string nombre, Cuenta.TipoCuenta tipo, Cuenta.NaturalezaCuenta naturaleza,
+        bool esAsentable = false)
     {
         var cuenta = objectSpace.CreateObject<Cuenta>();
         cuenta.Codigo = codigo;

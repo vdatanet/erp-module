@@ -8,7 +8,6 @@ using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Crm;
-using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.BusinessObjects.Ventas;
 using erp.Module.Helpers.Contactos;

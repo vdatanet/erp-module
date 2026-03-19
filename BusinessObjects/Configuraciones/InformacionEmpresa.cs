@@ -162,7 +162,8 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     public string? PrefijoPresupuestosCompraPorDefecto
     {
         get => _prefijoPresupuestosCompraPorDefecto;
-        set => SetPropertyValue(nameof(PrefijoPresupuestosCompraPorDefecto), ref _prefijoPresupuestosCompraPorDefecto, value);
+        set => SetPropertyValue(nameof(PrefijoPresupuestosCompraPorDefecto), ref _prefijoPresupuestosCompraPorDefecto,
+            value);
     }
 
     [XafDisplayName("Prefijo Albaranes Compra")]

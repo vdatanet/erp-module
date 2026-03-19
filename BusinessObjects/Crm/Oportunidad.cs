@@ -1,5 +1,4 @@
 using DevExpress.ExpressApp.DC;
-using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
@@ -7,7 +6,6 @@ using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Ventas;
-using erp.Module.Helpers.Comun;
 
 namespace erp.Module.BusinessObjects.Crm;
 
@@ -133,7 +131,7 @@ public class Oportunidad(Session session) : EntidadBase(session)
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
-    
+
     [Association("Oportunidad-Presupuestos")]
     [XafDisplayName("Presupuestos")]
     public XPCollection<Presupuesto> Presupuestos
@@ -144,7 +142,7 @@ public class Oportunidad(Session session) : EntidadBase(session)
             return collection;
         }
     }
-    
+
     [Association("Oportunidad-Pedidos")]
     [XafDisplayName("Pedidos")]
     public XPCollection<Pedido> Pedidos

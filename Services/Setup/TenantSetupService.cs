@@ -12,15 +12,17 @@ public class TenantSetupService(IObjectSpace objectSpace)
         {
             tenant = objectSpace.CreateObject<Tenant>();
             tenant.Name = tenantName;
-            
+
             var connectionString = provider switch
             {
-                "Postgres" => $"XpoProvider=Postgres;Server=db-local;User ID=postgres;Password=;database={databaseName}",
-                "MSSqlServer" => $"XpoProvider=MSSqlServer;data source=.\\SQLEXPRESS;integrated security=SSPI;initial catalog={databaseName};TrustServerCertificate=True",
+                "Postgres" =>
+                    $"XpoProvider=Postgres;Server=db-local;User ID=postgres;Password=;database={databaseName}",
+                "MSSqlServer" =>
+                    $"XpoProvider=MSSqlServer;data source=.\\SQLEXPRESS;integrated security=SSPI;initial catalog={databaseName};TrustServerCertificate=True",
                 "MySql" => $"XpoProvider=MySql;Server=db-local;User ID=devuser;Password=;database={databaseName}",
                 _ => $"XpoProvider=Postgres;Server=db-local;User ID=postgres;Password=;database={databaseName}"
             };
-            
+
             tenant.ConnectionString = connectionString;
         }
 
@@ -32,7 +34,7 @@ public class TenantSetupService(IObjectSpace objectSpace)
 #if DEBUG
         if (currentTenantName == null)
         {
-            _ = CreateTenant("demo", "erp_demo", "Postgres");
+            _ = CreateTenant("demo", "erp_demo");
             _ = CreateTenant("demo-mssql", "erp_demo_mssql", "MSSqlServer");
             _ = CreateTenant("demo-mysql", "erp_demo_mysql", "MySql");
         }
