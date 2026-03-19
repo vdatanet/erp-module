@@ -40,20 +40,25 @@ public class DatabaseService(IConfiguration configuration) : IDatabaseService
         try
         {
             var cleanConnectionString = CleanConnectionString(connectionString);
+            Console.WriteLine($"[DEBUG_LOG] Postgres: cleanConnectionString='{cleanConnectionString}'");
             // Extraer la parte de la conexión sin el nombre de la base de datos para conectar al servidor de administración
             var builder = new NpgsqlConnectionStringBuilder(cleanConnectionString);
             builder.Database = "postgres"; // Conectamos a la DB por defecto del sistema
             
             using var conn = new NpgsqlConnection(builder.ConnectionString);
             conn.Open();
+            Console.WriteLine($"[DEBUG_LOG] Postgres: Conectado para comprobar existencia de '{databaseName}'");
             using var cmd = new NpgsqlCommand("SELECT 1 FROM pg_database WHERE datname = @dbName", conn);
             cmd.Parameters.AddWithValue("dbName", databaseName.ToLower());
             var result = cmd.ExecuteScalar();
+            Console.WriteLine($"[DEBUG_LOG] Postgres: Resultado de búsqueda '{databaseName}': {result}");
             return result != null;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"[DEBUG_LOG] Error comprobando DB Postgres '{databaseName}': {ex.Message}");
+            if (ex.InnerException != null)
+                Console.WriteLine($"[DEBUG_LOG] Inner Error: {ex.InnerException.Message}");
             throw; // Propagamos el error para que el controlador no asuma que no existe si hay un fallo de conexión
         }
     }
