@@ -41,10 +41,7 @@ public static class DevExpressPasswordHelper
 
     private static byte[] GenerateHash(string password, byte[] salt)
     {
-        using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 20000, HashAlgorithmName.SHA1))
-        {
-            return pbkdf2.GetBytes(32);
-        }
+        return Rfc2898DeriveBytes.Pbkdf2(password, salt, 20000, HashAlgorithmName.SHA1, 32);
     }
 
     private static bool AreEqual(byte[] x, byte[] y)

@@ -75,7 +75,7 @@ public class DatabaseService(IConfiguration configuration) : IDatabaseService
             var result = cmd.ExecuteScalar();
             return result != null;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw; // Propagamos el error para que el controlador no asuma que no existe si hay un fallo de conexión
         }
@@ -111,7 +111,7 @@ public class DatabaseService(IConfiguration configuration) : IDatabaseService
             var result = cmd.ExecuteScalar();
             return result != null;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }
@@ -146,7 +146,7 @@ public class DatabaseService(IConfiguration configuration) : IDatabaseService
             var result = cmd.ExecuteScalar();
             return result != null;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }

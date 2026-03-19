@@ -87,7 +87,6 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             }
         }
 
-        var baseAdminUserName = "Admin";
         var fullAdminUserName = tenantName != null ? $"Admin@{tenantName}" : "Admin";
         // En la base de datos del tenant, el UserName DEBE ser el nombre completo si usamos TenantByEmailResolver.
         var effectiveAdminUserName = fullAdminUserName;
