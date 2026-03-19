@@ -68,9 +68,8 @@ public sealed class erpModule : ModuleBase
                 updater.TenantNameOverride = tenantProvider.TenantName;
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            Console.WriteLine($"[DEBUG_LOG] Error al intentar obtener ITenantProvider en GetModuleUpdaters: {ex.Message}");
         }
 
         return new[] { updater };

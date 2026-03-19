@@ -76,9 +76,8 @@ public abstract class EventoBase(Session session) : Event(session)
                 ModificadoPor = GetCurrentUser();
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            Console.WriteLine($"[DEBUG_LOG] Error en OnSaving de EventoBase ({GetType().Name}): {ex.Message}");
         }
     }
 
@@ -94,9 +93,8 @@ public abstract class EventoBase(Session session) : Event(session)
 
             return Session.GetObjectByKey<ApplicationUser>(security.UserId);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            Console.WriteLine($"[DEBUG_LOG] Excepción en GetCurrentUser de EventoBase ({GetType().Name}): {ex.Message}");
             return null;
         }
     }

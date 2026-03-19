@@ -19,6 +19,7 @@ using erp.Module.BusinessObjects.Produccion;
 using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Tpv;
 using erp.Module.BusinessObjects.Ventas;
+using erp.Module.Helpers.Comun;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.Services.Setup;
@@ -46,12 +47,6 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
         var userManager = objectSpace.ServiceProvider?.GetService<UserManager>();
 
-        if (userManager == null)
-        {
-            Console.WriteLine("[DEBUG_LOG] UserManager no disponible en el ServiceProvider. No se pueden crear usuarios.");
-            return;
-        }
-
         if (tenantName != null)
         {
             var defaultRole = CreateDefaultRole();
@@ -72,11 +67,48 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             var reportsRole_User = CreateReportsRole();
 
             var userName = $"User@{tenantName}";
-            if (userManager.FindUserByName<ApplicationUser>(objectSpace, userName) == null)
+            
+            if (userManager != null)
             {
-                var EmptyPassword = "";
-                _ = userManager.CreateUser<ApplicationUser>(objectSpace, userName, EmptyPassword, user =>
+                if (userManager.FindUserByName<ApplicationUser>(objectSpace, userName) == null)
                 {
+                    var EmptyPassword = "";
+                    var userResult = userManager.CreateUser<ApplicationUser>(objectSpace, userName, EmptyPassword, user =>
+                    {
+                        user.ChangePasswordOnFirstLogon = true;
+                        user.Roles.Add(defaultRole);
+                        user.Roles.Add(imprentaRole_User);
+                        user.Roles.Add(contactosRole_User);
+                        user.Roles.Add(ventasRole_User);
+                        user.Roles.Add(comprasRole_User);
+                        user.Roles.Add(produccionRole_User);
+                        user.Roles.Add(tpvRole_User);
+                        user.Roles.Add(contabilidadRole_User);
+                        user.Roles.Add(auxiliaresRole_User);
+                        user.Roles.Add(configuracionesRole_User);
+                        user.Roles.Add(controlHorarioRole_User);
+                        user.Roles.Add(crmRole_User);
+                        user.Roles.Add(impuestosRole_User);
+                        user.Roles.Add(productosRole_User);
+                        user.Roles.Add(alquileresRole_User);
+                        user.Roles.Add(reportsRole_User);
+                    });
+
+                    if (userResult.User is ISecurityUserWithLoginInfo userWithLoginInfo)
+                    {
+                        userWithLoginInfo.CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, userName);
+                    }
+                }
+            }
+            else
+            {
+                // Fallback manual si UserManager no está disponible (ej. durante la creación del tenant)
+                var user = objectSpace.FirstOrDefault<ApplicationUser>(u => u.UserName == userName);
+                if (user == null)
+                {
+                    user = objectSpace.CreateObject<ApplicationUser>();
+                    user.UserName = userName;
+                    user.SetPassword("");
                     user.ChangePasswordOnFirstLogon = true;
                     user.Roles.Add(defaultRole);
                     user.Roles.Add(imprentaRole_User);
@@ -94,20 +126,43 @@ public class SecuritySetupService(IObjectSpace objectSpace)
                     user.Roles.Add(productosRole_User);
                     user.Roles.Add(alquileresRole_User);
                     user.Roles.Add(reportsRole_User);
-                });
+                    ((ISecurityUserWithLoginInfo)user).CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, userName);
+                }
             }
         }
 
         var adminUserName = tenantName != null ? $"Admin@{tenantName}" : "Admin";
-        if (userManager.FindUserByName<ApplicationUser>(objectSpace, adminUserName) == null)
+        
+        if (userManager != null)
         {
-            var EmptyPassword = "";
-            _ = userManager.CreateUser<ApplicationUser>(objectSpace, adminUserName, EmptyPassword,
-                user =>
+            if (userManager.FindUserByName<ApplicationUser>(objectSpace, adminUserName) == null)
+            {
+                var EmptyPassword = "";
+                var userResult = userManager.CreateUser<ApplicationUser>(objectSpace, adminUserName, EmptyPassword,
+                    user =>
+                    {
+                        user.ChangePasswordOnFirstLogon = true;
+                        user.Roles.Add(adminRole);
+                    });
+                if (userResult.User is ISecurityUserWithLoginInfo userWithLoginInfo)
                 {
-                    user.ChangePasswordOnFirstLogon = true;
-                    user.Roles.Add(adminRole);
-                });
+                    userWithLoginInfo.CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, adminUserName);
+                }
+            }
+        }
+        else
+        {
+            // Fallback manual para el Admin
+            var adminUser = objectSpace.FirstOrDefault<ApplicationUser>(u => u.UserName == adminUserName);
+            if (adminUser == null)
+            {
+                adminUser = objectSpace.CreateObject<ApplicationUser>();
+                adminUser.UserName = adminUserName;
+                adminUser.SetPassword("");
+                adminUser.ChangePasswordOnFirstLogon = true;
+                adminUser.Roles.Add(adminRole);
+                ((ISecurityUserWithLoginInfo)adminUser).CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, adminUserName);
+            }
         }
     }
 

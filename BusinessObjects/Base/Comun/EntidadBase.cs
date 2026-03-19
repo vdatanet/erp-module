@@ -76,9 +76,8 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
                 ModificadoPor = GetCurrentUser();
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            Console.WriteLine($"[DEBUG_LOG] Error en OnSaving de EntidadBase ({GetType().Name}): {ex.Message}");
         }
     }
 
@@ -89,20 +88,17 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
             var serviceProvider = Session.ServiceProvider;
             if (serviceProvider == null)
             {
-                // Console.WriteLine("[DEBUG_LOG] GetCurrentUser: ServiceProvider es nulo.");
                 return null;
             }
 
             var security = serviceProvider.GetService<ISecurityStrategyBase>();
             if (security == null)
             {
-                // Console.WriteLine("[DEBUG_LOG] GetCurrentUser: ISecurityStrategyBase no encontrado.");
                 return null;
             }
 
             if (security.UserId == null)
             {
-                // Console.WriteLine("[DEBUG_LOG] GetCurrentUser: UserId es nulo.");
                 return null;
             }
 
@@ -110,9 +106,8 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
             // aunque GetObjectByKey maneja object.
             return Session.GetObjectByKey<ApplicationUser>(security.UserId);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            Console.WriteLine($"[DEBUG_LOG] Excepción en GetCurrentUser de EntidadBase ({GetType().Name}): {ex.Message}");
             return null;
         }
     }
