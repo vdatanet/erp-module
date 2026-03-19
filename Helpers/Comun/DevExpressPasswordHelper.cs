@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace erp.Module.Helpers;
+namespace erp.Module.Helpers.Comun;
 
 public static class DevExpressPasswordHelper
 {
