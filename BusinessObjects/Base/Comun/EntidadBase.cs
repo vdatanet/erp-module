@@ -59,6 +59,10 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
         set => SetPropertyValue(nameof(ModificadoEl), ref _modificadoEl, value);
     }
 
+    [XafDisplayName("Código Barras")]
+    [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
+    public string BarCodeString => Oid.ToString("N");
+
     protected override void OnSaving()
     {
         base.OnSaving();
