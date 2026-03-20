@@ -19,6 +19,7 @@ using erp.Module.BusinessObjects.Produccion;
 using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Tpv;
 using erp.Module.BusinessObjects.Ventas;
+using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.Helpers.Comun;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -43,6 +44,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         var impuestosRole = CreateImpuestosRole();
         var productosRole = CreateProductosRole();
         var alquileresRole = CreateAlquileresRole();
+        var clientesRole = CreateClientesRole();
         var reportsRole = CreateReportsRole();
 
         var userManager = objectSpace.ServiceProvider?.GetService<UserManager>();
@@ -64,6 +66,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             var impuestosRole_User = CreateImpuestosRole();
             var productosRole_User = CreateProductosRole();
             var alquileresRole_User = CreateAlquileresRole();
+            var clientesRole_User = CreateClientesRole();
             var reportsRole_User = CreateReportsRole();
 
             /* 
@@ -574,5 +577,43 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             SecurityPermissionState.Allow);
 
         return reportsRole;
+    }
+
+    private PermissionPolicyRole CreateClientesRole()
+    {
+        var clientesRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Clientes");
+        if (clientesRole == null)
+        {
+            clientesRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            clientesRole.Name = "Clientes";
+        }
+
+        clientesRole.AddNavigationPermission(@"Application/NavigationItems/Items/Ventas",
+            SecurityPermissionState.Allow);
+
+        string clienteCriteria = "[Cliente.Contactos][Usuario.Oid = CurrentUserId()]";
+
+        clientesRole.AddObjectPermission<DocumentoVenta>(SecurityOperations.Read, clienteCriteria,
+            SecurityPermissionState.Allow);
+        clientesRole.AddObjectPermission<Factura>(SecurityOperations.Read, clienteCriteria,
+            SecurityPermissionState.Allow);
+        clientesRole.AddObjectPermission<Pedido>(SecurityOperations.Read, clienteCriteria,
+            SecurityPermissionState.Allow);
+        clientesRole.AddObjectPermission<Albaran>(SecurityOperations.Read, clienteCriteria,
+            SecurityPermissionState.Allow);
+        clientesRole.AddObjectPermission<Presupuesto>(SecurityOperations.Read, clienteCriteria,
+            SecurityPermissionState.Allow);
+
+        clientesRole.AddTypePermissionsRecursively<LineaDocumentoVenta>(SecurityOperations.Read,
+            SecurityPermissionState.Allow);
+        clientesRole.AddTypePermissionsRecursively<Producto>(SecurityOperations.Read,
+            SecurityPermissionState.Allow);
+        clientesRole.AddTypePermissionsRecursively<TipoImpuesto>(SecurityOperations.Read,
+            SecurityPermissionState.Allow);
+
+        clientesRole.AddObjectPermission<Cliente>(SecurityOperations.Read, "[Contactos][Usuario.Oid = CurrentUserId()]",
+            SecurityPermissionState.Allow);
+
+        return clientesRole;
     }
 }
