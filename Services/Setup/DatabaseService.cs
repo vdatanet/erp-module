@@ -65,14 +65,18 @@ public class DatabaseService(IConfiguration configuration) : IDatabaseService
         {
             var cleanConnectionString = CleanConnectionString(connectionString);
             var builder = new NpgsqlConnectionStringBuilder(cleanConnectionString);
-            builder.Database = "postgres"; 
+            builder.Database = databaseName; 
 
             using var conn = new NpgsqlConnection(builder.ConnectionString);
             conn.Open();
-            using var cmd = new NpgsqlCommand("SELECT 1 FROM pg_database WHERE datname = @dbName", conn);
-            cmd.Parameters.AddWithValue("dbName", databaseName.ToLower());
-            var result = cmd.ExecuteScalar();
-            return result != null;
+            return true;
+        }
+        catch (PostgresException ex)
+        {
+            // 3D000 = invalid_catalog_name (Database does not exist)
+            if (ex.SqlState == "3D000")
+                return false;
+            throw;
         }
         catch (Exception)
         {
@@ -84,11 +88,28 @@ public class DatabaseService(IConfiguration configuration) : IDatabaseService
     {
         var cleanConnectionString = CleanConnectionString(connectionString);
         var builder = new NpgsqlConnectionStringBuilder(cleanConnectionString);
-        builder.Database = "postgres";
+        
+        // Intentar conectar a 'postgres' por defecto si el usuario tiene permisos
+        // pero si no, intentamos sin especificar base de datos (conecta a la DB del usuario)
+        try 
+        {
+            builder.Database = "postgres";
+            using var conn = new NpgsqlConnection(builder.ConnectionString);
+            conn.Open();
+            ExecuteCreatePostgres(conn, databaseName);
+        }
+        catch (Exception)
+        {
+            // Fallback: intentar con la conexión original (probablemente DB asignada al usuario)
+            builder.Database = ""; 
+            using var conn = new NpgsqlConnection(builder.ConnectionString);
+            conn.Open();
+            ExecuteCreatePostgres(conn, databaseName);
+        }
+    }
 
-        using var conn = new NpgsqlConnection(builder.ConnectionString);
-        conn.Open();
-
+    private void ExecuteCreatePostgres(NpgsqlConnection conn, string databaseName)
+    {
         var cmdText = $"CREATE DATABASE \"{databaseName.ToLower()}\"";
         using var cmd = new NpgsqlCommand(cmdText, conn);
         cmd.ExecuteNonQuery();
@@ -100,14 +121,18 @@ public class DatabaseService(IConfiguration configuration) : IDatabaseService
         {
             var cleanConnectionString = CleanConnectionString(connectionString);
             var builder = new SqlConnectionStringBuilder(cleanConnectionString);
-            builder.InitialCatalog = "master";
+            builder.InitialCatalog = databaseName;
 
             using var conn = new SqlConnection(builder.ConnectionString);
             conn.Open();
-            using var cmd = new SqlCommand("SELECT 1 FROM sys.databases WHERE name = @dbName", conn);
-            cmd.Parameters.AddWithValue("dbName", databaseName);
-            var result = cmd.ExecuteScalar();
-            return result != null;
+            return true;
+        }
+        catch (SqlException ex)
+        {
+            // Error 4060: Cannot open database requested by the login
+            if (ex.Number == 4060)
+                return false;
+            throw;
         }
         catch (Exception)
         {
@@ -119,11 +144,25 @@ public class DatabaseService(IConfiguration configuration) : IDatabaseService
     {
         var cleanConnectionString = CleanConnectionString(connectionString);
         var builder = new SqlConnectionStringBuilder(cleanConnectionString);
-        builder.InitialCatalog = "master";
+        
+        try 
+        {
+            builder.InitialCatalog = "master";
+            using var conn = new SqlConnection(builder.ConnectionString);
+            conn.Open();
+            ExecuteCreateMsSql(conn, databaseName);
+        }
+        catch (Exception)
+        {
+            builder.InitialCatalog = ""; 
+            using var conn = new SqlConnection(builder.ConnectionString);
+            conn.Open();
+            ExecuteCreateMsSql(conn, databaseName);
+        }
+    }
 
-        using var conn = new SqlConnection(builder.ConnectionString);
-        conn.Open();
-
+    private void ExecuteCreateMsSql(SqlConnection conn, string databaseName)
+    {
         var cmdText = $"CREATE DATABASE [{databaseName}]";
         using var cmd = new SqlCommand(cmdText, conn);
         cmd.ExecuteNonQuery();
@@ -135,14 +174,19 @@ public class DatabaseService(IConfiguration configuration) : IDatabaseService
         {
             var cleanConnectionString = CleanConnectionString(connectionString);
             var builder = new MySqlConnectionStringBuilder(cleanConnectionString);
-            builder.Database = "information_schema";
+            builder.Database = databaseName;
 
             using var conn = new MySqlConnection(builder.ConnectionString);
             conn.Open();
-            using var cmd = new MySqlCommand("SELECT 1 FROM SCHEMATA WHERE SCHEMA_NAME = @dbName", conn);
-            cmd.Parameters.AddWithValue("dbName", databaseName);
-            var result = cmd.ExecuteScalar();
-            return result != null;
+            return true;
+        }
+        catch (MySqlException ex)
+        {
+            // Error 1049: Unknown database
+            if (ex.Number == 1049)
+                return false;
+            
+            throw;
         }
         catch (Exception)
         {
@@ -154,14 +198,35 @@ public class DatabaseService(IConfiguration configuration) : IDatabaseService
     {
         var cleanConnectionString = CleanConnectionString(connectionString);
         var builder = new MySqlConnectionStringBuilder(cleanConnectionString);
-        builder.Database = "mysql";
+        
+        // En producción (Plesk), el usuario ya tiene su base de datos asignada.
+        // Intentar crearla puede dar error si no es root.
+        // Intentamos conectarnos a 'mysql' o 'information_schema' solo si es necesario,
+        // pero lo más seguro es intentar conectarse a la base de datos predeterminada del usuario
+        // y ejecutar el CREATE DATABASE.
+        
+        // Si no se especifica base de datos, MySqlConnector suele usar la del usuario o ninguna.
+        builder.Database = ""; 
 
-        using var conn = new MySqlConnection(builder.ConnectionString);
-        conn.Open();
+        try 
+        {
+            using var conn = new MySqlConnection(builder.ConnectionString);
+            conn.Open();
 
-        var cmdText = $"CREATE DATABASE `{databaseName}`";
-        using var cmd = new MySqlCommand(cmdText, conn);
-        cmd.ExecuteNonQuery();
+            var cmdText = $"CREATE DATABASE IF NOT EXISTS `{databaseName}`";
+            using var cmd = new MySqlCommand(cmdText, conn);
+            cmd.ExecuteNonQuery();
+        }
+        catch (MySqlException ex)
+        {
+            // Si el error es de acceso denegado (1044, 1045) o falta de privilegios (1142), 
+            // y la base de datos ya existe (lo cual verificamos antes), podemos ignorarlo.
+            // Pero como CheckMySqlDatabase ya se llamó antes en TenantsController, 
+            // si llegamos aquí es porque CheckMySqlDatabase devolvió false.
+            throw new Exception($"No se pudo crear la base de datos '{databaseName}'. " +
+                                $"Asegúrese de que el usuario tiene permisos o que la base de datos ha sido pre-provisionada. " +
+                                $"Error: {ex.Message}", ex);
+        }
     }
 
 }
