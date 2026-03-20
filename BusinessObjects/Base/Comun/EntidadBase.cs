@@ -1,7 +1,6 @@
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.ExpressApp.Security;
-using DevExpress.ExpressApp.Xpo;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
@@ -9,24 +8,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.BusinessObjects.Base.Comun;
 
-[NonPersistent]
 [ModelDefault("IsCloneable", "True")]
+[NonPersistent]
 public abstract class EntidadBase(Session session) : BaseObject(session)
 {
-    private MediaDataObject? _qrCode;
     private DateTime? _creadoEl;
     private ApplicationUser? _creadoPor;
     private DateTime? _modificadoEl;
     private ApplicationUser? _modificadoPor;
-
-    [XafDisplayName("Código QR")]
-    [ModelDefault("AllowEdit", "False")]
-    [ImageEditor(ListViewImageEditorMode = ImageEditorMode.PictureEdit, DetailViewImageEditorMode = ImageEditorMode.PictureEdit)]
-    public MediaDataObject? QrCode
-    {
-        get => _qrCode;
-        set => SetPropertyValue(nameof(QrCode), ref _qrCode, value);
-    }
 
     [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
@@ -73,44 +62,16 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
     protected override void OnSaving()
     {
         base.OnSaving();
-        try
-        {
-            if (Session.IsNewObject(this))
-            {
-                CreadoEl = DateTime.Now;
-                CreadoPor = GetCurrentUser();
-                GenerarQrCode();
-            }
-            else
-            {
-                ModificadoEl = DateTime.Now;
-                ModificadoPor = GetCurrentUser();
-            }
-        }
-        catch (Exception)
-        {
-        }
-    }
 
-    private void GenerarQrCode()
-    {
-        if (QrCode != null) return;
-        
-        try
+        if (Session.IsNewObject(this))
         {
-            var oid = Oid.ToString();
-            var url = $"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={oid}";
-            
-            using var client = new HttpClient();
-            var bytes = client.GetByteArrayAsync(url).Result;
-            
-            var media = new MediaDataObject(Session);
-            media.MediaData = bytes;
-            QrCode = media;
+            CreadoEl = DateTime.Now;
+            CreadoPor = GetCurrentUser();
         }
-        catch
+        else
         {
-            // Silenciosamente fallar si no hay conexión o error en API
+            ModificadoEl = DateTime.Now;
+            ModificadoPor = GetCurrentUser();
         }
     }
 
@@ -119,25 +80,15 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
         try
         {
             var serviceProvider = Session.ServiceProvider;
-            if (serviceProvider == null)
-            {
-                return null;
-            }
 
-            var security = serviceProvider.GetService<ISecurityStrategyBase>();
-            if (security == null)
-            {
-                return null;
-            }
+            var security = serviceProvider?.GetService<ISecurityStrategyBase>();
 
-            if (security.UserId == null)
-            {
-                return null;
-            }
-
-            // Aquí es donde podría fallar si UserId no es Guid, 
-            // aunque GetObjectByKey maneja object.
-            return Session.GetObjectByKey<ApplicationUser>(security.UserId);
+            return security?.UserId == null
+                ? null
+                :
+                // Aquí es donde podría fallar si UserId no es Guid, 
+                // aunque GetObjectByKey maneja object.
+                Session.GetObjectByKey<ApplicationUser>(security.UserId);
         }
         catch (Exception)
         {
