@@ -17,15 +17,6 @@ public class Empleado(Session session) : Contacto(session)
     private DateTime? _ultimoRegistroEntrada;
     private DateTime? _ultimoRegistroSalida;
 
-    private ApplicationUser? _usuario;
-
-    [XafDisplayName("Usuario de Aplicación")]
-    public ApplicationUser? Usuario
-    {
-        get => _usuario;
-        set => SetPropertyValue(nameof(Usuario), ref _usuario, value);
-    }
-
     [XafDisplayName("¿Está trabajando?")]
     [ModelDefault("AllowEdit", "False")]
     public bool EstaTrabajando

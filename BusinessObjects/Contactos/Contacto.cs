@@ -1,10 +1,12 @@
 using System.ComponentModel;
+using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects;
 using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.Factories;
@@ -18,6 +20,7 @@ namespace erp.Module.BusinessObjects.Contactos;
 [DefaultProperty(nameof(Nombre))]
 public class Contacto(Session session) : EntidadBase(session)
 {
+    private ApplicationUser? _usuario;
     private Cliente? _cliente;
     private string? _codigo;
     private string? _codigoPostal;
@@ -46,6 +49,24 @@ public class Contacto(Session session) : EntidadBase(session)
     {
         get => _cliente;
         set => SetPropertyValue(nameof(Cliente), ref _cliente, value);
+    }
+
+    [XafDisplayName("Usuario de Aplicación")]
+    public ApplicationUser? Usuario
+    {
+        get => _usuario;
+        set
+        {
+            if (!SetPropertyValue(nameof(Usuario), ref _usuario, value)) return;
+            if (IsLoading || IsSaving || value == null) return;
+            
+            var otroContacto = Session.FindObject<Contacto>(PersistentCriteriaEvaluationBehavior.InTransaction,
+                CriteriaOperator.Parse("Usuario = ? and Oid != ?", value, Oid));
+            if (otroContacto != null)
+            {
+                otroContacto.Usuario = null;
+            }
+        }
     }
 
     [Size(50)]
