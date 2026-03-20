@@ -45,93 +45,11 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         var alquileresRole = CreateAlquileresRole();
         var reportsRole = CreateReportsRole();
 
+        // No crear usuarios de tenant, solo el Admin del host (cuando tenantName es null)
+        if (tenantName != null) return;
+
         var userManager = objectSpace.ServiceProvider?.GetService<UserManager>();
-
-        if (tenantName != null)
-        {
-            var defaultRole = CreateDefaultRole();
-            var imprentaRole_User = CreateImprentaRole();
-            var contactosRole_User = CreateContactosRole();
-            var ventasRole_User = CreateVentasRole();
-            var comprasRole_User = CreateComprasRole();
-            var produccionRole_User = CreateProduccionRole();
-            var tpvRole_User = CreateTpvRole();
-            var contabilidadRole_User = CreateContabilidadRole();
-            var auxiliaresRole_User = CreateAuxiliaresRole();
-            var configuracionesRole_User = CreateConfiguracionesRole();
-            var controlHorarioRole_User = CreateControlHorarioRole();
-            var crmRole_User = CreateCrmRole();
-            var impuestosRole_User = CreateImpuestosRole();
-            var productosRole_User = CreateProductosRole();
-            var alquileresRole_User = CreateAlquileresRole();
-            var reportsRole_User = CreateReportsRole();
-
-            var userName = $"User@{tenantName}";
-
-            if (userManager != null)
-            {
-                if (userManager.FindUserByName<ApplicationUser>(objectSpace, userName) == null)
-                {
-                    var EmptyPassword = "";
-                    var userResult = userManager.CreateUser<ApplicationUser>(objectSpace, userName, EmptyPassword, user =>
-                    {
-                        user.ChangePasswordOnFirstLogon = true;
-                        user.Roles.Add(defaultRole);
-                        user.Roles.Add(imprentaRole_User);
-                        user.Roles.Add(contactosRole_User);
-                        user.Roles.Add(ventasRole_User);
-                        user.Roles.Add(comprasRole_User);
-                        user.Roles.Add(produccionRole_User);
-                        user.Roles.Add(tpvRole_User);
-                        user.Roles.Add(contabilidadRole_User);
-                        user.Roles.Add(auxiliaresRole_User);
-                        user.Roles.Add(configuracionesRole_User);
-                        user.Roles.Add(controlHorarioRole_User);
-                        user.Roles.Add(crmRole_User);
-                        user.Roles.Add(impuestosRole_User);
-                        user.Roles.Add(productosRole_User);
-                        user.Roles.Add(alquileresRole_User);
-                        user.Roles.Add(reportsRole_User);
-                    });
-
-                    if (userResult.User is ISecurityUserWithLoginInfo userWithLoginInfo)
-                    {
-                        userWithLoginInfo.CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, userName);
-                    }
-                }
-            }
-            else
-            {
-                // Fallback manual si UserManager no está disponible (ej. durante la creación del tenant)
-                var user = objectSpace.FirstOrDefault<ApplicationUser>(u => u.UserName == userName);
-                if (user == null)
-                {
-                    user = objectSpace.CreateObject<ApplicationUser>();
-                    user.UserName = userName;
-                    user.SetPassword("");
-                    user.ChangePasswordOnFirstLogon = true;
-                    user.Roles.Add(defaultRole);
-                    user.Roles.Add(imprentaRole_User);
-                    user.Roles.Add(contactosRole_User);
-                    user.Roles.Add(ventasRole_User);
-                    user.Roles.Add(comprasRole_User);
-                    user.Roles.Add(produccionRole_User);
-                    user.Roles.Add(tpvRole_User);
-                    user.Roles.Add(contabilidadRole_User);
-                    user.Roles.Add(auxiliaresRole_User);
-                    user.Roles.Add(configuracionesRole_User);
-                    user.Roles.Add(controlHorarioRole_User);
-                    user.Roles.Add(crmRole_User);
-                    user.Roles.Add(impuestosRole_User);
-                    user.Roles.Add(productosRole_User);
-                    user.Roles.Add(alquileresRole_User);
-                    user.Roles.Add(reportsRole_User);
-                    ((ISecurityUserWithLoginInfo)user).CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, userName);
-                }
-            }
-        }
-
-        var adminUserName = tenantName != null ? $"Admin@{tenantName}" : "Admin";
+        var adminUserName = "Admin";
 
         if (userManager != null)
         {

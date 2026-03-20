@@ -36,7 +36,7 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
 
         new TenantSetupService(objectSpace).CreateInitialTenants(tenantName ?? "Default");
 
-        new SecuritySetupService(objectSpace).CreateRolesAndUsers(tenantName ?? "Default");
+        new SecuritySetupService(objectSpace).CreateRolesAndUsers(tenantName);
 
         if (tenantId != null)
         {

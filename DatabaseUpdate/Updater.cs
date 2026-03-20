@@ -27,8 +27,11 @@ public class Updater : ModuleUpdater
         base.UpdateDatabaseAfterUpdateSchema();
 
 #if DEBUG
-        var securitySetup = new SecuritySetupService(ObjectSpace);
-        securitySetup.CreateRolesAndUsers(TenantName);
+        if (ObjectSpace.ServiceProvider != null)
+        {
+            var securitySetup = new SecuritySetupService(ObjectSpace);
+            securitySetup.CreateRolesAndUsers(TenantName);
+        }
 #endif
 
         ObjectSpace.CommitChanges();
