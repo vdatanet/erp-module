@@ -89,22 +89,43 @@ public class DatabaseService(IConfiguration configuration) : IDatabaseService
         var cleanConnectionString = CleanConnectionString(connectionString);
         var builder = new NpgsqlConnectionStringBuilder(cleanConnectionString);
         
-        // Intentar conectar a 'postgres' por defecto si el usuario tiene permisos
-        // pero si no, intentamos sin especificar base de datos (conecta a la DB del usuario)
-        try 
+        // Usar siempre 'postgres' como base de mantenimiento para crear tenants
+        builder.Database = "postgres";
+
+        var maxRetries = 3;
+        var retryCount = 0;
+        var delayMs = 1000;
+
+        while (true)
         {
-            builder.Database = "postgres";
-            using var conn = new NpgsqlConnection(builder.ConnectionString);
-            conn.Open();
-            ExecuteCreatePostgres(conn, databaseName);
-        }
-        catch (Exception)
-        {
-            // Fallback: intentar con la conexión original (probablemente DB asignada al usuario)
-            builder.Database = ""; 
-            using var conn = new NpgsqlConnection(builder.ConnectionString);
-            conn.Open();
-            ExecuteCreatePostgres(conn, databaseName);
+            try 
+            {
+                using var conn = new NpgsqlConnection(builder.ConnectionString);
+                conn.Open();
+                ExecuteCreatePostgres(conn, databaseName);
+                return;
+            }
+            catch (PostgresException ex) when (ex.SqlState == "55006" || ex.SqlState == "57P03" || ex.SqlState == "40001")
+            {
+                // 55006: Object in use (e.g. database still has connections)
+                // 57P03: Server is in hot standby or starting up
+                // 40001: Serialization failure (deadlock or similar race condition)
+                retryCount++;
+                if (retryCount > maxRetries) throw;
+                
+                Thread.Sleep(delayMs * retryCount); // Backoff simple
+            }
+            catch (Exception)
+            {
+                // Si falla la conexión a 'postgres', intentamos una vez con builder.Database = "" como último recurso,
+                // pero solo para el primer intento de conexión, no para el bucle de reintentos del CREATE DATABASE
+                if (retryCount == 0 && builder.Database == "postgres")
+                {
+                    builder.Database = "";
+                    continue; 
+                }
+                throw;
+            }
         }
     }
 
