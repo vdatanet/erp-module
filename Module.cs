@@ -19,6 +19,7 @@ using DevExpress.ExpressApp.Xpo;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.ExpressApp.MultiTenancy;
 using Microsoft.Extensions.DependencyInjection;
+using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Ventas;
 using Updater = erp.Module.DatabaseUpdate.Updater;
 

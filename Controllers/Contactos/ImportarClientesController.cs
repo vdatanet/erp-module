@@ -7,7 +7,7 @@ using DevExpress.Persistent.Base;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Ventas;
 
-namespace erp.Module.Controllers.Ventas;
+namespace erp.Module.Controllers.Contactos;
 
 public class ImportarClientesController : ViewController
 {
@@ -73,7 +73,7 @@ public class ImportarClientesController : ViewController
             if (string.IsNullOrEmpty(nombre)) continue;
 
             // Buscar si ya existe por NIF (si tiene) o Nombre
-            Cliente cliente = null;
+            Cliente? cliente = null;
             if (!string.IsNullOrEmpty(nif))
             {
                 cliente = objectSpace.FindObject<Cliente>(CriteriaOperator.Parse("Nif = ?", nif));
