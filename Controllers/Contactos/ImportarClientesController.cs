@@ -3,9 +3,11 @@ using System.Text;
 using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
+using DevExpress.ExpressApp.MultiTenancy;
 using DevExpress.Persistent.Base;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Ventas;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.Controllers.Contactos;
 
@@ -29,6 +31,14 @@ public class ImportarClientesController : ViewController
         importarClientesAction.Execute += ImportarClientesAction_Execute;
 
         Actions.Add(importarClientesAction);
+    }
+
+    protected override void OnActivated()
+    {
+        base.OnActivated();
+        var tenantProvider = Application.ServiceProvider.GetService<ITenantProvider>();
+        var tenantName = tenantProvider?.TenantName;
+        Active["DemoOnly"] = tenantName == "demo";
     }
 
     private void ImportarClientesAction_CustomizePopupWindowParams(object sender, CustomizePopupWindowParamsEventArgs e)
