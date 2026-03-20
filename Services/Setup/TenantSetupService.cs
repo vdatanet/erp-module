@@ -5,7 +5,7 @@ namespace erp.Module.Services.Setup;
 
 public class TenantSetupService(IObjectSpace objectSpace)
 {
-    public Tenant CreateTenant(string tenantName, string databaseName, string provider = "Postgres")
+    public Tenant CreateTenant(string tenantName, string databaseName, string provider, string server, string user, string password)
     {
         var tenant = objectSpace.FirstOrDefault<Tenant>(t => t.Name == tenantName);
         if (tenant == null)
@@ -13,14 +13,14 @@ public class TenantSetupService(IObjectSpace objectSpace)
             tenant = objectSpace.CreateObject<Tenant>();
             tenant.Name = tenantName;
 
-            var connectionString = provider switch
+            var connectionString = provider.ToLower() switch
             {
-                "Postgres" =>
-                    $"XpoProvider=Postgres;Server=db-local;User ID=postgres;Password=;database={databaseName}",
-                "MSSqlServer" =>
-                    $"XpoProvider=MSSqlServer;data source=.\\SQLEXPRESS;integrated security=SSPI;initial catalog={databaseName};TrustServerCertificate=True",
-                "MySql" => $"XpoProvider=MySql;Server=db-local;User ID=devuser;Password=;database={databaseName}",
-                _ => $"XpoProvider=Postgres;Server=db-local;User ID=postgres;Password=;database={databaseName}"
+                "postgres" =>
+                    $"XpoProvider=Postgres;Server={server};User ID={user};Password={password};database={databaseName}",
+                "mssqlserver" =>
+                    $"XpoProvider=MSSqlServer;data source={server};user id={user};password={password};initial catalog={databaseName};TrustServerCertificate=True",
+                "mysql" => $"XpoProvider=MySql;Server={server};User ID={user};Password={password};database={databaseName}",
+                _ => throw new NotSupportedException($"Proveedor de base de datos no soportado: {provider}")
             };
 
             tenant.ConnectionString = connectionString;
@@ -34,9 +34,9 @@ public class TenantSetupService(IObjectSpace objectSpace)
 #if DEBUG
         if (currentTenantName == null)
         {
-            _ = CreateTenant("demo", "erp_demo");
-            _ = CreateTenant("demo-mssql", "erp_demo_mssql", "MSSqlServer");
-            _ = CreateTenant("demo-mysql", "erp_demo_mysql", "MySql");
+            _ = CreateTenant("demo", "erp_demo", "Postgres", "db-local", "postgres", "");
+            _ = CreateTenant("demo-mssql", "erp_demo_mssql", "MSSqlServer", ".\\SQLEXPRESS", "sa", "your_password");
+            _ = CreateTenant("demo-mysql", "erp_demo_mysql", "MySql", "db-local", "devuser", "");
         }
 #endif
     }
