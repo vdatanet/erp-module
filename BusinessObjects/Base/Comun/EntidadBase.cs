@@ -13,10 +13,20 @@ namespace erp.Module.BusinessObjects.Base.Comun;
 [ModelDefault("IsCloneable", "True")]
 public abstract class EntidadBase(Session session) : BaseObject(session)
 {
+    private MediaDataObject? _qrCode;
     private DateTime? _creadoEl;
     private ApplicationUser? _creadoPor;
     private DateTime? _modificadoEl;
     private ApplicationUser? _modificadoPor;
+
+    [XafDisplayName("Código QR")]
+    [ModelDefault("AllowEdit", "False")]
+    [ImageEditor(ListViewImageEditorMode = ImageEditorMode.PictureEdit, DetailViewImageEditorMode = ImageEditorMode.PictureEdit)]
+    public MediaDataObject? QrCode
+    {
+        get => _qrCode;
+        set => SetPropertyValue(nameof(QrCode), ref _qrCode, value);
+    }
 
     [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
@@ -69,6 +79,7 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
             {
                 CreadoEl = DateTime.Now;
                 CreadoPor = GetCurrentUser();
+                GenerarQrCode();
             }
             else
             {
@@ -78,6 +89,28 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
         }
         catch (Exception)
         {
+        }
+    }
+
+    private void GenerarQrCode()
+    {
+        if (QrCode != null) return;
+        
+        try
+        {
+            var oid = Oid.ToString();
+            var url = $"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={oid}";
+            
+            using var client = new HttpClient();
+            var bytes = client.GetByteArrayAsync(url).Result;
+            
+            var media = new MediaDataObject(Session);
+            media.MediaData = bytes;
+            QrCode = media;
+        }
+        catch
+        {
+            // Silenciosamente fallar si no hay conexión o error en API
         }
     }
 

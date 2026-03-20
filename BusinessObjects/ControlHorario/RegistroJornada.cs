@@ -20,6 +20,8 @@ namespace erp.Module.BusinessObjects.ControlHorario;
     CustomMessageTemplate = "La fecha de fin debe ser posterior a la fecha de inicio")]
 public class RegistroJornada(Session session) : EntidadBase(session)
 {
+    private string? _motivoModificacion;
+    private bool _modificado;
     private TimeSpan _duracion;
     private Empleado? _empleado;
     private DateTime? _fechaFin;
@@ -52,8 +54,14 @@ public class RegistroJornada(Session session) : EntidadBase(session)
         get => _fechaInicio;
         set
         {
+            var oldVal = _fechaInicio;
             if (SetPropertyValue(nameof(FechaInicio), ref _fechaInicio, value))
             {
+                if (!IsLoading && !IsSaving && !Session.IsNewObject(this) && oldVal != DateTime.MinValue && (oldVal - value).Duration() > TimeSpan.FromSeconds(1))
+                {
+                    _modificado = true;
+                    OnChanged(nameof(Modificado));
+                }
                 RecalcularDuracion();
                 ActualizarEmpleado();
             }
@@ -69,8 +77,14 @@ public class RegistroJornada(Session session) : EntidadBase(session)
         get => _fechaFin;
         set
         {
+            var oldVal = _fechaFin;
             if (SetPropertyValue(nameof(FechaFin), ref _fechaFin, value))
             {
+                if (!IsLoading && !IsSaving && !Session.IsNewObject(this) && oldVal != null && value != null && (oldVal.Value - value.Value).Duration() > TimeSpan.FromSeconds(1))
+                {
+                    _modificado = true;
+                    OnChanged(nameof(Modificado));
+                }
                 RecalcularDuracion();
                 ActualizarEmpleado();
             }
@@ -86,9 +100,32 @@ public class RegistroJornada(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
+    [XafDisplayName("Modificado")]
+    [ModelDefault("AllowEdit", "False")]
+    [ImmediatePostData]
+    public bool Modificado
+    {
+        get => _modificado;
+        set => SetPropertyValue(nameof(Modificado), ref _modificado, value);
+    }
+
+    [Size(SizeAttribute.Unlimited)]
+    [ModelDefault("RowCount", "5")]
+    [XafDisplayName("Motivo de Modificación")]
+    [RuleRequiredField("MotivoModificacionRequired", DefaultContexts.Save,
+        TargetCriteria = "Modificado = True",
+        CustomMessageTemplate = "Debe indicar el motivo de la modificación")]
+    [ImmediatePostData]
+    public string? MotivoModificacion
+    {
+        get => _motivoModificacion;
+        set => SetPropertyValue(nameof(MotivoModificacion), ref _motivoModificacion, value);
+    }
+
     [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Duración")]
-    [ModelDefault("DisplayFormat", "{0:hh\\:mm}")]
+    [ModelDefault("DisplayFormat", @"{0:hh\:mm}")]
+    [ModelDefault("EditMask", @"hh\:mm")]
     public TimeSpan Duracion
     {
         get => _duracion;
