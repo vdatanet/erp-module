@@ -19,6 +19,7 @@ using DevExpress.ExpressApp.Xpo;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.ExpressApp.MultiTenancy;
 using Microsoft.Extensions.DependencyInjection;
+using erp.Module.BusinessObjects.Ventas;
 using Updater = erp.Module.DatabaseUpdate.Updater;
 
 namespace erp.Module;
@@ -39,6 +40,7 @@ public sealed class erpModule : ModuleBase
         AdditionalExportedTypes.Add(typeof(Event));
         AdditionalExportedTypes.Add(typeof(Resource));
         AdditionalExportedTypes.Add(typeof(HCategory));
+        AdditionalExportedTypes.Add(typeof(ImportarClientesParameters));
         RequiredModuleTypes.Add(typeof(SystemModule));
         RequiredModuleTypes.Add(typeof(SecurityModule));
         RequiredModuleTypes.Add(typeof(ChartModule));
