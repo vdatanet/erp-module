@@ -66,11 +66,8 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             var alquileresRole_User = CreateAlquileresRole();
             var reportsRole_User = CreateReportsRole();
 
-            /* 
-            // Comentamos la creación automática del usuario para que el usuario pueda crearlos manualmente
-            // tal como se solicita en el issue.
             var userName = $"User@{tenantName}";
-            
+
             if (userManager != null)
             {
                 if (userManager.FindUserByName<ApplicationUser>(objectSpace, userName) == null)
@@ -132,14 +129,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
                     ((ISecurityUserWithLoginInfo)user).CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, userName);
                 }
             }
-            */
         }
 
-        /*
-        // Comentamos la creación automática del Admin para que el usuario pueda crearlos manualmente
-        // tal como se solicita en el issue.
         var adminUserName = tenantName != null ? $"Admin@{tenantName}" : "Admin";
-        
+
         if (userManager != null)
         {
             if (userManager.FindUserByName<ApplicationUser>(objectSpace, adminUserName) == null)
@@ -171,7 +164,6 @@ public class SecuritySetupService(IObjectSpace objectSpace)
                 ((ISecurityUserWithLoginInfo)adminUser).CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, adminUserName);
             }
         }
-        */
     }
 
     private PermissionPolicyRole CreateAdminRole()

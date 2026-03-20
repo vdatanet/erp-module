@@ -25,6 +25,13 @@ public class Updater : ModuleUpdater
     public override void UpdateDatabaseAfterUpdateSchema()
     {
         base.UpdateDatabaseAfterUpdateSchema();
+
+#if DEBUG
+        var securitySetup = new SecuritySetupService(ObjectSpace);
+        securitySetup.CreateRolesAndUsers(TenantName);
+#endif
+
+        ObjectSpace.CommitChanges();
     }
 
     public override void UpdateDatabaseBeforeUpdateSchema()
