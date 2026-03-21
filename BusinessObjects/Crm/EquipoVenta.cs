@@ -1,4 +1,5 @@
 using DevExpress.ExpressApp.DC;
+using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
@@ -18,6 +19,8 @@ public class EquipoVenta(Session session) : EntidadBase(session)
 {
     private string? _nombre;
     private ApplicationUser? _responsable;
+    private decimal _porcentajeComision;
+    private decimal _importeComisionFijo;
 
     [Size(255)]
     [RuleRequiredField]
@@ -33,6 +36,24 @@ public class EquipoVenta(Session session) : EntidadBase(session)
     {
         get => _responsable;
         set => SetPropertyValue(nameof(Responsable), ref _responsable, value);
+    }
+
+    [XafDisplayName("% Comisión")]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    public decimal PorcentajeComision
+    {
+        get => _porcentajeComision;
+        set => SetPropertyValue(nameof(PorcentajeComision), ref _porcentajeComision, value);
+    }
+
+    [XafDisplayName("Importe Fijo Comisión")]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    public decimal ImporteComisionFijo
+    {
+        get => _importeComisionFijo;
+        set => SetPropertyValue(nameof(ImporteComisionFijo), ref _importeComisionFijo, value);
     }
 
     [Association("EquipoVenta-Leads")]

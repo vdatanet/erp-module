@@ -29,6 +29,8 @@ public class Contacto(Session session) : EntidadBase(session)
     private DateTime _fechaAlta;
     private DateTime? _fechaBaja;
     private EquipoVenta? _equipoVenta;
+    private decimal _porcentajeComision;
+    private decimal _importeComisionFijo;
     private ApplicationUser? _usuario;
     private Cliente? _cliente;
     private string? _codigo;
@@ -102,10 +104,37 @@ public class Contacto(Session session) : EntidadBase(session)
     [XafDisplayName("Equipo de Venta")]
     [Association("EquipoVenta-Vendedores")]
     [DataSourceCriteria("EsVendedor = true")]
+    [ImmediatePostData]
     public EquipoVenta? EquipoVenta
     {
         get => _equipoVenta;
-        set => SetPropertyValue(nameof(EquipoVenta), ref _equipoVenta, value);
+        set
+        {
+            var modified = SetPropertyValue(nameof(EquipoVenta), ref _equipoVenta, value);
+            if (modified && !IsLoading && !IsSaving && value != null)
+            {
+                PorcentajeComision = value.PorcentajeComision;
+                ImporteComisionFijo = value.ImporteComisionFijo;
+            }
+        }
+    }
+
+    [XafDisplayName("% Comisión")]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    public decimal PorcentajeComision
+    {
+        get => _porcentajeComision;
+        set => SetPropertyValue(nameof(PorcentajeComision), ref _porcentajeComision, value);
+    }
+
+    [XafDisplayName("Importe Fijo Comisión")]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    public decimal ImporteComisionFijo
+    {
+        get => _importeComisionFijo;
+        set => SetPropertyValue(nameof(ImporteComisionFijo), ref _importeComisionFijo, value);
     }
 
     [XafDisplayName("Usuario de Aplicación")]

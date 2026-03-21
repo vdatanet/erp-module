@@ -124,10 +124,25 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     [XafDisplayName("Vendedor")]
     [ToolTip("El vendedor puede ser un empleado o un agente externo (ambos son Contactos)")]
     [DataSourceCriteria("EsVendedor = true AND Activo = true")]
+    [ImmediatePostData]
     public Contacto? Vendedor
     {
         get => _vendedor;
-        set => SetPropertyValue(nameof(Vendedor), ref _vendedor, value);
+        set
+        {
+            var modified = SetPropertyValue(nameof(Vendedor), ref _vendedor, value);
+            if (modified && !IsLoading && !IsSaving && value != null)
+            {
+                if (value.EquipoVenta != null)
+                    EquipoVenta = value.EquipoVenta;
+
+                foreach (var linea in Lineas)
+                {
+                    linea.PorcentajeComision = value.PorcentajeComision;
+                    linea.ImporteComisionFijo = value.ImporteComisionFijo;
+                }
+            }
+        }
     }
 
     [XafDisplayName("Categoría de Venta")]
