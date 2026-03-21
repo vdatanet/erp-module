@@ -1,3 +1,4 @@
+using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
@@ -91,19 +92,41 @@ public class Lead(Session session) : Contacto(session)
     {
         if (Cliente != null) return;
 
-        // 1. Crear el Cliente si no existe
-        var cliente = new Cliente(Session);
-        cliente.Nombre = Nombre;
-        cliente.NombreComercial = NombreComercial;
-        cliente.CorreoElectronico = CorreoElectronico;
-        cliente.Telefono = Telefono;
-        cliente.Direccion = Direccion;
-        cliente.CodigoPostal = CodigoPostal;
-        cliente.Poblacion = Poblacion;
-        cliente.Provincia = Provincia;
-        cliente.Pais = Pais;
-        
-        // Asociar el lead al nuevo cliente
+        // 1. Buscar si ya existe un Cliente (Tercero) por NIF, Email o Teléfono
+        Cliente? cliente = null;
+
+        if (!string.IsNullOrEmpty(Nif))
+        {
+            cliente = Session.FindObject<Cliente>(CriteriaOperator.Parse("Nif = ?", Nif));
+        }
+
+        if (cliente == null && !string.IsNullOrEmpty(CorreoElectronico))
+        {
+            cliente = Session.FindObject<Cliente>(CriteriaOperator.Parse("CorreoElectronico = ?", CorreoElectronico));
+        }
+
+        if (cliente == null && !string.IsNullOrEmpty(Telefono))
+        {
+            cliente = Session.FindObject<Cliente>(CriteriaOperator.Parse("Telefono = ?", Telefono));
+        }
+
+        // Si no se encuentra, crear uno nuevo
+        if (cliente == null)
+        {
+            cliente = new Cliente(Session);
+            cliente.Nombre = Nombre;
+            cliente.NombreComercial = NombreComercial;
+            cliente.CorreoElectronico = CorreoElectronico;
+            cliente.Telefono = Telefono;
+            cliente.Direccion = Direccion;
+            cliente.CodigoPostal = CodigoPostal;
+            cliente.Poblacion = Poblacion;
+            cliente.Provincia = Provincia;
+            cliente.Pais = Pais;
+            cliente.Nif = Nif;
+        }
+
+        // Asociar el lead al cliente encontrado o creado
         Cliente = cliente;
 
         // 2. Crear la Oportunidad
