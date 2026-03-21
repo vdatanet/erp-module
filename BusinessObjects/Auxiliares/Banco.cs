@@ -46,6 +46,7 @@ public class Banco(Session session) : EntidadBase(session)
 
     [Association("Cliente-Bancos")]
     [XafDisplayName("Cliente")]
+    [DataSourceCriteria("Activo = true")]
     public Cliente? Cliente
     {
         get => _cliente;

@@ -56,7 +56,7 @@ public class Lead(Session session) : Contacto(session)
 
     [XafDisplayName("Vendedor")]
     [ToolTip("El vendedor puede ser un empleado o un agente externo (ambos son Contactos)")]
-    [DataSourceCriteria("EsVendedor = true")]
+    [DataSourceCriteria("EsVendedor = true AND Activo = true")]
     public Contacto? Vendedor
     {
         get => _vendedor;

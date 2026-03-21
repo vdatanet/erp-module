@@ -50,6 +50,7 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
     [Association("Cliente-Reservas")]
     [XafDisplayName("Cliente")]
     [ImmediatePostData]
+    [DataSourceCriteria("Activo = true")]
     public Cliente? Cliente
     {
         get => _cliente;

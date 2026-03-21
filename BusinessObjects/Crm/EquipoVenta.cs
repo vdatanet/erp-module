@@ -49,5 +49,6 @@ public class EquipoVenta(Session session) : EntidadBase(session)
 
     [Association("EquipoVenta-Vendedores")]
     [XafDisplayName("Vendedores")]
+    [DataSourceCriteria("EsVendedor = true AND Activo = true")]
     public XPCollection<Contacto> Vendedores => GetCollection<Contacto>();
 }

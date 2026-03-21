@@ -19,47 +19,14 @@ namespace erp.Module.BusinessObjects.Contactos;
 [ImageName("BO_Customer")]
 public class Cliente(Session session) : Tercero(session)
 {
-    private bool _activo;
     private Banco? _bancoPredeterminado;
     private CondicionPago? _condicionPago;
     private Cuenta? _cuentaCobro;
     private Cuenta? _cuentaContable;
     private Diario? _diarioVentas;
-    private DateTime _fechaAlta;
-    private DateTime? _fechaBaja;
     private PosicionFiscal? _posicionFiscal;
     private Sector? _sector;
 
-    [XafDisplayName("Activo")]
-    public bool Activo
-    {
-        get => _activo;
-        set
-        {
-            if (!SetPropertyValue(nameof(Activo), ref _activo, value)) return;
-            if (IsLoading || IsSaving) return;
-            if (value)
-                FechaBaja = null;
-            else
-                FechaBaja = DateTime.Now;
-        }
-    }
-
-    [XafDisplayName("Fecha de Alta")]
-    [ModelDefault("AllowEdit", "False")]
-    public DateTime FechaAlta
-    {
-        get => _fechaAlta;
-        set => SetPropertyValue(nameof(FechaAlta), ref _fechaAlta, value);
-    }
-
-    [XafDisplayName("Fecha de Baja")]
-    [ModelDefault("AllowEdit", "False")]
-    public DateTime? FechaBaja
-    {
-        get => _fechaBaja;
-        set => SetPropertyValue(nameof(FechaBaja), ref _fechaBaja, value);
-    }
 
     [XafDisplayName("Cuenta Contable")]
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
@@ -174,7 +141,5 @@ public class Cliente(Session session) : Tercero(session)
         _diarioVentas = companyInfo.DiarioVentasPorDefecto;
         _posicionFiscal = companyInfo.PosicionFiscalPorDefecto;
         _condicionPago = companyInfo.CondicionPagoPorDefecto;
-        _activo = true;
-        _fechaAlta = DateTime.Now;
     }
 }

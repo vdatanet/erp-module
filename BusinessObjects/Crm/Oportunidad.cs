@@ -60,6 +60,7 @@ public class Oportunidad(Session session) : EntidadBase(session)
     [RuleRequiredField]
     [Association("Cliente-Oportunidades")]
     [XafDisplayName("Cliente")]
+    [DataSourceCriteria("Activo = true")]
     public Cliente? Cliente
     {
         get => _cliente;
@@ -136,7 +137,7 @@ public class Oportunidad(Session session) : EntidadBase(session)
 
     [XafDisplayName("Vendedor")]
     [ToolTip("El vendedor puede ser un empleado o un agente externo (ambos son Contactos)")]
-    [DataSourceCriteria("EsVendedor = true")]
+    [DataSourceCriteria("EsVendedor = true AND Activo = true")]
     public Contacto? Vendedor
     {
         get => _vendedor;

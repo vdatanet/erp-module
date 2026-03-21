@@ -22,6 +22,9 @@ namespace erp.Module.BusinessObjects.Contactos;
 public class Contacto(Session session) : EntidadBase(session)
 {
     private bool _esVendedor;
+    private bool _activo;
+    private DateTime _fechaAlta;
+    private DateTime? _fechaBaja;
     private EquipoVenta? _equipoVenta;
     private ApplicationUser? _usuario;
     private Cliente? _cliente;
@@ -48,6 +51,7 @@ public class Contacto(Session session) : EntidadBase(session)
 
     [XafDisplayName("Cliente")]
     [Association("Cliente-Contactos")]
+    [DataSourceCriteria("Activo = true")]
     public Cliente? Cliente
     {
         get => _cliente;
@@ -59,6 +63,37 @@ public class Contacto(Session session) : EntidadBase(session)
     {
         get => _esVendedor;
         set => SetPropertyValue(nameof(EsVendedor), ref _esVendedor, value);
+    }
+
+    [XafDisplayName("Activo")]
+    public bool Activo
+    {
+        get => _activo;
+        set
+        {
+            if (!SetPropertyValue(nameof(Activo), ref _activo, value)) return;
+            if (IsLoading || IsSaving) return;
+            if (value)
+                FechaBaja = null;
+            else
+                FechaBaja = DateTime.Now;
+        }
+    }
+
+    [XafDisplayName("Fecha de Alta")]
+    [ModelDefault("AllowEdit", "False")]
+    public DateTime FechaAlta
+    {
+        get => _fechaAlta;
+        set => SetPropertyValue(nameof(FechaAlta), ref _fechaAlta, value);
+    }
+
+    [XafDisplayName("Fecha de Baja")]
+    [ModelDefault("AllowEdit", "False")]
+    public DateTime? FechaBaja
+    {
+        get => _fechaBaja;
+        set => SetPropertyValue(nameof(FechaBaja), ref _fechaBaja, value);
     }
 
     [XafDisplayName("Equipo de Venta")]
@@ -290,5 +325,7 @@ public class Contacto(Session session) : EntidadBase(session)
     private void InitValues()
     {
         TipoIdentificacion = IDType.NIF_IVA;
+        Activo = true;
+        FechaAlta = DateTime.Now;
     }
 }
