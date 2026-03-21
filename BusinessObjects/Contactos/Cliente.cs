@@ -117,6 +117,10 @@ public class Cliente(Session session) : Tercero(session)
     [XafDisplayName("Facturas")]
     public XPCollection<Factura> Facturas => new(Session, CriteriaOperator.Parse("Cliente = ?", this));
 
+    [Association("Cliente-Suscripciones")]
+    [XafDisplayName("Suscripciones")]
+    public XPCollection<Suscripciones.Suscripcion> Suscripciones => GetCollection<Suscripciones.Suscripcion>();
+
     [Association("Cliente-Reservas")]
     [XafDisplayName("Reservas")]
     public XPCollection<Reserva> Reservas => GetCollection<Reserva>();

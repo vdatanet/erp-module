@@ -153,6 +153,10 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
     public XPCollection<Producto> ProductoImpuestosCompra => GetCollection<Producto>();
 
     [NonCloneable]
+    [Association("TipoSuscripcion-Impuestos")]
+    public XPCollection<Suscripciones.TipoSuscripcion> TipoSuscripciones => GetCollection<Suscripciones.TipoSuscripcion>();
+
+    [NonCloneable]
     [Association("InformacionEmpresa-ImpuestosVentas")]
     public XPCollection<InformacionEmpresa> InformacionEmpresaImpuestosVenta => GetCollection<InformacionEmpresa>();
 
