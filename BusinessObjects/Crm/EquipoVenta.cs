@@ -3,6 +3,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Base.Ventas;
 
 namespace erp.Module.BusinessObjects.Crm;
 
@@ -39,4 +40,8 @@ public class EquipoVenta(Session session) : EntidadBase(session)
     [Association("EquipoVenta-Oportunidades")]
     [XafDisplayName("Oportunidades")]
     public XPCollection<Oportunidad> Oportunidades => GetCollection<Oportunidad>();
+
+    [Association("EquipoVenta-DocumentosVenta")]
+    [XafDisplayName("Documentos de Venta")]
+    public XPCollection<DocumentoVenta> DocumentosVenta => GetCollection<DocumentoVenta>();
 }

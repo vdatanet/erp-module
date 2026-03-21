@@ -7,6 +7,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
+using erp.Module.BusinessObjects.Crm;
 using erp.Module.Factories;
 using erp.Module.Helpers.Comun;
 using erp.Module.Helpers.Contactos;
@@ -24,6 +25,8 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private int _numero;
     private string? _secuencia;
     private string? _serie;
+    private EquipoVenta? _equipoVenta;
+    private Contacto? _vendedor;
 
     [RuleRequiredField("erp.Module.BusinessObjects.Ventas.Factura.Cliente_Required", DefaultContexts.Save,
         TargetCriteria =
@@ -106,6 +109,22 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     {
         get => _importeTotal;
         set => SetPropertyValue(nameof(ImporteTotal), ref _importeTotal, value);
+    }
+
+    [XafDisplayName("Equipo de Venta")]
+    [Association("EquipoVenta-DocumentosVenta")]
+    public EquipoVenta? EquipoVenta
+    {
+        get => _equipoVenta;
+        set => SetPropertyValue(nameof(EquipoVenta), ref _equipoVenta, value);
+    }
+
+    [XafDisplayName("Vendedor")]
+    [ToolTip("El vendedor puede ser un empleado o un agente externo (ambos son Contactos)")]
+    public Contacto? Vendedor
+    {
+        get => _vendedor;
+        set => SetPropertyValue(nameof(Vendedor), ref _vendedor, value);
     }
 
     [DevExpress.Xpo.Aggregated]

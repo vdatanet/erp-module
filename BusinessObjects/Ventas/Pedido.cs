@@ -21,7 +21,12 @@ public class Pedido(Session session) : DocumentoVenta(session)
         set
         {
             if (!SetPropertyValue(nameof(Oportunidad), ref _oportunidad, value) || IsLoading || IsSaving) return;
-            if (value != null && value.Cliente != null) Cliente = value.Cliente;
+            if (value != null)
+            {
+                if (value.Cliente != null) Cliente = value.Cliente;
+                if (value.EquipoVenta != null) EquipoVenta = value.EquipoVenta;
+                if (value.Vendedor != null) Vendedor = value.Vendedor;
+            }
         }
     }
 }
