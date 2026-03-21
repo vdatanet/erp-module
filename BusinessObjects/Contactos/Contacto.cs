@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using DevExpress.Data.Filtering;
+using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
@@ -19,6 +20,8 @@ namespace erp.Module.BusinessObjects.Contactos;
 [NavigationItem("Contactos")]
 [ImageName("BO_Contact")]
 [DefaultProperty(nameof(Nombre))]
+[Appearance("BlockEditingWhenInactive", AppearanceItemType = "ViewItem", TargetItems = "*",
+    Criteria = "Activo = false", Context = "Any", Enabled = false)]
 public class Contacto(Session session) : EntidadBase(session)
 {
     private bool _esVendedor;
@@ -291,6 +294,20 @@ public class Contacto(Session session) : EntidadBase(session)
     [Association("Contacto-Adjuntos")]
     [XafDisplayName("Adjuntos")]
     public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
+
+    [Action(Caption = "Desactivar", ImageName = "Action_Delete", TargetObjectsCriteria = "Activo = true", 
+        ConfirmationMessage = "¿Desea desactivar este contacto?", SelectionDependencyType = MethodActionSelectionDependencyType.RequireSingleObject)]
+    public void Desactivar()
+    {
+        Activo = false;
+    }
+
+    [Action(Caption = "Reactivar", ImageName = "Action_Refresh", TargetObjectsCriteria = "Activo = false", 
+        ConfirmationMessage = "¿Desea reactivar este contacto?", SelectionDependencyType = MethodActionSelectionDependencyType.RequireSingleObject)]
+    public void Reactivar()
+    {
+        Activo = true;
+    }
 
     public override void AfterConstruction()
     {
