@@ -23,6 +23,8 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     private decimal _porcentajeDescuento;
     private decimal _precioUnitario;
     private Producto? _producto;
+    private decimal _porcentajeComision;
+    private decimal _importeComisionFijo;
 
     [Association("DocumentoVenta-Lineas")]
     [XafDisplayName("Documento Venta")]
@@ -110,6 +112,30 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
             EstablecerBaseImponible();
         }
     }
+
+    [XafDisplayName("% Comisión")]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    public decimal PorcentajeComision
+    {
+        get => _porcentajeComision;
+        set => SetPropertyValue(nameof(PorcentajeComision), ref _porcentajeComision, value);
+    }
+
+    [XafDisplayName("Importe Fijo Comisión")]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    public decimal ImporteComisionFijo
+    {
+        get => _importeComisionFijo;
+        set => SetPropertyValue(nameof(ImporteComisionFijo), ref _importeComisionFijo, value);
+    }
+
+    [PersistentAlias("BaseImponible * (PorcentajeComision / 100) + ImporteComisionFijo")]
+    [XafDisplayName("Comisión Calculada")]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("AllowEdit", "False")]
+    public decimal ComisionCalculada => Convert.ToDecimal(EvaluateAlias(nameof(ComisionCalculada)));
 
     [Persistent(nameof(BaseImponible))]
     [ModelDefault("DisplayFormat", "{0:n2}")]
