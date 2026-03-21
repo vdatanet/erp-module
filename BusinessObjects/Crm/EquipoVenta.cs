@@ -4,6 +4,8 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Base.Ventas;
+using erp.Module.BusinessObjects.Contactos;
+using erp.Module.BusinessObjects.Crm;
 
 namespace erp.Module.BusinessObjects.Crm;
 
@@ -35,7 +37,7 @@ public class EquipoVenta(Session session) : EntidadBase(session)
 
     [Association("EquipoVenta-Leads")]
     [XafDisplayName("Leads")]
-    public XPCollection<Lead> Leads => GetCollection<Lead>();
+    public XPCollection<Lead> Leads => GetCollection<Lead>(nameof(Leads));
 
     [Association("EquipoVenta-Oportunidades")]
     [XafDisplayName("Oportunidades")]
@@ -44,4 +46,8 @@ public class EquipoVenta(Session session) : EntidadBase(session)
     [Association("EquipoVenta-DocumentosVenta")]
     [XafDisplayName("Documentos de Venta")]
     public XPCollection<DocumentoVenta> DocumentosVenta => GetCollection<DocumentoVenta>();
+
+    [Association("EquipoVenta-Vendedores")]
+    [XafDisplayName("Vendedores")]
+    public XPCollection<Contacto> Vendedores => GetCollection<Contacto>();
 }

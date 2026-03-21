@@ -136,6 +136,7 @@ public class Oportunidad(Session session) : EntidadBase(session)
 
     [XafDisplayName("Vendedor")]
     [ToolTip("El vendedor puede ser un empleado o un agente externo (ambos son Contactos)")]
+    [DataSourceCriteria("EsVendedor = true")]
     public Contacto? Vendedor
     {
         get => _vendedor;

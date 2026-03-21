@@ -45,16 +45,17 @@ public class Lead(Session session) : Contacto(session)
         set => SetPropertyValue(nameof(Responsable), ref _responsable, value);
     }
 
-    [XafDisplayName("Equipo de Venta")]
+    [XafDisplayName("Equipo de Venta (Lead)")]
     [Association("EquipoVenta-Leads")]
-    public EquipoVenta? EquipoVenta
+    public EquipoVenta? EquipoVentaLead
     {
         get => _equipoVenta;
-        set => SetPropertyValue(nameof(EquipoVenta), ref _equipoVenta, value);
+        set => SetPropertyValue(nameof(EquipoVentaLead), ref _equipoVenta, value);
     }
 
     [XafDisplayName("Vendedor")]
     [ToolTip("El vendedor puede ser un empleado o un agente externo (ambos son Contactos)")]
+    [DataSourceCriteria("EsVendedor = true")]
     public Contacto? Vendedor
     {
         get => _vendedor;
@@ -111,7 +112,7 @@ public class Lead(Session session) : Contacto(session)
         oportunidad.Descripcion = Mensaje;
         oportunidad.Cliente = cliente;
         oportunidad.Responsable = Responsable;
-        oportunidad.EquipoVenta = EquipoVenta;
+        oportunidad.EquipoVenta = EquipoVentaLead;
         oportunidad.Vendedor = Vendedor;
         oportunidad.Campana = Campana;
         oportunidad.Medio = Medio;

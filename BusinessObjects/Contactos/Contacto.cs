@@ -9,6 +9,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects;
 using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Crm;
 using erp.Module.Factories;
 using VeriFactu.Xml.Factu;
 
@@ -20,6 +21,8 @@ namespace erp.Module.BusinessObjects.Contactos;
 [DefaultProperty(nameof(Nombre))]
 public class Contacto(Session session) : EntidadBase(session)
 {
+    private bool _esVendedor;
+    private EquipoVenta? _equipoVenta;
     private ApplicationUser? _usuario;
     private Cliente? _cliente;
     private string? _codigo;
@@ -49,6 +52,22 @@ public class Contacto(Session session) : EntidadBase(session)
     {
         get => _cliente;
         set => SetPropertyValue(nameof(Cliente), ref _cliente, value);
+    }
+
+    [XafDisplayName("¿Es Vendedor?")]
+    public bool EsVendedor
+    {
+        get => _esVendedor;
+        set => SetPropertyValue(nameof(EsVendedor), ref _esVendedor, value);
+    }
+
+    [XafDisplayName("Equipo de Venta")]
+    [Association("EquipoVenta-Vendedores")]
+    [DataSourceCriteria("EsVendedor = true")]
+    public EquipoVenta? EquipoVenta
+    {
+        get => _equipoVenta;
+        set => SetPropertyValue(nameof(EquipoVenta), ref _equipoVenta, value);
     }
 
     [XafDisplayName("Usuario de Aplicación")]
