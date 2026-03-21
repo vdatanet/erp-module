@@ -295,18 +295,11 @@ public class Contacto(Session session) : EntidadBase(session)
     [XafDisplayName("Adjuntos")]
     public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
 
-    [Action(Caption = "Desactivar", ImageName = "Action_Delete", TargetObjectsCriteria = "Activo = true", 
-        ConfirmationMessage = "¿Desea desactivar este contacto?", SelectionDependencyType = MethodActionSelectionDependencyType.RequireSingleObject)]
-    public void Desactivar()
+    [Action(Caption = "Cambiar Estado", ConfirmationMessage = "¿Desea cambiar el estado de este contacto?", 
+        SelectionDependencyType = MethodActionSelectionDependencyType.RequireSingleObject)]
+    public void ToggleEstado()
     {
-        Activo = false;
-    }
-
-    [Action(Caption = "Reactivar", ImageName = "Action_Refresh", TargetObjectsCriteria = "Activo = false", 
-        ConfirmationMessage = "¿Desea reactivar este contacto?", SelectionDependencyType = MethodActionSelectionDependencyType.RequireSingleObject)]
-    public void Reactivar()
-    {
-        Activo = true;
+        Activo = !Activo;
     }
 
     public override void AfterConstruction()

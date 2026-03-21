@@ -1,11 +1,14 @@
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
 using erp.Module.BusinessObjects.Contactos;
+using DevExpress.ExpressApp.SystemModule;
 
 namespace erp.Module.Controllers.Contactos;
 
 public class ContactoEstadoController : ViewController
 {
+    private ActionBase? _toggleAction;
+
     public ContactoEstadoController()
     {
         TargetObjectType = typeof(Contacto);
@@ -14,27 +17,68 @@ public class ContactoEstadoController : ViewController
     protected override void OnActivated()
     {
         base.OnActivated();
-        // Cuando estamos en una ListView, desactivamos las acciones de Desactivar y Reactivar
-        // que vienen definidas por atributo en el Business Object.
-        if (View is ListView)
+        
+        // El controlador de XAF que maneja las acciones por atributo se llama ObjectMethodActionsViewController
+        var controller = Frame.GetController<ObjectMethodActionsViewController>();
+        if (controller != null)
         {
-            foreach (var action in Actions)
+            foreach (var action in controller.Actions)
             {
-                if (action.Id == "Desactivar" || action.Id == "Reactivar")
+                if (action.Id == "Contacto.ToggleEstado" || action.Id == "ToggleEstado")
                 {
-                    action.Active["VisibleInListView"] = false;
+                    _toggleAction = action;
+                    // En ListView lo desactivamos (ocultamos)
+                    action.Active["VisibleInListView"] = View is DetailView;
+                    break;
                 }
             }
         }
-        else if (View is DetailView)
+
+        if (_toggleAction != null && View is DetailView detailView)
         {
-            foreach (var action in Actions)
-            {
-                if (action.Id == "Desactivar" || action.Id == "Reactivar")
-                {
-                    action.Active["VisibleInListView"] = true;
-                }
-            }
+            detailView.CurrentObjectChanged += View_CurrentObjectChanged;
+            View.ObjectSpace.ObjectChanged += ObjectSpace_ObjectChanged;
+            UpdateActionState();
+        }
+    }
+
+    protected override void OnDeactivated()
+    {
+        if (View is DetailView detailView)
+        {
+            detailView.CurrentObjectChanged -= View_CurrentObjectChanged;
+            View.ObjectSpace.ObjectChanged -= ObjectSpace_ObjectChanged;
+        }
+        _toggleAction = null;
+        base.OnDeactivated();
+    }
+
+    private void ObjectSpace_ObjectChanged(object? sender, ObjectChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(Contacto.Activo))
+        {
+            UpdateActionState();
+        }
+    }
+
+    private void View_CurrentObjectChanged(object? sender, EventArgs e)
+    {
+        UpdateActionState();
+    }
+
+    private void UpdateActionState()
+    {
+        if (_toggleAction == null || View.CurrentObject is not Contacto contacto) return;
+
+        if (contacto.Activo)
+        {
+            _toggleAction.Caption = "Desactivar";
+            _toggleAction.ImageName = "Action_Delete";
+        }
+        else
+        {
+            _toggleAction.Caption = "Reactivar";
+            _toggleAction.ImageName = "Action_Refresh";
         }
     }
 }
