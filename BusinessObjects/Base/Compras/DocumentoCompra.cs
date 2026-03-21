@@ -7,6 +7,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
+using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.Factories;
 using erp.Module.Helpers.Comun;
 using erp.Module.Helpers.Contactos;
@@ -24,16 +25,25 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
     private Proveedor? _proveedor;
     private string? _secuencia;
     private string? _serie;
+    private CondicionPago? _condicionPago;
 
     [RuleRequiredField("erp.Module.BusinessObjects.Compras.FacturaCompra.Proveedor_Required", DefaultContexts.Save,
         TargetCriteria =
             "IsInstanceOfType(this, 'erp.Module.BusinessObjects.Compras.FacturaCompra') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Compras.PresupuestoCompra') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Compras.AlbaranCompra')")]
     [Association("Proveedor-DocumentosCompra")]
     [XafDisplayName("Proveedor")]
+    [ImmediatePostData]
     public Proveedor? Proveedor
     {
         get => _proveedor;
-        set => SetPropertyValue(nameof(Proveedor), ref _proveedor, value);
+        set
+        {
+            var modified = SetPropertyValue(nameof(Proveedor), ref _proveedor, value);
+            if (modified && !IsLoading && !IsSaving && value != null)
+            {
+                CondicionPago = value.CondicionPago;
+            }
+        }
     }
 
     [XafDisplayName("Serie")]
@@ -44,6 +54,13 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
     {
         get => _serie;
         set => SetPropertyValue(nameof(Serie), ref _serie, value);
+    }
+
+    [XafDisplayName("Condición de Pago")]
+    public CondicionPago? CondicionPago
+    {
+        get => _condicionPago;
+        set => SetPropertyValue(nameof(CondicionPago), ref _condicionPago, value);
     }
 
     [NonCloneable]

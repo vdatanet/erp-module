@@ -5,6 +5,8 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Compras;
 using erp.Module.BusinessObjects.Compras;
 
+using erp.Module.BusinessObjects.Auxiliares;
+
 namespace erp.Module.BusinessObjects.Contactos;
 
 [DefaultClassOptions]
@@ -12,6 +14,14 @@ namespace erp.Module.BusinessObjects.Contactos;
 [ImageName("BO_Vendor")]
 public class Proveedor(Session session) : Tercero(session)
 {
+    private CondicionPago? _condicionPago;
+
+    [XafDisplayName("Condiciones de Pago")]
+    public CondicionPago? CondicionPago
+    {
+        get => _condicionPago;
+        set => SetPropertyValue(nameof(CondicionPago), ref _condicionPago, value);
+    }
     [Association("Proveedor-DocumentosCompra")]
     [XafDisplayName("Documentos de Compra")]
     [VisibleInDetailView(false)]

@@ -8,6 +8,7 @@ using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
+using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.Factories;
 using erp.Module.Helpers.Comun;
 using erp.Module.Helpers.Contactos;
@@ -28,6 +29,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private EquipoVenta? _equipoVenta;
     private Contacto? _vendedor;
     private CategoriaVenta? _categoriaVenta;
+    private CondicionPago? _condicionPago;
 
     [RuleRequiredField("erp.Module.BusinessObjects.Ventas.Factura.Cliente_Required", DefaultContexts.Save,
         TargetCriteria =
@@ -35,10 +37,18 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     [Association("Cliente-DocumentosVenta")]
     [XafDisplayName("Cliente")]
     [DataSourceCriteria("Activo = true")]
+    [ImmediatePostData]
     public Cliente? Cliente
     {
         get => _cliente;
-        set => SetPropertyValue(nameof(Cliente), ref _cliente, value);
+        set
+        {
+            var modified = SetPropertyValue(nameof(Cliente), ref _cliente, value);
+            if (modified && !IsLoading && !IsSaving && value != null)
+            {
+                CondicionPago = value.CondicionPago;
+            }
+        }
     }
 
     [XafDisplayName("Serie")]
@@ -150,6 +160,13 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     {
         get => _categoriaVenta;
         set => SetPropertyValue(nameof(CategoriaVenta), ref _categoriaVenta, value);
+    }
+
+    [XafDisplayName("Condición de Pago")]
+    public CondicionPago? CondicionPago
+    {
+        get => _condicionPago;
+        set => SetPropertyValue(nameof(CondicionPago), ref _condicionPago, value);
     }
 
     [DevExpress.Xpo.Aggregated]
