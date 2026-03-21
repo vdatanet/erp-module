@@ -35,6 +35,8 @@ public class Oportunidad(Session session) : EntidadBase(session)
     private string? _notas;
     private double _probabilidad;
     private ApplicationUser? _responsable;
+    private EquipoVenta? _equipoVenta;
+    private Contacto? _vendedor;
     private string? _titulo;
     private decimal _valorEstimado;
 
@@ -122,6 +124,22 @@ public class Oportunidad(Session session) : EntidadBase(session)
     {
         get => _responsable;
         set => SetPropertyValue(nameof(Responsable), ref _responsable, value);
+    }
+
+    [XafDisplayName("Equipo de Venta")]
+    [Association("EquipoVenta-Oportunidades")]
+    public EquipoVenta? EquipoVenta
+    {
+        get => _equipoVenta;
+        set => SetPropertyValue(nameof(EquipoVenta), ref _equipoVenta, value);
+    }
+
+    [XafDisplayName("Vendedor")]
+    [ToolTip("El vendedor puede ser un empleado o un agente externo (ambos son Contactos)")]
+    public Contacto? Vendedor
+    {
+        get => _vendedor;
+        set => SetPropertyValue(nameof(Vendedor), ref _vendedor, value);
     }
 
     [Size(SizeAttribute.Unlimited)]

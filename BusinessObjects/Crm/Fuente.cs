@@ -34,4 +34,8 @@ public class Fuente(Session session) : EntidadBase(session)
     [Association("Fuente-Oportunidades")]
     [XafDisplayName("Oportunidades")]
     public XPCollection<Oportunidad> Oportunidades => GetCollection<Oportunidad>();
+
+    [Association("Fuente-Leads")]
+    [XafDisplayName("Leads")]
+    public XPCollection<Lead> Leads => GetCollection<Lead>();
 }
