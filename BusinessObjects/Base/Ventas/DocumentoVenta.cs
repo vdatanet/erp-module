@@ -27,6 +27,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private string? _serie;
     private EquipoVenta? _equipoVenta;
     private Contacto? _vendedor;
+    private CategoriaVenta? _categoriaVenta;
 
     [RuleRequiredField("erp.Module.BusinessObjects.Ventas.Factura.Cliente_Required", DefaultContexts.Save,
         TargetCriteria =
@@ -127,6 +128,13 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     {
         get => _vendedor;
         set => SetPropertyValue(nameof(Vendedor), ref _vendedor, value);
+    }
+
+    [XafDisplayName("Categoría de Venta")]
+    public CategoriaVenta? CategoriaVenta
+    {
+        get => _categoriaVenta;
+        set => SetPropertyValue(nameof(CategoriaVenta), ref _categoriaVenta, value);
     }
 
     [DevExpress.Xpo.Aggregated]
