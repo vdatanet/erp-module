@@ -22,7 +22,7 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
 {
     private CausaExencion? _causaExencion;
     private string? _codigo;
-    private Cuenta? _cuenta;
+    private CuentaContable? _cuenta;
     private bool _disponibleEnCompras;
     private bool _disponibleEnVentas;
     private bool _esRetencion;
@@ -68,11 +68,11 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Secuencia), ref _secuencia, value);
     }
 
-    [XafDisplayName("Cuenta")]
-    public Cuenta? Cuenta
+    [XafDisplayName("CuentaContable")]
+    public CuentaContable? CuentaContable
     {
         get => _cuenta;
-        set => SetPropertyValue(nameof(Cuenta), ref _cuenta, value);
+        set => SetPropertyValue(nameof(CuentaContable), ref _cuenta, value);
     }
 
     [ModelDefault("DisplayFormat", "{0:n2}")]
@@ -181,6 +181,6 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
         DisponibleEnCompras = false;
         EsRetencion = false;
         Tipo = 0;
-        Cuenta = null;
+        CuentaContable = null;
     }
 }

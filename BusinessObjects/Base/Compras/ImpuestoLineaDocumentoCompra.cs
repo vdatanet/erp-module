@@ -14,7 +14,7 @@ namespace erp.Module.BusinessObjects.Base.Compras;
 public class ImpuestoLineaDocumentoCompra(Session session) : EntidadBase(session)
 {
     private decimal _baseImponible;
-    private Cuenta? _cuenta;
+    private CuentaContable? _cuenta;
     private bool _esCompuesto;
     private bool _esRetencion;
     private decimal _importeImpuestos;
@@ -67,11 +67,11 @@ public class ImpuestoLineaDocumentoCompra(Session session) : EntidadBase(session
         set => SetPropertyValue(nameof(Secuencia), ref _secuencia, value);
     }
 
-    [XafDisplayName("Cuenta")]
-    public Cuenta? Cuenta
+    [XafDisplayName("CuentaContable")]
+    public CuentaContable? CuentaContable
     {
         get => _cuenta;
-        set => SetPropertyValue(nameof(Cuenta), ref _cuenta, value);
+        set => SetPropertyValue(nameof(CuentaContable), ref _cuenta, value);
     }
 
     [ModelDefault("DisplayFormat", "{0:n2}")]
@@ -125,7 +125,7 @@ public class ImpuestoLineaDocumentoCompra(Session session) : EntidadBase(session
             Nombre = null;
             Notas = null;
             Secuencia = 0;
-            Cuenta = null;
+            CuentaContable = null;
             Tipo = 0m;
             EsCompuesto = false;
             EsRetencion = false;
@@ -135,7 +135,7 @@ public class ImpuestoLineaDocumentoCompra(Session session) : EntidadBase(session
         Nombre = t.Nombre;
         Notas = t.Notas;
         Secuencia = t.Secuencia;
-        Cuenta = t.Cuenta;
+        CuentaContable = t.CuentaContable;
         Tipo = t.Tipo;
         EsRetencion = t.EsRetencion;
     }

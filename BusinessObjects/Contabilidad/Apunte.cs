@@ -15,7 +15,7 @@ namespace erp.Module.BusinessObjects.Contabilidad;
 [NavigationItem("Contabilidad")]
 [XafDisplayName("Apunte")]
 [ImageName("BO_Lead")]
-[RuleCriteria("Apunte_Cuenta_Activa_Asentable", DefaultContexts.Save, "Cuenta is null || (Cuenta.EstaActiva && Cuenta.EsAsentable)", 
+[RuleCriteria("Apunte_Cuenta_Activa_Asentable", DefaultContexts.Save, "CuentaContable is null || (CuentaContable.EstaActiva && CuentaContable.EsAsentable)", 
     "La cuenta debe ser activa y asentable.")]
 [RuleCriteria("Apunte_Tercero_Activo", DefaultContexts.Save, "Tercero is null || Tercero.Activo", 
     "El tercero debe estar activo.")]
@@ -26,7 +26,7 @@ namespace erp.Module.BusinessObjects.Contabilidad;
 public class Apunte(Session session) : EntidadBase(session)
 {
     private Asiento? _asiento;
-    private Cuenta? _cuenta;
+    private CuentaContable? _cuenta;
     private Tercero? _tercero;
     private string? _concepto;
     private decimal _debe;
@@ -59,7 +59,7 @@ public class Apunte(Session session) : EntidadBase(session)
     
     private string? _cuentaBusqueda;
     [NonPersistent]
-    [XafDisplayName("Buscar Cuenta")]
+    [XafDisplayName("Buscar CuentaContable")]
     [ToolTip("Permite buscar por código (ej. 430.1 para 4300000001)")]
     public string? CuentaBusqueda
     {
@@ -73,10 +73,10 @@ public class Apunte(Session session) : EntidadBase(session)
         }
     }
 
-    [XafDisplayName("Cuenta")]
+    [XafDisplayName("CuentaContable")]
     [RuleRequiredField]
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    public Cuenta? Cuenta
+    public CuentaContable? CuentaContable
     {
         get => _cuenta;
         set
@@ -84,7 +84,7 @@ public class Apunte(Session session) : EntidadBase(session)
             if (value != _cuenta)
             {
                 EnsureAsientoNotPublished();
-                SetPropertyValue(nameof(Cuenta), ref _cuenta, value);
+                SetPropertyValue(nameof(CuentaContable), ref _cuenta, value);
             }
         }
     }
@@ -210,12 +210,12 @@ public class Apunte(Session session) : EntidadBase(session)
             searchCode = pattern;
         }
 
-        var cuentaEncontrada = Session.Query<Cuenta>()
+        var cuentaEncontrada = Session.Query<CuentaContable>()
             .FirstOrDefault(c => (c.Codigo == searchCode || c.Codigo!.StartsWith(searchCode)) && c.EstaActiva && c.EsAsentable);
         
         if (cuentaEncontrada != null)
         {
-            Cuenta = cuentaEncontrada;
+            CuentaContable = cuentaEncontrada;
         }
     }
 

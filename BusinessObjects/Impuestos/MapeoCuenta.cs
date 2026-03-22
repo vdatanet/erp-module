@@ -12,8 +12,8 @@ namespace erp.Module.BusinessObjects.Impuestos;
 [ImageName("BO_List")]
 public class MapeoCuenta(Session session) : EntidadBase(session)
 {
-    private Cuenta? _cuentaDestino;
-    private Cuenta? _cuentaOrigen;
+    private CuentaContable? _cuentaDestino;
+    private CuentaContable? _cuentaOrigen;
     private PosicionFiscal? _posicionFiscal;
 
     [Association("PosicionFiscal-MapeosCuenta")]
@@ -24,19 +24,19 @@ public class MapeoCuenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(PosicionFiscal), ref _posicionFiscal, value);
     }
 
-    [RuleRequiredField("RuleRequiredField_MapeoCuenta_CuentaOrigen", DefaultContexts.Save, CustomMessageTemplate = "La Cuenta Origen del Mapeo es obligatoria")]
-    [XafDisplayName("Cuenta Origen")]
+    [RuleRequiredField("RuleRequiredField_MapeoCuenta_CuentaOrigen", DefaultContexts.Save, CustomMessageTemplate = "La CuentaContable Origen del Mapeo es obligatoria")]
+    [XafDisplayName("CuentaContable Origen")]
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    public Cuenta? CuentaOrigen
+    public CuentaContable? CuentaOrigen
     {
         get => _cuentaOrigen;
         set => SetPropertyValue(nameof(CuentaOrigen), ref _cuentaOrigen, value);
     }
 
-    [RuleRequiredField("RuleRequiredField_MapeoCuenta_CuentaDestino", DefaultContexts.Save, CustomMessageTemplate = "La Cuenta Destino del Mapeo es obligatoria")]
-    [XafDisplayName("Cuenta Destino")]
+    [RuleRequiredField("RuleRequiredField_MapeoCuenta_CuentaDestino", DefaultContexts.Save, CustomMessageTemplate = "La CuentaContable Destino del Mapeo es obligatoria")]
+    [XafDisplayName("CuentaContable Destino")]
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    public Cuenta? CuentaDestino
+    public CuentaContable? CuentaDestino
     {
         get => _cuentaDestino;
         set => SetPropertyValue(nameof(CuentaDestino), ref _cuentaDestino, value);

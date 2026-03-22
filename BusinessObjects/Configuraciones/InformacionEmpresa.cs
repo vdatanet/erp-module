@@ -22,17 +22,17 @@ namespace erp.Module.BusinessObjects.Configuraciones;
     CustomMessageTemplate = "No se puede eliminar la información de la empresa.")]
 public class InformacionEmpresa(Session session) : Contacto(session)
 {
-    private Cuenta? _cuentaAcreedoresPorDefecto;
-    private Cuenta? _cuentaPadreAcreedores;
-    private Cuenta? _cuentaPadreClientes;
-    private Cuenta? _cuentaPadreProveedores;
+    private CuentaContable? _cuentaAcreedoresPorDefecto;
+    private CuentaContable? _cuentaPadreAcreedores;
+    private CuentaContable? _cuentaPadreClientes;
+    private CuentaContable? _cuentaPadreProveedores;
     private CondicionPago? _condicionPagoPorDefecto;
-    private Cuenta? _cuentaClientesPorDefecto;
-    private Cuenta? _cuentaCobrosPorDefecto;
-    private Cuenta? _cuentaComprasPorDefecto;
-    private Cuenta? _cuentaPagosPorDefecto;
-    private Cuenta? _cuentaProveedoresPorDefecto;
-    private Cuenta? _cuentaVentasPorDefecto;
+    private CuentaContable? _cuentaClientesPorDefecto;
+    private CuentaContable? _cuentaCobrosPorDefecto;
+    private CuentaContable? _cuentaComprasPorDefecto;
+    private CuentaContable? _cuentaPagosPorDefecto;
+    private CuentaContable? _cuentaProveedoresPorDefecto;
+    private CuentaContable? _cuentaVentasPorDefecto;
     private Diario? _diarioComprasPorDefecto;
     private Diario? _diarioVentasPorDefecto;
     private string? _nifAdministradorSistemaVeriFactu;
@@ -81,80 +81,80 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     }
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    [XafDisplayName("Cuenta Ventas por Defecto")]
-    public Cuenta? CuentaVentasPorDefecto
+    [XafDisplayName("CuentaContable Ventas por Defecto")]
+    public CuentaContable? CuentaVentasPorDefecto
     {
         get => _cuentaVentasPorDefecto;
         set => SetPropertyValue(nameof(CuentaVentasPorDefecto), ref _cuentaVentasPorDefecto, value);
     }
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    [XafDisplayName("Cuenta Compras por Defecto")]
-    public Cuenta? CuentaComprasPorDefecto
+    [XafDisplayName("CuentaContable Compras por Defecto")]
+    public CuentaContable? CuentaComprasPorDefecto
     {
         get => _cuentaComprasPorDefecto;
         set => SetPropertyValue(nameof(CuentaComprasPorDefecto), ref _cuentaComprasPorDefecto, value);
     }
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    [XafDisplayName("Cuenta Clientes por Defecto")]
-    public Cuenta? CuentaClientesPorDefecto
+    [XafDisplayName("CuentaContable Clientes por Defecto")]
+    public CuentaContable? CuentaClientesPorDefecto
     {
         get => _cuentaClientesPorDefecto;
         set => SetPropertyValue(nameof(CuentaClientesPorDefecto), ref _cuentaClientesPorDefecto, value);
     }
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    [XafDisplayName("Cuenta de Cobros por Defecto")]
-    public Cuenta? CuentaCobrosPorDefecto
+    [XafDisplayName("CuentaContable de Cobros por Defecto")]
+    public CuentaContable? CuentaCobrosPorDefecto
     {
         get => _cuentaCobrosPorDefecto;
         set => SetPropertyValue(nameof(CuentaCobrosPorDefecto), ref _cuentaCobrosPorDefecto, value);
     }
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    [XafDisplayName("Cuenta Proveedores por Defecto")]
-    public Cuenta? CuentaProveedoresPorDefecto
+    [XafDisplayName("CuentaContable Proveedores por Defecto")]
+    public CuentaContable? CuentaProveedoresPorDefecto
     {
         get => _cuentaProveedoresPorDefecto;
         set => SetPropertyValue(nameof(CuentaProveedoresPorDefecto), ref _cuentaProveedoresPorDefecto, value);
     }
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    [XafDisplayName("Cuenta Acreedores por Defecto")]
-    public Cuenta? CuentaAcreedoresPorDefecto
+    [XafDisplayName("CuentaContable Acreedores por Defecto")]
+    public CuentaContable? CuentaAcreedoresPorDefecto
     {
         get => _cuentaAcreedoresPorDefecto;
         set => SetPropertyValue(nameof(CuentaAcreedoresPorDefecto), ref _cuentaAcreedoresPorDefecto, value);
     }
 
     [DataSourceCriteria("EstaActiva = True")]
-    [XafDisplayName("Cuenta Padre Clientes")]
-    public Cuenta? CuentaPadreClientes
+    [XafDisplayName("CuentaContable Padre Clientes")]
+    public CuentaContable? CuentaPadreClientes
     {
         get => _cuentaPadreClientes;
         set => SetPropertyValue(nameof(CuentaPadreClientes), ref _cuentaPadreClientes, value);
     }
 
     [DataSourceCriteria("EstaActiva = True")]
-    [XafDisplayName("Cuenta Padre Proveedores")]
-    public Cuenta? CuentaPadreProveedores
+    [XafDisplayName("CuentaContable Padre Proveedores")]
+    public CuentaContable? CuentaPadreProveedores
     {
         get => _cuentaPadreProveedores;
         set => SetPropertyValue(nameof(CuentaPadreProveedores), ref _cuentaPadreProveedores, value);
     }
 
     [DataSourceCriteria("EstaActiva = True")]
-    [XafDisplayName("Cuenta Padre Acreedores")]
-    public Cuenta? CuentaPadreAcreedores
+    [XafDisplayName("CuentaContable Padre Acreedores")]
+    public CuentaContable? CuentaPadreAcreedores
     {
         get => _cuentaPadreAcreedores;
         set => SetPropertyValue(nameof(CuentaPadreAcreedores), ref _cuentaPadreAcreedores, value);
     }
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    [XafDisplayName("Cuenta de Pagos por Defecto")]
-    public Cuenta? CuentaPagosPorDefecto
+    [XafDisplayName("CuentaContable de Pagos por Defecto")]
+    public CuentaContable? CuentaPagosPorDefecto
     {
         get => _cuentaPagosPorDefecto;
         set => SetPropertyValue(nameof(CuentaPagosPorDefecto), ref _cuentaPagosPorDefecto, value);
@@ -384,7 +384,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     }
 
     [RuleRange("InformacionEmpresa_PaddingCuentaContable_Range", DefaultContexts.Save, 1, 15)]
-    [XafDisplayName("Padding Cuenta Contable")]
+    [XafDisplayName("Padding CuentaContable Contable")]
     public int PaddingCuentaContable
     {
         get => _paddingCuentaContable;

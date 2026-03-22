@@ -82,7 +82,7 @@ public class ImpuestoSetupService(IObjectSpace objectSpace)
 
         if (!string.IsNullOrEmpty(codigoCuenta))
         {
-            tipoImpuesto.Cuenta = objectSpace.FirstOrDefault<Cuenta>(c => c.Codigo == codigoCuenta);
+            tipoImpuesto.CuentaContable = objectSpace.FirstOrDefault<CuentaContable>(c => c.Codigo == codigoCuenta);
         }
     }
 }

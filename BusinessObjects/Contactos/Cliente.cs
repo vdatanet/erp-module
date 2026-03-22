@@ -21,15 +21,15 @@ public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVent
 {
     private Banco? _bancoPredeterminado;
     private CondicionPago? _condicionPago;
-    private Cuenta? _cuentaCobro;
+    private CuentaContable? _cuentaCobro;
     private Diario? _diarioVentas;
     private PosicionFiscal? _posicionFiscal;
     private Sector? _sector;
 
 
-    [XafDisplayName("Cuenta de Cobro")]
+    [XafDisplayName("CuentaContable de Cobro")]
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    public Cuenta? CuentaCobro
+    public CuentaContable? CuentaCobro
     {
         get => _cuentaCobro;
         set => SetPropertyValue(nameof(CuentaCobro), ref _cuentaCobro, value);

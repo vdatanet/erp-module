@@ -16,11 +16,11 @@ namespace erp.Module.BusinessObjects.Contactos;
 [ImageName("BO_Organization")]
 public class Tercero(Session session) : Contacto(session)
 {
-    private Cuenta? _cuentaContable;
+    private CuentaContable? _cuentaContable;
 
-    [XafDisplayName("Cuenta Contable")]
+    [XafDisplayName("CuentaContable Contable")]
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    public Cuenta? CuentaContable
+    public CuentaContable? CuentaContable
     {
         get => _cuentaContable;
         set => SetPropertyValue(nameof(CuentaContable), ref _cuentaContable, value);
@@ -95,8 +95,8 @@ public class Tercero(Session session) : Contacto(session)
         var config = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (config == null) return;
 
-        Cuenta? cuentaDefecto = null;
-        Cuenta? cuentaPadre = null;
+        CuentaContable? cuentaDefecto = null;
+        CuentaContable? cuentaPadre = null;
 
         if (this is Cliente)
         {
@@ -163,7 +163,7 @@ public class Tercero(Session session) : Contacto(session)
                 cuentaCodigo = cuentaCodigo.Substring(0, paddingValue);
             }
 
-            var cuentaExistente = Session.FindObject<Cuenta>(new BinaryOperator(nameof(Cuenta.Codigo), cuentaCodigo));
+            var cuentaExistente = Session.FindObject<CuentaContable>(new BinaryOperator(nameof(CuentaContable.Codigo), cuentaCodigo));
             if (cuentaExistente != null)
             {
                 CuentaContable = cuentaExistente;
@@ -174,7 +174,7 @@ public class Tercero(Session session) : Contacto(session)
             }
             else
             {
-                var nuevaCuenta = new Cuenta(Session)
+                var nuevaCuenta = new CuentaContable(Session)
                 {
                     Codigo = cuentaCodigo,
                     Nombre = Nombre,

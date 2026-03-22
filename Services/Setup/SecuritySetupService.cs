@@ -283,7 +283,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             contabilidadRole.Name = "Contabilidad";
         }
 
-        contabilidadRole.AddTypePermissionsRecursively<Cuenta>(SecurityOperations.FullAccess,
+        contabilidadRole.AddTypePermissionsRecursively<CuentaContable>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
         contabilidadRole.AddTypePermissionsRecursively<Diario>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);

@@ -23,8 +23,8 @@ public class Producto(Session session) : EntidadBase(session)
     private string? _codigo;
     private string? _codigoBarras;
     private decimal _costeEstandar;
-    private Cuenta? _cuentaCompras;
-    private Cuenta? _cuentaVentas;
+    private CuentaContable? _cuentaCompras;
+    private CuentaContable? _cuentaVentas;
     private bool _disponibleEnCompras;
     private bool _disponibleEnTpv;
     private bool _disponibleEnVentas;
@@ -83,15 +83,15 @@ public class Producto(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(PrecioVenta), ref _precioVenta, value);
     }
 
-    [XafDisplayName("Cuenta Ventas")]
-    public Cuenta? CuentaVentas
+    [XafDisplayName("CuentaContable Ventas")]
+    public CuentaContable? CuentaVentas
     {
         get => _cuentaVentas;
         set => SetPropertyValue(nameof(CuentaVentas), ref _cuentaVentas, value);
     }
 
-    [XafDisplayName("Cuenta Compras")]
-    public Cuenta? CuentaCompras
+    [XafDisplayName("CuentaContable Compras")]
+    public CuentaContable? CuentaCompras
     {
         get => _cuentaCompras;
         set => SetPropertyValue(nameof(CuentaCompras), ref _cuentaCompras, value);
