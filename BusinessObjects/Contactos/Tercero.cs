@@ -110,7 +110,21 @@ public class Tercero(Session session) : Contacto(session)
                 return;
             }
 
-            var cuentaExistente = Session.FindObject<Cuenta>(new BinaryOperator(nameof(Cuenta.Codigo), Codigo));
+            var cuentaCodigo = Codigo;
+            if (int.TryParse(Codigo, out var numericCodigo))
+            {
+                cuentaCodigo = numericCodigo.ToString().PadLeft(10, '0');
+            }
+            else if (!string.IsNullOrEmpty(Codigo))
+            {
+                // Si el código no es puramente numérico (ej: C00001), 
+                // pero queremos que la cuenta sea a 10 dígitos si es posible.
+                // Si ya tiene letras, el padding dependerá de la política, 
+                // pero el requerimiento dice "a 10 dígitos".
+                cuentaCodigo = Codigo.PadLeft(10, '0');
+            }
+
+            var cuentaExistente = Session.FindObject<Cuenta>(new BinaryOperator(nameof(Cuenta.Codigo), cuentaCodigo));
             if (cuentaExistente != null)
             {
                 CuentaContable = cuentaExistente;
@@ -119,7 +133,7 @@ public class Tercero(Session session) : Contacto(session)
             {
                 var nuevaCuenta = new Cuenta(Session)
                 {
-                    Codigo = Codigo,
+                    Codigo = cuentaCodigo,
                     Nombre = Nombre,
                     CuentaPadre = cuentaPadre,
                     EsAsentable = true,
