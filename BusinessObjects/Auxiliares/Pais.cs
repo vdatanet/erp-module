@@ -25,6 +25,12 @@ public class Pais(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
+    public static Pais? FindByName(Session session, string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return null;
+        return session.FindObject<Pais>(new DevExpress.Data.Filtering.BinaryOperator(nameof(Nombre), name.Trim()));
+    }
+
     [Association("Pais-Provincias")]
     [XafDisplayName("Provincias")]
     [VisibleInDetailView(false)]

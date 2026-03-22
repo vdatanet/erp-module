@@ -31,6 +31,9 @@ public class Updater : ModuleUpdater
         {
             var securitySetup = new SecuritySetupService(ObjectSpace);
             securitySetup.CreateRolesAndUsers(TenantName);
+
+            var paisProvinciaSetup = new PaisProvinciaPoblacionSetupService(ObjectSpace);
+            paisProvinciaSetup.CreateInitialData();
         }
 #endif
 

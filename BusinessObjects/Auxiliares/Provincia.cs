@@ -34,6 +34,17 @@ public class Provincia(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
+    public static Provincia? FindByName(Session session, string name, Pais? pais = null)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return null;
+        var criteria = (DevExpress.Data.Filtering.CriteriaOperator)new DevExpress.Data.Filtering.BinaryOperator(nameof(Nombre), name.Trim());
+        if (pais != null)
+        {
+            criteria = DevExpress.Data.Filtering.CriteriaOperator.And(criteria, new DevExpress.Data.Filtering.BinaryOperator(nameof(Pais), pais));
+        }
+        return session.FindObject<Provincia>(criteria);
+    }
+
     [Association("Provincia-Poblaciones")]
     [XafDisplayName("Poblaciones")]
     [VisibleInDetailView(false)]

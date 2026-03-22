@@ -34,4 +34,15 @@ public class Poblacion(Session session) : EntidadBase(session)
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
+
+    public static Poblacion? FindByName(Session session, string name, Provincia? provincia = null)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return null;
+        var criteria = (DevExpress.Data.Filtering.CriteriaOperator)new DevExpress.Data.Filtering.BinaryOperator(nameof(Nombre), name.Trim());
+        if (provincia != null)
+        {
+            criteria = DevExpress.Data.Filtering.CriteriaOperator.And(criteria, new DevExpress.Data.Filtering.BinaryOperator(nameof(Provincia), provincia));
+        }
+        return session.FindObject<Poblacion>(criteria);
+    }
 }

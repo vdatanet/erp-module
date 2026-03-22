@@ -297,7 +297,7 @@ public class Asiento(Session session) : EntidadBase(session)
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo != null)
         {
-            string prefijo = companyInfo.PrefijoAsientosPorDefecto;
+            string? prefijo = companyInfo.PrefijoAsientosPorDefecto;
             if (!string.IsNullOrEmpty(prefijo))
             {
                 Serie = $"{prefijo}/{Fecha.Year}";

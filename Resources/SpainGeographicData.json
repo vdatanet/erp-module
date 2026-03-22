@@ -1,0 +1,213 @@
+{
+  "Pais": "España",
+  "Provincias": [
+    {
+      "Nombre": "Álava",
+      "Poblaciones": ["Vitoria-Gasteiz", "Llodio", "Amurrio", "Oyon", "Salvatierra", "Alegría-Dulantzi", "Arceniega"]
+    },
+    {
+      "Nombre": "Albacete",
+      "Poblaciones": ["Albacete", "Hellín", "Villarrobledo", "Almansa", "La Roda", "Caudete", "Tobarra"]
+    },
+    {
+      "Nombre": "Alicante",
+      "Poblaciones": ["Alicante", "Elche", "Torrevieja", "Orihuela", "Benidorm", "Alcoy", "Elda", "San Vicente del Raspeig", "Denia", "Villajoyosa", "Santa Pola", "Crevillente", "Campello", "Jávea"]
+    },
+    {
+      "Nombre": "Almería",
+      "Poblaciones": ["Almería", "Roquetas de Mar", "El Ejido", "Níjar", "Adra", "Vícar", "Huércal-Overa", "Berja"]
+    },
+    {
+      "Nombre": "Asturias",
+      "Poblaciones": ["Gijón", "Oviedo", "Avilés", "Siero", "Langreo", "Mieres", "Castrillón", "San Martín del Rey Aurelio"]
+    },
+    {
+      "Nombre": "Ávila",
+      "Poblaciones": ["Ávila", "Arévalo", "Arenas de San Pedro", "Las Navas del Marqués", "Candeleda"]
+    },
+    {
+      "Nombre": "Badajoz",
+      "Poblaciones": ["Badajoz", "Mérida", "Don Benito", "Almendralejo", "Villanueva de la Serena", "Zafra", "Montijo", "Villafranca de los Barros"]
+    },
+    {
+      "Nombre": "Barcelona",
+      "Poblaciones": ["Barcelona", "L'Hospitalet de Llobregat", "Badalona", "Terrassa", "Sabadell", "Mataró", "Santa Coloma de Gramenet", "Sant Cugat del Vallès", "Cornellà de Llobregat", "Sant Boi de Llobregat", "Manresa", "Rubí", "Vilanova i la Geltrú", "Viladecans", "Castelldefels", "El Prat de Llobregat", "Granollers", "Cerdanyola del Vallès", "Mollet del Vallès", "Vic", "Igualada"]
+    },
+    {
+      "Nombre": "Burgos",
+      "Poblaciones": ["Burgos", "Miranda de Ebro", "Aranda de Duero", "Briviesca", "Medina de Pomar"]
+    },
+    {
+      "Nombre": "Cáceres",
+      "Poblaciones": ["Cáceres", "Plasencia", "Navalmoral de la Mata", "Coria", "Miajadas", "Trujillo"]
+    },
+    {
+      "Nombre": "Cádiz",
+      "Poblaciones": ["Cádiz", "Jerez de la Frontera", "Algeciras", "San Fernando", "El Puerto de Santa María", "Chiclana de la Frontera", "Sanlúcar de Barrameda", "La Línea de la Concepción", "Puerto Real", "Arcos de la Frontera", "San Roque", "Rota", "Barbate"]
+    },
+    {
+      "Nombre": "Cantabria",
+      "Poblaciones": ["Santander", "Torrelavega", "Castro-Urdiales", "Camargo", "Piélagos", "El Astillero", "Laredo", "Santoña"]
+    },
+    {
+      "Nombre": "Castellón",
+      "Poblaciones": ["Castellón de la Plana", "Villarreal", "Burriana", "Vall de Uxó", "Vinaroz", "Benicarló", "Almazora", "Onda", "Benicasim"]
+    },
+    {
+      "Nombre": "Ciudad Real",
+      "Poblaciones": ["Ciudad Real", "Puertollano", "Tomelloso", "Alcázar de San Juan", "Valdepeñas", "Manzanares", "Daimiel", "La Solana"]
+    },
+    {
+      "Nombre": "Córdoba",
+      "Poblaciones": ["Córdoba", "Lucena", "Puente Genil", "Montilla", "Priego de Córdoba", "Palma del Río", "Cabra", "Baena"]
+    },
+    {
+      "Nombre": "A Coruña",
+      "Poblaciones": ["A Coruña", "Santiago de Compostela", "Ferrol", "Narón", "Oleiros", "Carballo", "Arteixo", "Ames", "Culleredo", "Ribeira", "Ituango"]
+    },
+    {
+      "Nombre": "Cuenca",
+      "Poblaciones": ["Cuenca", "Tarancón", "Quintanar del Rey", "Las Pedroñeras", "San Clemente"]
+    },
+    {
+      "Nombre": "Girona",
+      "Poblaciones": ["Girona", "Figueres", "Blanes", "Lloret de Mar", "Olot", "Salt", "Palafrugell", "Sant Feliu de Guíxols", "Roses", "Palamós", "Banyoles"]
+    },
+    {
+      "Nombre": "Granada",
+      "Poblaciones": ["Granada", "Motril", "Almuñécar", "Armilla", "Maracena", "Baza", "Loja", "Las Gabias", "La Zubia", "Guadix", "Albolote"]
+    },
+    {
+      "Nombre": "Guadalajara",
+      "Poblaciones": ["Guadalajara", "Azuqueca de Henares", "Alovera", "El Casar", "Cabanillas del Campo"]
+    },
+    {
+      "Nombre": "Guipúzcoa",
+      "Poblaciones": ["San Sebastián", "Irún", "Rentería", "Éibar", "Zarauz", "Mondragón", "Hernani", "Tolosa", "Lasarte-Oria", "Pasajes"]
+    },
+    {
+      "Nombre": "Huelva",
+      "Poblaciones": ["Huelva", "Lepe", "Almonte", "Moguer", "Isla Cristina", "Aljaraque", "Ayamonte", "Cartaya", "Punta Umbría"]
+    },
+    {
+      "Nombre": "Huesca",
+      "Poblaciones": ["Huesca", "Barbastro", "Monzón", "Fraga", "Jaca", "Sabiñánigo", "Binéfar"]
+    },
+    {
+      "Nombre": "Illes Balears",
+      "Poblaciones": ["Palma de Mallorca", "Calvià", "Ibiza", "Manacor", "Santa Eulalia del Río", "Mahón", "Ciudadela", "Inca", "Marratxí", "Llucmajor", "San Antonio Abad"]
+    },
+    {
+      "Nombre": "Jaén",
+      "Poblaciones": ["Jaén", "Linares", "Andújar", "Úbeda", "Martos", "Alcalá la Real", "Bailén", "Baeza"]
+    },
+    {
+      "Nombre": "León",
+      "Poblaciones": ["León", "Ponferrada", "San Andrés del Rabanedo", "Villaquilambre", "Astorga", "La Bañeza"]
+    },
+    {
+      "Nombre": "Lleida",
+      "Poblaciones": ["Lleida", "Tàrrega", "Balaguer", "Mollerussa", "La Seu d'Urgell", "Cervera", "Solsona"]
+    },
+    {
+      "Nombre": "Lugo",
+      "Poblaciones": ["Lugo", "Monforte de Lemos", "Viveiro", "Vilalba", "Sarria", "Foz", "Ribadeo"]
+    },
+    {
+      "Nombre": "Madrid",
+      "Poblaciones": ["Madrid", "Móstoles", "Alcalá de Henares", "Fuenlabrada", "Leganés", "Getafe", "Alcorcón", "Torrejón de Ardoz", "Parla", "Alcobendas", "Las Rozas de Madrid", "San Sebastián de los Reyes", "Pozuelo de Alarcón", "Rivas-Vaciamadrid", "Coslada", "Valdemoro", "Majadahonda", "Collado Villalba", "Aranjuez", "Arganda del Rey", "Boadilla del Monte", "Pinto", "Colmenar Viejo", "Tres Cantos", "San Fernando de Henares"]
+    },
+    {
+      "Nombre": "Málaga",
+      "Poblaciones": ["Málaga", "Marbella", "Mijas", "Fuengirola", "Vélez-Málaga", "Estepona", "Torremolinos", "Benalmádena", "Rincón de la Victoria", "Antequera", "Ronda", "Alhaurín de la Torre", "Coín"]
+    },
+    {
+      "Nombre": "Murcia",
+      "Poblaciones": ["Murcia", "Cartagena", "Lorca", "Molina de Segura", "Alcantarilla", "Mazarrón", "Cieza", "Águilas", "Torre-Pacheco", "Yecla", "San Javier", "Totana", "Caravaca de la Cruz", "Jumilla"]
+    },
+    {
+      "Nombre": "Navarra",
+      "Poblaciones": ["Pamplona", "Tudela", "Barañáin", "Egues", "Zizur Mayor", "Estella-Lizarra", "Tafalla", "Ansoáin", "Villava"]
+    },
+    {
+      "Nombre": "Ourense",
+      "Poblaciones": ["Ourense", "Verín", "O Barco de Valdeorras", "Carballiño", "Xinzo de Limia"]
+    },
+    {
+      "Nombre": "Palencia",
+      "Poblaciones": ["Palencia", "Aguilar de Campoo", "Guardo", "Venta de Baños", "Villamuriel de Cerrato"]
+    },
+    {
+      "Nombre": "Las Palmas",
+      "Poblaciones": ["Las Palmas de Gran Canaria", "Telde", "Santa Lucía de Tirajana", "Arrecife", "San Bartolomé de Tirajana", "Puerto del Rosario", "Arucas", "Agüimes", "Ingenio", "Gáldar", "Teguise", "Mogán"]
+    },
+    {
+      "Nombre": "Pontevedra",
+      "Poblaciones": ["Vigo", "Pontevedra", "Vilagarcía de Arousa", "Redondela", "Marín", "Cangas", "Lalín", "Estrada, A", "Moaña", "Porriño, O", "Nigrán", "Sanxenxo"]
+    },
+    {
+      "Nombre": "La Rioja",
+      "Poblaciones": ["Logroño", "Calahorra", "Arnedo", "Haro", "Alfaro", "Nájera"]
+    },
+    {
+      "Nombre": "Salamanca",
+      "Poblaciones": ["Salamanca", "Santa Marta de Tormes", "Béjar", "Ciudad Rodrigo", "Villamayor", "Carbajosa de la Sagrada"]
+    },
+    {
+      "Nombre": "Santa Cruz de Tenerife",
+      "Poblaciones": ["Santa Cruz de Tenerife", "San Cristóbal de La Laguna", "Arona", "Adeje", "Granadilla de Abona", "La Orotava", "Los Realejos", "Puerto de la Cruz", "Candelaria", "Icod de los Vinos", "Tacoronte"]
+    },
+    {
+      "Nombre": "Segovia",
+      "Poblaciones": ["Segovia", "El Espinar", "Cuéllar", "Real Sitio de San Ildefonso", "Palazuelos de Eresma"]
+    },
+    {
+      "Nombre": "Sevilla",
+      "Poblaciones": ["Sevilla", "Dos Hermanas", "Alcalá de Guadaíra", "Utrera", "Mairena del Aljarafe", "Écija", "La Rinconada", "Los Palacios y Villafranca", "Coria del Río", "Carmona", "Morteros", "Lebrija", "Camas", "Tomares", "Bormujos", "San Juan de Aznalfarache"]
+    },
+    {
+      "Nombre": "Soria",
+      "Poblaciones": ["Soria", "Almazán", "Burgo de Osma-Ciudad de Osma"]
+    },
+    {
+      "Nombre": "Tarragona",
+      "Poblaciones": ["Tarragona", "Reus", "Tortosa", "El Vendrell", "Cambrils", "Salou", "Valls", "Calafell", "Amposta", "Vilaseca", "Torredembarra"]
+    },
+    {
+      "Nombre": "Teruel",
+      "Poblaciones": ["Teruel", "Alcañiz", "Andorra", "Calamocha"]
+    },
+    {
+      "Nombre": "Toledo",
+      "Poblaciones": ["Toledo", "Talavera de la Reina", "Illescas", "Seseña", "Torrijos", "Quintanar de la Orden", "Sonseca", "Fuensalida"]
+    },
+    {
+      "Nombre": "Valencia",
+      "Poblaciones": ["Valencia", "Torrente", "Gandía", "Paterna", "Sagunto", "Alzira", "Mislata", "Burjasot", "Ontinyent", "Aldaya", "Manises", "Alacuás", "Játiva", "Chirivella", "Sueca", "Catarroja", "Algemesí", "Oliva", "Cuart de Poblet", "Paiporta"]
+    },
+    {
+      "Nombre": "Valladolid",
+      "Poblaciones": ["Valladolid", "Laguna de Duero", "Medina del Campo", "Arroyo de la Encomienda", "Tordesillas", "Tudela de Duero"]
+    },
+    {
+      "Nombre": "Vizcaya",
+      "Poblaciones": ["Bilbao", "Baracaldo", "Guecho", "Portugalete", "Santurce", "Basauri", "Leioa", "Galdácano", "Sestao", "Erandio", "Amorebieta-Echano", "Munguía", "Guernica y Luno"]
+    },
+    {
+      "Nombre": "Zamora",
+      "Poblaciones": ["Zamora", "Benavente", "Toro", "Morales del Vino"]
+    },
+    {
+      "Nombre": "Zaragoza",
+      "Poblaciones": ["Zaragoza", "Calatayud", "Utebo", "Ejea de los Caballeros", "Tarazona", "Caspe", "Cuarte de Huerva"]
+    },
+    {
+      "Nombre": "Ceuta",
+      "Poblaciones": ["Ceuta"]
+    },
+    {
+      "Nombre": "Melilla",
+      "Poblaciones": ["Melilla"]
+    }
+  ]
+}
