@@ -21,6 +21,7 @@ using DevExpress.ExpressApp.MultiTenancy;
 using Microsoft.Extensions.DependencyInjection;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Ventas;
+using erp.Module.BusinessObjects.Auxiliares;
 using Updater = erp.Module.DatabaseUpdate.Updater;
 
 namespace erp.Module;
@@ -43,6 +44,9 @@ public sealed class erpModule : ModuleBase
         AdditionalExportedTypes.Add(typeof(HCategory));
         AdditionalExportedTypes.Add(typeof(ImportarClientesParameters));
         AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.PermissionPolicy.UserToken));
+        AdditionalExportedTypes.Add(typeof(Pais));
+        AdditionalExportedTypes.Add(typeof(Provincia));
+        AdditionalExportedTypes.Add(typeof(Poblacion));
         RequiredModuleTypes.Add(typeof(SystemModule));
         RequiredModuleTypes.Add(typeof(SecurityModule));
         RequiredModuleTypes.Add(typeof(ChartModule));

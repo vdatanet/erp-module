@@ -1,47 +1,62 @@
 using System.Reflection;
 using System.Text.Json;
+using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp;
+using DevExpress.ExpressApp.Xpo;
 using erp.Module.BusinessObjects.Auxiliares;
 
 namespace erp.Module.Services.Setup;
 
 public class PaisProvinciaPoblacionSetupService(IObjectSpace objectSpace)
 {
+    private IObjectSpace GetWorkingObjectSpace()
+    {
+        if (objectSpace is CompositeObjectSpace compositeOS)
+        {
+            var result = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(Pais)));
+            if (result != null) return result;
+        }
+
+        return objectSpace;
+    }
+
     public void CreateInitialData()
     {
         var data = LoadGeographicData();
         if (data == null) return;
 
-        var pais = objectSpace.FirstOrDefault<Pais>(p => p.Nombre == data.Pais);
+        var os = GetWorkingObjectSpace();
+
+        var pais = os.FindObject<Pais>(CriteriaOperator.Parse("Nombre = ?", data.Pais));
         if (pais == null)
         {
-            pais = objectSpace.CreateObject<Pais>();
+            pais = os.CreateObject<Pais>();
             pais.Nombre = data.Pais;
         }
 
         foreach (var provinciaData in data.Provincias)
         {
-            var provincia = objectSpace.FirstOrDefault<Provincia>(p => p.Nombre == provinciaData.Nombre && p.Pais != null && p.Pais.Oid == pais.Oid);
+            var provincia = os.FindObject<Provincia>(CriteriaOperator.Parse("Nombre = ? AND Pais.Oid = ?", provinciaData.Nombre, pais.Oid));
             if (provincia == null)
             {
-                provincia = objectSpace.CreateObject<Provincia>();
+                provincia = os.CreateObject<Provincia>();
                 provincia.Nombre = provinciaData.Nombre;
                 provincia.Pais = pais;
             }
 
             foreach (var nombrePoblacion in provinciaData.Poblaciones)
             {
-                var poblacion = objectSpace.FirstOrDefault<Poblacion>(p => p.Nombre == nombrePoblacion && p.Provincia != null && p.Provincia.Oid == provincia.Oid);
+                var poblacion = os.FindObject<Poblacion>(CriteriaOperator.Parse("Nombre = ? AND Provincia.Oid = ?", nombrePoblacion, provincia.Oid));
                 if (poblacion == null)
                 {
-                    poblacion = objectSpace.CreateObject<Poblacion>();
+                    poblacion = os.CreateObject<Poblacion>();
                     poblacion.Nombre = nombrePoblacion;
                     poblacion.Provincia = provincia;
                 }
             }
         }
 
-        objectSpace.CommitChanges();
+        os.CommitChanges();
     }
 
     private GeographicData? LoadGeographicData()

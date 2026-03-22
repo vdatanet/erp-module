@@ -1,16 +1,31 @@
 using DevExpress.ExpressApp;
+using DevExpress.ExpressApp.Xpo;
 using DevExpress.Persistent.BaseImpl.MultiTenancy;
 
 namespace erp.Module.Services.Setup;
 
 public class TenantSetupService(IObjectSpace objectSpace)
 {
+    private IObjectSpace? _os;
+    private IObjectSpace OS => _os ??= GetWorkingObjectSpace();
+
+    private IObjectSpace GetWorkingObjectSpace()
+    {
+        if (objectSpace is CompositeObjectSpace compositeOS)
+        {
+            var result = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(Tenant)));
+            if (result != null) return result;
+        }
+
+        return objectSpace;
+    }
+
     public Tenant CreateTenant(string tenantName, string databaseName, string provider, string server, string user, string password)
     {
-        var tenant = objectSpace.FirstOrDefault<Tenant>(t => t.Name == tenantName);
+        var tenant = OS.FirstOrDefault<Tenant>(t => t.Name == tenantName);
         if (tenant == null)
         {
-            tenant = objectSpace.CreateObject<Tenant>();
+            tenant = OS.CreateObject<Tenant>();
             tenant.Name = tenantName;
 
             var connectionString = provider.ToLower() switch

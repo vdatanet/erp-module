@@ -1,10 +1,25 @@
 using DevExpress.ExpressApp;
+using DevExpress.ExpressApp.Xpo;
 using erp.Module.BusinessObjects.Contabilidad;
 
 namespace erp.Module.Services.Setup;
 
 public class CuentaSetupService(IObjectSpace objectSpace)
 {
+    private IObjectSpace? _os;
+    private IObjectSpace OS => _os ??= GetWorkingObjectSpace();
+
+    private IObjectSpace GetWorkingObjectSpace()
+    {
+        if (objectSpace is CompositeObjectSpace compositeOS)
+        {
+            var result = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(CuentaContable)));
+            if (result != null) return result;
+        }
+
+        return objectSpace;
+    }
+
     public void CreateInitialCuentas()
     {
         CreatePgcEspanol();
@@ -155,10 +170,10 @@ public class CuentaSetupService(IObjectSpace objectSpace)
     private void CreateCuenta(string codigo, string nombre, CuentaContable.TipoCuenta tipo, CuentaContable.NaturalezaCuenta naturaleza,
         bool esAsentable = false)
     {
-        var cuenta = objectSpace.FirstOrDefault<CuentaContable>(c => c.Codigo == codigo);
+        var cuenta = OS.FirstOrDefault<CuentaContable>(c => c.Codigo == codigo);
         if (cuenta == null)
         {
-            cuenta = objectSpace.CreateObject<CuentaContable>();
+            cuenta = OS.CreateObject<CuentaContable>();
             cuenta.Codigo = codigo;
         }
 

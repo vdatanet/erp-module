@@ -1,4 +1,5 @@
 using DevExpress.ExpressApp;
+using DevExpress.ExpressApp.Xpo;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Impuestos;
 using VeriFactu.Xml.Factu;
@@ -8,6 +9,20 @@ namespace erp.Module.Services.Setup;
 
 public class ImpuestoSetupService(IObjectSpace objectSpace)
 {
+    private IObjectSpace? _os;
+    private IObjectSpace OS => _os ??= GetWorkingObjectSpace();
+
+    private IObjectSpace GetWorkingObjectSpace()
+    {
+        if (objectSpace is CompositeObjectSpace compositeOS)
+        {
+            var result = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(TipoImpuesto)));
+            if (result != null) return result;
+        }
+
+        return objectSpace;
+    }
+
     public void CreateInitialImpuestos()
     {
         // --- IVA REPERCUTIDO (Ventas S1, Régimen 01) ---
@@ -62,10 +77,10 @@ public class ImpuestoSetupService(IObjectSpace objectSpace)
         Impuesto? impuestoVeriFactu, ClaveRegimen? regimenFiscal = null, CalificacionOperacion? tipoOperacion = null,
         CausaExencion? causaExencion = null, bool esRetencion = false, string? codigoCuenta = null)
     {
-        var tipoImpuesto = objectSpace.FirstOrDefault<TipoImpuesto>(t => t.Codigo == codigo);
+        var tipoImpuesto = OS.FirstOrDefault<TipoImpuesto>(t => t.Codigo == codigo);
         if (tipoImpuesto == null)
         {
-            tipoImpuesto = objectSpace.CreateObject<TipoImpuesto>();
+            tipoImpuesto = OS.CreateObject<TipoImpuesto>();
             tipoImpuesto.Codigo = codigo;
         }
 
@@ -82,7 +97,7 @@ public class ImpuestoSetupService(IObjectSpace objectSpace)
 
         if (!string.IsNullOrEmpty(codigoCuenta))
         {
-            tipoImpuesto.CuentaContable = objectSpace.FirstOrDefault<CuentaContable>(c => c.Codigo == codigoCuenta);
+            tipoImpuesto.CuentaContable = OS.FirstOrDefault<CuentaContable>(c => c.Codigo == codigoCuenta);
         }
     }
 }

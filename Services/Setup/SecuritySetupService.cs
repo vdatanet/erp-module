@@ -1,6 +1,7 @@
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Security;
 using DevExpress.ExpressApp.SystemModule;
+using DevExpress.ExpressApp.Xpo;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
@@ -28,6 +29,20 @@ namespace erp.Module.Services.Setup;
 
 public class SecuritySetupService(IObjectSpace objectSpace)
 {
+    private IObjectSpace? _os;
+    private IObjectSpace OS => _os ??= GetWorkingObjectSpace();
+
+    private IObjectSpace GetWorkingObjectSpace()
+    {
+        if (objectSpace is CompositeObjectSpace compositeOS)
+        {
+            var result = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(PermissionPolicyRole)));
+            if (result != null) return result;
+        }
+
+        return objectSpace;
+    }
+
     public void CreateRolesAndUsers(string? tenantName)
     {
         var adminRole = CreateAdminRole();
@@ -52,15 +67,15 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         // No crear usuarios de tenant, solo el Admin del host (cuando tenantName es null)
         if (tenantName != null) return;
 
-        var userManager = objectSpace.ServiceProvider?.GetService<UserManager>();
+        var userManager = OS.ServiceProvider?.GetService<UserManager>();
         var adminUserName = "Admin";
 
         if (userManager != null)
         {
-            if (userManager.FindUserByName<ApplicationUser>(objectSpace, adminUserName) == null)
+            if (userManager.FindUserByName<ApplicationUser>(OS, adminUserName) == null)
             {
                 var EmptyPassword = "";
-                var userResult = userManager.CreateUser<ApplicationUser>(objectSpace, adminUserName, EmptyPassword,
+                var userResult = userManager.CreateUser<ApplicationUser>(OS, adminUserName, EmptyPassword,
                     user =>
                     {
                         user.ChangePasswordOnFirstLogon = true;
@@ -75,10 +90,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         else
         {
             // Fallback manual para el Admin
-            var adminUser = objectSpace.FirstOrDefault<ApplicationUser>(u => u.UserName == adminUserName);
+            var adminUser = OS.FirstOrDefault<ApplicationUser>(u => u.UserName == adminUserName);
             if (adminUser == null)
             {
-                adminUser = objectSpace.CreateObject<ApplicationUser>();
+                adminUser = OS.CreateObject<ApplicationUser>();
                 adminUser.UserName = adminUserName;
                 adminUser.SetPassword("");
                 adminUser.ChangePasswordOnFirstLogon = true;
@@ -90,10 +105,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     private PermissionPolicyRole CreateAdminRole()
     {
-        var adminRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(r => r.Name == "Administradores");
+        var adminRole = OS.FirstOrDefault<PermissionPolicyRole>(r => r.Name == "Administradores");
         if (adminRole == null)
         {
-            adminRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            adminRole = OS.CreateObject<PermissionPolicyRole>();
             adminRole.Name = "Administradores";
         }
 
@@ -103,10 +118,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     private PermissionPolicyRole CreateDefaultRole()
     {
-        var defaultRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Predeterminado");
+        var defaultRole = OS.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Predeterminado");
         if (defaultRole == null)
         {
-            defaultRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            defaultRole = OS.CreateObject<PermissionPolicyRole>();
             defaultRole.Name = "Predeterminado";
         }
 
@@ -137,10 +152,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     private PermissionPolicyRole CreateImprentaRole()
     {
-        var imprentaRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Imprenta");
+        var imprentaRole = OS.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Imprenta");
         if (imprentaRole == null)
         {
-            imprentaRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            imprentaRole = OS.CreateObject<PermissionPolicyRole>();
             imprentaRole.Name = "Imprenta";
         }
 
@@ -165,10 +180,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     private PermissionPolicyRole CreateContactosRole()
     {
-        var contactosRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Contactos");
+        var contactosRole = OS.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Contactos");
         if (contactosRole == null)
         {
-            contactosRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            contactosRole = OS.CreateObject<PermissionPolicyRole>();
             contactosRole.Name = "Contactos";
         }
 
@@ -193,10 +208,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     private PermissionPolicyRole CreateVentasRole()
     {
-        var ventasRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Ventas");
+        var ventasRole = OS.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Ventas");
         if (ventasRole == null)
         {
-            ventasRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            ventasRole = OS.CreateObject<PermissionPolicyRole>();
             ventasRole.Name = "Ventas";
         }
 
@@ -220,10 +235,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     private PermissionPolicyRole CreateComprasRole()
     {
-        var comprasRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Compras");
+        var comprasRole = OS.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Compras");
         if (comprasRole == null)
         {
-            comprasRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            comprasRole = OS.CreateObject<PermissionPolicyRole>();
             comprasRole.Name = "Compras";
         }
 
@@ -244,10 +259,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     private PermissionPolicyRole CreateProduccionRole()
     {
-        var produccionRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Producción");
+        var produccionRole = OS.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Producción");
         if (produccionRole == null)
         {
-            produccionRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            produccionRole = OS.CreateObject<PermissionPolicyRole>();
             produccionRole.Name = "Producción";
         }
 
@@ -262,10 +277,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     private PermissionPolicyRole CreateTpvRole()
     {
-        var tpvRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Tpv");
+        var tpvRole = OS.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Tpv");
         if (tpvRole == null)
         {
-            tpvRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            tpvRole = OS.CreateObject<PermissionPolicyRole>();
             tpvRole.Name = "Tpv";
         }
 
@@ -282,10 +297,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     private PermissionPolicyRole CreateContabilidadRole()
     {
-        var contabilidadRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Contabilidad");
+        var contabilidadRole = OS.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Contabilidad");
         if (contabilidadRole == null)
         {
-            contabilidadRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            contabilidadRole = OS.CreateObject<PermissionPolicyRole>();
             contabilidadRole.Name = "Contabilidad";
         }
 
@@ -302,10 +317,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     private PermissionPolicyRole CreateAuxiliaresRole()
     {
-        var auxiliaresRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Auxiliares");
+        var auxiliaresRole = OS.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Auxiliares");
         if (auxiliaresRole == null)
         {
-            auxiliaresRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            auxiliaresRole = OS.CreateObject<PermissionPolicyRole>();
             auxiliaresRole.Name = "Auxiliares";
         }
 
@@ -337,10 +352,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
     private PermissionPolicyRole CreateConfiguracionesRole()
     {
         var configuracionesRole =
-            objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Configuraciones");
+            OS.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Configuraciones");
         if (configuracionesRole == null)
         {
-            configuracionesRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            configuracionesRole = OS.CreateObject<PermissionPolicyRole>();
             configuracionesRole.Name = "Configuraciones";
         }
 
@@ -358,10 +373,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
     private PermissionPolicyRole CreateControlHorarioRole()
     {
         var controlHorarioRole =
-            objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "ControlHorario");
+            OS.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "ControlHorario");
         if (controlHorarioRole == null)
         {
-            controlHorarioRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            controlHorarioRole = OS.CreateObject<PermissionPolicyRole>();
             controlHorarioRole.Name = "ControlHorario";
         }
 
@@ -376,10 +391,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     private PermissionPolicyRole CreateCrmRole()
     {
-        var crmRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Crm");
+        var crmRole = OS.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Crm");
         if (crmRole == null)
         {
-            crmRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            crmRole = OS.CreateObject<PermissionPolicyRole>();
             crmRole.Name = "Crm";
         }
 
@@ -399,10 +414,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     private PermissionPolicyRole CreateImpuestosRole()
     {
-        var impuestosRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Impuestos");
+        var impuestosRole = OS.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Impuestos");
         if (impuestosRole == null)
         {
-            impuestosRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            impuestosRole = OS.CreateObject<PermissionPolicyRole>();
             impuestosRole.Name = "Impuestos";
         }
 
@@ -423,10 +438,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     private PermissionPolicyRole CreateProductosRole()
     {
-        var productosRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Productos");
+        var productosRole = OS.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Productos");
         if (productosRole == null)
         {
-            productosRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            productosRole = OS.CreateObject<PermissionPolicyRole>();
             productosRole.Name = "Productos";
         }
 
@@ -445,10 +460,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     private PermissionPolicyRole CreateAlquileresRole()
     {
-        var alquileresRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Alquileres");
+        var alquileresRole = OS.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Alquileres");
         if (alquileresRole == null)
         {
-            alquileresRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            alquileresRole = OS.CreateObject<PermissionPolicyRole>();
             alquileresRole.Name = "Alquileres";
         }
 
@@ -477,10 +492,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     private PermissionPolicyRole CreateSuscripcionesRole()
     {
-        var suscripcionesRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Suscripciones");
+        var suscripcionesRole = OS.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Suscripciones");
         if (suscripcionesRole == null)
         {
-            suscripcionesRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            suscripcionesRole = OS.CreateObject<PermissionPolicyRole>();
             suscripcionesRole.Name = "Suscripciones";
         }
 
@@ -499,10 +514,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     private PermissionPolicyRole CreateTesoreriaRole()
     {
-        var tesoreriaRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Tesorería");
+        var tesoreriaRole = OS.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Tesorería");
         if (tesoreriaRole == null)
         {
-            tesoreriaRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            tesoreriaRole = OS.CreateObject<PermissionPolicyRole>();
             tesoreriaRole.Name = "Tesorería";
         }
 
@@ -531,10 +546,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     private PermissionPolicyRole CreateReportsRole()
     {
-        var reportsRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Reports");
+        var reportsRole = OS.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Reports");
         if (reportsRole == null)
         {
-            reportsRole = objectSpace.CreateObject<PermissionPolicyRole>();
+            reportsRole = OS.CreateObject<PermissionPolicyRole>();
             reportsRole.Name = "Reports";
         }
 

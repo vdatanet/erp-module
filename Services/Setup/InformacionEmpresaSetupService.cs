@@ -1,16 +1,31 @@
 using DevExpress.ExpressApp;
+using DevExpress.ExpressApp.Xpo;
 using erp.Module.BusinessObjects.Configuraciones;
 
 namespace erp.Module.Services.Setup;
 
 public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
 {
+    private IObjectSpace? _os;
+    private IObjectSpace OS => _os ??= GetWorkingObjectSpace();
+
+    private IObjectSpace GetWorkingObjectSpace()
+    {
+        if (objectSpace is CompositeObjectSpace compositeOS)
+        {
+            var result = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(InformacionEmpresa)));
+            if (result != null) return result;
+        }
+
+        return objectSpace;
+    }
+
     public void CreateInitialInformacionEmpresa()
     {
-        var informacionEmpresa = objectSpace.FirstOrDefault<InformacionEmpresa>(i => true);
+        var informacionEmpresa = OS.FirstOrDefault<InformacionEmpresa>(i => true);
         if (informacionEmpresa == null)
         {
-            informacionEmpresa = objectSpace.CreateObject<InformacionEmpresa>();
+            informacionEmpresa = OS.CreateObject<InformacionEmpresa>();
             informacionEmpresa.Nombre = "Empresa por Defecto";
             informacionEmpresa.Nif = "B00000000";
             informacionEmpresa.PrefijoAsientosPorDefecto = "AS";
@@ -31,7 +46,7 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
             informacionEmpresa.PrefijoReservas = "AR";
             informacionEmpresa.PaddingNumero = 5;
             informacionEmpresa.PaddingCuentaContable = 10;
-            objectSpace.CommitChanges(); // Nos aseguramos de guardar la empresa inicial para evitar nulos en otras partes si es necesario
+            OS.CommitChanges(); // Nos aseguramos de guardar la empresa inicial para evitar nulos en otras partes si es necesario
         }
     }
 }
