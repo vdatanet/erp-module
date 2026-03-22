@@ -150,7 +150,7 @@ public class LineaDocumentoCompra(Session session) : EntidadBase(session)
         Descripcion = Producto.Nombre;
         Precio = Producto.CosteEstandar;
         BorrarImpuestosProducto();
-        foreach (var t in Producto.PurchaseTaxes)
+        foreach (var t in Producto.ImpuestosCompras)
         {
             var tax = new ImpuestoLineaDocumentoCompra(Session)
             {

@@ -221,7 +221,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
         if (Cantidad == 0m)
             Cantidad = 1m;
 
-        foreach (var tax in Producto.SalesTaxes.OrderBy(t => t.Secuencia)) TiposImpuestoVenta.Add(tax);
+        foreach (var tax in Producto.ImpuestosVentas.OrderBy(t => t.Secuencia)) TiposImpuestoVenta.Add(tax);
     }
 
     private void EstablecerBaseImponible()
@@ -254,7 +254,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
 
     private void BorrarImpuestosProducto()
     {
-        var salesTaxesToRemove = TiposImpuestoVenta.ToList();
-        foreach (var tax in salesTaxesToRemove) TiposImpuestoVenta.Remove(tax);
+        var impuestosVentasToRemove = TiposImpuestoVenta.ToList();
+        foreach (var tax in impuestosVentasToRemove) TiposImpuestoVenta.Remove(tax);
     }
 }

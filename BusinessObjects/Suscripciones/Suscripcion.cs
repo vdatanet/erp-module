@@ -228,7 +228,7 @@ public class Suscripcion(Session session) : EntidadBase(session)
 
         if (Producto != null)
         {
-            foreach (var tax in Producto.SalesTaxes)
+            foreach (var tax in Producto.ImpuestosVentas)
             {
                 linea.TiposImpuestoVenta.Add(tax);
             }
@@ -269,7 +269,7 @@ public class Suscripcion(Session session) : EntidadBase(session)
 
         if (Producto != null)
         {
-            foreach (var tax in Producto.SalesTaxes)
+            foreach (var tax in Producto.ImpuestosVentas)
             {
                 linea.TiposImpuestoVenta.Add(tax);
             }

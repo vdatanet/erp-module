@@ -144,13 +144,13 @@ public class Producto(Session session) : EntidadBase(session)
     [Association("Productos-ImpuestosVentas")]
     [DataSourceCriteria("DisponibleEnVentas = True AND EstaActivo = True")]
     [XafDisplayName("Impuestos Ventas")]
-    public XPCollection<TipoImpuesto> SalesTaxes => GetCollection<TipoImpuesto>();
+    public XPCollection<TipoImpuesto> ImpuestosVentas => GetCollection<TipoImpuesto>();
 
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
     [Association("Productos-ImpuestosCompras")]
     [DataSourceCriteria("DisponibleEnCompras = True AND EstaActivo = True")]
     [XafDisplayName("Impuestos Compras")]
-    public XPCollection<TipoImpuesto> PurchaseTaxes => GetCollection<TipoImpuesto>();
+    public XPCollection<TipoImpuesto> ImpuestosCompras => GetCollection<TipoImpuesto>();
 
     [DevExpress.Xpo.Aggregated]
     [Association("Producto-Tareas")]
