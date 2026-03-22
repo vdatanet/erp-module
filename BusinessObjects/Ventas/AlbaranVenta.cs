@@ -9,7 +9,7 @@ namespace erp.Module.BusinessObjects.Ventas;
 [DefaultClassOptions]
 [NavigationItem("Ventas")]
 [ImageName("BO_Order")]
-public class Albaran(Session session) : DocumentoVenta(session)
+public class AlbaranVenta(Session session) : DocumentoVenta(session)
 {
     public override void AfterConstruction()
     {

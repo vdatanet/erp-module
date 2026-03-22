@@ -14,7 +14,7 @@ namespace erp.Module.BusinessObjects.Alquileres;
 [XafDisplayName("Pago")]
 public class Pago(Session session) : EntidadBase(session)
 {
-    private Factura? _factura;
+    private FacturaVenta? _factura;
     private DateTime _fechaPago;
     private decimal _importe;
     private MedioPago? _medio;
@@ -72,8 +72,8 @@ public class Pago(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Factura")]
-    [Association("Factura-Pagos")]
-    public Factura? Factura
+    [Association("FacturaVenta-Pagos")]
+    public FacturaVenta? Factura
     {
         get => _factura;
         set => SetPropertyValue(nameof(Factura), ref _factura, value);

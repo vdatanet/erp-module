@@ -11,7 +11,7 @@ namespace erp.Module.BusinessObjects.Ventas;
 [DefaultClassOptions]
 [NavigationItem("Ventas")]
 [ImageName("BO_Order")]
-public class Pedido(Session session) : DocumentoVenta(session)
+public class PedidoVenta(Session session) : DocumentoVenta(session)
 {
     private Oportunidad? _oportunidad;
     private Suscripcion? _suscripcion;
@@ -22,7 +22,7 @@ public class Pedido(Session session) : DocumentoVenta(session)
     private decimal _importeSuscripcion;
     private Periodicidad _periodicidadSuscripcion;
 
-    [Association("Suscripcion-Pedidos")]
+    [Association("Suscripcion-PedidosVenta")]
     [XafDisplayName("Suscripción")]
     public Suscripcion? Suscripcion
     {
@@ -73,7 +73,7 @@ public class Pedido(Session session) : DocumentoVenta(session)
         set => SetPropertyValue(nameof(PeriodicidadSuscripcion), ref _periodicidadSuscripcion, value);
     }
 
-    [Association("Oportunidad-Pedidos")]
+    [Association("Oportunidad-PedidosVenta")]
     [XafDisplayName("Oportunidad")]
     public Oportunidad? Oportunidad
     {

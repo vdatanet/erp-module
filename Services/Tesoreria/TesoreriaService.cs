@@ -7,7 +7,7 @@ namespace erp.Module.Services.Tesoreria;
 
 public static class TesoreriaService
 {
-    public static void GenerarEfectosVenta(Factura factura)
+    public static void GenerarEfectosVenta(FacturaVenta factura)
     {
         if (factura.EfectosCobro.Any(e => e.Estado != EstadoEfecto.Pendiente))
             return;

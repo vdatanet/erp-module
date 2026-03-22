@@ -11,11 +11,11 @@ namespace erp.Module.BusinessObjects.Tesoreria;
 [ImageName("BO_Invoice")]
 public class EfectoCobro(Session session) : EfectoBase(session)
 {
-    private Factura? _factura;
+    private FacturaVenta? _factura;
 
-    [Association("Factura-EfectosCobro")]
+    [Association("FacturaVenta-EfectosCobro")]
     [XafDisplayName("Factura")]
-    public Factura? Factura
+    public FacturaVenta? Factura
     {
         get => _factura;
         set => SetPropertyValue(nameof(Factura), ref _factura, value);

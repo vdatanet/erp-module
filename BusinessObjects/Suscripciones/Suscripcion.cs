@@ -33,7 +33,7 @@ public class Suscripcion(Session session) : EntidadBase(session)
     private DateTime? _ultimaFechaCobro;
     private DateTime? _proximaFechaCobro;
     private string? _observaciones;
-    private Pedido? _pedidoVigente;
+    private PedidoVenta? _pedidoVigente;
 
     [RuleRequiredField("RuleRequiredField_Suscripcion_Cliente", DefaultContexts.Save, CustomMessageTemplate = "El Cliente de la Suscripción es obligatorio")]
     [Association("Cliente-Suscripciones")]
@@ -142,15 +142,15 @@ public class Suscripcion(Session session) : EntidadBase(session)
 
     [XafDisplayName("Pedido Vigente")]
     [ModelDefault("AllowEdit", "False")]
-    public Pedido? PedidoVigente
+    public PedidoVenta? PedidoVigente
     {
         get => _pedidoVigente;
         set => SetPropertyValue(nameof(PedidoVigente), ref _pedidoVigente, value);
     }
 
-    [Association("Suscripcion-Pedidos")]
+    [Association("Suscripcion-PedidosVenta")]
     [XafDisplayName("Historial de Pedidos")]
-    public XPCollection<Pedido> Pedidos => GetCollection<Pedido>(nameof(Pedidos));
+    public XPCollection<PedidoVenta> Pedidos => GetCollection<PedidoVenta>(nameof(Pedidos));
 
     [XafDisplayName("Vencida")]
     public bool EstaVencida
@@ -206,7 +206,7 @@ public class Suscripcion(Session session) : EntidadBase(session)
 
     private void CrearPedidoVigente()
     {
-        var nuevoPedido = new Pedido(Session)
+        var nuevoPedido = new PedidoVenta(Session)
         {
             Suscripcion = this,
             Cliente = Cliente,
@@ -247,12 +247,12 @@ public class Suscripcion(Session session) : EntidadBase(session)
         PedidoVigente = nuevoPedido;
     }
 
-    public Factura GenerarFactura()
+    public FacturaVenta GenerarFactura()
     {
         if (Cliente == null)
             throw new InvalidOperationException("La suscripción debe tener un cliente asignado.");
 
-        var factura = new Factura(Session)
+        var factura = new FacturaVenta(Session)
         {
             Cliente = Cliente,
             Fecha = DateTime.Today

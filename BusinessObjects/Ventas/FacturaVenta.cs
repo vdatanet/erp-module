@@ -17,14 +17,14 @@ namespace erp.Module.BusinessObjects.Ventas;
 [ImageName("BO_Invoice")]
 [DefaultProperty(nameof(Secuencia))]
 [RuleCriteria("Factura_SumaEfectosCoherente", DefaultContexts.Save, "EfectosCobro.Sum(Importe) = ImporteTotal", "La suma de los importes de los efectos debe coincidir con el total de la factura.")]
-public class Factura(Session session) : FacturaBase(session)
+public class FacturaVenta(Session session) : FacturaBase(session)
 {
     [XafDisplayName("Pagos")]
-    [Association("Factura-Pagos")]
+    [Association("FacturaVenta-Pagos")]
     public XPCollection<Pago> Pagos => GetCollection<Pago>();
 
     [XafDisplayName("Efectos de Cobro")]
-    [Association("Factura-EfectosCobro")]
+    [Association("FacturaVenta-EfectosCobro")]
     [DevExpress.Xpo.Aggregated]
     public XPCollection<EfectoCobro> EfectosCobro => GetCollection<EfectoCobro>();
 

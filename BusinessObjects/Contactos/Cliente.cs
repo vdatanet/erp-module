@@ -92,13 +92,13 @@ public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVent
     public XPCollection<OfertaVenta> Ofertas => new(Session, CriteriaOperator.Parse("Cliente.Oid = ?", Oid));
 
     [XafDisplayName("Pedidos")]
-    public XPCollection<Pedido> Pedidos => new(Session, CriteriaOperator.Parse("Cliente.Oid = ?", Oid));
+    public XPCollection<PedidoVenta> Pedidos => new(Session, CriteriaOperator.Parse("Cliente.Oid = ?", Oid));
 
     [XafDisplayName("Albaranes")]
-    public XPCollection<Albaran> Albaranes => new(Session, CriteriaOperator.Parse("Cliente.Oid = ?", Oid));
+    public XPCollection<AlbaranVenta> Albaranes => new(Session, CriteriaOperator.Parse("Cliente.Oid = ?", Oid));
 
     [XafDisplayName("Facturas")]
-    public XPCollection<Factura> Facturas => new(Session, CriteriaOperator.Parse("Cliente.Oid = ?", Oid));
+    public XPCollection<FacturaVenta> Facturas => new(Session, CriteriaOperator.Parse("Cliente.Oid = ?", Oid));
 
     [Association("Cliente-Suscripciones")]
     [XafDisplayName("Suscripciones")]

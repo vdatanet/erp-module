@@ -163,13 +163,13 @@ public class Oportunidad(Session session) : EntidadBase(session)
         }
     }
 
-    [Association("Oportunidad-Pedidos")]
+    [Association("Oportunidad-PedidosVenta")]
     [XafDisplayName("Pedidos")]
-    public XPCollection<Pedido> Pedidos
+    public XPCollection<PedidoVenta> Pedidos
     {
         get
         {
-            var collection = GetCollection<Pedido>();
+            var collection = GetCollection<PedidoVenta>();
             return collection;
         }
     }
