@@ -7,8 +7,6 @@ public class CuentaSetupService(IObjectSpace objectSpace)
 {
     public void CreateInitialCuentas()
     {
-        if (objectSpace.GetObjectsCount(typeof(Cuenta), null) > 0) return;
-
         CreatePgcEspanol();
     }
 
@@ -65,9 +63,27 @@ public class CuentaSetupService(IObjectSpace objectSpace)
         CreateCuenta("465", "Remuneraciones pendientes de pago", Cuenta.TipoCuenta.Pasivo, Cuenta.NaturalezaCuenta.Acreedora);
         CreateCuenta("47", "Administraciones Públicas", Cuenta.TipoCuenta.Pasivo, Cuenta.NaturalezaCuenta.Acreedora);
         CreateCuenta("472", "Hacienda Pública, IVA soportado", Cuenta.TipoCuenta.Activo, Cuenta.NaturalezaCuenta.Deudora);
+        CreateCuenta("47221", "HP IVA soportado 21%", Cuenta.TipoCuenta.Activo, Cuenta.NaturalezaCuenta.Deudora, true);
+        CreateCuenta("47210", "HP IVA soportado 10%", Cuenta.TipoCuenta.Activo, Cuenta.NaturalezaCuenta.Deudora, true);
+        CreateCuenta("47204", "HP IVA soportado 4%", Cuenta.TipoCuenta.Activo, Cuenta.NaturalezaCuenta.Deudora, true);
+        CreateCuenta("47200", "HP IVA soportado 0%", Cuenta.TipoCuenta.Activo, Cuenta.NaturalezaCuenta.Deudora, true);
+        CreateCuenta("473", "HP Retenciones y pagos a cuenta", Cuenta.TipoCuenta.Activo, Cuenta.NaturalezaCuenta.Deudora);
+        CreateCuenta("47315", "HP Retenciones Profesionales 15%", Cuenta.TipoCuenta.Activo, Cuenta.NaturalezaCuenta.Deudora, true);
+        CreateCuenta("47307", "HP Retenciones Nuevos Prof. 7%", Cuenta.TipoCuenta.Activo, Cuenta.NaturalezaCuenta.Deudora, true);
+        CreateCuenta("47319", "HP Retenciones Alquileres 19%", Cuenta.TipoCuenta.Activo, Cuenta.NaturalezaCuenta.Deudora, true);
         CreateCuenta("475", "Hacienda Pública, acreedora por diversos conceptos", Cuenta.TipoCuenta.Pasivo, Cuenta.NaturalezaCuenta.Acreedora);
+        CreateCuenta("47515", "HP acreedora Ret. Prof. 15%", Cuenta.TipoCuenta.Pasivo, Cuenta.NaturalezaCuenta.Acreedora, true);
+        CreateCuenta("47507", "HP acreedora Ret. Prof. 7%", Cuenta.TipoCuenta.Pasivo, Cuenta.NaturalezaCuenta.Acreedora, true);
+        CreateCuenta("47519", "HP acreedora Ret. Alquileres 19%", Cuenta.TipoCuenta.Pasivo, Cuenta.NaturalezaCuenta.Acreedora, true);
         CreateCuenta("476", "Organismos de la Seguridad Social, acreedores", Cuenta.TipoCuenta.Pasivo, Cuenta.NaturalezaCuenta.Acreedora);
         CreateCuenta("477", "Hacienda Pública, IVA repercutido", Cuenta.TipoCuenta.Pasivo, Cuenta.NaturalezaCuenta.Acreedora);
+        CreateCuenta("47721", "HP IVA repercutido 21%", Cuenta.TipoCuenta.Pasivo, Cuenta.NaturalezaCuenta.Acreedora, true);
+        CreateCuenta("47710", "HP IVA repercutido 10%", Cuenta.TipoCuenta.Pasivo, Cuenta.NaturalezaCuenta.Acreedora, true);
+        CreateCuenta("47704", "HP IVA repercutido 4%", Cuenta.TipoCuenta.Pasivo, Cuenta.NaturalezaCuenta.Acreedora, true);
+        CreateCuenta("47700", "HP IVA repercutido 0%", Cuenta.TipoCuenta.Pasivo, Cuenta.NaturalezaCuenta.Acreedora, true);
+        CreateCuenta("47752", "HP Recargo Equivalencia 5,2%", Cuenta.TipoCuenta.Pasivo, Cuenta.NaturalezaCuenta.Acreedora, true);
+        CreateCuenta("47714", "HP Recargo Equivalencia 1,4%", Cuenta.TipoCuenta.Pasivo, Cuenta.NaturalezaCuenta.Acreedora, true);
+        CreateCuenta("47705", "HP Recargo Equivalencia 0,5%", Cuenta.TipoCuenta.Pasivo, Cuenta.NaturalezaCuenta.Acreedora, true);
 
         // GRUPO 5: CUENTAS FINANCIERAS
         CreateCuenta("5", "Cuentas financieras", Cuenta.TipoCuenta.Activo, Cuenta.NaturalezaCuenta.Deudora);
