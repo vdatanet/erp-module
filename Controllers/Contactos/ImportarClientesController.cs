@@ -3,6 +3,7 @@ using System.Text;
 using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
+using DevExpress.ExpressApp.MultiTenancy;
 using DevExpress.ExpressApp.Xpo;
 using DevExpress.Persistent.Base;
 using erp.Module.BusinessObjects.Contactos;
