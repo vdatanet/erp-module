@@ -79,6 +79,9 @@ public class Tercero(Session session) : Contacto(session)
     {
         if (IsLoading) return;
 
+        // Solo se debe intentar crear/asignar cuenta contable en Cliente, Proveedor o Acreedor
+        if (!(this is Cliente) && !(this is Proveedor) && !(this is Acreedor)) return;
+
         if (CuentaContable != null)
         {
             // Sincronizar el nombre si la cuenta ya existe
@@ -185,10 +188,8 @@ public class Tercero(Session session) : Contacto(session)
         }
         else
         {
-            // Si no hay cuenta por defecto ni cuenta padre, se debería impedir la creación según el resumen
-            // pero XPO OnSaving no es el mejor sitio para lanzar excepciones de validación que detengan la UI de forma amigable.
-            // No obstante, el requerimiento dice "impedir la creación y mostrar error de configuración".
-            throw new UserFriendlyException("No se ha configurado una Cuenta Contable por defecto ni una Cuenta Padre para este tipo de tercero en la Información de la Empresa.");
+            // Si no hay cuenta por defecto ni cuenta padre, dejamos la cuenta contable en blanco
+            // Se elimina la excepción UserFriendlyException según el nuevo requerimiento
         }
     }
 }
