@@ -112,6 +112,8 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
         defaultRole.AddObjectPermission<ApplicationUser>(SecurityOperations.Read,
             "Oid = CurrentUserId()", SecurityPermissionState.Allow);
+        defaultRole.AddNavigationPermission(@"Application/NavigationItems/Items/Seguridad/Items/MyDetails",
+            SecurityPermissionState.Allow);
         defaultRole.AddNavigationPermission(@"Application/NavigationItems/Items/Default/Items/MyDetails",
             SecurityPermissionState.Allow);
         defaultRole.AddMemberPermission<ApplicationUser>(SecurityOperations.Write,
@@ -366,7 +368,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         controlHorarioRole.AddTypePermissionsRecursively<RegistroJornada>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
 
-        controlHorarioRole.AddNavigationPermission(@"Application/NavigationItems/Items/ControlHorario",
+        controlHorarioRole.AddNavigationPermission(@"Application/NavigationItems/Items/Control Horario",
             SecurityPermissionState.Allow);
 
         return controlHorarioRole;
