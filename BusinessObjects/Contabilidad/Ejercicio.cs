@@ -72,7 +72,11 @@ public class Ejercicio(Session session) : EntidadBase(session)
         }
         var asientosOrdenados = asientosList.OrderBy(a => a.Fecha).ThenBy(a => a.Orden).ToList();
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        int padding = companyInfo?.PaddingNumero ?? 5;
+        if (companyInfo == null)
+        {
+            throw new UserFriendlyException("La configuración de la empresa no ha sido inicializada.");
+        }
+        int padding = companyInfo.PaddingNumero;
         int nuevoNumero = 1;
         foreach (var asiento in asientosOrdenados)
         {

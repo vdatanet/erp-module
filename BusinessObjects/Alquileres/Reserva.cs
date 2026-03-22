@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
@@ -357,10 +358,10 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
             Temporada = StartOn.Year;
             if (Temporada != 0)
             {
-                var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-                int padding = companyInfo?.PaddingNumero ?? 5;
-                string prefijo = companyInfo?.PrefijoReservas ?? $"{Temporada}";
-                string prefixSequence = string.IsNullOrEmpty(companyInfo?.PrefijoReservas) ? $"{Temporada}" : $"{prefijo}/{Temporada}";
+                var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session) ?? throw new UserFriendlyException("No se ha podido obtener la configuración de la empresa.");
+                int padding = companyInfo.PaddingNumero;
+                string prefijo = companyInfo.PrefijoReservas ?? throw new UserFriendlyException("El prefijo de reservas no está configurado.");
+                string prefixSequence = $"{prefijo}/{Temporada}";
 
                 Numero = SequenceFactory.GetNextSequence(Session, $"{GetType().FullName}-{Temporada}",
                     out var formattedSequence, prefixSequence, padding);

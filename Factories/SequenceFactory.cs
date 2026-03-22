@@ -5,7 +5,7 @@ namespace erp.Module.Factories;
 
 public static class SequenceFactory
 {
-    public static string GetNextSequence(Session session, string sequenceName, string prefix = "", int padding = 6)
+    public static string GetNextSequence(Session session, string sequenceName, string prefix, int padding)
     {
         var service = new SequenceService(session);
         service.GetNextSequence(sequenceName, prefix, padding, out var formattedSequence);
@@ -13,7 +13,7 @@ public static class SequenceFactory
     }
 
     public static int GetNextSequence(Session session, string sequenceName, out string formattedSequence,
-        string prefix = "", int padding = 6)
+        string prefix, int padding)
     {
         var service = new SequenceService(session);
         return service.GetNextSequence(sequenceName, prefix, padding, out formattedSequence);

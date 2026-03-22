@@ -278,8 +278,8 @@ public class Asiento(Session session) : EntidadBase(session)
         
         if (string.IsNullOrEmpty(Codigo) && !string.IsNullOrEmpty(Serie) && Numero > 0)
         {
-            var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-            int padding = companyInfo?.PaddingNumero ?? 5;
+            var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session) ?? throw new UserFriendlyException("No se ha podido obtener la configuración de la empresa.");
+            int padding = companyInfo.PaddingNumero;
             Codigo = $"{Serie}/{Numero.ToString().PadLeft(padding, '0')}";
         }
 
@@ -295,11 +295,13 @@ public class Asiento(Session session) : EntidadBase(session)
         Ejercicio = Session.Query<Ejercicio>().FirstOrDefault(e => e.Estado == EstadoEjercicio.Abierto && e.FechaInicio <= Fecha && e.FechaFin >= Fecha);
         
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        string prefijo = companyInfo?.PrefijoAsientosPorDefecto ?? "AS";
-        Serie = $"{prefijo}/{Fecha.Year}";
-        
         if (companyInfo != null)
         {
+            string prefijo = companyInfo.PrefijoAsientosPorDefecto;
+            if (!string.IsNullOrEmpty(prefijo))
+            {
+                Serie = $"{prefijo}/{Fecha.Year}";
+            }
             Diario = companyInfo.DiarioVentasPorDefecto;
         }
     }

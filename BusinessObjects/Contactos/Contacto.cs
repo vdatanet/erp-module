@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp.ConditionalAppearance;
+using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
@@ -373,8 +374,8 @@ public class Contacto(Session session) : EntidadBase(session)
         var prefijo = GetPrefijoCodigo();
         if (string.IsNullOrEmpty(prefijo)) return;
         var nombreSecuencia = GetType().FullName ?? GetType().Name;
-        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        int padding = companyInfo?.PaddingNumero ?? 5;
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session) ?? throw new UserFriendlyException("No se ha podido obtener la configuración de la empresa.");
+        int padding = companyInfo.PaddingNumero;
         Numero = SequenceFactory.GetNextSequence(Session, nombreSecuencia, out var formattedSequence, prefijo, padding);
         Codigo = formattedSequence;
     }

@@ -30,6 +30,7 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
             informacionEmpresa.PrefijoEmpleados = "TE";
             informacionEmpresa.PrefijoReservas = "AR";
             informacionEmpresa.PaddingNumero = 5;
+            informacionEmpresa.PaddingCuentaContable = 10;
             objectSpace.CommitChanges(); // Nos aseguramos de guardar la empresa inicial para evitar nulos en otras partes si es necesario
         }
     }

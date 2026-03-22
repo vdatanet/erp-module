@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
@@ -298,9 +299,9 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     {
         if (!string.IsNullOrEmpty(Serie) && Ejercicio != null)
         {
-            var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-            int padding = companyInfo?.PaddingNumero ?? 5;
-            
+            var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session) ?? throw new UserFriendlyException("No se ha podido obtener la configuración de la empresa.");
+            int padding = companyInfo.PaddingNumero;
+
             string sequenceName = $"{GetType().FullName}.{Ejercicio.Anio}.{Serie}";
             string prefix = $"{Serie}/{Ejercicio.Anio}";
 

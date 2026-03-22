@@ -145,8 +145,6 @@ public class Tercero(Session session) : Contacto(session)
             string cuentaCodigo;
 
             int paddingValue = config.PaddingNumero;
-            if (paddingValue <= 0) paddingValue = 10;
-
             int paddingLength = paddingValue - prefix.Length;
             if (paddingLength > 0)
             {
