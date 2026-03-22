@@ -73,6 +73,7 @@ public class CuentaSetupService(IObjectSpace objectSpace)
         CreateCuenta("430", "Clientes", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("4300", "Clientes (euros)", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("43000", "Clientes (euros) - Nacionales", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
+        CreateCuenta("430000", "Clientes (euros) - Nacionales", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("44", "Deudores varios", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("440", "Deudores", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("4400", "Deudores (euros)", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
