@@ -81,7 +81,7 @@ public class Cuenta(Session session) : EntidadBase(session)
         {
             codigoPadre = Codigo.Substring(0, 3);
         }
-        else if (longitud > 5) // Nivel 5 (100000), padre Nivel 4 (10000)
+        else if (longitud > 5) // Nivel 5 (ej. 10 dígitos), padre Nivel 4 (5 dígitos)
         {
             codigoPadre = Codigo.Substring(0, 5);
             EsAsentable = true;
