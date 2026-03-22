@@ -146,11 +146,25 @@ public class Contacto(Session session) : EntidadBase(session)
             if (!SetPropertyValue(nameof(Usuario), ref _usuario, value)) return;
             if (IsLoading || IsSaving || value == null) return;
             
-            var otroContacto = Session.FindObject<Contacto>(PersistentCriteriaEvaluationBehavior.InTransaction,
-                CriteriaOperator.Parse("Usuario = ? and Oid != ?", value, Oid));
-            if (otroContacto != null)
+            // Si es un Empleado, un usuario solo puede estar asociado a un Empleado
+            if (this is Empleado)
             {
-                otroContacto.Usuario = null;
+                var otroEmpleado = Session.FindObject<Empleado>(PersistentCriteriaEvaluationBehavior.InTransaction,
+                    CriteriaOperator.Parse("Usuario = ? and Oid != ?", value, Oid));
+                if (otroEmpleado != null)
+                {
+                    otroEmpleado.Usuario = null;
+                }
+            }
+            else
+            {
+                // Lógica general para otros tipos de contacto si se desea mantener la unicidad global
+                var otroContacto = Session.FindObject<Contacto>(PersistentCriteriaEvaluationBehavior.InTransaction,
+                    CriteriaOperator.Parse("Usuario = ? and Oid != ?", value, Oid));
+                if (otroContacto != null)
+                {
+                    otroContacto.Usuario = null;
+                }
             }
         }
     }
