@@ -42,6 +42,7 @@ public sealed class erpModule : ModuleBase
         AdditionalExportedTypes.Add(typeof(Resource));
         AdditionalExportedTypes.Add(typeof(HCategory));
         AdditionalExportedTypes.Add(typeof(ImportarClientesParameters));
+        AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.PermissionPolicy.UserToken));
         RequiredModuleTypes.Add(typeof(SystemModule));
         RequiredModuleTypes.Add(typeof(SecurityModule));
         RequiredModuleTypes.Add(typeof(ChartModule));
