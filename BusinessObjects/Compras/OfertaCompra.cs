@@ -7,4 +7,4 @@ namespace erp.Module.BusinessObjects.Compras;
 [DefaultClassOptions]
 [NavigationItem("Compras")]
 [ImageName("BO_Order")]
-public class PresupuestoCompra(Session session) : DocumentoCompra(session);
+public class OfertaCompra(Session session) : DocumentoCompra(session);

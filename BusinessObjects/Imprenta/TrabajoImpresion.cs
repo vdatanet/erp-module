@@ -10,12 +10,12 @@ namespace erp.Module.BusinessObjects.Imprenta;
 [NavigationItem("Imprenta")]
 [XafDisplayName("Trabajo de Impresión")]
 [ImageName("BO_Order")]
-public class TrabajoImpresion : Presupuesto
+public class TrabajoImpresion : OfertaVenta
 {
-    public enum EstadosPresupuesto
+    public enum EstadosOferta
     {
         Borrador,
-        Presupuesto,
+        Oferta,
         Orden,
         Rechazado
     }
@@ -27,7 +27,7 @@ public class TrabajoImpresion : Presupuesto
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        Estado = EstadosPresupuesto.Borrador;
+        Estado = EstadosOferta.Borrador;
     }
 
     #region Datos Generales
@@ -43,9 +43,9 @@ public class TrabajoImpresion : Presupuesto
         set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
     }
 
-    private EstadosPresupuesto? _estado;
+    private EstadosOferta? _estado;
 
-    public EstadosPresupuesto? Estado
+    public EstadosOferta? Estado
     {
         get => _estado;
         set => SetPropertyValue(nameof(Estado), ref _estado, value);

@@ -36,7 +36,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     [RuleRequiredField("erp.Module.BusinessObjects.Ventas.Factura.Cliente_Required", DefaultContexts.Save,
         TargetCriteria =
-            "IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Factura') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Presupuesto') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Albaran')",
+            "IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Factura') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.OfertaVenta') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Albaran')",
         CustomMessageTemplate = "El Cliente del documento de venta es obligatorio")]
     [Association("Tercero-DocumentosVenta")]
     [XafDisplayName("Cliente")]

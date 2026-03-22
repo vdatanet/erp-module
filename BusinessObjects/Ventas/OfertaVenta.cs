@@ -9,11 +9,11 @@ namespace erp.Module.BusinessObjects.Ventas;
 [DefaultClassOptions]
 [NavigationItem("Ventas")]
 [ImageName("BO_Order")]
-public class Presupuesto(Session session) : DocumentoVenta(session)
+public class OfertaVenta(Session session) : DocumentoVenta(session)
 {
     private Oportunidad? _oportunidad;
 
-    [Association("Oportunidad-Presupuestos")]
+    [Association("Oportunidad-OfertasVenta")]
     [XafDisplayName("Oportunidad")]
     public Oportunidad? Oportunidad
     {

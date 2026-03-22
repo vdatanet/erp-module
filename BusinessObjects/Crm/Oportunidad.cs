@@ -152,13 +152,13 @@ public class Oportunidad(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
-    [Association("Oportunidad-Presupuestos")]
-    [XafDisplayName("Presupuestos")]
-    public XPCollection<Presupuesto> Presupuestos
+    [Association("Oportunidad-OfertasVenta")]
+    [XafDisplayName("Ofertas")]
+    public XPCollection<OfertaVenta> OfertasVenta
     {
         get
         {
-            var collection = GetCollection<Presupuesto>();
+            var collection = GetCollection<OfertaVenta>();
             return collection;
         }
     }

@@ -202,7 +202,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
         ventasRole.AddTypePermissionsRecursively<Pedido>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
         ventasRole.AddTypePermissionsRecursively<Albaran>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
-        ventasRole.AddTypePermissionsRecursively<Presupuesto>(SecurityOperations.FullAccess,
+        ventasRole.AddTypePermissionsRecursively<OfertaVenta>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
         ventasRole.AddTypePermissionsRecursively<Factura>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
@@ -225,7 +225,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             SecurityPermissionState.Allow);
         comprasRole.AddTypePermissionsRecursively<AlbaranCompra>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
-        comprasRole.AddTypePermissionsRecursively<PresupuestoCompra>(SecurityOperations.FullAccess,
+        comprasRole.AddTypePermissionsRecursively<OfertaCompra>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
         comprasRole.AddTypePermissionsRecursively<FacturaCompra>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);

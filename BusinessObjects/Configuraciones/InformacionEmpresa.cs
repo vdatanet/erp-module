@@ -48,8 +48,8 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     private string? _prefijoPartesDiariosPorDefecto;
     private string? _prefijoPedidosCompraPorDefecto;
     private string? _prefijoPedidosPorDefecto;
-    private string? _prefijoPresupuestosCompraPorDefecto;
-    private string? _prefijoPresupuestosPorDefecto;
+    private string? _prefijoOfertasCompraPorDefecto;
+    private string? _prefijoOfertasVentaPorDefecto;
     private string? _prefijoUrlValidacionVeriFactu;
     private string? _prefijoUrlVeriFactu;
     private string? _prefijoClientes;
@@ -201,11 +201,11 @@ public class InformacionEmpresa(Session session) : Contacto(session)
         set => SetPropertyValue(nameof(PrefijoPedidosCompraPorDefecto), ref _prefijoPedidosCompraPorDefecto, value);
     }
 
-    [XafDisplayName("Prefijo Presupuestos Compra")]
-    public string? PrefijoPresupuestosCompraPorDefecto
+    [XafDisplayName("Prefijo Ofertas Compra")]
+    public string? PrefijoOfertasCompraPorDefecto
     {
-        get => _prefijoPresupuestosCompraPorDefecto;
-        set => SetPropertyValue(nameof(PrefijoPresupuestosCompraPorDefecto), ref _prefijoPresupuestosCompraPorDefecto,
+        get => _prefijoOfertasCompraPorDefecto;
+        set => SetPropertyValue(nameof(PrefijoOfertasCompraPorDefecto), ref _prefijoOfertasCompraPorDefecto,
             value);
     }
 
@@ -223,11 +223,11 @@ public class InformacionEmpresa(Session session) : Contacto(session)
         set => SetPropertyValue(nameof(PrefijoPedidosPorDefecto), ref _prefijoPedidosPorDefecto, value);
     }
 
-    [XafDisplayName("Prefijo Presupuestos")]
-    public string? PrefijoPresupuestosPorDefecto
+    [XafDisplayName("Prefijo Ofertas Venta")]
+    public string? PrefijoOfertasVentaPorDefecto
     {
-        get => _prefijoPresupuestosPorDefecto;
-        set => SetPropertyValue(nameof(PrefijoPresupuestosPorDefecto), ref _prefijoPresupuestosPorDefecto, value);
+        get => _prefijoOfertasVentaPorDefecto;
+        set => SetPropertyValue(nameof(PrefijoOfertasVentaPorDefecto), ref _prefijoOfertasVentaPorDefecto, value);
     }
 
     [XafDisplayName("Prefijo Partes Diarios")]

@@ -147,8 +147,8 @@
             <LayoutGroup Id="Oportunidades" Index="5" ShowCaption="True" RelativeSize="100" IsNewNode="True">
               <LayoutItem Id="Oportunidades" ViewItem="Oportunidades" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
             </LayoutGroup>
-            <LayoutGroup Id="Presupuestos" Index="6" ShowCaption="True" RelativeSize="100" IsNewNode="True">
-              <LayoutItem Id="Presupuestos" ViewItem="Presupuestos" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
+            <LayoutGroup Id="Ofertas" Index="6" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+              <LayoutItem Id="Ofertas" ViewItem="Ofertas" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
             </LayoutGroup>
             <LayoutGroup Id="Pedidos" Index="7" ShowCaption="True" RelativeSize="100" IsNewNode="True">
               <LayoutItem Id="Pedidos" ViewItem="Pedidos" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
@@ -312,7 +312,7 @@
             </LayoutGroup>
             <LayoutGroup Id="Prefijos" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="2" Caption="Prefijos" RelativeSize="100" ImageName="Number" IsNewNode="True">
               <LayoutGroup Id="col1" Index="0" ShowCaption="False" RelativeSize="49.953917050691246" Caption="Prefijo Facturas Venta" IsNewNode="True">
-                <LayoutItem Id="PrefijoPresupuestosPorDefecto" ViewItem="PrefijoPresupuestosPorDefecto" Index="0" RelativeSize="4.086845466155811" IsNewNode="True" />
+                <LayoutItem Id="PrefijoOfertasVentaPorDefecto" ViewItem="PrefijoOfertasVentaPorDefecto" Index="0" RelativeSize="4.086845466155811" IsNewNode="True" />
                 <LayoutItem Id="PrefijoPedidosPorDefecto" ViewItem="PrefijoPedidosPorDefecto" Index="1" RelativeSize="3.0651340996168583" IsNewNode="True" />
                 <LayoutItem Id="PrefijoFacturasVentaPorDefecto" ViewItem="PrefijoFacturasVentaPorDefecto" Index="2" RelativeSize="3.0651340996168583" IsNewNode="True" />
                 <LayoutItem Id="PrefijoFacturasSimplificadasPorDefecto" ViewItem="PrefijoFacturasSimplificadasPorDefecto" Index="3" RelativeSize="89.78288633461047" IsNewNode="True" />
@@ -383,7 +383,7 @@
         <ColumnInfo Id="PrefijoFacturasVentaPorDefecto" Index="-1" />
         <ColumnInfo Id="PrefijoPartesDiariosPorDefecto" Index="-1" />
         <ColumnInfo Id="PrefijoPedidosPorDefecto" Index="-1" />
-        <ColumnInfo Id="PrefijoPresupuestosPorDefecto" Index="-1" />
+        <ColumnInfo Id="PrefijoOfertasVentaPorDefecto" Index="-1" />
         <ColumnInfo Id="PrefijoUrlValidacionVeriFactu" Index="-1" />
         <ColumnInfo Id="PrefijoUrlVeriFactu" Index="-1" />
         <ColumnInfo Id="Provincia" Index="-1" />
