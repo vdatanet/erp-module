@@ -1,7 +1,6 @@
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
 using DevExpress.Persistent.Base;
-using erp.Module.BusinessObjects.Comisiones;
 using erp.Module.BusinessObjects.Ventas;
 using erp.Module.BusinessObjects.Alquileres;
 using System.Linq;

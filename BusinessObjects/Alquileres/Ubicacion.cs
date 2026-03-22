@@ -8,7 +8,7 @@ using erp.Module.BusinessObjects.Base.Comun;
 namespace erp.Module.BusinessObjects.Alquileres;
 
 [DefaultClassOptions]
-[NavigationItem("Configuraciones")]
+[NavigationItem("Alquileres")]
 [XafDisplayName("Ubicación")]
 [DefaultProperty(nameof(Nombre))]
 public class Ubicacion(Session session) : EntidadBase(session)

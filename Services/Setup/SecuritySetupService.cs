@@ -7,7 +7,7 @@ using DevExpress.Persistent.BaseImpl.PermissionPolicy;
 using erp.Module.BusinessObjects;
 using erp.Module.BusinessObjects.Alquileres;
 using erp.Module.BusinessObjects.Auxiliares;
-using erp.Module.BusinessObjects.Comisiones;
+using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Compras;
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Contabilidad;
@@ -19,7 +19,6 @@ using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.BusinessObjects.Produccion;
 using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Suscripciones;
-using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Tpv;
 using erp.Module.BusinessObjects.Ventas;
 using erp.Module.Helpers.Comun;
@@ -46,7 +45,6 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         var impuestosRole = CreateImpuestosRole();
         var productosRole = CreateProductosRole();
         var alquileresRole = CreateAlquileresRole();
-        var comisionesRole = CreateComisionesRole();
         var suscripcionesRole = CreateSuscripcionesRole();
         var tesoreriaRole = CreateTesoreriaRole();
         var reportsRole = CreateReportsRole();
@@ -206,6 +204,12 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             SecurityPermissionState.Allow);
         ventasRole.AddTypePermissionsRecursively<Factura>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
+        ventasRole.AddTypePermissionsRecursively<CategoriaVenta>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        ventasRole.AddTypePermissionsRecursively<Comision>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        ventasRole.AddTypePermissionsRecursively<LiquidacionComision>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
 
         ventasRole.AddNavigationPermission(@"Application/NavigationItems/Items/Ventas", SecurityPermissionState.Allow);
 
@@ -305,21 +309,9 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
         auxiliaresRole.AddTypePermissionsRecursively<Adjunto>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
-        auxiliaresRole.AddTypePermissionsRecursively<Banco>(SecurityOperations.FullAccess,
-            SecurityPermissionState.Allow);
-        auxiliaresRole.AddTypePermissionsRecursively<CategoriaVenta>(SecurityOperations.FullAccess,
-            SecurityPermissionState.Allow);
-        auxiliaresRole.AddTypePermissionsRecursively<CondicionPago>(SecurityOperations.FullAccess,
-            SecurityPermissionState.Allow);
         auxiliaresRole.AddTypePermissionsRecursively<Imagen>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
-        auxiliaresRole.AddTypePermissionsRecursively<MedioPago>(SecurityOperations.FullAccess,
-            SecurityPermissionState.Allow);
-        auxiliaresRole.AddTypePermissionsRecursively<Nacionalidad>(SecurityOperations.FullAccess,
-            SecurityPermissionState.Allow);
         auxiliaresRole.AddTypePermissionsRecursively<Pais>(SecurityOperations.FullAccess,
-            SecurityPermissionState.Allow);
-        auxiliaresRole.AddTypePermissionsRecursively<Parentesco>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
         auxiliaresRole.AddTypePermissionsRecursively<Poblacion>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
@@ -328,6 +320,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         auxiliaresRole.AddTypePermissionsRecursively<Sector>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
         auxiliaresRole.AddTypePermissionsRecursively<Tarea>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        auxiliaresRole.AddTypePermissionsRecursively<Nacionalidad>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        auxiliaresRole.AddTypePermissionsRecursively<Parentesco>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
 
         auxiliaresRole.AddNavigationPermission(@"Application/NavigationItems/Items/Auxiliares",
@@ -479,26 +475,6 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         return alquileresRole;
     }
 
-    private PermissionPolicyRole CreateComisionesRole()
-    {
-        var comisionesRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Comisiones");
-        if (comisionesRole == null)
-        {
-            comisionesRole = objectSpace.CreateObject<PermissionPolicyRole>();
-            comisionesRole.Name = "Comisiones";
-        }
-
-        comisionesRole.AddTypePermissionsRecursively<Comision>(SecurityOperations.FullAccess,
-            SecurityPermissionState.Allow);
-        comisionesRole.AddTypePermissionsRecursively<LiquidacionComision>(SecurityOperations.FullAccess,
-            SecurityPermissionState.Allow);
-
-        comisionesRole.AddNavigationPermission(@"Application/NavigationItems/Items/Comisiones",
-            SecurityPermissionState.Allow);
-
-        return comisionesRole;
-    }
-
     private PermissionPolicyRole CreateSuscripcionesRole()
     {
         var suscripcionesRole = objectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Suscripciones");
@@ -530,6 +506,14 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             tesoreriaRole.Name = "Tesorería";
         }
 
+        tesoreriaRole.AddTypePermissionsRecursively<Banco>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        tesoreriaRole.AddTypePermissionsRecursively<CondicionPago>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        tesoreriaRole.AddTypePermissionsRecursively<MedioPago>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        tesoreriaRole.AddTypePermissionsRecursively<MandatoSepa>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
         tesoreriaRole.AddTypePermissionsRecursively<EfectoBase>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
         tesoreriaRole.AddTypePermissionsRecursively<EfectoCobro>(SecurityOperations.FullAccess,

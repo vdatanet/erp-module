@@ -7,7 +7,7 @@ using erp.Module.BusinessObjects.Base.Comun;
 namespace erp.Module.BusinessObjects.Auxiliares;
 
 [DefaultClassOptions]
-[NavigationItem("Configuraciones")]
+[NavigationItem("Auxiliares")]
 [XafDisplayName("Parentesco")]
 [DefaultProperty(nameof(Nombre))]
 public class Parentesco(Session session) : EntidadBase(session)

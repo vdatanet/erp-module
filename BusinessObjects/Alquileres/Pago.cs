@@ -2,7 +2,7 @@ using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
-using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Ventas;
 

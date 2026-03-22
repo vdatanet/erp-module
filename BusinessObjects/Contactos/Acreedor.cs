@@ -5,8 +5,8 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Compras;
 using erp.Module.BusinessObjects.Compras;
 using erp.Module.BusinessObjects.Contabilidad;
+using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.Helpers.Contactos;
-using erp.Module.BusinessObjects.Auxiliares;
 
 namespace erp.Module.BusinessObjects.Contactos;
 

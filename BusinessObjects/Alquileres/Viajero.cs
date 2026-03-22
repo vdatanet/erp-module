@@ -4,6 +4,7 @@ using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Contactos;
 using VeriFactu.Xml.Factu;
 

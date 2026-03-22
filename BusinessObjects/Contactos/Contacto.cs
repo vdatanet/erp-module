@@ -10,11 +10,14 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects;
 using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.Factories;
 using erp.Module.Helpers.Contactos;
 using VeriFactu.Xml.Factu;
+
+using erp.Module.BusinessObjects.Tesoreria;
 
 namespace erp.Module.BusinessObjects.Contactos;
 
@@ -325,6 +328,14 @@ public class Contacto(Session session) : EntidadBase(session)
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
+
+    [Association("Contacto-Bancos")]
+    [XafDisplayName("Bancos")]
+    public XPCollection<Banco> Bancos => GetCollection<Banco>();
+
+    [Association("Contacto-MandatosSepa")]
+    [XafDisplayName("Mandatos SEPA")]
+    public XPCollection<MandatoSepa> MandatosSepa => GetCollection<MandatoSepa>();
 
     [DevExpress.Xpo.Aggregated]
     [Association("Contacto-Tareas")]

@@ -8,7 +8,7 @@ using erp.Module.BusinessObjects.Contactos;
 namespace erp.Module.BusinessObjects.Auxiliares;
 
 [DefaultClassOptions]
-[NavigationItem("Configuraciones")]
+[NavigationItem("Auxiliares")]
 [ImageName("BO_Localization")]
 [DefaultProperty(nameof(Nombre))]
 public class Nacionalidad(Session session) : EntidadBase(session)

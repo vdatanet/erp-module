@@ -5,6 +5,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Alquileres;
 using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Crm;
@@ -50,14 +51,6 @@ public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVent
         set => SetPropertyValue(nameof(CondicionPago), ref _condicionPago, value);
     }
 
-    [XafDisplayName("Banco Predeterminado")]
-    [DataSourceProperty(nameof(Bancos))]
-    public Banco? BancoPredeterminado
-    {
-        get => _bancoPredeterminado;
-        set => SetPropertyValue(nameof(BancoPredeterminado), ref _bancoPredeterminado, value);
-    }
-
     [XafDisplayName("Posición Fiscal")]
     public PosicionFiscal? PosicionFiscal
     {
@@ -72,9 +65,13 @@ public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVent
         set => SetPropertyValue(nameof(Sector), ref _sector, value);
     }
 
-    [Association("Cliente-Bancos")]
-    [XafDisplayName("Bancos")]
-    public XPCollection<Banco> Bancos => GetCollection<Banco>();
+    [XafDisplayName("Banco Predeterminado")]
+    [DataSourceProperty(nameof(Bancos))]
+    public Banco? BancoPredeterminado
+    {
+        get => _bancoPredeterminado;
+        set => SetPropertyValue(nameof(BancoPredeterminado), ref _bancoPredeterminado, value);
+    }
 
     [Association("Cliente-Contactos")]
     [XafDisplayName("Contactos")]
