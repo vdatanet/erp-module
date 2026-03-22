@@ -38,68 +38,38 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         {
             var result = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(PermissionPolicyRole)));
             if (result != null) return result;
+
+            // Fallback to the first persistent Object Space if no specific match is found for the type
+            var fallback = compositeOS.AdditionalObjectSpaces.FirstOrDefault();
+            if (fallback != null) return fallback;
         }
 
         return objectSpace;
     }
 
-    public void CreateRolesAndUsers(string? tenantName)
+    public void CreateRolesAndUsers(string? tenantName, bool onlyAdmin = false)
     {
         var adminRole = CreateAdminRole();
-        var imprentaRole = CreateImprentaRole();
-        var contactosRole = CreateContactosRole();
-        var ventasRole = CreateVentasRole();
-        var comprasRole = CreateComprasRole();
-        var produccionRole = CreateProduccionRole();
-        var tpvRole = CreateTpvRole();
-        var contabilidadRole = CreateContabilidadRole();
-        var auxiliaresRole = CreateAuxiliaresRole();
-        var configuracionesRole = CreateConfiguracionesRole();
-        var controlHorarioRole = CreateControlHorarioRole();
-        var crmRole = CreateCrmRole();
-        var impuestosRole = CreateImpuestosRole();
-        var productosRole = CreateProductosRole();
-        var alquileresRole = CreateAlquileresRole();
-        var suscripcionesRole = CreateSuscripcionesRole();
-        var tesoreriaRole = CreateTesoreriaRole();
-        var reportsRole = CreateReportsRole();
-
-        // No crear usuarios de tenant, solo el Admin del host (cuando tenantName es null)
-        if (tenantName != null) return;
-
-        var userManager = OS.ServiceProvider?.GetService<UserManager>();
-        var adminUserName = "Admin";
-
-        if (userManager != null)
+        // Crear roles de negocio si no es onlyAdmin
+        if (!onlyAdmin)
         {
-            if (userManager.FindUserByName<ApplicationUser>(OS, adminUserName) == null)
-            {
-                var EmptyPassword = "";
-                var userResult = userManager.CreateUser<ApplicationUser>(OS, adminUserName, EmptyPassword,
-                    user =>
-                    {
-                        user.ChangePasswordOnFirstLogon = true;
-                        user.Roles.Add(adminRole);
-                    });
-                if (userResult.User is ISecurityUserWithLoginInfo userWithLoginInfo)
-                {
-                    userWithLoginInfo.CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, adminUserName);
-                }
-            }
-        }
-        else
-        {
-            // Fallback manual para el Admin
-            var adminUser = OS.FirstOrDefault<ApplicationUser>(u => u.UserName == adminUserName);
-            if (adminUser == null)
-            {
-                adminUser = OS.CreateObject<ApplicationUser>();
-                adminUser.UserName = adminUserName;
-                adminUser.SetPassword("");
-                adminUser.ChangePasswordOnFirstLogon = true;
-                adminUser.Roles.Add(adminRole);
-                ((ISecurityUserWithLoginInfo)adminUser).CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, adminUserName);
-            }
+            CreateImprentaRole();
+            CreateContactosRole();
+            CreateVentasRole();
+            CreateComprasRole();
+            CreateProduccionRole();
+            CreateTpvRole();
+            CreateContabilidadRole();
+            CreateAuxiliaresRole();
+            CreateConfiguracionesRole();
+            CreateControlHorarioRole();
+            CreateCrmRole();
+            CreateImpuestosRole();
+            CreateProductosRole();
+            CreateAlquileresRole();
+            CreateSuscripcionesRole();
+            CreateTesoreriaRole();
+            CreateReportsRole();
         }
     }
 

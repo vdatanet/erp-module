@@ -30,10 +30,7 @@ public class Updater : ModuleUpdater
         if (ObjectSpace.ServiceProvider != null)
         {
             var securitySetup = new SecuritySetupService(ObjectSpace);
-            securitySetup.CreateRolesAndUsers(TenantName);
-
-            var paisProvinciaSetup = new PaisProvinciaPoblacionSetupService(ObjectSpace);
-            paisProvinciaSetup.CreateInitialData();
+            securitySetup.CreateRolesAndUsers(TenantName, onlyAdmin: true);
         }
 #endif
 

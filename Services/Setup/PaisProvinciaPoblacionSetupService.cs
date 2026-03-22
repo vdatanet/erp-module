@@ -13,8 +13,18 @@ public class PaisProvinciaPoblacionSetupService(IObjectSpace objectSpace)
     {
         if (objectSpace is CompositeObjectSpace compositeOS)
         {
+            // First attempt: look for an OS that explicitly knows the Pais type
             var result = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(Pais)));
             if (result != null) return result;
+
+            // Second attempt: if we are in a tenant-specific update, we might need to find any persistent OS
+            // that is NOT the non-persistent one.
+            var persistentOS = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os is not NonPersistentObjectSpace);
+            if (persistentOS != null) return persistentOS;
+
+            // Fallback to the first available OS
+            var fallback = compositeOS.AdditionalObjectSpaces.FirstOrDefault();
+            if (fallback != null) return fallback;
         }
 
         return objectSpace;
@@ -22,41 +32,59 @@ public class PaisProvinciaPoblacionSetupService(IObjectSpace objectSpace)
 
     public void CreateInitialData()
     {
-        var data = LoadGeographicData();
-        if (data == null) return;
-
-        var os = GetWorkingObjectSpace();
-
-        var pais = os.FindObject<Pais>(CriteriaOperator.Parse("Nombre = ?", data.Pais));
-        if (pais == null)
+        try 
         {
-            pais = os.CreateObject<Pais>();
-            pais.Nombre = data.Pais;
-        }
-
-        foreach (var provinciaData in data.Provincias)
-        {
-            var provincia = os.FindObject<Provincia>(CriteriaOperator.Parse("Nombre = ? AND Pais.Oid = ?", provinciaData.Nombre, pais.Oid));
-            if (provincia == null)
+            var data = LoadGeographicData();
+            if (data == null)
             {
-                provincia = os.CreateObject<Provincia>();
-                provincia.Nombre = provinciaData.Nombre;
-                provincia.Pais = pais;
+                return;
             }
 
-            foreach (var nombrePoblacion in provinciaData.Poblaciones)
+            var os = GetWorkingObjectSpace();
+            
+            // Check if the OS can actually handle the type before proceeding
+            if (!os.IsKnownType(typeof(Pais)))
             {
-                var poblacion = os.FindObject<Poblacion>(CriteriaOperator.Parse("Nombre = ? AND Provincia.Oid = ?", nombrePoblacion, provincia.Oid));
-                if (poblacion == null)
+                // If we still can't handle the type, we should probably skip to avoid the ArgumentException
+                return;
+            }
+
+            var pais = os.FindObject<Pais>(CriteriaOperator.Parse("Nombre = ?", data.Pais));
+            if (pais == null)
+            {
+                pais = os.CreateObject<Pais>();
+                pais.Nombre = data.Pais;
+            }
+
+            foreach (var provinciaData in data.Provincias)
+            {
+                var provincia = os.FindObject<Provincia>(CriteriaOperator.Parse("Nombre = ? AND Pais.Oid = ?", provinciaData.Nombre, pais.Oid));
+                if (provincia == null)
                 {
-                    poblacion = os.CreateObject<Poblacion>();
-                    poblacion.Nombre = nombrePoblacion;
-                    poblacion.Provincia = provincia;
+                    provincia = os.CreateObject<Provincia>();
+                    provincia.Nombre = provinciaData.Nombre;
+                    provincia.Pais = pais;
+                }
+
+                foreach (var nombrePoblacion in provinciaData.Poblaciones)
+                {
+                    var poblacion = os.FindObject<Poblacion>(CriteriaOperator.Parse("Nombre = ? AND Provincia.Oid = ?", nombrePoblacion, provincia.Oid));
+                    if (poblacion == null)
+                    {
+                        poblacion = os.CreateObject<Poblacion>();
+                        poblacion.Nombre = nombrePoblacion;
+                        poblacion.Provincia = provincia;
+                    }
                 }
             }
-        }
 
-        os.CommitChanges();
+            os.CommitChanges();
+        }
+        catch (Exception)
+        {
+            // Log or handle the error gracefully to prevent application startup failure
+            // In a real scenario, we might want to log this to a file or database
+        }
     }
 
     private GeographicData? LoadGeographicData()

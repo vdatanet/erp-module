@@ -22,7 +22,7 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
             {
                 try {
                     prop.SetValue(baseOs, serviceProvider);
-                } catch {
+                } catch (Exception) {
                     // Si no se puede setear directamente, los servicios que lo necesiten podrían fallar, 
                     // pero al menos lo intentamos.
                 }
@@ -40,15 +40,18 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
         new SecuritySetupService(objectSpace).CreateRolesAndUsers(tenantName);
         objectSpace.CommitChanges();
 
+        new PaisProvinciaPoblacionSetupService(objectSpace).CreateInitialData();
+        objectSpace.CommitChanges();
+
         if (tenantId != null)
         {
+            new InformacionEmpresaSetupService(objectSpace).CreateInitialInformacionEmpresa();
+            objectSpace.CommitChanges();
+
             new CuentaSetupService(objectSpace).CreateInitialCuentas();
             objectSpace.CommitChanges();
             
             new ImpuestoSetupService(objectSpace).CreateInitialImpuestos();
-            objectSpace.CommitChanges();
-            
-            new InformacionEmpresaSetupService(objectSpace).CreateInitialInformacionEmpresa();
             objectSpace.CommitChanges();
         }
     }
