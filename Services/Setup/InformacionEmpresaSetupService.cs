@@ -13,6 +13,7 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
             informacionEmpresa = objectSpace.CreateObject<InformacionEmpresa>();
             informacionEmpresa.Nombre = "Empresa por Defecto";
             informacionEmpresa.Nif = "B00000000";
+            objectSpace.CommitChanges(); // Nos aseguramos de guardar la empresa inicial para evitar nulos en otras partes si es necesario
         }
     }
 }

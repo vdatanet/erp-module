@@ -35,16 +35,21 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
         }
 
         new TenantSetupService(objectSpace).CreateInitialTenants(tenantName ?? "Default");
+        objectSpace.CommitChanges();
 
         new SecuritySetupService(objectSpace).CreateRolesAndUsers(tenantName);
+        objectSpace.CommitChanges();
 
         if (tenantId != null)
         {
             new CuentaSetupService(objectSpace).CreateInitialCuentas();
+            objectSpace.CommitChanges();
+            
             new ImpuestoSetupService(objectSpace).CreateInitialImpuestos();
+            objectSpace.CommitChanges();
+            
             new InformacionEmpresaSetupService(objectSpace).CreateInitialInformacionEmpresa();
+            objectSpace.CommitChanges();
         }
-
-        objectSpace.CommitChanges();
     }
 }

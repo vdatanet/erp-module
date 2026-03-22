@@ -19,8 +19,13 @@ public class ImpuestoSetupService(IObjectSpace objectSpace)
     private void CreateTipoImpuesto(string codigo, string nombre, decimal tipo, bool enVentas, bool enCompras,
         Impuesto? impuestoVeriFactu)
     {
-        var tipoImpuesto = objectSpace.CreateObject<TipoImpuesto>();
-        tipoImpuesto.Codigo = codigo;
+        var tipoImpuesto = objectSpace.FirstOrDefault<TipoImpuesto>(t => t.Codigo == codigo);
+        if (tipoImpuesto == null)
+        {
+            tipoImpuesto = objectSpace.CreateObject<TipoImpuesto>();
+            tipoImpuesto.Codigo = codigo;
+        }
+
         tipoImpuesto.Nombre = nombre;
         tipoImpuesto.Tipo = tipo;
         tipoImpuesto.DisponibleEnVentas = enVentas;

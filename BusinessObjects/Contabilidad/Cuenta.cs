@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Text;
+using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
@@ -45,8 +46,63 @@ public class Cuenta(Session session) : EntidadBase(session)
     public string? Codigo
     {
         get => _codigo;
-        set => SetPropertyValue(nameof(Codigo), ref _codigo, value);
+        set
+        {
+            if (SetPropertyValue(nameof(Codigo), ref _codigo, value))
+            {
+                if (!IsLoading && !IsSaving && !string.IsNullOrEmpty(value))
+                {
+                    ActualizarPadre();
+                }
+            }
+        }
     }
+
+    private void ActualizarPadre()
+    {
+        if (string.IsNullOrEmpty(Codigo))
+        {
+            CuentaPadre = null;
+            return;
+        }
+
+        string? codigoPadre = null;
+        int longitud = Codigo.Length;
+
+        if (longitud == 2) // Nivel 2 (10), padre Nivel 1 (1)
+        {
+            codigoPadre = Codigo.Substring(0, 1);
+        }
+        else if (longitud == 3) // Nivel 3 (100), padre Nivel 2 (10)
+        {
+            codigoPadre = Codigo.Substring(0, 2);
+        }
+        else if (longitud == 4 || longitud == 5) // Nivel 4 (1000 o 10000), padre Nivel 3 (100)
+        {
+            codigoPadre = Codigo.Substring(0, 3);
+        }
+        else if (longitud > 5) // Nivel 5 (100000), padre Nivel 4 (10000)
+        {
+            codigoPadre = Codigo.Substring(0, 5);
+            EsAsentable = true;
+        }
+
+        if (codigoPadre != null)
+        {
+            CuentaPadre = Session.FindObject<Cuenta>(PersistentCriteriaEvaluationBehavior.InTransaction, new BinaryOperator(nameof(Codigo), codigoPadre));
+        }
+        else
+        {
+            CuentaPadre = null;
+        }
+    }
+
+    [PersistentAlias("Iif(Len(Codigo) == 1, 1, Iif(Len(Codigo) == 2, 2, Iif(Len(Codigo) == 3, 3, Iif(Len(Codigo) == 4 || Len(Codigo) == 5, 4, Iif(Len(Codigo) > 5, 5, 0)))))")]
+    [XafDisplayName("Nivel")]
+    public int Nivel => (int)EvaluateAlias(nameof(Nivel));
+
+    [Browsable(false)]
+    public bool CodigoEsValido => true;
 
     [Size(255)]
     [RuleRequiredField]
