@@ -67,7 +67,15 @@ public class Tercero(Session session) : Contacto(session)
     {
         if (IsLoading) return;
 
-        if (CuentaContable != null) return;
+        if (CuentaContable != null)
+        {
+            // Sincronizar el nombre si la cuenta ya existe
+            if (CuentaContable.Nombre != Nombre)
+            {
+                CuentaContable.Nombre = Nombre;
+            }
+            return;
+        }
 
         var config = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (config == null) return;
@@ -110,10 +118,17 @@ public class Tercero(Session session) : Contacto(session)
                 return;
             }
 
-            var cuentaCodigo = Codigo;
+            // Extraer solo la parte numérica del código del tercero (ej. C/0001 -> 0001)
+            var suffix = new string((Codigo ?? "").Where(char.IsDigit).ToArray());
+            if (string.IsNullOrEmpty(suffix))
+            {
+                // Si no hay dígitos, usamos el número de registro como respaldo
+                suffix = Numero.ToString();
+            }
+
             var prefix = cuentaPadre.Codigo ?? "";
-            var suffix = Codigo ?? "";
-            
+            string cuentaCodigo;
+
             int paddingLength = 10 - prefix.Length;
             if (paddingLength > 0)
             {
@@ -124,10 +139,22 @@ public class Tercero(Session session) : Contacto(session)
                 cuentaCodigo = prefix + suffix;
             }
 
+            // Asegurar longitud de 10 si el prefijo + sufijo exceden o no llegan por alguna razón
+            if (cuentaCodigo.Length > 10)
+            {
+                // Si excede, tomamos los últimos dígitos necesarios para completar con el prefijo
+                // O simplemente truncamos/ajustamos. Dado el requisito de 10 dígitos:
+                cuentaCodigo = cuentaCodigo.Substring(0, 10);
+            }
+
             var cuentaExistente = Session.FindObject<Cuenta>(new BinaryOperator(nameof(Cuenta.Codigo), cuentaCodigo));
             if (cuentaExistente != null)
             {
                 CuentaContable = cuentaExistente;
+                if (CuentaContable.Nombre != Nombre)
+                {
+                    CuentaContable.Nombre = Nombre;
+                }
             }
             else
             {

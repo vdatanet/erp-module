@@ -43,7 +43,7 @@ public class Contacto(Session session) : EntidadBase(session)
     private string? _movil;
     private Nacionalidad? _nacionalidad;
     private string? _nif;
-    private string? _nombre;
+    private string _nombre = string.Empty;
     private string? _nombreComercial;
     private string? _notas;
     private int _numero;
@@ -175,7 +175,7 @@ public class Contacto(Session session) : EntidadBase(session)
     [Size(255)]
     [RuleRequiredField]
     [XafDisplayName("Nombre")]
-    public string? Nombre
+    public string Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
