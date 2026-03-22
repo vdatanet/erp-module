@@ -38,7 +38,21 @@ public class ImportarClientesController : ViewController
     {
         base.OnActivated();
         var tenantProvider = Application.ServiceProvider.GetService<ITenantProvider>();
-        var tenantName = tenantProvider?.TenantName;
+        string? tenantName = null;
+        try
+        {
+            tenantName = tenantProvider?.TenantName;
+        }
+        catch (NotImplementedException)
+        {
+            // Fallback for some platforms (e.g. WinForms) where TenantName is not implemented in ITenantProvider
+            if (tenantProvider?.TenantId != null)
+            {
+                var tenantOS = Application.CreateObjectSpace(typeof(DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant));
+                var tenant = tenantOS.GetObjectByKey<DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant>(tenantProvider.TenantId);
+                tenantName = tenant?.Name;
+            }
+        }
         Active["DemoOnly"] = tenantName == "demo";
     }
 
