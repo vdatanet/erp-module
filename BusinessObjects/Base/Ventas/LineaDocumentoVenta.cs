@@ -4,9 +4,11 @@ using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.BusinessObjects.Productos;
 using erp.Module.Helpers.Comun;
+using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Base.Ventas;
 
@@ -23,6 +25,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     private decimal _porcentajeDescuento;
     private decimal _precioUnitario;
     private Producto? _producto;
+    private CuentaContable? _cuentaContable;
     private decimal _porcentajeComision;
     private decimal _importeComisionFijo;
 
@@ -32,6 +35,14 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     {
         get => _documentoVenta;
         set => SetPropertyValue(nameof(DocumentoVenta), ref _documentoVenta, value);
+    }
+
+    [DataSourceCriteria("EstaActiva = True AND EsAsentable = True")]
+    [XafDisplayName("Cuenta Contable")]
+    public CuentaContable? CuentaContable
+    {
+        get => _cuentaContable;
+        set => SetPropertyValue(nameof(CuentaContable), ref _cuentaContable, value);
     }
 
     [ImmediatePostData]
@@ -217,6 +228,9 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
         NombreProducto = Producto.Nombre;
         Notas = Producto.Notas;
         PrecioUnitario = Producto.PrecioVenta;
+
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        CuentaContable = Producto.CuentaVentas ?? companyInfo?.CuentaVentasPorDefecto;
 
         if (Cantidad == 0m)
             Cantidad = 1m;

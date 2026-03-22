@@ -3,8 +3,10 @@ using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Productos;
 using erp.Module.Helpers.Comun;
+using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Base.Compras;
 
@@ -19,6 +21,7 @@ public class LineaDocumentoCompra(Session session) : EntidadBase(session)
     private string? _notas;
     private decimal _precio;
     private Producto? _producto;
+    private CuentaContable? _cuentaContable;
     private int _secuencia;
 
     [Association("DocumentoCompra-Lineas")]
@@ -39,6 +42,14 @@ public class LineaDocumentoCompra(Session session) : EntidadBase(session)
     {
         get => _secuencia;
         set => SetPropertyValue(nameof(Secuencia), ref _secuencia, value);
+    }
+
+    [DataSourceCriteria("EstaActiva = True AND EsAsentable = True")]
+    [XafDisplayName("Cuenta Contable")]
+    public CuentaContable? CuentaContable
+    {
+        get => _cuentaContable;
+        set => SetPropertyValue(nameof(CuentaContable), ref _cuentaContable, value);
     }
 
     [ImmediatePostData]
@@ -149,6 +160,10 @@ public class LineaDocumentoCompra(Session session) : EntidadBase(session)
         if (Producto == null) return;
         Descripcion = Producto.Nombre;
         Precio = Producto.CosteEstandar;
+
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        CuentaContable = Producto.CuentaCompras ?? companyInfo?.CuentaComprasPorDefecto;
+
         BorrarImpuestosProducto();
         foreach (var t in Producto.ImpuestosCompras)
         {
