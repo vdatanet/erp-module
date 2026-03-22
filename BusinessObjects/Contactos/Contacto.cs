@@ -337,6 +337,11 @@ public class Contacto(Session session) : EntidadBase(session)
         InitValues();
     }
 
+    protected override void OnSaving()
+    {
+        base.OnSaving();
+    }
+
     protected override void OnChanged(string propertyName, object oldValue, object newValue)
     {
         base.OnChanged(propertyName, oldValue, newValue);
