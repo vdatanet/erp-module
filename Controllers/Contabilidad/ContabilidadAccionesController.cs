@@ -78,22 +78,22 @@ public class ContabilidadAccionesController : ViewController
         base.OnDeactivated();
     }
 
-    private void ListView_SelectionChanged(object sender, EventArgs e)
+    private void ListView_SelectionChanged(object? sender, EventArgs e)
     {
         ActualizarAcciones();
     }
 
-    private void ObjectSpace_Committed(object sender, EventArgs e)
+    private void ObjectSpace_Committed(object? sender, EventArgs e)
     {
         ActualizarAcciones();
     }
 
-    private void View_CurrentObjectChanged(object sender, EventArgs e)
+    private void View_CurrentObjectChanged(object? sender, EventArgs e)
     {
         ActualizarAcciones();
     }
 
-    private void ObjectSpace_ObjectChanged(object sender, ObjectChangedEventArgs e)
+    private void ObjectSpace_ObjectChanged(object? sender, ObjectChangedEventArgs e)
     {
         if (e.Object == View.CurrentObject && (e.PropertyName == "Estado" || string.IsNullOrEmpty(e.PropertyName)))
         {
@@ -107,8 +107,8 @@ public class ContabilidadAccionesController : ViewController
         if (togglePublicadoAction != null)
         {
             // Determinar el objeto de referencia para texto e icono
-            Asiento asientoReferencia = View.CurrentObject as Asiento;
-            if (View is ListView lvAsiento && lvAsiento.SelectedObjects.Count > 0)
+            Asiento? asientoReferencia = View.CurrentObject as Asiento;
+            if (View is ListView { SelectedObjects.Count: > 0 } lvAsiento)
             {
                 asientoReferencia = lvAsiento.SelectedObjects[0] as Asiento;
             }
@@ -157,8 +157,8 @@ public class ContabilidadAccionesController : ViewController
         // Gestión de la acción de Ejercicio
         if (toggleEstadoEjercicioAction != null)
         {
-            Ejercicio ejercicioReferencia = View.CurrentObject as Ejercicio;
-            if (View is ListView lvEjercicio && lvEjercicio.SelectedObjects.Count > 0)
+            Ejercicio? ejercicioReferencia = View.CurrentObject as Ejercicio;
+            if (View is ListView { SelectedObjects.Count: > 0 } lvEjercicio)
             {
                 ejercicioReferencia = lvEjercicio.SelectedObjects[0] as Ejercicio;
             }
