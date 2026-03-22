@@ -381,7 +381,7 @@
         <ColumnInfo Id="PrefijoFacturasCompraPorDefecto" Index="-1" />
         <ColumnInfo Id="PrefijoFacturasSimplificadasPorDefecto" Index="-1" />
         <ColumnInfo Id="PrefijoFacturasVentaPorDefecto" Index="-1" />
-        <ColumnInfo Id="PrefijoPartesDiariosPorDefecto" Index="-1" />
+        <ColumnInfo Id="PrefijoParteTrabajoPorDefecto" Index="-1" />
         <ColumnInfo Id="PrefijoPedidosPorDefecto" Index="-1" />
         <ColumnInfo Id="PrefijoOfertasVentaPorDefecto" Index="-1" />
         <ColumnInfo Id="PrefijoUrlValidacionVeriFactu" Index="-1" />

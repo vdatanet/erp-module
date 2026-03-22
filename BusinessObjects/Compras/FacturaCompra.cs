@@ -5,6 +5,7 @@ using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Base.Compras;
 using DevExpress.ExpressApp.DC;
 
+using erp.Module.Helpers.Contactos;
 using erp.Module.Services.Tesoreria;
 using DevExpress.Persistent.Validation;
 
@@ -30,5 +31,12 @@ public class FacturaCompra(Session session) : DocumentoCompra(session)
         {
             TesoreriaService.GenerarEfectosCompra(this);
         }
+    }
+
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        Serie ??= companyInfo?.PrefijoFacturasCompraPorDefecto;
     }
 }

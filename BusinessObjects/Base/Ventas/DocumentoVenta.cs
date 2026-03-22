@@ -280,9 +280,6 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         Fecha = DateTime.Today;
         
         Ejercicio = Session.Query<Ejercicio>().FirstOrDefault(e => e.Estado == EstadoEjercicio.Abierto && e.FechaInicio <= Fecha && e.FechaFin >= Fecha);
-
-        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        Serie ??= companyInfo?.PrefijoFacturasVentaPorDefecto;
     }
 
     public virtual bool GetAsignarNumeroAlGuardar()

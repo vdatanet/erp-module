@@ -4,6 +4,8 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Crm;
 
+using erp.Module.Helpers.Contactos;
+
 namespace erp.Module.BusinessObjects.Ventas;
 
 [DefaultClassOptions]
@@ -28,5 +30,12 @@ public class OfertaVenta(Session session) : DocumentoVenta(session)
                 if (value.Vendedor != null) Vendedor = value.Vendedor;
             }
         }
+    }
+
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        Serie ??= companyInfo?.PrefijoOfertasVentaPorDefecto;
     }
 }

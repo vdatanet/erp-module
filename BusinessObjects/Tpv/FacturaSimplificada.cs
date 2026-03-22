@@ -3,6 +3,8 @@ using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Facturacion;
+using erp.Module.Helpers.Contactos;
+using VeriFactu.Xml.Factu.Alta;
 
 namespace erp.Module.BusinessObjects.Tpv;
 
@@ -29,6 +31,14 @@ public class FacturaSimplificada(Session session) : FacturaBase(session)
     {
         get => _sesionTpv;
         set => SetPropertyValue(nameof(SesionTpv), ref _sesionTpv, value);
+    }
+
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        Serie ??= companyInfo?.PrefijoFacturasSimplificadasPorDefecto;
+        TipoFactura = TipoFactura.F2;
     }
 
     public override bool EsValida()

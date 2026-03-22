@@ -6,6 +6,7 @@ using erp.Module.BusinessObjects.Alquileres;
 using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Base.Facturacion;
 
+using erp.Module.Helpers.Contactos;
 using erp.Module.Services.Tesoreria;
 using DevExpress.Persistent.Validation;
 
@@ -35,6 +36,13 @@ public class Factura(Session session) : FacturaBase(session)
         {
             TesoreriaService.GenerarEfectosVenta(this);
         }
+    }
+
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        Serie ??= companyInfo?.PrefijoFacturasVentaPorDefecto;
     }
 
     public override bool EsValida()

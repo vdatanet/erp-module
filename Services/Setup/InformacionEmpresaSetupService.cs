@@ -14,11 +14,21 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
             informacionEmpresa.Nombre = "Empresa por Defecto";
             informacionEmpresa.Nif = "B00000000";
             informacionEmpresa.PrefijoAsientosPorDefecto = "AS";
-            informacionEmpresa.PrefijoClientes = "C";
-            informacionEmpresa.PrefijoProveedores = "P";
-            informacionEmpresa.PrefijoAcreedores = "A";
-            informacionEmpresa.PrefijoEmpleados = "E";
-            informacionEmpresa.PrefijoReservas = "RES";
+            informacionEmpresa.PrefijoOfertasCompraPorDefecto = "CO";
+            informacionEmpresa.PrefijoPedidosCompraPorDefecto = "CP";
+            informacionEmpresa.PrefijoAlbaranesCompraPorDefecto = "CA";
+            informacionEmpresa.PrefijoFacturasCompraPorDefecto = "CF";
+            informacionEmpresa.PrefijoOfertasVentaPorDefecto = "VO";
+            informacionEmpresa.PrefijoPedidosPorDefecto = "VP";
+            informacionEmpresa.PrefijoAlbaranesVentaPorDefecto = "VA";
+            informacionEmpresa.PrefijoFacturasVentaPorDefecto = "VF";
+            informacionEmpresa.PrefijoFacturasSimplificadasPorDefecto = "VS";
+            informacionEmpresa.PrefijoParteTrabajoPorDefecto = "PT";
+            informacionEmpresa.PrefijoClientes = "TC";
+            informacionEmpresa.PrefijoProveedores = "TP";
+            informacionEmpresa.PrefijoAcreedores = "TA";
+            informacionEmpresa.PrefijoEmpleados = "TE";
+            informacionEmpresa.PrefijoReservas = "AR";
             informacionEmpresa.PaddingNumero = 5;
             objectSpace.CommitChanges(); // Nos aseguramos de guardar la empresa inicial para evitar nulos en otras partes si es necesario
         }

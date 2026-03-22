@@ -42,10 +42,11 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     private PosicionFiscal? _posicionFiscalPorDefecto;
     private string? _prefijoAsientosPorDefecto;
     private string? _prefijoAlbaranesCompraPorDefecto;
+    private string? _prefijoAlbaranesVentaPorDefecto;
     private string? _prefijoFacturasCompraPorDefecto;
     private string? _prefijoFacturasSimplificadasPorDefecto;
     private string? _prefijoFacturasVentaPorDefecto;
-    private string? _prefijoPartesDiariosPorDefecto;
+    private string? _prefijoParteTrabajoPorDefecto;
     private string? _prefijoPedidosCompraPorDefecto;
     private string? _prefijoPedidosPorDefecto;
     private string? _prefijoOfertasCompraPorDefecto;
@@ -216,6 +217,13 @@ public class InformacionEmpresa(Session session) : Contacto(session)
         set => SetPropertyValue(nameof(PrefijoAlbaranesCompraPorDefecto), ref _prefijoAlbaranesCompraPorDefecto, value);
     }
 
+    [XafDisplayName("Prefijo Albaranes Venta")]
+    public string? PrefijoAlbaranesVentaPorDefecto
+    {
+        get => _prefijoAlbaranesVentaPorDefecto;
+        set => SetPropertyValue(nameof(PrefijoAlbaranesVentaPorDefecto), ref _prefijoAlbaranesVentaPorDefecto, value);
+    }
+
     [XafDisplayName("Prefijo Pedidos")]
     public string? PrefijoPedidosPorDefecto
     {
@@ -230,11 +238,11 @@ public class InformacionEmpresa(Session session) : Contacto(session)
         set => SetPropertyValue(nameof(PrefijoOfertasVentaPorDefecto), ref _prefijoOfertasVentaPorDefecto, value);
     }
 
-    [XafDisplayName("Prefijo Partes Diarios")]
-    public string? PrefijoPartesDiariosPorDefecto
+    [XafDisplayName("Prefijo Parte de Trabajo")]
+    public string? PrefijoParteTrabajoPorDefecto
     {
-        get => _prefijoPartesDiariosPorDefecto;
-        set => SetPropertyValue(nameof(PrefijoPartesDiariosPorDefecto), ref _prefijoPartesDiariosPorDefecto, value);
+        get => _prefijoParteTrabajoPorDefecto;
+        set => SetPropertyValue(nameof(PrefijoParteTrabajoPorDefecto), ref _prefijoParteTrabajoPorDefecto, value);
     }
 
     [XafDisplayName("Prefijo Asientos")]
