@@ -4,6 +4,8 @@ using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Compras;
 using erp.Module.BusinessObjects.Compras;
+using erp.Module.BusinessObjects.Contabilidad;
+using erp.Module.Helpers.Contactos;
 
 using erp.Module.BusinessObjects.Auxiliares;
 
@@ -42,5 +44,22 @@ public class Proveedor(Session session) : Tercero(session)
     public override string GetPrefijoCodigo()
     {
         return "P";
+    }
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        InitValues();
+    }
+
+    private void InitValues()
+    {
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        if (companyInfo == null) return;
+        CuentaContable = companyInfo.CuentaProveedoresPorDefecto;
+        if (CuentaContable != null && (!CuentaContable.EstaActiva || !CuentaContable.EsAsentable))
+        {
+            CuentaContable = null;
+        }
+        _condicionPago = companyInfo.CondicionPagoPorDefecto;
     }
 }

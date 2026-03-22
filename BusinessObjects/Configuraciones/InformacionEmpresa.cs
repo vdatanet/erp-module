@@ -22,6 +22,10 @@ namespace erp.Module.BusinessObjects.Configuraciones;
     CustomMessageTemplate = "No se puede eliminar la información de la empresa.")]
 public class InformacionEmpresa(Session session) : Contacto(session)
 {
+    private Cuenta? _cuentaAcreedoresPorDefecto;
+    private Cuenta? _cuentaPadreAcreedores;
+    private Cuenta? _cuentaPadreClientes;
+    private Cuenta? _cuentaPadreProveedores;
     private CondicionPago? _condicionPagoPorDefecto;
     private Cuenta? _cuentaClientesPorDefecto;
     private Cuenta? _cuentaCobrosPorDefecto;
@@ -105,6 +109,38 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     {
         get => _cuentaProveedoresPorDefecto;
         set => SetPropertyValue(nameof(CuentaProveedoresPorDefecto), ref _cuentaProveedoresPorDefecto, value);
+    }
+
+    [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
+    [XafDisplayName("Cuenta Acreedores por Defecto")]
+    public Cuenta? CuentaAcreedoresPorDefecto
+    {
+        get => _cuentaAcreedoresPorDefecto;
+        set => SetPropertyValue(nameof(CuentaAcreedoresPorDefecto), ref _cuentaAcreedoresPorDefecto, value);
+    }
+
+    [DataSourceCriteria("EstaActiva = True")]
+    [XafDisplayName("Cuenta Padre Clientes")]
+    public Cuenta? CuentaPadreClientes
+    {
+        get => _cuentaPadreClientes;
+        set => SetPropertyValue(nameof(CuentaPadreClientes), ref _cuentaPadreClientes, value);
+    }
+
+    [DataSourceCriteria("EstaActiva = True")]
+    [XafDisplayName("Cuenta Padre Proveedores")]
+    public Cuenta? CuentaPadreProveedores
+    {
+        get => _cuentaPadreProveedores;
+        set => SetPropertyValue(nameof(CuentaPadreProveedores), ref _cuentaPadreProveedores, value);
+    }
+
+    [DataSourceCriteria("EstaActiva = True")]
+    [XafDisplayName("Cuenta Padre Acreedores")]
+    public Cuenta? CuentaPadreAcreedores
+    {
+        get => _cuentaPadreAcreedores;
+        set => SetPropertyValue(nameof(CuentaPadreAcreedores), ref _cuentaPadreAcreedores, value);
     }
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]

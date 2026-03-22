@@ -22,19 +22,10 @@ public class Cliente(Session session) : Tercero(session)
     private Banco? _bancoPredeterminado;
     private CondicionPago? _condicionPago;
     private Cuenta? _cuentaCobro;
-    private Cuenta? _cuentaContable;
     private Diario? _diarioVentas;
     private PosicionFiscal? _posicionFiscal;
     private Sector? _sector;
 
-
-    [XafDisplayName("Cuenta Contable")]
-    [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    public Cuenta? CuentaContable
-    {
-        get => _cuentaContable;
-        set => SetPropertyValue(nameof(CuentaContable), ref _cuentaContable, value);
-    }
 
     [XafDisplayName("Cuenta de Cobro")]
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
@@ -140,7 +131,11 @@ public class Cliente(Session session) : Tercero(session)
     {
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null) return;
-        _cuentaContable = companyInfo.CuentaClientesPorDefecto;
+        CuentaContable = companyInfo.CuentaClientesPorDefecto;
+        if (CuentaContable != null && (!CuentaContable.EstaActiva || !CuentaContable.EsAsentable))
+        {
+            CuentaContable = null;
+        }
         _cuentaCobro = companyInfo.CuentaCobrosPorDefecto;
         _diarioVentas = companyInfo.DiarioVentasPorDefecto;
         _posicionFiscal = companyInfo.PosicionFiscalPorDefecto;
