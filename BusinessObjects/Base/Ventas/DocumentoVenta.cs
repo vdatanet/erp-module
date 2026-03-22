@@ -18,7 +18,7 @@ namespace erp.Module.BusinessObjects.Base.Ventas;
 public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 {
     private decimal _baseImponible;
-    private Cliente? _cliente;
+    private Tercero? _cliente;
     private DateTime _fecha;
     private decimal _importeImpuestos;
     private decimal _importeTotal;
@@ -34,19 +34,19 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     [RuleRequiredField("erp.Module.BusinessObjects.Ventas.Factura.Cliente_Required", DefaultContexts.Save,
         TargetCriteria =
             "IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Factura') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Presupuesto') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Albaran')")]
-    [Association("Cliente-DocumentosVenta")]
+    [Association("Tercero-DocumentosVenta")]
     [XafDisplayName("Cliente")]
-    [DataSourceCriteria("Activo = true")]
+    [DataSourceCriteria("Activo = true and IsIPuedeParticiparEnVentas")]
     [ImmediatePostData]
-    public Cliente? Cliente
+    public Tercero? Cliente
     {
         get => _cliente;
         set
         {
             var modified = SetPropertyValue(nameof(Cliente), ref _cliente, value);
-            if (modified && !IsLoading && !IsSaving && value != null)
+            if (modified && !IsLoading && !IsSaving && value is Cliente c)
             {
-                CondicionPago = value.CondicionPago;
+                CondicionPago = c.CondicionPago;
             }
         }
     }

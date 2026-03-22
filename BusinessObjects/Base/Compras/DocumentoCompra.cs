@@ -22,7 +22,7 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
     private decimal _importeTotal;
     private string? _notas;
     private int _numero;
-    private Proveedor? _proveedor;
+    private Tercero? _proveedor;
     private string? _secuencia;
     private string? _serie;
     private CondicionPago? _condicionPago;
@@ -30,18 +30,22 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
     [RuleRequiredField("erp.Module.BusinessObjects.Compras.FacturaCompra.Proveedor_Required", DefaultContexts.Save,
         TargetCriteria =
             "IsInstanceOfType(this, 'erp.Module.BusinessObjects.Compras.FacturaCompra') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Compras.PresupuestoCompra') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Compras.AlbaranCompra')")]
-    [Association("Proveedor-DocumentosCompra")]
+    [Association("Tercero-DocumentosCompra")]
     [XafDisplayName("Proveedor")]
+    [DataSourceCriteria("Activo = true and IsIPuedeParticiparEnCompras")]
     [ImmediatePostData]
-    public Proveedor? Proveedor
+    public Tercero? Proveedor
     {
         get => _proveedor;
         set
         {
             var modified = SetPropertyValue(nameof(Proveedor), ref _proveedor, value);
-            if (modified && !IsLoading && !IsSaving && value != null)
+            if (modified && !IsLoading && !IsSaving && value is IPuedeParticiparEnCompras p)
             {
-                CondicionPago = value.CondicionPago;
+                if (value is Proveedor prov)
+                {
+                    CondicionPago = prov.CondicionPago;
+                }
             }
         }
     }

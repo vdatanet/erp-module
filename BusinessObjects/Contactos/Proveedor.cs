@@ -14,7 +14,7 @@ namespace erp.Module.BusinessObjects.Contactos;
 [DefaultClassOptions]
 [NavigationItem("Contactos")]
 [ImageName("BO_Vendor")]
-public class Proveedor(Session session) : Tercero(session)
+public class Proveedor(Session session) : Tercero(session), IPuedeParticiparEnCompras
 {
     private CondicionPago? _condicionPago;
 
@@ -24,22 +24,21 @@ public class Proveedor(Session session) : Tercero(session)
         get => _condicionPago;
         set => SetPropertyValue(nameof(CondicionPago), ref _condicionPago, value);
     }
-    [Association("Proveedor-DocumentosCompra")]
     [XafDisplayName("Documentos de Compra")]
     [VisibleInDetailView(false)]
-    public XPCollection<DocumentoCompra> DocumentosCompra => GetCollection<DocumentoCompra>();
+    public XPCollection<DocumentoCompra> DocumentosCompra => new(Session, CriteriaOperator.Parse("Proveedor.Oid = ?", Oid));
 
     [XafDisplayName("Presupuestos")]
-    public XPCollection<PresupuestoCompra> Presupuestos => new(Session, CriteriaOperator.Parse("Proveedor = ?", this));
+    public XPCollection<PresupuestoCompra> Presupuestos => new(Session, CriteriaOperator.Parse("Proveedor.Oid = ?", Oid));
 
     [XafDisplayName("Pedidos")]
-    public XPCollection<PedidoCompra> Pedidos => new(Session, CriteriaOperator.Parse("Proveedor = ?", this));
+    public XPCollection<PedidoCompra> Pedidos => new(Session, CriteriaOperator.Parse("Proveedor.Oid = ?", Oid));
 
     [XafDisplayName("Albaranes")]
-    public XPCollection<AlbaranCompra> Albaranes => new(Session, CriteriaOperator.Parse("Proveedor = ?", this));
+    public XPCollection<AlbaranCompra> Albaranes => new(Session, CriteriaOperator.Parse("Proveedor.Oid = ?", Oid));
 
     [XafDisplayName("Facturas")]
-    public XPCollection<FacturaCompra> Facturas => new(Session, CriteriaOperator.Parse("Proveedor = ?", this));
+    public XPCollection<FacturaCompra> Facturas => new(Session, CriteriaOperator.Parse("Proveedor.Oid = ?", Oid));
 
     public override string GetPrefijoCodigo()
     {
@@ -48,18 +47,14 @@ public class Proveedor(Session session) : Tercero(session)
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        InitValues();
+        // InitValues se llama en el base.AfterConstruction()
     }
 
-    private void InitValues()
+    protected override void InitValues()
     {
+        base.InitValues();
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null) return;
-        CuentaContable = companyInfo.CuentaProveedoresPorDefecto;
-        if (CuentaContable != null && (!CuentaContable.EstaActiva || !CuentaContable.EsAsentable))
-        {
-            CuentaContable = null;
-        }
         _condicionPago = companyInfo.CondicionPagoPorDefecto;
     }
 }

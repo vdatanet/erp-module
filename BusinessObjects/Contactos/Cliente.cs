@@ -17,7 +17,7 @@ namespace erp.Module.BusinessObjects.Contactos;
 [DefaultClassOptions]
 [NavigationItem("Contactos")]
 [ImageName("BO_Customer")]
-public class Cliente(Session session) : Tercero(session)
+public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVentas
 {
     private Banco? _bancoPredeterminado;
     private CondicionPago? _condicionPago;
@@ -91,22 +91,21 @@ public class Cliente(Session session) : Tercero(session)
     [XafDisplayName("Oportunidades")]
     public XPCollection<Oportunidad> Oportunidades => GetCollection<Oportunidad>();
 
-    [Association("Cliente-DocumentosVenta")]
     [XafDisplayName("Documentos de Venta")]
     [VisibleInDetailView(false)]
-    public XPCollection<DocumentoVenta> DocumentosVenta => GetCollection<DocumentoVenta>();
+    public XPCollection<DocumentoVenta> DocumentosVenta => new(Session, CriteriaOperator.Parse("Cliente.Oid = ?", Oid));
 
     [XafDisplayName("Presupuestos")]
-    public XPCollection<Presupuesto> Presupuestos => new(Session, CriteriaOperator.Parse("Cliente = ?", this));
+    public XPCollection<Presupuesto> Presupuestos => new(Session, CriteriaOperator.Parse("Cliente.Oid = ?", Oid));
 
     [XafDisplayName("Pedidos")]
-    public XPCollection<Pedido> Pedidos => new(Session, CriteriaOperator.Parse("Cliente = ?", this));
+    public XPCollection<Pedido> Pedidos => new(Session, CriteriaOperator.Parse("Cliente.Oid = ?", Oid));
 
     [XafDisplayName("Albaranes")]
-    public XPCollection<Albaran> Albaranes => new(Session, CriteriaOperator.Parse("Cliente = ?", this));
+    public XPCollection<Albaran> Albaranes => new(Session, CriteriaOperator.Parse("Cliente.Oid = ?", Oid));
 
     [XafDisplayName("Facturas")]
-    public XPCollection<Factura> Facturas => new(Session, CriteriaOperator.Parse("Cliente = ?", this));
+    public XPCollection<Factura> Facturas => new(Session, CriteriaOperator.Parse("Cliente.Oid = ?", Oid));
 
     [Association("Cliente-Suscripciones")]
     [XafDisplayName("Suscripciones")]
@@ -119,7 +118,7 @@ public class Cliente(Session session) : Tercero(session)
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        InitValues();
+        // InitValues se llama en el base.AfterConstruction()
     }
 
     public override string GetPrefijoCodigo()
@@ -127,15 +126,12 @@ public class Cliente(Session session) : Tercero(session)
         return "C";
     }
 
-    private void InitValues()
+    protected override void InitValues()
     {
+        base.InitValues();
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null) return;
-        CuentaContable = companyInfo.CuentaClientesPorDefecto;
-        if (CuentaContable != null && (!CuentaContable.EstaActiva || !CuentaContable.EsAsentable))
-        {
-            CuentaContable = null;
-        }
+
         _cuentaCobro = companyInfo.CuentaCobrosPorDefecto;
         _diarioVentas = companyInfo.DiarioVentasPorDefecto;
         _posicionFiscal = companyInfo.PosicionFiscalPorDefecto;

@@ -3,6 +3,8 @@ using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Base.Compras;
+using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.Helpers.Contactos;
@@ -22,6 +24,37 @@ public class Tercero(Session session) : Contacto(session)
     {
         get => _cuentaContable;
         set => SetPropertyValue(nameof(CuentaContable), ref _cuentaContable, value);
+    }
+
+    [Association("Tercero-DocumentosVenta")]
+    [XafDisplayName("Documentos de Venta")]
+    [VisibleInDetailView(false)]
+    public XPCollection<DocumentoVenta> DocumentosVenta => GetCollection<DocumentoVenta>();
+
+    [Association("Tercero-DocumentosCompra")]
+    [XafDisplayName("Documentos de Compra")]
+    [VisibleInDetailView(false)]
+    public XPCollection<DocumentoCompra> DocumentosCompra => GetCollection<DocumentoCompra>();
+
+    [XafDisplayName("¿Puede Participar en Ventas?")]
+    [VisibleInDetailView(false)]
+    [VisibleInListView(false)]
+    public bool IsIPuedeParticiparEnVentas => this is IPuedeParticiparEnVentas;
+
+    [XafDisplayName("¿Puede Participar en Compras?")]
+    [VisibleInDetailView(false)]
+    [VisibleInListView(false)]
+    public bool IsIPuedeParticiparEnCompras => this is IPuedeParticiparEnCompras;
+
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        InitValues();
+    }
+
+    protected virtual void InitValues()
+    {
+        AsignarCuentaContable();
     }
 
     protected override void OnSaving()
@@ -69,7 +102,13 @@ public class Tercero(Session session) : Contacto(session)
                 AsignarCodigo();
             }
 
-            if (string.IsNullOrEmpty(Codigo)) return;
+            if (string.IsNullOrEmpty(Codigo))
+            {
+                // En AfterConstruction el código suele estar vacío.
+                // Si estamos en OnSaving y sigue vacío, algo va mal.
+                if (IsSaving) return;
+                return;
+            }
 
             var cuentaExistente = Session.FindObject<Cuenta>(new BinaryOperator(nameof(Cuenta.Codigo), Codigo));
             if (cuentaExistente != null)
