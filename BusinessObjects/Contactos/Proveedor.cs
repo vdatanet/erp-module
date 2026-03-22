@@ -24,10 +24,6 @@ public class Proveedor(Session session) : Tercero(session), IPuedeParticiparEnCo
         get => _condicionPago;
         set => SetPropertyValue(nameof(CondicionPago), ref _condicionPago, value);
     }
-    [XafDisplayName("Documentos de Compra")]
-    [VisibleInDetailView(false)]
-    public XPCollection<DocumentoCompra> DocumentosCompra => new(Session, CriteriaOperator.Parse("Proveedor.Oid = ?", Oid));
-
     [XafDisplayName("Presupuestos")]
     public XPCollection<PresupuestoCompra> Presupuestos => new(Session, CriteriaOperator.Parse("Proveedor.Oid = ?", Oid));
 

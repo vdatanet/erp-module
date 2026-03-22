@@ -91,10 +91,6 @@ public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVent
     [XafDisplayName("Oportunidades")]
     public XPCollection<Oportunidad> Oportunidades => GetCollection<Oportunidad>();
 
-    [XafDisplayName("Documentos de Venta")]
-    [VisibleInDetailView(false)]
-    public XPCollection<DocumentoVenta> DocumentosVenta => new(Session, CriteriaOperator.Parse("Cliente.Oid = ?", Oid));
-
     [XafDisplayName("Presupuestos")]
     public XPCollection<Presupuesto> Presupuestos => new(Session, CriteriaOperator.Parse("Cliente.Oid = ?", Oid));
 

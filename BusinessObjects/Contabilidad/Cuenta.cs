@@ -48,6 +48,21 @@ public class Cuenta(Session session) : EntidadBase(session)
         get => _codigo;
         set
         {
+            if (value != null && value.Contains('.'))
+            {
+                var partes = value.Split('.');
+                if (partes.Length == 2)
+                {
+                    string prefijo = partes[0];
+                    string sufijo = partes[1];
+                    int cerosNecesarios = 10 - prefijo.Length - sufijo.Length;
+                    if (cerosNecesarios > 0)
+                    {
+                        value = prefijo + new string('0', cerosNecesarios) + sufijo;
+                    }
+                }
+            }
+
             if (SetPropertyValue(nameof(Codigo), ref _codigo, value))
             {
                 if (!IsLoading && !IsSaving && !string.IsNullOrEmpty(value))
@@ -83,8 +98,14 @@ public class Cuenta(Session session) : EntidadBase(session)
         }
         else if (longitud > 5) // Nivel 5 (ej. 10 dígitos), padre Nivel 4 (5 dígitos)
         {
-            codigoPadre = Codigo.Substring(0, 5);
-            EsAsentable = true;
+            if (longitud >= 5)
+            {
+                codigoPadre = Codigo.Substring(0, 5);
+            }
+            if (longitud == 10)
+            {
+                EsAsentable = true;
+            }
         }
 
         if (codigoPadre != null)

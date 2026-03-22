@@ -27,10 +27,6 @@ public class Acreedor(Session session) : Tercero(session), IPuedeParticiparEnCom
     [XafDisplayName("Facturas")]
     public XPCollection<FacturaCompra> Facturas => new(Session, CriteriaOperator.Parse("Proveedor.Oid = ?", Oid));
 
-    [XafDisplayName("Documentos de Compra")]
-    [VisibleInDetailView(false)]
-    public XPCollection<DocumentoCompra> DocumentosCompra => new(Session, CriteriaOperator.Parse("Proveedor.Oid = ?", Oid));
-
     public override string GetPrefijoCodigo()
     {
         return "A";

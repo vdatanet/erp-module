@@ -111,17 +111,17 @@ public class Tercero(Session session) : Contacto(session)
             }
 
             var cuentaCodigo = Codigo;
-            if (int.TryParse(Codigo, out var numericCodigo))
+            var prefix = cuentaPadre.Codigo ?? "";
+            var suffix = Codigo ?? "";
+            
+            int paddingLength = 10 - prefix.Length;
+            if (paddingLength > 0)
             {
-                cuentaCodigo = numericCodigo.ToString().PadLeft(10, '0');
+                cuentaCodigo = prefix + suffix.PadLeft(paddingLength, '0');
             }
-            else if (!string.IsNullOrEmpty(Codigo))
+            else
             {
-                // Si el código no es puramente numérico (ej: C00001), 
-                // pero queremos que la cuenta sea a 10 dígitos si es posible.
-                // Si ya tiene letras, el padding dependerá de la política, 
-                // pero el requerimiento dice "a 10 dígitos".
-                cuentaCodigo = Codigo.PadLeft(10, '0');
+                cuentaCodigo = prefix + suffix;
             }
 
             var cuentaExistente = Session.FindObject<Cuenta>(new BinaryOperator(nameof(Cuenta.Codigo), cuentaCodigo));
