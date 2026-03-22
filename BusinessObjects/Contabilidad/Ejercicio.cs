@@ -79,22 +79,20 @@ public class Ejercicio(Session session) : EntidadBase(session)
         Session.Save((IEnumerable)asientosOrdenados);
     }
 
-    [Action(Caption = "Cerrar Ejercicio", ConfirmationMessage = "El ejercicio pasará a estar Cerrado. No se podrán añadir más asientos.", ImageName = "Action_Close", TargetObjectsCriteria = "Estado = 'Abierto'")]
-    public void CerrarEjercicio()
+    public void ToggleEstadoEjercicio()
     {
-        Estado = EstadoEjercicio.Cerrado;
-    }
-
-    [Action(Caption = "Abrir Ejercicio", ImageName = "Action_Open", TargetObjectsCriteria = "Estado = 'Cerrado'")]
-    public void AbrirEjercicio()
-    {
-        Estado = EstadoEjercicio.Abierto;
-    }
-
-    [Action(Caption = "Bloquear Ejercicio", ImageName = "Action_Lock", TargetObjectsCriteria = "Estado != 'Bloqueado'")]
-    public void BloquearEjercicio()
-    {
-        Estado = EstadoEjercicio.Bloqueado;
+        switch (Estado)
+        {
+            case EstadoEjercicio.Abierto:
+                Estado = EstadoEjercicio.Cerrado;
+                break;
+            case EstadoEjercicio.Cerrado:
+                Estado = EstadoEjercicio.Bloqueado;
+                break;
+            case EstadoEjercicio.Bloqueado:
+                Estado = EstadoEjercicio.Abierto;
+                break;
+        }
     }
 
     [Association("Ejercicio-Asientos")]

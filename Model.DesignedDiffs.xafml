@@ -761,4 +761,10 @@
       </Columns>
     </ListView>
   </Views>
+  <ActionDesign>
+    <Actions>
+      <Action Id="TogglePublicadoAction" SynchronizeCaptionWithControl="True" />
+      <Action Id="ToggleEstadoEjercicioAction" SynchronizeCaptionWithControl="True" />
+    </Actions>
+  </ActionDesign>
 </Application>

@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.DC;
+using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
@@ -16,6 +17,8 @@ namespace erp.Module.BusinessObjects.Contabilidad;
 [XafDisplayName("Asiento")]
 [DefaultProperty(nameof(Codigo))]
 [ImageName("BO_List")]
+[RuleCriteria("Asiento_NoEliminablePublicado", DefaultContexts.Delete, "Estado != 'Publicado'", "Un asiento publicado no puede ser eliminado.", SkipNullOrEmptyValues = false, TargetContextIDs = "Delete")]
+[Appearance("Asiento_Publicado_Deshabilitado", AppearanceItemType = "ViewItem", TargetItems = "*", Criteria = "Estado = 'Publicado'", Enabled = false)]
 public class Asiento(Session session) : EntidadBase(session)
 {
     private Diario? _diario;
@@ -26,10 +29,16 @@ public class Asiento(Session session) : EntidadBase(session)
     private string? _codigo;
     private int _orden;
     private string? _concepto;
-    private decimal _sumaDebe;
-    private decimal _sumaHaber;
     private string? _notas;
     private EstadoAsiento _estado;
+
+    private void EnsureNotPublished()
+    {
+        if (!IsLoading && !IsSaving && Estado == EstadoAsiento.Publicado)
+        {
+            throw new UserFriendlyException("No se puede modificar un asiento publicado.");
+        }
+    }
 
     [XafDisplayName("Diario")]
     [RuleRequiredField]
@@ -37,7 +46,14 @@ public class Asiento(Session session) : EntidadBase(session)
     public Diario? Diario
     {
         get => _diario;
-        set => SetPropertyValue(nameof(Diario), ref _diario, value);
+        set
+        {
+            if (value != _diario)
+            {
+                EnsureNotPublished();
+                SetPropertyValue(nameof(Diario), ref _diario, value);
+            }
+        }
     }
 
     [XafDisplayName("Fecha")]
@@ -46,7 +62,14 @@ public class Asiento(Session session) : EntidadBase(session)
     public DateTime Fecha
     {
         get => _fecha;
-        set => SetPropertyValue(nameof(Fecha), ref _fecha, value);
+        set
+        {
+            if (value != _fecha)
+            {
+                EnsureNotPublished();
+                SetPropertyValue(nameof(Fecha), ref _fecha, value);
+            }
+        }
     }
 
     [XafDisplayName("Ejercicio")]
@@ -55,20 +78,36 @@ public class Asiento(Session session) : EntidadBase(session)
     public Ejercicio? Ejercicio
     {
         get => _ejercicio;
-        set => SetPropertyValue(nameof(Ejercicio), ref _ejercicio, value);
+        set
+        {
+            if (value != _ejercicio)
+            {
+                EnsureNotPublished();
+                SetPropertyValue(nameof(Ejercicio), ref _ejercicio, value);
+            }
+        }
     }
 
     [XafDisplayName("Serie")]
     [RuleRequiredField]
     [Size(50)]
+    [NonCloneable]
     public string? Serie
     {
         get => _serie;
-        set => SetPropertyValue(nameof(Serie), ref _serie, value);
+        set
+        {
+            if (value != _serie)
+            {
+                EnsureNotPublished();
+                SetPropertyValue(nameof(Serie), ref _serie, value);
+            }
+        }
     }
 
     [XafDisplayName("Número")]
     [ModelDefault("AllowEdit", "False")]
+    [NonCloneable]
     public int Numero
     {
         get => _numero;
@@ -79,6 +118,7 @@ public class Asiento(Session session) : EntidadBase(session)
     [RuleUniqueValue]
     [Size(100)]
     [ModelDefault("AllowEdit", "False")]
+    [NonCloneable]
     public string? Codigo
     {
         get => _codigo;
@@ -87,6 +127,7 @@ public class Asiento(Session session) : EntidadBase(session)
 
     [XafDisplayName("Orden")]
     [ModelDefault("AllowEdit", "False")]
+    [NonCloneable]
     public int Orden
     {
         get => _orden;
@@ -99,7 +140,14 @@ public class Asiento(Session session) : EntidadBase(session)
     public string? Concepto
     {
         get => _concepto;
-        set => SetPropertyValue(nameof(Concepto), ref _concepto, value);
+        set
+        {
+            if (value != _concepto)
+            {
+                EnsureNotPublished();
+                SetPropertyValue(nameof(Concepto), ref _concepto, value);
+            }
+        }
     }
 
     [Persistent(nameof(SumaDebe))]
@@ -131,30 +179,38 @@ public class Asiento(Session session) : EntidadBase(session)
     public string? Notas
     {
         get => _notas;
-        set => SetPropertyValue(nameof(Notas), ref _notas, value);
+        set
+        {
+            if (value != _notas)
+            {
+                EnsureNotPublished();
+                SetPropertyValue(nameof(Notas), ref _notas, value);
+            }
+        }
     }
 
     [XafDisplayName("Estado")]
+    [NonCloneable]
     public EstadoAsiento Estado
     {
         get => _estado;
         set => SetPropertyValue(nameof(Estado), ref _estado, value);
     }
 
-    [Action(Caption = "Publicar Asiento", ConfirmationMessage = "El asiento pasará a estar Publicado y no podrá ser modificado. ¿Desea continuar?", ImageName = "Action_LinkUnlink_Link", TargetObjectsCriteria = "Estado = 'Borrador'")]
-    public void PublicarAsiento()
+    public void TogglePublicado()
     {
-        if (Saldo != 0)
+        if (Estado == EstadoAsiento.Borrador)
         {
-            throw new UserFriendlyException("No se puede publicar un asiento descuadrado.");
+            if (Saldo != 0)
+            {
+                throw new UserFriendlyException("No se puede publicar un asiento descuadrado.");
+            }
+            Estado = EstadoAsiento.Publicado;
         }
-        Estado = EstadoAsiento.Publicado;
-    }
-
-    [Action(Caption = "Volver a Borrador", ImageName = "Action_Reset", TargetObjectsCriteria = "Estado = 'Publicado'")]
-    public void ResetBorrador()
-    {
-        Estado = EstadoAsiento.Borrador;
+        else if (Estado == EstadoAsiento.Publicado)
+        {
+            Estado = EstadoAsiento.Borrador;
+        }
     }
 
     [Aggregated, Association("Asiento-Apuntes")]
