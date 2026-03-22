@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
@@ -329,5 +330,33 @@ public class Suscripcion(Session session) : EntidadBase(session)
             CrearPedidoVigente();
             Session.CommitTransaction();
         }
+    }
+
+    public static int ProcesarFacturacionMensual(Session session)
+    {
+        var hoy = DateTime.Today;
+        var primerDiaMes = new DateTime(hoy.Year, hoy.Month, 1);
+        var ultimoDiaMes = primerDiaMes.AddMonths(1).AddDays(-1);
+
+        var criteria = CriteriaOperator.Parse("Estado = ? AND ProximaFechaCobro >= ? AND ProximaFechaCobro <= ?", 
+            EstadoSuscripcion.Activa, primerDiaMes, ultimoDiaMes);
+
+        var suscripciones = new XPCollection<Suscripcion>(session, criteria);
+        int generadas = 0;
+
+        foreach (var suscripcion in suscripciones.ToList())
+        {
+            try
+            {
+                suscripcion.GenerarFactura();
+                generadas++;
+            }
+            catch (Exception ex)
+            {
+                DevExpress.Persistent.Base.Tracing.Tracer.LogError(ex);
+            }
+        }
+
+        return generadas;
     }
 }

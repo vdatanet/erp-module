@@ -24,43 +24,9 @@ public class LiquidacionComisionesController : ObjectViewController<DetailView, 
     private void GenerarComisionesAction_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
         var liquidacion = ViewCurrentObject;
-        if (liquidacion == null || liquidacion.Vendedor == null) return;
+        if (liquidacion == null) return;
 
-        // Borrar comisiones actuales de esta liquidación
-        var currentComisiones = liquidacion.Comisiones.ToList();
-        foreach (var comision in currentComisiones)
-        {
-            comision.Delete();
-        }
-
-        // Buscar facturas que tengan pagos en el mes/año indicado y que sean del vendedor
-        // Nota: El vendedor está en el DocumentoVenta (base de Factura)
-        var mes = liquidacion.Mes;
-        var anio = liquidacion.Anio;
-
-        var pagos = ObjectSpace.GetObjectsQuery<Pago>()
-            .Where(p => p.FechaPago.Month == mes && p.FechaPago.Year == anio && p.Factura != null && p.Factura.Vendedor == liquidacion.Vendedor)
-            .ToList();
-
-        // Agrupar por factura para no duplicar si hay varios pagos para la misma factura en el mismo mes
-        var facturasIds = pagos.Select(p => p.Factura!.Oid).Distinct();
-
-        foreach (var facturaId in facturasIds)
-        {
-            var factura = ObjectSpace.GetObjectByKey<Factura>(facturaId);
-            if (factura == null) continue;
-
-            foreach (var linea in factura.Lineas)
-            {
-                if (linea.ComisionCalculada > 0)
-                {
-                    var nuevaComision = ObjectSpace.CreateObject<Comision>();
-                    nuevaComision.Liquidacion = liquidacion;
-                    nuevaComision.LineaDocumentoVenta = linea;
-                    nuevaComision.Importe = linea.ComisionCalculada;
-                }
-            }
-        }
+        liquidacion.GenerarComisiones();
 
         if (ObjectSpace.IsModified)
         {

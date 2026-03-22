@@ -123,6 +123,54 @@ public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVent
         return companyInfo?.PrefijoClientes ?? "C";
     }
 
+    public static int ImportarDesdeCsv(Session session, string csvContent)
+    {
+        if (string.IsNullOrEmpty(csvContent)) return 0;
+
+        var lines = csvContent.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
+        if (lines.Length <= 1) return 0; // Encabezado o vacío
+
+        int importedCount = 0;
+
+        // Formato: Nombre;NIF;Email;Telefono;Direccion
+        for (var i = 1; i < lines.Length; i++)
+        {
+            var line = lines[i];
+            var values = line.Split(';');
+            if (values.Length < 2) continue;
+
+            var nombre = values[0].Trim();
+            var nif = values[1].Trim();
+            var email = values.Length > 2 ? values[2].Trim() : string.Empty;
+            var telefono = values.Length > 3 ? values[3].Trim() : string.Empty;
+            var direccion = values.Length > 4 ? values[4].Trim() : string.Empty;
+
+            if (string.IsNullOrEmpty(nombre)) continue;
+
+            // Buscar si ya existe por NIF (si tiene)
+            Cliente? cliente = null;
+            if (!string.IsNullOrEmpty(nif))
+            {
+                cliente = session.FindObject<Cliente>(CriteriaOperator.Parse("Nif = ?", nif));
+            }
+
+            if (cliente == null)
+            {
+                cliente = new Cliente(session);
+                cliente.Nombre = nombre;
+                cliente.Nif = nif;
+            }
+
+            if (!string.IsNullOrEmpty(email)) cliente.CorreoElectronico = email;
+            if (!string.IsNullOrEmpty(telefono)) cliente.Telefono = telefono;
+            if (!string.IsNullOrEmpty(direccion)) cliente.Direccion = direccion;
+
+            importedCount++;
+        }
+
+        return importedCount;
+    }
+
     protected override void InitValues()
     {
         base.InitValues();

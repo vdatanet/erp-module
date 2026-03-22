@@ -1,6 +1,7 @@
 using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
+using DevExpress.ExpressApp.Xpo;
 using DevExpress.Persistent.Base;
 using erp.Module.BusinessObjects.Suscripciones;
 
@@ -62,29 +63,7 @@ public class SuscripcionController : ViewController
 
     private void ProcesarFacturacionMensualAction_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
-        var hoy = DateTime.Today;
-        var primerDiaMes = new DateTime(hoy.Year, hoy.Month, 1);
-        var ultimoDiaMes = primerDiaMes.AddMonths(1).AddDays(-1);
-
-        var criteria = CriteriaOperator.Parse("Estado = ? AND ProximaFechaCobro >= ? AND ProximaFechaCobro <= ?", 
-            EstadoSuscripcion.Activa, primerDiaMes, ultimoDiaMes);
-
-        var suscripciones = ObjectSpace.GetObjects<Suscripcion>(criteria);
-        int generadas = 0;
-
-        foreach (var suscripcion in suscripciones)
-        {
-            try
-            {
-                suscripcion.GenerarFactura();
-                generadas++;
-            }
-            catch (Exception ex)
-            {
-                // Log o manejo de error por suscripción individual si es necesario
-                Tracing.Tracer.LogError(ex);
-            }
-        }
+        int generadas = Suscripcion.ProcesarFacturacionMensual(((XPObjectSpace)ObjectSpace).Session);
 
         if (generadas > 0)
         {
