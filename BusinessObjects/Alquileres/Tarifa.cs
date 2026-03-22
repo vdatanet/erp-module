@@ -18,7 +18,7 @@ public class Tarifa(Session session) : EntidadBase(session)
     private string? _notas;
 
     [Size(255)]
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_Tarifa_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre de la Tarifa es obligatorio")]
     [XafDisplayName("Nombre")]
     public string? Nombre
     {

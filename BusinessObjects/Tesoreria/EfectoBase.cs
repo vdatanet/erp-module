@@ -28,7 +28,7 @@ public abstract class EfectoBase(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Importe), ref _importe, value);
     }
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_EfectoBase_FechaVencimiento", DefaultContexts.Save, CustomMessageTemplate = "La Fecha de Vencimiento del Efecto es obligatoria")]
     [XafDisplayName("Fecha Vencimiento")]
     public DateTime FechaVencimiento
     {

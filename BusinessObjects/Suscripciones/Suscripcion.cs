@@ -34,7 +34,7 @@ public class Suscripcion(Session session) : EntidadBase(session)
     private string? _observaciones;
     private Pedido? _pedidoVigente;
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_Suscripcion_Cliente", DefaultContexts.Save, CustomMessageTemplate = "El Cliente de la Suscripción es obligatorio")]
     [Association("Cliente-Suscripciones")]
     [XafDisplayName("Cliente")]
     public Cliente? Cliente
@@ -50,7 +50,7 @@ public class Suscripcion(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Producto), ref _producto, value);
     }
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_Suscripcion_TipoSuscripcion", DefaultContexts.Save, CustomMessageTemplate = "El Tipo de Suscripción es obligatorio")]
     [Association("TipoSuscripcion-Suscripciones")]
     [XafDisplayName("Tipo de Suscripción")]
     public TipoSuscripcion? TipoSuscripcion
@@ -94,7 +94,7 @@ public class Suscripcion(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(EntidadRelacionadaTipo), ref _entidadRelacionadaTipo, value);
     }
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_Suscripcion_FechaInicio", DefaultContexts.Save, CustomMessageTemplate = "La Fecha de Inicio de la Suscripción es obligatoria")]
     [XafDisplayName("Fecha Inicio")]
     public DateTime FechaInicio
     {

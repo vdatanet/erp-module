@@ -17,7 +17,7 @@ public class Extra(Session session) : EntidadBase(session)
     private decimal _precioDiario;
 
     [Size(255)]
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_Extra_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre del Extra es obligatorio")]
     [RuleUniqueValue]
     [XafDisplayName("Nombre")]
     public string? Nombre

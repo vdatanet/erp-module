@@ -17,7 +17,7 @@ public class Poblacion(Session session) : EntidadBase(session)
     private string? _nombre;
     private Provincia? _provincia;
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_Poblacion_Provincia", DefaultContexts.Save, CustomMessageTemplate = "La Provincia de la Población es obligatoria")]
     [Association("Provincia-Poblaciones")]
     [XafDisplayName("Provincia")]
     public Provincia? Provincia
@@ -26,7 +26,7 @@ public class Poblacion(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Provincia), ref _provincia, value);
     }
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_Poblacion_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre de la Población es obligatorio")]
     [RuleUniqueValue]
     [XafDisplayName("Nombre")]
     public string? Nombre

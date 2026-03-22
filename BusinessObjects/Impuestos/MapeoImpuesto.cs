@@ -23,7 +23,7 @@ public class MapeoImpuesto(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(PosicionFiscal), ref _posicionFiscal, value);
     }
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_MapeoImpuesto_ImpuestoOrigen", DefaultContexts.Save, CustomMessageTemplate = "El Impuesto Origen del Mapeo es obligatorio")]
     [XafDisplayName("Impuesto Origen")]
     public TipoImpuesto? ImpuestoOrigen
     {

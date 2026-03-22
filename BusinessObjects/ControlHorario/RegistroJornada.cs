@@ -34,7 +34,7 @@ public class RegistroJornada(Session session) : EntidadBase(session)
     private string? _ubicacionFin;
     private string? _ubicacionInicio;
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_RegistroJornada_Empleado", DefaultContexts.Save, CustomMessageTemplate = "El Empleado del Registro de Jornada es obligatorio")]
     [Association("Empleado-RegistrosJornada")]
     [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Empleado")]
@@ -44,7 +44,7 @@ public class RegistroJornada(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Empleado), ref _empleado, value);
     }
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_RegistroJornada_FechaInicio", DefaultContexts.Save, CustomMessageTemplate = "La Fecha de Inicio del Registro de Jornada es obligatoria")]
     [ImmediatePostData]
     [ModelDefault(nameof(IModelCommonMemberViewItem.DisplayFormat), "G")]
     [ModelDefault(nameof(IModelCommonMemberViewItem.EditMask), "g")]

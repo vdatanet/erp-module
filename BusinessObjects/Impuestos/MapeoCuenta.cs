@@ -24,7 +24,7 @@ public class MapeoCuenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(PosicionFiscal), ref _posicionFiscal, value);
     }
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_MapeoCuenta_CuentaOrigen", DefaultContexts.Save, CustomMessageTemplate = "La Cuenta Origen del Mapeo es obligatoria")]
     [XafDisplayName("Cuenta Origen")]
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
     public Cuenta? CuentaOrigen
@@ -33,7 +33,7 @@ public class MapeoCuenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(CuentaOrigen), ref _cuentaOrigen, value);
     }
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_MapeoCuenta_CuentaDestino", DefaultContexts.Save, CustomMessageTemplate = "La Cuenta Destino del Mapeo es obligatoria")]
     [XafDisplayName("Cuenta Destino")]
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
     public Cuenta? CuentaDestino

@@ -16,7 +16,7 @@ public class Pais(Session session) : EntidadBase(session)
 {
     private string? _nombre;
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_Pais_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre del País es obligatorio")]
     [RuleUniqueValue]
     [XafDisplayName("Nombre")]
     public string? Nombre

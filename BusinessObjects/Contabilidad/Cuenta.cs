@@ -40,7 +40,7 @@ public class Cuenta(Session session) : EntidadBase(session)
     private string? _notas;
     private TipoCuenta _tipo;
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_Cuenta_Codigo", DefaultContexts.Save, CustomMessageTemplate = "El Código de la Cuenta es obligatorio")]
     [RuleUniqueValue]
     [XafDisplayName("Código")]
     public string? Codigo
@@ -126,7 +126,8 @@ public class Cuenta(Session session) : EntidadBase(session)
     public bool CodigoEsValido => true;
 
     [Size(255)]
-    [RuleRequiredField]
+    [ImmediatePostData]
+    [RuleRequiredField("RuleRequiredField_Cuenta_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre de la cuenta contable es obligatorio")]
     [XafDisplayName("Nombre")]
     public string? Nombre
     {

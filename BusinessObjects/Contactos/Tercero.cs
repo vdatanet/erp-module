@@ -63,6 +63,18 @@ public class Tercero(Session session) : Contacto(session)
         AsignarCuentaContable();
     }
 
+    protected override void OnChanged(string propertyName, object oldValue, object newValue)
+    {
+        base.OnChanged(propertyName, oldValue, newValue);
+        if (!IsLoading && propertyName == nameof(Nombre) && CuentaContable != null)
+        {
+            if (CuentaContable.Nombre != Nombre)
+            {
+                CuentaContable.Nombre = Nombre;
+            }
+        }
+    }
+
     private void AsignarCuentaContable()
     {
         if (IsLoading) return;

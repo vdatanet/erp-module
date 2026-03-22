@@ -29,7 +29,8 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
 
     [RuleRequiredField("erp.Module.BusinessObjects.Compras.FacturaCompra.Proveedor_Required", DefaultContexts.Save,
         TargetCriteria =
-            "IsInstanceOfType(this, 'erp.Module.BusinessObjects.Compras.FacturaCompra') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Compras.PresupuestoCompra') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Compras.AlbaranCompra')")]
+            "IsInstanceOfType(this, 'erp.Module.BusinessObjects.Compras.FacturaCompra') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Compras.PresupuestoCompra') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Compras.AlbaranCompra')",
+        CustomMessageTemplate = "El Proveedor del documento de compra es obligatorio")]
     [Association("Tercero-DocumentosCompra")]
     [XafDisplayName("Proveedor")]
     [DataSourceCriteria("Activo = true and IsIPuedeParticiparEnCompras")]
@@ -51,7 +52,7 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Serie")]
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_DocumentoCompra_Serie", DefaultContexts.Save, CustomMessageTemplate = "La Serie del documento de compra es obligatoria")]
     [Appearance("BlockSerieWhenNumeroIsSetCompra", Enabled = false,
         Criteria = "!IsNewObject(this) and !IsNullOrEmpty(Secuencia)", Context = "Any")]
     public string? Serie

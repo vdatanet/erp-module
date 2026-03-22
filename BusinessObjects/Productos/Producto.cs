@@ -51,7 +51,7 @@ public class Producto(Session session) : EntidadBase(session)
     }
 
     [RuleUniqueValue]
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_Producto_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre del Producto es obligatorio")]
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Nombre")]
     public string? Nombre

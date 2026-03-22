@@ -20,7 +20,7 @@ public class Categoria(Session session) : EntidadBase(session)
     private string? _notas;
 
     [Size(255)]
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_Categoria_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre de la Categoría es obligatorio")]
     [RuleUniqueValue]
     [XafDisplayName("Nombre")]
     public string? Nombre

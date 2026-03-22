@@ -18,7 +18,7 @@ public class Diario(Session session) : EntidadBase(session)
     private string? _nombre;
     private string? _notas;
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_Diario_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre del Diario es obligatorio")]
     [RuleUniqueValue]
     [Size(255)]
     [XafDisplayName("Nombre")]

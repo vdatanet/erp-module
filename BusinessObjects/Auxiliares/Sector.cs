@@ -17,7 +17,7 @@ public class Sector(Session session) : EntidadBase(session)
     private string? _nombre;
     private string? _notas;
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_Sector_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre del Sector es obligatorio")]
     [XafDisplayName("Nombre")]
     [Size(255)]
     public string? Nombre

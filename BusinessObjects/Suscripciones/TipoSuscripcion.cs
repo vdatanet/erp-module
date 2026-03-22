@@ -26,7 +26,7 @@ public class TipoSuscripcion(Session session) : EntidadBase(session)
     private bool _estaActivo;
     private bool _generarAutomaticamente;
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_TipoSuscripcion_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre del Tipo de Suscripción es obligatorio")]
     [XafDisplayName("Nombre")]
     public string? Nombre
     {

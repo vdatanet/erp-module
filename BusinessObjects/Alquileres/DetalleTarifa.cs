@@ -35,7 +35,7 @@ public class DetalleTarifa(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Desde")]
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_DetalleTarifa_Desde", DefaultContexts.Save, CustomMessageTemplate = "La Fecha de Inicio (Desde) del Detalle de Tarifa es obligatoria")]
     public DateTime Desde
     {
         get => _fechaInicio;
@@ -48,7 +48,7 @@ public class DetalleTarifa(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Hasta")]
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_DetalleTarifa_Hasta", DefaultContexts.Save, CustomMessageTemplate = "La Fecha de Fin (Hasta) del Detalle de Tarifa es obligatoria")]
     public DateTime Hasta
     {
         get => _fechaFin;

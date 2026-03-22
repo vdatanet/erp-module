@@ -35,7 +35,7 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
     private decimal _tipo;
     private CalificacionOperacion? _tipoOperacion;
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_TipoImpuesto_Codigo", DefaultContexts.Save, CustomMessageTemplate = "El Código del Tipo de Impuesto es obligatorio")]
     [RuleUniqueValue]
     [XafDisplayName("Código")]
     public string? Codigo
@@ -45,7 +45,7 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
     }
 
     [Size(255)]
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_TipoImpuesto_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre del Tipo de Impuesto es obligatorio")]
     [XafDisplayName("Nombre")]
     public string? Nombre
     {

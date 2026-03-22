@@ -23,7 +23,7 @@ public class RecursoAlquilable(Session session) : RecursoBase(session)
     private Ubicacion? _ubicacion;
 
     [Size(255)]
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_RecursoAlquilable_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre del Recurso Alquilable es obligatorio")]
     [XafDisplayName("Nombre")]
     public string Nombre
     {

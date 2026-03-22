@@ -41,7 +41,7 @@ public class Oportunidad(Session session) : EntidadBase(session)
     private decimal _valorEstimado;
 
     [Size(255)]
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_Oportunidad_Titulo", DefaultContexts.Save, CustomMessageTemplate = "El Título de la Oportunidad es obligatorio")]
     [XafDisplayName("Título")]
     public string? Titulo
     {
@@ -57,7 +57,7 @@ public class Oportunidad(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
     }
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_Oportunidad_Cliente", DefaultContexts.Save, CustomMessageTemplate = "El Cliente de la Oportunidad es obligatorio")]
     [Association("Cliente-Oportunidades")]
     [XafDisplayName("Cliente")]
     [DataSourceCriteria("Activo = true")]

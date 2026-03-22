@@ -23,7 +23,7 @@ public class Lead(Session session) : Contacto(session)
     private Fuente? _fuente;
 
     [Size(255)]
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_Lead_Asunto", DefaultContexts.Save, CustomMessageTemplate = "El Asunto del Lead es obligatorio")]
     [XafDisplayName("Asunto")]
     public string? Asunto
     {

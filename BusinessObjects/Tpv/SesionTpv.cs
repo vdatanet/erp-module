@@ -33,7 +33,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
     private ApplicationUser? _usuario;
 
     [XafDisplayName("TPV")]
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_SesionTpv_Tpv", DefaultContexts.Save, CustomMessageTemplate = "El TPV de la Sesión es obligatorio")]
     [Association("Tpv-Sesiones")]
     public Tpv? Tpv
     {
@@ -42,7 +42,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Usuario")]
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_SesionTpv_Usuario", DefaultContexts.Save, CustomMessageTemplate = "El Usuario de la Sesión es obligatorio")]
     public ApplicationUser? Usuario
     {
         get => _usuario;
@@ -50,7 +50,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Apertura")]
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_SesionTpv_Apertura", DefaultContexts.Save, CustomMessageTemplate = "La Fecha de Apertura de la Sesión es obligatoria")]
     public DateTime Apertura
     {
         get => _apertura;

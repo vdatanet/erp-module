@@ -21,7 +21,7 @@ public class CondicionPago(Session session) : EntidadBase(session)
     private int _numeroPlazos;
     private int _plazoPrimerPago;
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_CondicionPago_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre de la Condición de Pago es obligatorio")]
     [Size(255)]
     [XafDisplayName("Nombre")]
     public string? Nombre

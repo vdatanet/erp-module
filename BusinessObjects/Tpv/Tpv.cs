@@ -18,7 +18,7 @@ public class Tpv(Session session) : EntidadBase(session)
     private string? _seriePorDefecto;
 
     [Size(100)]
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_Tpv_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre del TPV es obligatorio")]
     [XafDisplayName("Nombre")]
     public string? Nombre
     {
@@ -27,7 +27,7 @@ public class Tpv(Session session) : EntidadBase(session)
     }
 
     [Size(20)]
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_Tpv_Codigo", DefaultContexts.Save, CustomMessageTemplate = "El Código del TPV es obligatorio")]
     [RuleUniqueValue]
     [XafDisplayName("Código")]
     public string? Codigo

@@ -17,7 +17,7 @@ public class CategoriaVenta(Session session) : EntidadBase(session)
     private string? _nombre;
     private string? _notas;
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_CategoriaVenta_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre de la Categoría de Venta es obligatorio")]
     [XafDisplayName("Nombre")]
     [Size(255)]
     public string? Nombre

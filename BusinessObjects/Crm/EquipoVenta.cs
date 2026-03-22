@@ -23,7 +23,7 @@ public class EquipoVenta(Session session) : EntidadBase(session)
     private decimal _importeComisionFijo;
 
     [Size(255)]
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_EquipoVenta_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre del Equipo de Venta es obligatorio")]
     [XafDisplayName("Nombre")]
     public string? Nombre
     {

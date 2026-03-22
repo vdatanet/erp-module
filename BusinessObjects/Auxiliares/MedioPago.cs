@@ -17,7 +17,7 @@ public class MedioPago(Session session) : EntidadBase(session)
     private string? _nombre;
     private string? _notas;
 
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_MedioPago_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre del Medio de Pago es obligatorio")]
     [XafDisplayName("Nombre")]
     [Size(255)]
     public string? Nombre

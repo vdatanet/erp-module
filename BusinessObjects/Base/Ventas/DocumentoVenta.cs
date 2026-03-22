@@ -33,7 +33,8 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     [RuleRequiredField("erp.Module.BusinessObjects.Ventas.Factura.Cliente_Required", DefaultContexts.Save,
         TargetCriteria =
-            "IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Factura') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Presupuesto') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Albaran')")]
+            "IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Factura') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Presupuesto') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.Albaran')",
+        CustomMessageTemplate = "El Cliente del documento de venta es obligatorio")]
     [Association("Tercero-DocumentosVenta")]
     [XafDisplayName("Cliente")]
     [DataSourceCriteria("Activo = true and IsIPuedeParticiparEnVentas")]
@@ -52,7 +53,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Serie")]
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_DocumentoVenta_Serie", DefaultContexts.Save, CustomMessageTemplate = "La Serie del documento de venta es obligatoria")]
     [Appearance("BlockSerieWhenNumeroIsSet", Enabled = false,
         Criteria = "!IsNewObject(this) and !IsNullOrEmpty(Secuencia)", Context = "Any")]
     public string? Serie

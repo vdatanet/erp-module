@@ -16,7 +16,7 @@ public class Ubicacion(Session session) : EntidadBase(session)
     private string? _nombre;
 
     [Size(255)]
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_Ubicacion_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre de la Ubicación es obligatorio")]
     [XafDisplayName("Nombre")]
     public string? Nombre
     {

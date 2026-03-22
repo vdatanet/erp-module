@@ -69,7 +69,7 @@ public class Tarea(Session session) : EntidadBase(session)
     private Tarea? _tareaPadre;
 
     [Size(255)]
-    [RuleRequiredField]
+    [RuleRequiredField("RuleRequiredField_Tarea_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre de la Tarea es obligatorio")]
     [XafDisplayName("Nombre")]
     public string? Nombre
     {

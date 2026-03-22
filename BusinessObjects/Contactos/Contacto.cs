@@ -43,7 +43,7 @@ public class Contacto(Session session) : EntidadBase(session)
     private string? _movil;
     private Nacionalidad? _nacionalidad;
     private string? _nif;
-    private string _nombre = string.Empty;
+    private string? _nombre;
     private string? _nombreComercial;
     private string? _notas;
     private int _numero;
@@ -173,9 +173,10 @@ public class Contacto(Session session) : EntidadBase(session)
     }
 
     [Size(255)]
-    [RuleRequiredField]
+    [ImmediatePostData]
+    [RuleRequiredField("RuleRequiredField_Contacto_Nombre", DefaultContexts.Save, TargetCriteria = "Oid is not null", CustomMessageTemplate = "El Nombre del contacto es obligatorio")]
     [XafDisplayName("Nombre")]
-    public string Nombre
+    public string? Nombre
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
