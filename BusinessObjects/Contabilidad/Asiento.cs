@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Linq;
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.ConditionalAppearance;
@@ -210,6 +211,19 @@ public class Asiento(Session session) : EntidadBase(session)
         else if (Estado == EstadoAsiento.Publicado)
         {
             Estado = EstadoAsiento.Borrador;
+        }
+    }
+
+    [Browsable(false)]
+    [RuleFromBoolProperty("Asiento_FechaNoBloqueada", DefaultContexts.Save, "La fecha del asiento se encuentra en un periodo bloqueado del ejercicio.", UsedProperties = nameof(Fecha))]
+    public bool IsFechaNoBloqueada
+    {
+        get
+        {
+            if (Ejercicio == null) return true;
+            if (Ejercicio.Estado == EstadoEjercicio.Bloqueado) return false;
+            
+            return !Ejercicio.PeriodosBloqueados.Any(p => Fecha >= p.FechaInicio && Fecha <= p.FechaFin);
         }
     }
 

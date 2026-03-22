@@ -99,6 +99,10 @@ public class Ejercicio(Session session) : EntidadBase(session)
     [XafDisplayName("Asientos")]
     public XPCollection<Asiento> Asientos => GetCollection<Asiento>(nameof(Asientos));
 
+    [Association("Ejercicio-PeriodosBloqueados")]
+    [XafDisplayName("Periodos Bloqueados")]
+    public XPCollection<PeriodoBloqueado> PeriodosBloqueados => GetCollection<PeriodoBloqueado>(nameof(PeriodosBloqueados));
+
     public override void AfterConstruction()
     {
         base.AfterConstruction();
