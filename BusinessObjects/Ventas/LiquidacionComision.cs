@@ -80,7 +80,7 @@ public class LiquidacionComision(Session session) : EntidadBase(session)
         }
 
         // Buscar facturas que tengan pagos en el mes/año indicado y que sean del vendedor
-        // Nota: El vendedor está en el DocumentoVenta (base de Factura)
+        // Nota: El vendedor está en el DocumentoVenta (base de FacturaVenta)
         var mes = Mes;
         var anio = Anio;
 
@@ -93,7 +93,7 @@ public class LiquidacionComision(Session session) : EntidadBase(session)
 
         foreach (var facturaId in facturasIds)
         {
-            var factura = Session.GetObjectByKey<Factura>(facturaId);
+            var factura = Session.GetObjectByKey<FacturaVenta>(facturaId);
             if (factura == null) continue;
 
             foreach (var linea in factura.Lineas)
