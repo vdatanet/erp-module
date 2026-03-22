@@ -540,9 +540,6 @@
                 <LayoutItem Id="Notas" ViewItem="Notas" Index="13" RelativeSize="59.13154533844189" IsNewNode="True" />
               </LayoutGroup>
             </LayoutGroup>
-            <LayoutGroup Id="Pagos" RelativeSize="100" Index="1">
-              <LayoutItem Id="Pagos" RelativeSize="100" />
-            </LayoutGroup>
             <LayoutGroup Id="Viajeros" RelativeSize="100" Index="2">
               <LayoutItem Id="Viajeros" RelativeSize="100" />
             </LayoutGroup>

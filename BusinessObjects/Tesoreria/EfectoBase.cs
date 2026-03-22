@@ -18,6 +18,14 @@ public abstract class EfectoBase(Session session) : EntidadBase(session)
     private EstadoEfecto _estado;
     private string? _observaciones;
     private DateTime? _fechaLiquidacion;
+    private MedioPago? _medioPago;
+
+    [XafDisplayName("Medio de pago")]
+    public MedioPago? MedioPago
+    {
+        get => _medioPago;
+        set => SetPropertyValue(nameof(MedioPago), ref _medioPago, value);
+    }
 
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]

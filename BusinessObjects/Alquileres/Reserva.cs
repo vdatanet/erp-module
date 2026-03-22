@@ -8,6 +8,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Contabilidad;
+using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.Factories;
 using erp.Module.Helpers.Contactos;
 using erp.Module.Services.Reserva;
@@ -143,10 +144,10 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
         set => SetPropertyValue(nameof(TotalPagado), ref _totalPagado, value);
     }
 
-    [Association("Reserva-Pagos")]
+    [Association("Reserva-EfectosCobro")]
     [DevExpress.Xpo.Aggregated]
     [XafDisplayName("Pagos")]
-    public XPCollection<Pago> Pagos => GetCollection<Pago>();
+    public XPCollection<EfectoCobro> Pagos => GetCollection<EfectoCobro>();
 
     [Association("Reserva-Viajeros")]
     [XafDisplayName("Viajeros")]
@@ -406,7 +407,11 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
     {
         if (IsLoading || IsSaving) return;
         decimal totalPagado = 0;
-        foreach (var pago in Pagos) totalPagado += pago.Importe;
+        foreach (var pago in Pagos)
+        {
+            if (pago.Estado == EstadoEfecto.Cobrado)
+                totalPagado += pago.Importe;
+        }
 
         TotalPagado = totalPagado;
         ImportePendiente = Total - TotalPagado;

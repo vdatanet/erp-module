@@ -6,6 +6,7 @@ using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Ventas;
 using erp.Module.BusinessObjects.Alquileres;
+using erp.Module.BusinessObjects.Tesoreria;
 using System.ComponentModel;
 using System.Linq;
 
@@ -84,12 +85,12 @@ public class LiquidacionComision(Session session) : EntidadBase(session)
         var mes = Mes;
         var anio = Anio;
 
-        var pagos = new XPQuery<Pago>(Session)
-            .Where(p => p.FechaPago.Month == mes && p.FechaPago.Year == anio && p.Factura != null && p.Factura.Vendedor == Vendedor)
+        var efectos = new XPQuery<EfectoCobro>(Session)
+            .Where(e => e.FechaLiquidacion.HasValue && e.FechaLiquidacion.Value.Month == mes && e.FechaLiquidacion.Value.Year == anio && e.Factura != null && e.Factura.Vendedor == Vendedor)
             .ToList();
 
-        // Agrupar por factura para no duplicar si hay varios pagos para la misma factura en el mismo mes
-        var facturasIds = pagos.Select(p => p.Factura!.Oid).Distinct();
+        // Agrupar por factura para no duplicar si hay varios cobros para la misma factura en el mismo mes
+        var facturasIds = efectos.Select(e => e.Factura!.Oid).Distinct();
 
         foreach (var facturaId in facturasIds)
         {

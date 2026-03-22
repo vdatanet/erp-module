@@ -19,10 +19,6 @@ namespace erp.Module.BusinessObjects.Ventas;
 [RuleCriteria("Factura_SumaEfectosCoherente", DefaultContexts.Save, "EfectosCobro.Sum(Importe) = ImporteTotal", "La suma de los importes de los efectos debe coincidir con el total de la factura.")]
 public class FacturaVenta(Session session) : FacturaBase(session)
 {
-    [XafDisplayName("Pagos")]
-    [Association("FacturaVenta-Pagos")]
-    public XPCollection<Pago> Pagos => GetCollection<Pago>();
-
     [XafDisplayName("Efectos de Cobro")]
     [Association("FacturaVenta-EfectosCobro")]
     [DevExpress.Xpo.Aggregated]

@@ -456,8 +456,6 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             SecurityPermissionState.Allow);
         alquileresRole.AddTypePermissionsRecursively<Extra>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
-        alquileresRole.AddTypePermissionsRecursively<Pago>(SecurityOperations.FullAccess,
-            SecurityPermissionState.Allow);
         alquileresRole.AddTypePermissionsRecursively<RecursoAlquilable>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
         alquileresRole.AddTypePermissionsRecursively<BusinessObjects.Alquileres.Reserva>(SecurityOperations.FullAccess,
