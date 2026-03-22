@@ -40,6 +40,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     private string? _nombreArchivoConfigVeriFactu;
     private string? _nombreSistemaVeriFactu;
     private PosicionFiscal? _posicionFiscalPorDefecto;
+    private string? _prefijoAsientosPorDefecto;
     private string? _prefijoAlbaranesCompraPorDefecto;
     private string? _prefijoFacturasCompraPorDefecto;
     private string? _prefijoFacturasSimplificadasPorDefecto;
@@ -51,9 +52,15 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     private string? _prefijoPresupuestosPorDefecto;
     private string? _prefijoUrlValidacionVeriFactu;
     private string? _prefijoUrlVeriFactu;
+    private string? _prefijoClientes;
+    private string? _prefijoProveedores;
+    private string? _prefijoAcreedores;
+    private string? _prefijoEmpleados;
+    private string? _prefijoReservas;
     private string? _serieCertificadoVeriFactu;
     private string? _textoDefectoVeriFactu;
     private string? _versionSistemaVeriFactu;
+    private int _paddingNumero;
 
     [DataSourceCriteria("EstaActivo = True")]
     [XafDisplayName("Diario Ventas por Defecto")]
@@ -230,6 +237,48 @@ public class InformacionEmpresa(Session session) : Contacto(session)
         set => SetPropertyValue(nameof(PrefijoPartesDiariosPorDefecto), ref _prefijoPartesDiariosPorDefecto, value);
     }
 
+    [XafDisplayName("Prefijo Asientos")]
+    public string? PrefijoAsientosPorDefecto
+    {
+        get => _prefijoAsientosPorDefecto;
+        set => SetPropertyValue(nameof(PrefijoAsientosPorDefecto), ref _prefijoAsientosPorDefecto, value);
+    }
+
+    [XafDisplayName("Prefijo Clientes")]
+    public string? PrefijoClientes
+    {
+        get => _prefijoClientes;
+        set => SetPropertyValue(nameof(PrefijoClientes), ref _prefijoClientes, value);
+    }
+
+    [XafDisplayName("Prefijo Proveedores")]
+    public string? PrefijoProveedores
+    {
+        get => _prefijoProveedores;
+        set => SetPropertyValue(nameof(PrefijoProveedores), ref _prefijoProveedores, value);
+    }
+
+    [XafDisplayName("Prefijo Acreedores")]
+    public string? PrefijoAcreedores
+    {
+        get => _prefijoAcreedores;
+        set => SetPropertyValue(nameof(PrefijoAcreedores), ref _prefijoAcreedores, value);
+    }
+
+    [XafDisplayName("Prefijo Empleados")]
+    public string? PrefijoEmpleados
+    {
+        get => _prefijoEmpleados;
+        set => SetPropertyValue(nameof(PrefijoEmpleados), ref _prefijoEmpleados, value);
+    }
+
+    [XafDisplayName("Prefijo Reservas")]
+    public string? PrefijoReservas
+    {
+        get => _prefijoReservas;
+        set => SetPropertyValue(nameof(PrefijoReservas), ref _prefijoReservas, value);
+    }
+
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
     [Association("InformacionEmpresa-ImpuestosVentas")]
     [DataSourceCriteria("DisponibleEnVentas = True AND EstaActivo = True")]
@@ -299,6 +348,13 @@ public class InformacionEmpresa(Session session) : Contacto(session)
         get => _nombreAdministradorSistemaVeriFactu;
         set => SetPropertyValue(nameof(NombreAdministradorSistemaVeriFactu), ref _nombreAdministradorSistemaVeriFactu,
             value);
+    }
+
+    [XafDisplayName("Padding Número")]
+    public int PaddingNumero
+    {
+        get => _paddingNumero;
+        set => SetPropertyValue(nameof(PaddingNumero), ref _paddingNumero, value);
     }
 
     [XafDisplayName("NIF Admin Sistema VeriFactu")]

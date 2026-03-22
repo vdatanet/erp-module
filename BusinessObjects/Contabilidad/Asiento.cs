@@ -278,7 +278,9 @@ public class Asiento(Session session) : EntidadBase(session)
         
         if (string.IsNullOrEmpty(Codigo) && !string.IsNullOrEmpty(Serie) && Numero > 0)
         {
-            Codigo = $"{Serie}/{Numero:D5}";
+            var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+            int padding = companyInfo?.PaddingNumero ?? 5;
+            Codigo = $"{Serie}/{Numero.ToString().PadLeft(padding, '0')}";
         }
 
         base.OnSaving();
@@ -293,16 +295,12 @@ public class Asiento(Session session) : EntidadBase(session)
         Ejercicio = Session.Query<Ejercicio>().FirstOrDefault(e => e.Estado == EstadoEjercicio.Abierto && e.FechaInicio <= Fecha && e.FechaFin >= Fecha);
         
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        string prefijo = companyInfo?.PrefijoAsientosPorDefecto ?? "AS";
+        Serie = $"{prefijo}/{Fecha.Year}";
+        
         if (companyInfo != null)
         {
-            // Supongamos que hay un campo de prefijo por defecto en InformacionEmpresa que usaremos para Serie
-            // Si no existe, usaremos uno genérico AS/Anio
-            Serie = $"AS/{Fecha.Year}";
             Diario = companyInfo.DiarioVentasPorDefecto;
-        }
-        else
-        {
-            Serie = $"AS/{Fecha.Year}";
         }
     }
 }

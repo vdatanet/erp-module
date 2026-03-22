@@ -12,6 +12,7 @@ using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.Factories;
+using erp.Module.Helpers.Contactos;
 using VeriFactu.Xml.Factu;
 
 namespace erp.Module.BusinessObjects.Contactos;
@@ -372,7 +373,9 @@ public class Contacto(Session session) : EntidadBase(session)
         var prefijo = GetPrefijoCodigo();
         if (string.IsNullOrEmpty(prefijo)) return;
         var nombreSecuencia = GetType().FullName ?? GetType().Name;
-        Numero = SequenceFactory.GetNextSequence(Session, nombreSecuencia, out var formattedSequence, prefijo, 5);
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        int padding = companyInfo?.PaddingNumero ?? 5;
+        Numero = SequenceFactory.GetNextSequence(Session, nombreSecuencia, out var formattedSequence, prefijo, padding);
         Codigo = formattedSequence;
     }
 

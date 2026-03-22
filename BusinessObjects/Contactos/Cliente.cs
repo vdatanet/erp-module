@@ -119,7 +119,8 @@ public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVent
 
     public override string GetPrefijoCodigo()
     {
-        return "C";
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        return companyInfo?.PrefijoClientes ?? "C";
     }
 
     protected override void InitValues()

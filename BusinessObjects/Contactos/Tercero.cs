@@ -144,7 +144,10 @@ public class Tercero(Session session) : Contacto(session)
             var prefix = cuentaPadre.Codigo ?? "";
             string cuentaCodigo;
 
-            int paddingLength = 10 - prefix.Length;
+            int paddingValue = config.PaddingNumero;
+            if (paddingValue <= 0) paddingValue = 10;
+
+            int paddingLength = paddingValue - prefix.Length;
             if (paddingLength > 0)
             {
                 cuentaCodigo = prefix + suffix.PadLeft(paddingLength, '0');
@@ -154,12 +157,12 @@ public class Tercero(Session session) : Contacto(session)
                 cuentaCodigo = prefix + suffix;
             }
 
-            // Asegurar longitud de 10 si el prefijo + sufijo exceden o no llegan por alguna razón
-            if (cuentaCodigo.Length > 10)
+            // Asegurar longitud de paddingValue si el prefijo + sufijo exceden o no llegan por alguna razón
+            if (cuentaCodigo.Length > paddingValue)
             {
                 // Si excede, tomamos los últimos dígitos necesarios para completar con el prefijo
-                // O simplemente truncamos/ajustamos. Dado el requisito de 10 dígitos:
-                cuentaCodigo = cuentaCodigo.Substring(0, 10);
+                // O simplemente truncamos/ajustamos.
+                cuentaCodigo = cuentaCodigo.Substring(0, paddingValue);
             }
 
             var cuentaExistente = Session.FindObject<Cuenta>(new BinaryOperator(nameof(Cuenta.Codigo), cuentaCodigo));

@@ -6,6 +6,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.Factories;
+using erp.Module.Helpers.Contactos;
 using erp.Module.Services.Reserva;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -356,8 +357,13 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
             Temporada = StartOn.Year;
             if (Temporada != 0)
             {
+                var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+                int padding = companyInfo?.PaddingNumero ?? 5;
+                string prefijo = companyInfo?.PrefijoReservas ?? $"{Temporada}";
+                string prefixSequence = string.IsNullOrEmpty(companyInfo?.PrefijoReservas) ? $"{Temporada}" : $"{prefijo}/{Temporada}";
+
                 Numero = SequenceFactory.GetNextSequence(Session, $"{GetType().FullName}-{Temporada}",
-                    out var formattedSequence, $"{Temporada}", 4);
+                    out var formattedSequence, prefixSequence, padding);
                 Secuencia = formattedSequence;
             }
         }

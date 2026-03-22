@@ -6,6 +6,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Contabilidad;
 
@@ -70,11 +71,13 @@ public class Ejercicio(Session session) : EntidadBase(session)
             asientosList.Add(a);
         }
         var asientosOrdenados = asientosList.OrderBy(a => a.Fecha).ThenBy(a => a.Orden).ToList();
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        int padding = companyInfo?.PaddingNumero ?? 5;
         int nuevoNumero = 1;
         foreach (var asiento in asientosOrdenados)
         {
             asiento.Numero = nuevoNumero++;
-            asiento.Codigo = string.Format("{0}/{1:D5}", asiento.Serie, asiento.Numero);
+            asiento.Codigo = string.Format("{0}/{1}", asiento.Serie, asiento.Numero.ToString().PadLeft(padding, '0'));
         }
         Session.Save((IEnumerable)asientosOrdenados);
     }

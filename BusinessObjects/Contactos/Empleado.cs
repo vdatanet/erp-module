@@ -4,6 +4,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.ControlHorario;
+using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Contactos;
 
@@ -66,6 +67,7 @@ public class Empleado(Session session) : Contacto(session)
 
     public override string GetPrefijoCodigo()
     {
-        return "E";
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        return companyInfo?.PrefijoEmpleados ?? "E";
     }
 }

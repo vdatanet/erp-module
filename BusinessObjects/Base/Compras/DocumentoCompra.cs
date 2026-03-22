@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
@@ -6,6 +7,7 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.Factories;
@@ -26,6 +28,7 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
     private string? _secuencia;
     private string? _serie;
     private CondicionPago? _condicionPago;
+    private Ejercicio? _ejercicio;
 
     [RuleRequiredField("erp.Module.BusinessObjects.Compras.FacturaCompra.Proveedor_Required", DefaultContexts.Save,
         TargetCriteria =
@@ -91,6 +94,27 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
     {
         get => _fecha;
         set => SetPropertyValue(nameof(Fecha), ref _fecha, value);
+    }
+
+    [XafDisplayName("Ejercicio")]
+    [RuleRequiredField("RuleRequiredField_DocumentoCompra_Ejercicio", DefaultContexts.Save)]
+    public Ejercicio? Ejercicio
+    {
+        get => _ejercicio;
+        set => SetPropertyValue(nameof(Ejercicio), ref _ejercicio, value);
+    }
+
+    [Browsable(false)]
+    [RuleFromBoolProperty("DocumentoCompra_FechaNoBloqueada", DefaultContexts.Save, "La fecha del documento se encuentra en un periodo bloqueado del ejercicio o el ejercicio está bloqueado.", UsedProperties = nameof(Fecha))]
+    public bool IsFechaNoBloqueada
+    {
+        get
+        {
+            if (Ejercicio == null) return true;
+            if (Ejercicio.Estado == EstadoEjercicio.Bloqueado) return false;
+
+            return !Ejercicio.PeriodosBloqueados.Any(p => Fecha >= p.FechaInicio && Fecha <= p.FechaFin);
+        }
     }
 
     [Size(SizeAttribute.Unlimited)]
@@ -214,6 +238,9 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
     {
         base.AfterConstruction();
         Fecha = DateTime.Today;
+
+        Ejercicio = Session.Query<Ejercicio>().FirstOrDefault(e => e.Estado == EstadoEjercicio.Abierto && e.FechaInicio <= Fecha && e.FechaFin >= Fecha);
+
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         Serie ??= companyInfo?.PrefijoFacturasCompraPorDefecto;
     }
@@ -232,11 +259,16 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
 
     public virtual void AsignarNumero()
     {
-        if (!string.IsNullOrEmpty(Serie))
+        if (!string.IsNullOrEmpty(Serie) && Ejercicio != null)
         {
-            Numero = SequenceFactory.GetNextSequence(Session, $"{GetType().FullName}.{Serie}",
-                out var formattedSequence,
-                Serie, 5);
+            var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+            int padding = companyInfo?.PaddingNumero ?? 5;
+
+            string sequenceName = $"{GetType().FullName}.{Ejercicio.Anio}.{Serie}";
+            string prefix = $"{Serie}/{Ejercicio.Anio}";
+
+            Numero = SequenceFactory.GetNextSequence(Session, sequenceName, out var formattedSequence,
+                prefix, padding);
             Secuencia = formattedSequence;
         }
     }

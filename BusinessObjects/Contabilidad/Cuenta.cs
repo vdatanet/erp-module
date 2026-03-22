@@ -6,6 +6,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Contabilidad;
 
@@ -55,7 +56,9 @@ public class Cuenta(Session session) : EntidadBase(session)
                 {
                     string prefijo = partes[0];
                     string sufijo = partes[1];
-                    int cerosNecesarios = 10 - prefijo.Length - sufijo.Length;
+                    var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+                    int totalPadding = companyInfo?.PaddingNumero ?? 10;
+                    int cerosNecesarios = totalPadding - prefijo.Length - sufijo.Length;
                     if (cerosNecesarios > 0)
                     {
                         value = prefijo + new string('0', cerosNecesarios) + sufijo;
@@ -102,7 +105,10 @@ public class Cuenta(Session session) : EntidadBase(session)
             {
                 codigoPadre = Codigo.Substring(0, 5);
             }
-            if (longitud == 10)
+
+            var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+            int totalPadding = companyInfo?.PaddingNumero ?? 10;
+            if (longitud == totalPadding)
             {
                 EsAsentable = true;
             }
@@ -118,7 +124,7 @@ public class Cuenta(Session session) : EntidadBase(session)
         }
     }
 
-    [PersistentAlias("Iif(Len(Codigo) == 1, 1, Iif(Len(Codigo) == 2, 2, Iif(Len(Codigo) == 3, 3, Iif(Len(Codigo) == 4 || Len(Codigo) == 5, 4, Iif(Len(Codigo) > 5, 5, 0)))))")]
+    [PersistentAlias("Iif(Len(Codigo) == 1, 1, Iif(Len(Codigo) == 2, 2, Iif(Len(Codigo) == 3, 3, Iif(Len(Codigo) == 4 || Len(Codigo) == 5, 4, 5))))")]
     [XafDisplayName("Nivel")]
     public int Nivel => (int)EvaluateAlias(nameof(Nivel));
 
