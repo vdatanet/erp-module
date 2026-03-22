@@ -324,12 +324,12 @@ public class Contacto(Session session) : EntidadBase(session)
     [XafDisplayName("Adjuntos")]
     public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
 
-    [Action(Caption = "Cambiar Estado", ConfirmationMessage = "¿Desea cambiar el estado de este contacto?", 
+    /*[Action(Caption = "Cambiar Estado", ConfirmationMessage = "¿Desea cambiar el estado de este contacto?", 
         SelectionDependencyType = MethodActionSelectionDependencyType.RequireSingleObject)]
     public void ToggleEstado()
     {
         Activo = !Activo;
-    }
+    }*/
 
     public override void AfterConstruction()
     {

@@ -112,8 +112,8 @@ public class SesionTpv(Session session) : EntidadBase(session)
         Estado = EstadoSesionTpv.Abierta;
     }
 
-    [Action(Caption = "Cerrar Sesión", TargetObjectsCriteria = "Estado = 'Abierta'",
-        ConfirmationMessage = "¿Desea cerrar la sesión?", ImageName = "Action_Close")]
+    /*[Action(Caption = "Cerrar Sesión", TargetObjectsCriteria = "Estado = 'Abierta'",
+        ConfirmationMessage = "¿Desea cerrar la sesión?", ImageName = "Action_Close")]*/
     public void CerrarSesion()
     {
         Estado = EstadoSesionTpv.Cerrada;

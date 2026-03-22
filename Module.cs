@@ -54,7 +54,7 @@ public sealed class erpModule : ModuleBase
         RequiredModuleTypes.Add(typeof(ReportsModuleV2));
         RequiredModuleTypes.Add(typeof(SchedulerModuleBase));
         RequiredModuleTypes.Add(typeof(TreeListEditorsModuleBase));
-        RequiredModuleTypes.Add(typeof(ValidationModule));
+        // RequiredModuleTypes.Add(typeof(ValidationModule));
         RequiredModuleTypes.Add(typeof(ViewVariantsModule));
     }
 

@@ -5,6 +5,7 @@ using DevExpress.ExpressApp.SystemModule;
 
 namespace erp.Module.Controllers.Contactos;
 
+/*
 public class ContactoEstadoController : ViewController
 {
     private ActionBase? _toggleAction;
@@ -22,14 +23,21 @@ public class ContactoEstadoController : ViewController
         var controller = Frame.GetController<ObjectMethodActionsViewController>();
         if (controller != null)
         {
-            foreach (var action in controller.Actions)
+            if (controller.Actions == null)
             {
-                if (action.Id == "Contacto.ToggleEstado" || action.Id == "ToggleEstado")
+                System.Console.WriteLine("[DEBUG_LOG] ObjectMethodActionsViewController.Actions is NULL");
+            }
+            else
+            {
+                foreach (var action in controller.Actions)
                 {
-                    _toggleAction = action;
-                    // En ListView lo desactivamos (ocultamos)
-                    action.Active["VisibleInListView"] = View is DetailView;
-                    break;
+                    if (action.Id == "Contacto.ToggleEstado" || action.Id == "ToggleEstado")
+                    {
+                        _toggleAction = action;
+                        // En ListView lo desactivamos (ocultamos)
+                        action.Active["VisibleInListView"] = View is DetailView;
+                        break;
+                    }
                 }
             }
         }
@@ -82,3 +90,4 @@ public class ContactoEstadoController : ViewController
         }
     }
 }
+*/

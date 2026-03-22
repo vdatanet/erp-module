@@ -177,14 +177,14 @@ public class Suscripcion(Session session) : EntidadBase(session)
     [Browsable(false)]
     public bool PuedeGenerarFactura => Estado == EstadoSuscripcion.Activa && Cliente != null;
 
-    [Action(Caption = "Generar Factura", ImageName = "Action_Generate", TargetObjectsCriteria = "PuedeGenerarFactura")]
+    /*[Action(Caption = "Generar Factura", ImageName = "Action_Generate", TargetObjectsCriteria = "PuedeGenerarFactura")]*/
     public void GenerarFacturaAction()
     {
         GenerarFactura();
         Session.CommitTransaction();
     }
 
-    [Action(Caption = "Cambiar Condiciones", ImageName = "Action_Edit", TargetObjectsCriteria = "Estado = 'Activa'")]
+    /*[Action(Caption = "Cambiar Condiciones", ImageName = "Action_Edit", TargetObjectsCriteria = "Estado = 'Activa'")]*/
     public void CambiarCondiciones(string motivo, decimal nuevoPrecio, Periodicidad nuevaPeriodicidad)
     {
         if (PedidoVigente != null)

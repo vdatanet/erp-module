@@ -87,7 +87,7 @@ public class Lead(Session session) : Contacto(session)
         set => SetPropertyValue(nameof(Fuente), ref _fuente, value);
     }
 
-    [Action(Caption = "Convertir a Cliente y Oportunidad", ConfirmationMessage = "¿Está seguro de que desea convertir este Lead?", ImageName = "BO_Opportunity", TargetObjectsCriteria = "Cliente IS NULL")]
+    /*[Action(Caption = "Convertir a Cliente y Oportunidad", ConfirmationMessage = "¿Está seguro de que desea convertir este Lead?", ImageName = "BO_Opportunity", TargetObjectsCriteria = "Cliente IS NULL")]*/
     public void Madurar()
     {
         if (Cliente != null) return;
