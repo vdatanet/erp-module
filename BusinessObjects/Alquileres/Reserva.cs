@@ -3,13 +3,16 @@ using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
+using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
+using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.Factories;
 using erp.Module.Helpers.Contactos;
 using erp.Module.Services.Reserva;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 
 namespace erp.Module.BusinessObjects.Alquileres;
 
@@ -43,7 +46,7 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
     private RecursoAlquilable? _recursoAlquilable;
     private string? _secuencia;
     private decimal _subtotal;
-    private int _temporada;
+    private Ejercicio? _ejercicio;
     private decimal _total;
     private decimal _totalPagado;
     private decimal _totalTasaTuristicaIncluida;
@@ -71,12 +74,25 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
         set => SetPropertyValue(nameof(Numero), ref _numero, value);
     }
 
-    [XafDisplayName("Temporada")]
-    [ModelDefault("AllowEdit", "False")]
-    public int Temporada
+    [XafDisplayName("Ejercicio")]
+    [RuleRequiredField("RuleRequiredField_Reserva_Ejercicio", DefaultContexts.Save, CustomMessageTemplate = "El Ejercicio de la reserva es obligatorio")]
+    public Ejercicio? Ejercicio
     {
-        get => _temporada;
-        set => SetPropertyValue(nameof(Temporada), ref _temporada, value);
+        get => _ejercicio;
+        set => SetPropertyValue(nameof(Ejercicio), ref _ejercicio, value);
+    }
+
+    [Browsable(false)]
+    [RuleFromBoolProperty("Reserva_FechaNoBloqueada", DefaultContexts.Save, "La fecha de inicio de la reserva se encuentra en un periodo bloqueado del ejercicio o el ejercicio está bloqueado.", UsedProperties = nameof(StartOn))]
+    public bool IsFechaNoBloqueada
+    {
+        get
+        {
+            if (Ejercicio == null) return true;
+            if (Ejercicio.Estado == EstadoEjercicio.Bloqueado) return false;
+
+            return !Ejercicio.PeriodosBloqueados.Any(p => StartOn >= p.FechaInicio && StartOn <= p.FechaFin);
+        }
     }
 
     [XafDisplayName("Secuencia")]
@@ -349,21 +365,21 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
         Alojamiento = true;
         Parking = false;
         Ac = false;
+        Ejercicio = Session.Query<Ejercicio>().FirstOrDefault(e => e.Anio == StartOn.Year);
     }
 
     protected override void OnSaving()
     {
         if (!IsLoading && Session.IsNewObject(this) && Numero == 0 && StartOn != DateTime.MinValue)
         {
-            Temporada = StartOn.Year;
-            if (Temporada != 0)
+            if (Ejercicio != null && Ejercicio.Anio.HasValue)
             {
                 var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session) ?? throw new UserFriendlyException("No se ha podido obtener la configuración de la empresa.");
                 int padding = companyInfo.PaddingNumero;
                 string prefijo = companyInfo.PrefijoReservas ?? throw new UserFriendlyException("El prefijo de reservas no está configurado.");
-                string prefixSequence = $"{prefijo}/{Temporada}";
+                string prefixSequence = $"{prefijo}/{Ejercicio.Anio}";
 
-                Numero = SequenceFactory.GetNextSequence(Session, $"{GetType().FullName}-{Temporada}",
+                Numero = SequenceFactory.GetNextSequence(Session, $"{GetType().FullName}-{Ejercicio.Anio}",
                     out var formattedSequence, prefixSequence, padding);
                 Secuencia = formattedSequence;
             }
@@ -378,7 +394,10 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
         if (!IsLoading && (propertyName == nameof(StartOn) || propertyName == nameof(EndOn)))
         {
             Dias = (EndOn - StartOn).TotalDays;
-            Temporada = StartOn.Year;
+            if (propertyName == nameof(StartOn))
+            {
+                Ejercicio = Session.Query<Ejercicio>().FirstOrDefault(e => e.Anio == StartOn.Year);
+            }
             Calcular();
         }
     }
