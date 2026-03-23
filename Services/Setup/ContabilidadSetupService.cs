@@ -1,10 +1,9 @@
 using DevExpress.ExpressApp;
-using DevExpress.ExpressApp.Xpo;
 using erp.Module.BusinessObjects.Contabilidad;
 
 namespace erp.Module.Services.Setup;
 
-public class CuentaSetupService(IObjectSpace objectSpace)
+public class ContabilidadSetupService(IObjectSpace objectSpace)
 {
     private IObjectSpace? _os;
     private IObjectSpace OS => _os ??= GetWorkingObjectSpace();
@@ -13,15 +12,34 @@ public class CuentaSetupService(IObjectSpace objectSpace)
     {
         if (objectSpace is CompositeObjectSpace compositeOS)
         {
-            var result = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(CuentaContable)));
+            var result = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(Ejercicio)));
             if (result != null) return result;
 
-            // Fallback to the first persistent Object Space if no specific match is found for the type
             var fallback = compositeOS.AdditionalObjectSpaces.FirstOrDefault();
             if (fallback != null) return fallback;
         }
 
         return objectSpace;
+    }
+
+    public void CreateInitialData()
+    {
+        CreateInitialEjercicio();
+        CreateInitialCuentas();
+    }
+
+    public void CreateInitialEjercicio()
+    {
+        int anioActual = DateTime.Today.Year;
+        var ejercicioActual = OS.FirstOrDefault<Ejercicio>(e => e.Anio == anioActual);
+        if (ejercicioActual == null)
+        {
+            ejercicioActual = OS.CreateObject<Ejercicio>();
+            ejercicioActual.Anio = anioActual;
+            ejercicioActual.FechaInicio = new DateTime(anioActual, 1, 1);
+            ejercicioActual.FechaFin = new DateTime(anioActual, 12, 31);
+            ejercicioActual.Estado = EstadoEjercicio.Abierto;
+        }
     }
 
     public void CreateInitialCuentas()

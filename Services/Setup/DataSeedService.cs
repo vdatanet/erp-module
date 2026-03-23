@@ -48,7 +48,7 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
             new InformacionEmpresaSetupService(objectSpace).CreateInitialInformacionEmpresa();
             objectSpace.CommitChanges();
 
-            new CuentaSetupService(objectSpace).CreateInitialCuentas();
+            new ContabilidadSetupService(objectSpace).CreateInitialData();
             objectSpace.CommitChanges();
             
             new ImpuestoSetupService(objectSpace).CreateInitialImpuestos();
