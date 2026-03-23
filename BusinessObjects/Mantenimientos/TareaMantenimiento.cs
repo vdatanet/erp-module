@@ -9,7 +9,7 @@ namespace erp.Module.BusinessObjects.Mantenimientos;
 
 [DefaultClassOptions]
 [NavigationItem("Mantenimientos")]
-[XafDisplayName("Tarea de Mantenimiento")]
+[XafDisplayName("Tareas de Mantenimiento")]
 public class TareaMantenimiento(Session session) : EntidadBase(session)
 {
     private string? _codigo;

@@ -6,8 +6,8 @@ using erp.Module.BusinessObjects.Base.Comun;
 namespace erp.Module.BusinessObjects.TrabajoDeCampo;
 
 [DefaultClassOptions]
-[NavigationItem("Trabajo de campo")]
-[XafDisplayName("Periodicidad (TC)")]
+[NavigationItem("Mantenimientos")]
+[XafDisplayName("Periodicidades")]
 public class PeriodicidadTrabajoDeCampo(Session session) : EntidadBase(session)
 {
     private string? _nombre;

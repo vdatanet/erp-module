@@ -10,7 +10,7 @@ namespace erp.Module.BusinessObjects.Mantenimientos;
 
 [DefaultClassOptions]
 [NavigationItem("Mantenimientos")]
-[XafDisplayName("Contrato de Mantenimiento")]
+[XafDisplayName("Contratos de Mantenimiento")]
 public class ContratoMantenimiento(Session session) : EntidadBase(session)
 {
     private string? _codigo;

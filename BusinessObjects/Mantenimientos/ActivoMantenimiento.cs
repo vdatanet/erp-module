@@ -8,7 +8,7 @@ namespace erp.Module.BusinessObjects.Mantenimientos;
 
 [DefaultClassOptions]
 [NavigationItem("Mantenimientos")]
-[XafDisplayName("Activo de Mantenimiento")]
+[XafDisplayName("Activos")]
 public class ActivoMantenimiento(Session session) : EntidadBase(session)
 {
     private string? _codigo;

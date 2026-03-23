@@ -8,8 +8,8 @@ using erp.Module.BusinessObjects.Ventas;
 namespace erp.Module.BusinessObjects.TrabajoDeCampo;
 
 [DefaultClassOptions]
-[NavigationItem("Trabajo de campo")]
-[XafDisplayName("Pedido de trabajo de campo")]
+[NavigationItem("Mantenimientos")]
+[XafDisplayName("Trabajos de Campo")]
 public class PedidoTrabajoDeCampo(Session session) : EntidadBase(session)
 {
     private SolicitudTrabajoDeCampo? _solicitud;

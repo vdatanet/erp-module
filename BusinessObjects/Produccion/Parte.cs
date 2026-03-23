@@ -7,8 +7,8 @@ using erp.Module.Helpers.Contactos;
 namespace erp.Module.BusinessObjects.Produccion;
 
 [DefaultClassOptions]
-[NavigationItem("Producción")]
-[ImageName("BO_Order")]
+[NavigationItem("Mantenimientos")]
+[XafDisplayName("Partes de Trabajo")]
 public class Parte(Session session) : DocumentoVenta(session)
 {
     private bool _esFacturable;
