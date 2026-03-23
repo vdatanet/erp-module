@@ -17,7 +17,6 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
     private ApplicationUser? _creadoPor;
     private DateTime? _modificadoEl;
     private ApplicationUser? _modificadoPor;
-    private string? _barCodeString;
 
     [HideInUI(HideInUI.All)]
     [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
@@ -61,16 +60,6 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
         set => SetPropertyValue(nameof(ModificadoEl), ref _modificadoEl, value);
     }
 
-    [XafDisplayName("Código Barras")]
-    [ModelDefault(nameof(IModelCommonMemberViewItem.AllowEdit), "False")]
-    [Size(16)]
-    [Indexed]
-    public string? BarCodeString
-    {
-        get => _barCodeString;
-        set => SetPropertyValue(nameof(BarCodeString), ref _barCodeString, value);
-    }
-
     protected override void OnSaving()
     {
         base.OnSaving();
@@ -79,7 +68,6 @@ public abstract class EntidadBase(Session session) : BaseObject(session)
         {
             CreadoEl = DateTime.Now;
             CreadoPor = GetCurrentUser();
-            BarCodeString = Oid.ToString("N").Substring(0, 16).ToUpperInvariant();
         }
         else
         {
