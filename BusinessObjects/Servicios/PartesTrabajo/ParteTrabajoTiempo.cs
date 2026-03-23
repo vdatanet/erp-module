@@ -20,7 +20,7 @@ public class ParteTrabajoTiempo(Session session) : EntidadBase(session)
     private string? _observaciones;
 
     [Association("ParteTrabajo-Tiempos")]
-    [XafDisplayName("Parte")]
+    [XafDisplayName("Parte de Trabajo")]
     public ParteTrabajo? Parte
     {
         get => _parte;

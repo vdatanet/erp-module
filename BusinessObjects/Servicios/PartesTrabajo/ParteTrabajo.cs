@@ -11,7 +11,7 @@ namespace erp.Module.BusinessObjects.Servicios.PartesTrabajo;
 
 [DefaultClassOptions]
 [NavigationItem("Servicios")]
-[XafDisplayName("Partes de Trabajo")]
+[XafDisplayName("Parte de Trabajo")]
 public class ParteTrabajo(Session session) : DocumentoVenta(session)
 {
     private bool _esFacturable;

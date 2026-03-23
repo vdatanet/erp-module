@@ -20,7 +20,7 @@ public class ParteTrabajoMaterial(Session session) : EntidadBase(session)
     private bool _facturable;
 
     [Association("ParteTrabajo-Materiales")]
-    [XafDisplayName("Parte")]
+    [XafDisplayName("Parte de Trabajo")]
     public ParteTrabajo? Parte
     {
         get => _parte;
