@@ -83,14 +83,14 @@ public class Producto(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(PrecioVenta), ref _precioVenta, value);
     }
 
-    [XafDisplayName("CuentaContable Ventas")]
+    [XafDisplayName("Cuenta Contable Ventas")]
     public CuentaContable? CuentaVentas
     {
         get => _cuentaVentas;
         set => SetPropertyValue(nameof(CuentaVentas), ref _cuentaVentas, value);
     }
 
-    [XafDisplayName("CuentaContable Compras")]
+    [XafDisplayName("Cuenta Contable Compras")]
     public CuentaContable? CuentaCompras
     {
         get => _cuentaCompras;

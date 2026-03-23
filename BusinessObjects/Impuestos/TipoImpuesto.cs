@@ -68,7 +68,7 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Secuencia), ref _secuencia, value);
     }
 
-    [XafDisplayName("CuentaContable")]
+    [XafDisplayName("Cuenta Contable")]
     public CuentaContable? CuentaContable
     {
         get => _cuenta;

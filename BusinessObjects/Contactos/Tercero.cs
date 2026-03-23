@@ -18,7 +18,7 @@ public class Tercero(Session session) : Contacto(session)
 {
     private CuentaContable? _cuentaContable;
 
-    [XafDisplayName("CuentaContable Contable")]
+    [XafDisplayName("Cuenta Contable Contable")]
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
     public CuentaContable? CuentaContable
     {

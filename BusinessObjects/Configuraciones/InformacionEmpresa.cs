@@ -82,7 +82,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     }
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    [XafDisplayName("CuentaContable Ventas por Defecto")]
+    [XafDisplayName("Cuenta Contable Ventas por Defecto")]
     public CuentaContable? CuentaVentasPorDefecto
     {
         get => _cuentaVentasPorDefecto;
@@ -90,7 +90,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     }
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    [XafDisplayName("CuentaContable Compras por Defecto")]
+    [XafDisplayName("Cuenta Contable Compras por Defecto")]
     public CuentaContable? CuentaComprasPorDefecto
     {
         get => _cuentaComprasPorDefecto;
@@ -98,7 +98,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     }
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    [XafDisplayName("CuentaContable Clientes por Defecto")]
+    [XafDisplayName("Cuenta Contable Clientes por Defecto")]
     public CuentaContable? CuentaClientesPorDefecto
     {
         get => _cuentaClientesPorDefecto;
@@ -106,7 +106,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     }
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    [XafDisplayName("CuentaContable de Cobros por Defecto")]
+    [XafDisplayName("Cuenta Contable de Cobros por Defecto")]
     public CuentaContable? CuentaCobrosPorDefecto
     {
         get => _cuentaCobrosPorDefecto;
@@ -114,7 +114,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     }
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    [XafDisplayName("CuentaContable Proveedores por Defecto")]
+    [XafDisplayName("Cuenta Contable Proveedores por Defecto")]
     public CuentaContable? CuentaProveedoresPorDefecto
     {
         get => _cuentaProveedoresPorDefecto;
@@ -122,7 +122,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     }
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    [XafDisplayName("CuentaContable Acreedores por Defecto")]
+    [XafDisplayName("Cuenta Contable Acreedores por Defecto")]
     public CuentaContable? CuentaAcreedoresPorDefecto
     {
         get => _cuentaAcreedoresPorDefecto;
@@ -130,7 +130,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     }
 
     [DataSourceCriteria("EstaActiva = True")]
-    [XafDisplayName("CuentaContable Padre Clientes")]
+    [XafDisplayName("Cuenta Contable Padre Clientes")]
     public CuentaContable? CuentaPadreClientes
     {
         get => _cuentaPadreClientes;
@@ -138,7 +138,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     }
 
     [DataSourceCriteria("EstaActiva = True")]
-    [XafDisplayName("CuentaContable Padre Proveedores")]
+    [XafDisplayName("Cuenta Contable Padre Proveedores")]
     public CuentaContable? CuentaPadreProveedores
     {
         get => _cuentaPadreProveedores;
@@ -146,7 +146,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     }
 
     [DataSourceCriteria("EstaActiva = True")]
-    [XafDisplayName("CuentaContable Padre Acreedores")]
+    [XafDisplayName("Cuenta Contable Padre Acreedores")]
     public CuentaContable? CuentaPadreAcreedores
     {
         get => _cuentaPadreAcreedores;
@@ -154,7 +154,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     }
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
-    [XafDisplayName("CuentaContable de Pagos por Defecto")]
+    [XafDisplayName("Cuenta Contable de Pagos por Defecto")]
     public CuentaContable? CuentaPagosPorDefecto
     {
         get => _cuentaPagosPorDefecto;
@@ -385,7 +385,7 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     }
 
     [RuleRange("InformacionEmpresa_PaddingCuentaContable_Range", DefaultContexts.Save, 1, 15)]
-    [XafDisplayName("Padding CuentaContable Contable")]
+    [XafDisplayName("Padding Cuenta Contable Contable")]
     public int PaddingCuentaContable
     {
         get => _paddingCuentaContable;

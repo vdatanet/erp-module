@@ -28,7 +28,7 @@ public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVent
     private Sector? _sector;
 
 
-    [XafDisplayName("CuentaContable de Cobro")]
+    [XafDisplayName("Cuenta Contable de Cobro")]
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
     public CuentaContable? CuentaCobro
     {

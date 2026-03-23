@@ -159,7 +159,7 @@ public class CuentaContable(Session session) : EntidadBase(session)
     }
 
     [Association("CuentaPadre-CuentasHijas")]
-    [XafDisplayName("CuentaContable Padre")]
+    [XafDisplayName("Cuenta Contable Padre")]
     public CuentaContable? CuentaPadre
     {
         get => _cuentaPadre;

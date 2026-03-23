@@ -59,7 +59,7 @@ public class Apunte(Session session) : EntidadBase(session)
     
     private string? _cuentaBusqueda;
     [NonPersistent]
-    [XafDisplayName("Buscar CuentaContable")]
+    [XafDisplayName("Buscar Cuenta Contable")]
     [ToolTip("Permite buscar por código (ej. 430.1 para 4300000001)")]
     public string? CuentaBusqueda
     {
@@ -73,7 +73,7 @@ public class Apunte(Session session) : EntidadBase(session)
         }
     }
 
-    [XafDisplayName("CuentaContable")]
+    [XafDisplayName("Cuenta Contable")]
     [RuleRequiredField]
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
     public CuentaContable? CuentaContable

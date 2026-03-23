@@ -51,7 +51,7 @@ public class ImpuestoDocumentoCompra(Session session) : EntidadBase(session)
         }
     }
 
-    [XafDisplayName("CuentaContable")]
+    [XafDisplayName("Cuenta Contable")]
     public CuentaContable? CuentaContable
     {
         get => _cuenta;
