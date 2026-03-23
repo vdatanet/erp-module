@@ -197,6 +197,11 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [DevExpress.Xpo.Aggregated]
+    [Association("DocumentoVenta-Grupos")]
+    [XafDisplayName("Grupos")]
+    public XPCollection<GrupoDocumentoVenta> Grupos => GetCollection<GrupoDocumentoVenta>(nameof(Grupos));
+
+    [DevExpress.Xpo.Aggregated]
     [Association("DocumentoVenta-Lineas")]
     [XafDisplayName("Líneas")]
     public XPCollection<LineaDocumentoVenta> Lineas

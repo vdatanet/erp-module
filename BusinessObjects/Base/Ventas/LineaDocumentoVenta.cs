@@ -28,6 +28,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     private CuentaContable? _cuentaContable;
     private decimal _porcentajeComision;
     private decimal _importeComisionFijo;
+    private GrupoDocumentoVenta? _grupo;
 
     [Association("DocumentoVenta-Lineas")]
     [XafDisplayName("Documento Venta")]
@@ -35,6 +36,14 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     {
         get => _documentoVenta;
         set => SetPropertyValue(nameof(DocumentoVenta), ref _documentoVenta, value);
+    }
+
+    [Association("GrupoDocumentoVenta-Lineas")]
+    [XafDisplayName("Grupo")]
+    public GrupoDocumentoVenta? Grupo
+    {
+        get => _grupo;
+        set => SetPropertyValue(nameof(Grupo), ref _grupo, value);
     }
 
     [DataSourceCriteria("EstaActiva = True AND EsAsentable = True")]
