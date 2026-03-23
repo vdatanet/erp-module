@@ -3,10 +3,10 @@ using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 
-namespace erp.Module.BusinessObjects.TrabajoDeCampo;
+namespace erp.Module.BusinessObjects.Servicios.TrabajoDeCampo;
 
 [DefaultClassOptions]
-[NavigationItem("Trabajo de campo")]
+[NavigationItem("Servicios")]
 [XafDisplayName("Tipo de servicio (TC)")]
 public class TipoServicioTrabajoDeCampo(Session session) : EntidadBase(session)
 {

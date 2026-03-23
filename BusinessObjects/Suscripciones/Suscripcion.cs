@@ -152,6 +152,10 @@ public class Suscripcion(Session session) : EntidadBase(session)
     [XafDisplayName("Historial de Pedidos")]
     public XPCollection<PedidoVenta> Pedidos => GetCollection<PedidoVenta>(nameof(Pedidos));
 
+    [Association("Suscripcion-Coberturas")]
+    [XafDisplayName("Coberturas")]
+    public XPCollection<CoberturaSuscripcion> Coberturas => GetCollection<CoberturaSuscripcion>(nameof(Coberturas));
+
     [XafDisplayName("Vencida")]
     public bool EstaVencida
     {
@@ -320,6 +324,12 @@ public class Suscripcion(Session session) : EntidadBase(session)
         base.AfterConstruction();
         FechaInicio = DateTime.Today;
         Estado = EstadoSuscripcion.Activa;
+
+        if (!IsLoading && TipoSuscripcion != null)
+        {
+            ImporteFinal = TipoSuscripcion.ImporteBase;
+            // Podríamos heredar coberturas del TipoSuscripcion aquí si las añadiéramos al TipoSuscripcion
+        }
     }
 
     protected override void OnSaved()

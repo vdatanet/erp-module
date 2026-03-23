@@ -33,3 +33,15 @@ public enum EstadoTipoSuscripcion
     [XafDisplayName("Inactivo")]
     Inactivo
 }
+
+public enum TipoCobertura
+{
+    [XafDisplayName("Total")]
+    Total,
+    [XafDisplayName("Parcial")]
+    Parcial,
+    [XafDisplayName("Límite por Visitas")]
+    Visitas,
+    [XafDisplayName("Límite por Horas")]
+    Horas
+}

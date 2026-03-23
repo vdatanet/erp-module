@@ -4,10 +4,10 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 
-namespace erp.Module.BusinessObjects.TrabajoDeCampo;
+namespace erp.Module.BusinessObjects.Servicios.TrabajoDeCampo;
 
 [DefaultClassOptions]
-[NavigationItem("Trabajo de campo")]
+[NavigationItem("Servicios")]
 [XafDisplayName("Tarea de trabajo de campo")]
 public class TareaTrabajoDeCampo(Session session) : EntidadBase(session)
 {

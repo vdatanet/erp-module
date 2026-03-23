@@ -2,13 +2,13 @@ using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
-using erp.Module.BusinessObjects.Mantenimientos.Enums;
-using erp.Module.BusinessObjects.TrabajoDeCampo;
+using erp.Module.BusinessObjects.Servicios.Mantenimientos.Enums;
+using erp.Module.BusinessObjects.Servicios.TrabajoDeCampo;
 
-namespace erp.Module.BusinessObjects.Mantenimientos;
+namespace erp.Module.BusinessObjects.Servicios.Mantenimientos;
 
 [DefaultClassOptions]
-[NavigationItem("Mantenimientos")]
+[NavigationItem("Servicios")]
 [XafDisplayName("Planificaciones")]
 public class PlanificacionMantenimiento(Session session) : EntidadBase(session)
 {

@@ -5,10 +5,10 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
 
-namespace erp.Module.BusinessObjects.TrabajoDeCampo;
+namespace erp.Module.BusinessObjects.Servicios.TrabajoDeCampo;
 
 [DefaultClassOptions]
-[NavigationItem("Trabajo de campo")]
+[NavigationItem("Servicios")]
 [XafDisplayName("Servicio de trabajo de campo")]
 public class ServicioTrabajoDeCampo(Session session) : EntidadBase(session)
 {

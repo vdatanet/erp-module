@@ -4,10 +4,10 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
 
-namespace erp.Module.BusinessObjects.Mantenimientos;
+namespace erp.Module.BusinessObjects.Servicios.Mantenimientos;
 
 [DefaultClassOptions]
-[NavigationItem("Mantenimientos")]
+[NavigationItem("Servicios")]
 [XafDisplayName("Activos")]
 public class ActivoMantenimiento(Session session) : EntidadBase(session)
 {

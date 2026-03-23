@@ -4,10 +4,10 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
 
-namespace erp.Module.BusinessObjects.Produccion;
+namespace erp.Module.BusinessObjects.Servicios.PartesTrabajo;
 
 [DefaultClassOptions]
-[NavigationItem("Producción")]
+[NavigationItem("Servicios")]
 [XafDisplayName("Parte de Trabajo - Tiempo")]
 public class ParteTrabajoTiempo(Session session) : EntidadBase(session)
 {

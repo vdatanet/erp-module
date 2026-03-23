@@ -4,12 +4,12 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
-using erp.Module.BusinessObjects.TrabajoDeCampo;
+using erp.Module.BusinessObjects.Servicios.TrabajoDeCampo;
 
-namespace erp.Module.BusinessObjects.Mantenimientos;
+namespace erp.Module.BusinessObjects.Servicios.Mantenimientos;
 
 [DefaultClassOptions]
-[NavigationItem("Mantenimientos")]
+[NavigationItem("Servicios")]
 [XafDisplayName("Incidencias")]
 public class IncidenciaMantenimiento(Session session) : EntidadBase(session)
 {

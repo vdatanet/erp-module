@@ -17,7 +17,7 @@ using erp.Module.BusinessObjects.ControlHorario;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Imprenta;
 using erp.Module.BusinessObjects.Impuestos;
-using erp.Module.BusinessObjects.Produccion;
+using erp.Module.BusinessObjects.Servicios.PartesTrabajo;
 using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Suscripciones;
 using erp.Module.BusinessObjects.Tpv;

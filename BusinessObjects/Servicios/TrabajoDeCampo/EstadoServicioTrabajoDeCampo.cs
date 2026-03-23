@@ -1,6 +1,6 @@
 using DevExpress.ExpressApp.DC;
 
-namespace erp.Module.BusinessObjects.TrabajoDeCampo;
+namespace erp.Module.BusinessObjects.Servicios.TrabajoDeCampo;
 
 public enum EstadoServicioTrabajoDeCampo
 {

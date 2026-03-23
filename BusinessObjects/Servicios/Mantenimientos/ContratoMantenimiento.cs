@@ -3,13 +3,13 @@ using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
-using erp.Module.BusinessObjects.Mantenimientos.Enums;
+using erp.Module.BusinessObjects.Servicios.Mantenimientos.Enums;
 using erp.Module.BusinessObjects.Ventas;
 
-namespace erp.Module.BusinessObjects.Mantenimientos;
+namespace erp.Module.BusinessObjects.Servicios.Mantenimientos;
 
 [DefaultClassOptions]
-[NavigationItem("Mantenimientos")]
+[NavigationItem("Servicios")]
 [XafDisplayName("Contratos de Mantenimiento")]
 public class ContratoMantenimiento(Session session) : EntidadBase(session)
 {

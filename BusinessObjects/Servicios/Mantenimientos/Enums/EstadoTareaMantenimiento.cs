@@ -1,4 +1,4 @@
-namespace erp.Module.BusinessObjects.Mantenimientos.Enums;
+namespace erp.Module.BusinessObjects.Servicios.Mantenimientos.Enums;
 
 public enum EstadoTareaMantenimiento
 {
