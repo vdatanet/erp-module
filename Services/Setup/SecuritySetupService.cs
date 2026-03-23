@@ -18,6 +18,8 @@ using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Imprenta;
 using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.BusinessObjects.Servicios.PartesTrabajo;
+using erp.Module.BusinessObjects.Servicios.Mantenimientos;
+using erp.Module.BusinessObjects.Servicios.TrabajoDeCampo;
 using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Suscripciones;
 using erp.Module.BusinessObjects.Tpv;
@@ -57,7 +59,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             CreateContactosRole();
             CreateVentasRole();
             CreateComprasRole();
-            CreateProduccionRole();
+            CreateServiciosRole();
             CreateTpvRole();
             CreateContabilidadRole();
             CreateAuxiliaresRole();
@@ -197,6 +199,8 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             SecurityPermissionState.Allow);
         ventasRole.AddTypePermissionsRecursively<LiquidacionComision>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
+        ventasRole.AddTypePermissionsRecursively<GrupoMaestro>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
 
         ventasRole.AddNavigationPermission(@"Application/NavigationItems/Items/Ventas", SecurityPermissionState.Allow);
 
@@ -227,22 +231,53 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         return comprasRole;
     }
 
-    private PermissionPolicyRole CreateProduccionRole()
+    private PermissionPolicyRole CreateServiciosRole()
     {
-        var produccionRole = OS.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Producción");
-        if (produccionRole == null)
+        var serviciosRole = OS.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Servicios");
+        if (serviciosRole == null)
         {
-            produccionRole = OS.CreateObject<PermissionPolicyRole>();
-            produccionRole.Name = "Producción";
+            serviciosRole = OS.CreateObject<PermissionPolicyRole>();
+            serviciosRole.Name = "Servicios";
         }
 
-        produccionRole.AddTypePermissionsRecursively<ParteTrabajo>(SecurityOperations.FullAccess,
+        // Partes de Trabajo
+        serviciosRole.AddTypePermissionsRecursively<ParteTrabajo>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        serviciosRole.AddTypePermissionsRecursively<ParteTrabajoMaterial>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        serviciosRole.AddTypePermissionsRecursively<ParteTrabajoTiempo>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
 
-        produccionRole.AddNavigationPermission(@"Application/NavigationItems/Items/Producción",
+        // Mantenimientos
+        serviciosRole.AddTypePermissionsRecursively<ActivoMantenimiento>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        serviciosRole.AddTypePermissionsRecursively<ContratoMantenimiento>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        serviciosRole.AddTypePermissionsRecursively<IncidenciaMantenimiento>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        serviciosRole.AddTypePermissionsRecursively<PlanificacionMantenimiento>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        serviciosRole.AddTypePermissionsRecursively<TareaMantenimiento>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
 
-        return produccionRole;
+        // Trabajo de Campo
+        serviciosRole.AddTypePermissionsRecursively<PedidoTrabajoDeCampo>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        serviciosRole.AddTypePermissionsRecursively<PeriodicidadTrabajoDeCampo>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        serviciosRole.AddTypePermissionsRecursively<ServicioTrabajoDeCampo>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        serviciosRole.AddTypePermissionsRecursively<SolicitudTrabajoDeCampo>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        serviciosRole.AddTypePermissionsRecursively<TareaTrabajoDeCampo>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        serviciosRole.AddTypePermissionsRecursively<TipoServicioTrabajoDeCampo>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+
+        serviciosRole.AddNavigationPermission(@"Application/NavigationItems/Items/Servicios",
+            SecurityPermissionState.Allow);
+
+        return serviciosRole;
     }
 
     private PermissionPolicyRole CreateTpvRole()
@@ -277,6 +312,8 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         contabilidadRole.AddTypePermissionsRecursively<CuentaContable>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
         contabilidadRole.AddTypePermissionsRecursively<Diario>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        contabilidadRole.AddTypePermissionsRecursively<Ejercicio>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
 
         contabilidadRole.AddNavigationPermission(@"Application/NavigationItems/Items/Contabilidad",
