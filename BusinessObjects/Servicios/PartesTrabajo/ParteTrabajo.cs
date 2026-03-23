@@ -12,7 +12,7 @@ namespace erp.Module.BusinessObjects.Servicios.PartesTrabajo;
 [DefaultClassOptions]
 [NavigationItem("Servicios")]
 [XafDisplayName("Partes de Trabajo")]
-public class Parte(Session session) : DocumentoVenta(session)
+public class ParteTrabajo(Session session) : DocumentoVenta(session)
 {
     private bool _esFacturable;
     private double _horasTotales;
@@ -63,11 +63,11 @@ public class Parte(Session session) : DocumentoVenta(session)
         set => SetPropertyValue(nameof(ImporteMateriales), ref _importeMateriales, value);
     }
 
-    [Association("Parte-Tiempos")]
+    [Association("ParteTrabajo-Tiempos")]
     [XafDisplayName("Tiempos")]
     public XPCollection<ParteTrabajoTiempo> Tiempos => GetCollection<ParteTrabajoTiempo>(nameof(Tiempos));
 
-    [Association("Parte-Materiales")]
+    [Association("ParteTrabajo-Materiales")]
     [XafDisplayName("Materiales")]
     public XPCollection<ParteTrabajoMaterial> Materiales => GetCollection<ParteTrabajoMaterial>(nameof(Materiales));
 

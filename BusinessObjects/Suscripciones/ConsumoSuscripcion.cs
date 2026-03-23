@@ -12,7 +12,7 @@ namespace erp.Module.BusinessObjects.Suscripciones;
 public class ConsumoSuscripcion(Session session) : EntidadBase(session)
 {
     private CoberturaSuscripcion? _cobertura;
-    private Parte? _parteTrabajo;
+    private ParteTrabajo? _parteTrabajo;
     private DateTime _fecha;
     private decimal _cantidadHoras;
     private int _cantidadVisitas;
@@ -25,7 +25,7 @@ public class ConsumoSuscripcion(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Parte de Trabajo")]
-    public Parte? ParteTrabajo
+    public ParteTrabajo? ParteTrabajo
     {
         get => _parteTrabajo;
         set => SetPropertyValue(nameof(ParteTrabajo), ref _parteTrabajo, value);

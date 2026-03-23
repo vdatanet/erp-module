@@ -236,7 +236,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             produccionRole.Name = "Producción";
         }
 
-        produccionRole.AddTypePermissionsRecursively<Parte>(SecurityOperations.FullAccess,
+        produccionRole.AddTypePermissionsRecursively<ParteTrabajo>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
 
         produccionRole.AddNavigationPermission(@"Application/NavigationItems/Items/Producción",

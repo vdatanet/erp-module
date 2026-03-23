@@ -11,7 +11,7 @@ namespace erp.Module.BusinessObjects.Servicios.PartesTrabajo;
 [XafDisplayName("Parte de Trabajo - Tiempo")]
 public class ParteTrabajoTiempo(Session session) : EntidadBase(session)
 {
-    private Parte? _parte;
+    private ParteTrabajo? _parte;
     private DateTime _fechaInicio;
     private DateTime? _fechaFin;
     private double _horas;
@@ -19,9 +19,9 @@ public class ParteTrabajoTiempo(Session session) : EntidadBase(session)
     private string? _actividad;
     private string? _observaciones;
 
-    [Association("Parte-Tiempos")]
+    [Association("ParteTrabajo-Tiempos")]
     [XafDisplayName("Parte")]
-    public Parte? Parte
+    public ParteTrabajo? Parte
     {
         get => _parte;
         set => SetPropertyValue(nameof(Parte), ref _parte, value);

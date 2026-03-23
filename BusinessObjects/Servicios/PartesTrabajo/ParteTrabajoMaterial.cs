@@ -11,7 +11,7 @@ namespace erp.Module.BusinessObjects.Servicios.PartesTrabajo;
 [XafDisplayName("Parte de Trabajo - Material")]
 public class ParteTrabajoMaterial(Session session) : EntidadBase(session)
 {
-    private Parte? _parte;
+    private ParteTrabajo? _parte;
     private Producto? _producto;
     private string? _descripcion;
     private double _cantidad;
@@ -19,9 +19,9 @@ public class ParteTrabajoMaterial(Session session) : EntidadBase(session)
     private decimal _precioVenta;
     private bool _facturable;
 
-    [Association("Parte-Materiales")]
+    [Association("ParteTrabajo-Materiales")]
     [XafDisplayName("Parte")]
-    public Parte? Parte
+    public ParteTrabajo? Parte
     {
         get => _parte;
         set => SetPropertyValue(nameof(Parte), ref _parte, value);
