@@ -58,6 +58,14 @@ public class Contacto(Session session) : EntidadBase(session)
     private string? _sitioWeb;
     private string? _telefono;
     private IDType _tipoIdentificacion;
+    private string? _nfcUid;
+
+    [XafDisplayName("NFC UID")]
+    public string? NfcUid
+    {
+        get => _nfcUid;
+        set => SetPropertyValue(nameof(NfcUid), ref _nfcUid, value);
+    }
 
     [XafDisplayName("Cliente")]
     [Association("Cliente-Contactos")]
@@ -352,6 +360,16 @@ public class Contacto(Session session) : EntidadBase(session)
     [XafDisplayName("Adjuntos")]
     public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
 
+    [Action(Caption = "Restablecer NFC UID", 
+        ConfirmationMessage = "¿Desea restablecer el NFC UID al valor original?", 
+        ToolTip = "Restablece el valor del NFC UID al Oid del contacto",
+        ImageName = "Action_ResetViewSettings",
+        SelectionDependencyType = MethodActionSelectionDependencyType.RequireSingleObject)]
+    public void ResetNfcUid()
+    {
+        NfcUid = Oid.ToString();
+    }
+
     /*[Action(Caption = "Cambiar Estado", ConfirmationMessage = "¿Desea cambiar el estado de este contacto?", 
         SelectionDependencyType = MethodActionSelectionDependencyType.RequireSingleObject)]
     public void ToggleEstado()
@@ -401,5 +419,6 @@ public class Contacto(Session session) : EntidadBase(session)
         TipoIdentificacion = IDType.NIF_IVA;
         Activo = true;
         FechaAlta = DateTime.Now;
+        NfcUid = Oid.ToString();
     }
 }
