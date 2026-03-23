@@ -104,6 +104,10 @@ public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVent
     [XafDisplayName("Suscripciones")]
     public XPCollection<Suscripciones.Suscripcion> Suscripciones => GetCollection<Suscripciones.Suscripcion>();
 
+    [Association("Cliente-SolicitudesTC")]
+    [XafDisplayName("Solicitudes de Trabajo de Campo")]
+    public XPCollection<TrabajoDeCampo.SolicitudTrabajoDeCampo> SolicitudesTC => GetCollection<TrabajoDeCampo.SolicitudTrabajoDeCampo>();
+
     [Association("Cliente-Reservas")]
     [XafDisplayName("Reservas")]
     public XPCollection<Reserva> Reservas => GetCollection<Reserva>();
