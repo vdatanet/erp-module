@@ -84,14 +84,16 @@ public class ContabilidadSetupService(IObjectSpace objectSpace)
         CreateCuenta("40", "Proveedores", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora);
         CreateCuenta("400", "Proveedores", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora);
         CreateCuenta("40000", "Proveedores (euros) - Nacionales", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora);
+        CreateCuenta("4000000000", "Proveedores (euros) - Nacionales", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora);
         CreateCuenta("41", "Acreedores varios", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora);
         CreateCuenta("410", "Acreedores por prestaciones de servicios", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora);
         CreateCuenta("41000", "Acreedores por prestaciones de servicios (euros)", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora);
+        CreateCuenta("4100000000", "Acreedores por prestaciones de servicios (euros)", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora);
         CreateCuenta("43", "Clientes", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("430", "Clientes", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("4300", "Clientes (euros)", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("43000", "Clientes (euros) - Nacionales", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
-        CreateCuenta("430000", "Clientes (euros) - Nacionales", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
+        CreateCuenta("4300000000", "Clientes (euros) - Nacionales", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("44", "Deudores varios", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("440", "Deudores", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("4400", "Deudores (euros)", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
