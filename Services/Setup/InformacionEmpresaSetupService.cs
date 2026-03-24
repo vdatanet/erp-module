@@ -49,13 +49,13 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
         }
 
         // Siempre establecemos estos valores o nos aseguramos de que existan
-        if (isNew || string.IsNullOrEmpty(informacionEmpresa.PrefijoClientes) || informacionEmpresa.PrefijoClientes == "430000")
+        if (isNew || string.IsNullOrEmpty(informacionEmpresa.PrefijoClientes))
             informacionEmpresa.PrefijoClientes = "TC";
 
-        if (isNew || string.IsNullOrEmpty(informacionEmpresa.PrefijoProveedores) || informacionEmpresa.PrefijoProveedores == "40000")
+        if (isNew || string.IsNullOrEmpty(informacionEmpresa.PrefijoProveedores))
             informacionEmpresa.PrefijoProveedores = "TP";
 
-        if (isNew || string.IsNullOrEmpty(informacionEmpresa.PrefijoAcreedores) || informacionEmpresa.PrefijoAcreedores == "41000")
+        if (isNew || string.IsNullOrEmpty(informacionEmpresa.PrefijoAcreedores))
             informacionEmpresa.PrefijoAcreedores = "TA";
 
         // Establecer CuentaPadre para clientes, proveedores y acreedores
