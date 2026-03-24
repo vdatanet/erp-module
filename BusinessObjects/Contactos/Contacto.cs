@@ -63,19 +63,12 @@ public class Contacto(Session session) : EntidadBase(session)
     [Size(100)]
     [XafDisplayName("NFC UID")]
     [Indexed(Unique = true)]
-    [RuleRequiredField("RuleRequiredField_Contacto_NfcUid", DefaultContexts.Save, CustomMessageTemplate = "El NFC UID es obligatorio")]
+    [ImmediatePostData]
     [RuleUniqueValue("RuleUniqueValue_Contacto_NfcUid", DefaultContexts.Save, CustomMessageTemplate = "El NFC UID debe ser único")]
     public string? NfcUid
     {
         get => _nfcUid;
-        set 
-        {
-            if (string.IsNullOrWhiteSpace(value) && !IsLoading && !IsSaving)
-            {
-                value = Oid.ToString();
-            }
-            SetPropertyValue(nameof(NfcUid), ref _nfcUid, value);
-        }
+        set => SetPropertyValue(nameof(NfcUid), ref _nfcUid, value);
     }
 
     [XafDisplayName("Cliente")]
@@ -396,10 +389,6 @@ public class Contacto(Session session) : EntidadBase(session)
 
     protected override void OnSaving()
     {
-        if (string.IsNullOrWhiteSpace(NfcUid))
-        {
-            NfcUid = Oid.ToString();
-        }
         base.OnSaving();
     }
 
@@ -434,6 +423,5 @@ public class Contacto(Session session) : EntidadBase(session)
         TipoIdentificacion = IDType.NIF_IVA;
         Activo = true;
         FechaAlta = DateTime.Now;
-        NfcUid = Oid.ToString();
     }
 }
