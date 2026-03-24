@@ -59,13 +59,13 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
             informacionEmpresa.PrefijoAcreedores = "TA";
 
         // Establecer CuentaPadre para clientes, proveedores y acreedores
-        if (isNew || informacionEmpresa.CuentaPadreClientes == null)
+        if (informacionEmpresa.CuentaPadreClientes == null)
             informacionEmpresa.CuentaPadreClientes = OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "43000");
 
-        if (isNew || informacionEmpresa.CuentaPadreProveedores == null)
+        if (informacionEmpresa.CuentaPadreProveedores == null)
             informacionEmpresa.CuentaPadreProveedores = OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "40000");
 
-        if (isNew || informacionEmpresa.CuentaPadreAcreedores == null)
+        if (informacionEmpresa.CuentaPadreAcreedores == null)
             informacionEmpresa.CuentaPadreAcreedores = OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "41000");
 
         if (isNew)

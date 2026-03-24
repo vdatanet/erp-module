@@ -26,6 +26,22 @@ public class ContabilidadSetupService(IObjectSpace objectSpace)
     {
         CreateInitialEjercicio();
         CreateInitialCuentas();
+
+        // Actualizar relaciones con la empresa si ya existe
+        var informacionEmpresa = OS.FirstOrDefault<erp.Module.BusinessObjects.Configuraciones.InformacionEmpresa>(i => true);
+        if (informacionEmpresa != null)
+        {
+            if (informacionEmpresa.CuentaPadreClientes == null)
+                informacionEmpresa.CuentaPadreClientes = OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "43000");
+
+            if (informacionEmpresa.CuentaPadreProveedores == null)
+                informacionEmpresa.CuentaPadreProveedores = OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "40000");
+
+            if (informacionEmpresa.CuentaPadreAcreedores == null)
+                informacionEmpresa.CuentaPadreAcreedores = OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "41000");
+
+            OS.CommitChanges();
+        }
     }
 
     public void CreateInitialEjercicio()
