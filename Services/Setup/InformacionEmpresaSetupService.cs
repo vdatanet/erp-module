@@ -60,7 +60,7 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
 
         // Establecer CuentaPadre para clientes, proveedores y acreedores
         if (isNew || informacionEmpresa.CuentaPadreClientes == null)
-            informacionEmpresa.CuentaPadreClientes = OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "430000");
+            informacionEmpresa.CuentaPadreClientes = OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "43000");
 
         if (isNew || informacionEmpresa.CuentaPadreProveedores == null)
             informacionEmpresa.CuentaPadreProveedores = OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "40000");
