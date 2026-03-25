@@ -48,6 +48,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private CuentaContable? _cuentaPagosPorDefecto;
     private CuentaContable? _cuentaProveedoresPorDefecto;
     private CuentaContable? _cuentaVentasPorDefecto;
+    private MedioPago? _medioPagoPorDefecto;
     private Diario? _diarioComprasPorDefecto;
     private Diario? _diarioVentasPorDefecto;
     private string? _nifAdministradorSistemaVeriFactu;
@@ -279,6 +280,13 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     {
         get => _condicionPagoPorDefecto;
         set => SetPropertyValue(nameof(CondicionPagoPorDefecto), ref _condicionPagoPorDefecto, value);
+    }
+
+    [XafDisplayName("Medio de Pago por Defecto")]
+    public MedioPago? MedioPagoPorDefecto
+    {
+        get => _medioPagoPorDefecto;
+        set => SetPropertyValue(nameof(MedioPagoPorDefecto), ref _medioPagoPorDefecto, value);
     }
 
     [XafDisplayName("Posición Fiscal por Defecto")]

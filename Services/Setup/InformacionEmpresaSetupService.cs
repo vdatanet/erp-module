@@ -2,6 +2,7 @@ using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Xpo;
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Contabilidad;
+using erp.Module.BusinessObjects.Tesoreria;
 
 namespace erp.Module.Services.Setup;
 
@@ -79,6 +80,32 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
         if (isNew || informacionEmpresa.ZonaHorariaPorDefecto == null)
         {
             informacionEmpresa.ZonaHorariaPorDefecto = OS.FirstOrDefault<ZonaHoraria>(z => z.IdZonaHoraria == "Europe/Madrid");
+        }
+
+        if (informacionEmpresa.MedioPagoPorDefecto == null)
+        {
+            var medioPagoEfectivo = OS.FirstOrDefault<MedioPago>(m => m.Nombre == "Efectivo");
+            if (medioPagoEfectivo == null)
+            {
+                medioPagoEfectivo = OS.CreateObject<MedioPago>();
+                medioPagoEfectivo.Nombre = "Efectivo";
+            }
+            informacionEmpresa.MedioPagoPorDefecto = medioPagoEfectivo;
+        }
+
+        if (informacionEmpresa.CondicionPagoPorDefecto == null)
+        {
+            var condicionPagoEfectivo = OS.FirstOrDefault<CondicionPago>(c => c.Nombre == "Efectivo");
+            if (condicionPagoEfectivo == null)
+            {
+                condicionPagoEfectivo = OS.CreateObject<CondicionPago>();
+                condicionPagoEfectivo.Nombre = "Efectivo";
+                condicionPagoEfectivo.NumeroPlazos = 1;
+                condicionPagoEfectivo.PlazoPrimerPago = 0;
+                condicionPagoEfectivo.DiasEntrePlazos = 0;
+                condicionPagoEfectivo.MedioPago = informacionEmpresa.MedioPagoPorDefecto;
+            }
+            informacionEmpresa.CondicionPagoPorDefecto = condicionPagoEfectivo;
         }
 
         OS.CommitChanges(); // Nos aseguramos de guardar la empresa inicial para evitar nulos en otras partes si es necesario
