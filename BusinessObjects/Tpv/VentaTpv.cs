@@ -138,6 +138,12 @@ public class VentaTpv(Session session) : EntidadBase(session)
     [XafDisplayName("Descuentos")]
     public XPCollection<DescuentoVentaTpv> Descuentos => GetCollection<DescuentoVentaTpv>();
 
+    [XafDisplayName("Factura Simplificada")]
+    public FacturaSimplificada? FacturaSimplificada
+    {
+        get => Session.FindObject<FacturaSimplificada>(new DevExpress.Data.Filtering.BinaryOperator(nameof(FacturaSimplificada.VentaTpv), this));
+    }
+
     public override void AfterConstruction()
     {
         base.AfterConstruction();

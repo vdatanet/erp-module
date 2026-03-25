@@ -15,7 +15,6 @@ namespace erp.Module.BusinessObjects.Tpv;
 [DefaultProperty(nameof(Secuencia))]
 public class FacturaSimplificada(Session session) : FacturaBase(session)
 {
-    [Persistent(nameof(VentaTpv))]
     private VentaTpv? _ventaTpv;
 
     [XafDisplayName("Venta TPV")]
