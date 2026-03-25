@@ -7,7 +7,7 @@ namespace erp.Module.BusinessObjects.Imprenta;
 
 [DefaultClassOptions]
 [NavigationItem("Imprenta")]
-public class TrabajoImpresionServicio(Session session) : LineaDocumentoVenta(session)
+public class TrabajoImpresionServicio(Session session) : DocumentoVentaLinea(session)
 {
     private decimal _numEntradasMaq;
 

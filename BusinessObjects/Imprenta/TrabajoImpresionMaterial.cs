@@ -7,7 +7,7 @@ namespace erp.Module.BusinessObjects.Imprenta;
 
 [DefaultClassOptions]
 [NavigationItem("Imprenta")]
-public class TrabajoImpresionMaterial(Session session) : LineaDocumentoVenta(session)
+public class TrabajoImpresionMaterial(Session session) : DocumentoVentaLinea(session)
 {
     private TrabajoImpresion? _trabajoImpresion;
 

@@ -71,7 +71,7 @@ public class DocumentoVentaService : IDocumentoVentaService
 
         foreach (var g in groups)
         {
-            _ = new ImpuestoDocumentoVenta(documento.Session)
+            _ = new DocumentoVentaImpuesto(documento.Session)
             {
                 DocumentoVenta = documento,
                 TipoImpuesto = g.TaxType,

@@ -9,10 +9,10 @@ namespace erp.Module.BusinessObjects.Base.Ventas;
 
 [XafDisplayName("Grupo del Documento")]
 [ImageName("BO_Folder")]
-public class GrupoDocumentoVenta(Session session) : EntidadBase(session)
+public class DocumentoVentaGrupo(Session session) : EntidadBase(session)
 {
     private DocumentoVenta? _documentoVenta;
-    private GrupoDocumentoVenta? _padre;
+    private DocumentoVentaGrupo? _padre;
     private string? _nombre;
     private int _orden;
     private GrupoMaestro? _grupoMaestro;
@@ -25,17 +25,17 @@ public class GrupoDocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(DocumentoVenta), ref _documentoVenta, value);
     }
 
-    [Association("GrupoDocumentoVenta-Hijos")]
+    [Association("DocumentoVentaGrupo-Hijos")]
     [XafDisplayName("Padre")]
-    public GrupoDocumentoVenta? Padre
+    public DocumentoVentaGrupo? Padre
     {
         get => _padre;
         set => SetPropertyValue(nameof(Padre), ref _padre, value);
     }
 
-    [Association("GrupoDocumentoVenta-Hijos")]
+    [Association("DocumentoVentaGrupo-Hijos")]
     [XafDisplayName("Subgrupos")]
-    public XPCollection<GrupoDocumentoVenta> Hijos => GetCollection<GrupoDocumentoVenta>(nameof(Hijos));
+    public XPCollection<DocumentoVentaGrupo> Hijos => GetCollection<DocumentoVentaGrupo>(nameof(Hijos));
 
     [XafDisplayName("Nombre")]
     public string? Nombre
@@ -58,9 +58,9 @@ public class GrupoDocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(GrupoMaestro), ref _grupoMaestro, value);
     }
 
-    [Association("GrupoDocumentoVenta-Lineas")]
+    [Association("DocumentoVentaGrupo-Lineas")]
     [XafDisplayName("Líneas")]
-    public XPCollection<LineaDocumentoVenta> Lineas => GetCollection<LineaDocumentoVenta>(nameof(Lineas));
+    public XPCollection<DocumentoVentaLinea> Lineas => GetCollection<DocumentoVentaLinea>(nameof(Lineas));
 
     [XafDisplayName("Base Imponible")]
     public decimal BaseImponible => Lineas.Sum(l => l.BaseImponible) + Hijos.Sum(h => h.BaseImponible);
@@ -81,7 +81,7 @@ public class GrupoDocumentoVenta(Session session) : EntidadBase(session)
 
         foreach (var hijoMaestro in maestro.Hijos.Where(h => h.Activo))
         {
-            var hijoDoc = new GrupoDocumentoVenta(Session)
+            var hijoDoc = new DocumentoVentaGrupo(Session)
             {
                 DocumentoVenta = DocumentoVenta,
                 Padre = this

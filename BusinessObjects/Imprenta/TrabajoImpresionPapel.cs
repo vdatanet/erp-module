@@ -7,7 +7,7 @@ namespace erp.Module.BusinessObjects.Imprenta;
 
 [DefaultClassOptions]
 [NavigationItem("Imprenta")]
-public class TrabajoImpresionPapel(Session session) : LineaDocumentoVenta(session)
+public class TrabajoImpresionPapel(Session session) : DocumentoVentaLinea(session)
 {
     private decimal _alto;
 

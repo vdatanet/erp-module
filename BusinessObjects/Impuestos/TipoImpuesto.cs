@@ -141,8 +141,8 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
     }
 
     [NonCloneable]
-    [Association("LineaDocumentoVenta-TipoImpuestos")]
-    public XPCollection<LineaDocumentoVenta> LineasDocumentoVenta => GetCollection<LineaDocumentoVenta>();
+    [Association("DocumentoVentaLinea-TipoImpuestos")]
+    public XPCollection<DocumentoVentaLinea> DocumentoVentaLineas => GetCollection<DocumentoVentaLinea>();
 
     [NonCloneable]
     [Association("Productos-ImpuestosVentas")]

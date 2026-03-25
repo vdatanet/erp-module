@@ -13,15 +13,15 @@ namespace erp.Module.BusinessObjects.Ventas;
 [ImageName("BO_Lead")]
 public class Comision(Session session) : EntidadBase(session)
 {
-    private LineaDocumentoVenta? _lineaDocumentoVenta;
+    private DocumentoVentaLinea? _documentoVentaLinea;
     private LiquidacionComision? _liquidacion;
     private decimal _importe;
 
     [XafDisplayName("Línea de Venta")]
-    public LineaDocumentoVenta? LineaDocumentoVenta
+    public DocumentoVentaLinea? DocumentoVentaLinea
     {
-        get => _lineaDocumentoVenta;
-        set => SetPropertyValue(nameof(LineaDocumentoVenta), ref _lineaDocumentoVenta, value);
+        get => _documentoVentaLinea;
+        set => SetPropertyValue(nameof(DocumentoVentaLinea), ref _documentoVentaLinea, value);
     }
 
     [XafDisplayName("Liquidación")]

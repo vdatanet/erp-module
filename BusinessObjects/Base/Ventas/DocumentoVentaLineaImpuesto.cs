@@ -11,26 +11,26 @@ namespace erp.Module.BusinessObjects.Base.Ventas;
 
 [ImageName("Top10Percent")]
 [DefaultProperty(nameof(TipoImpuesto))]
-public class ImpuestoLineaDocumentoVenta(Session session) : EntidadBase(session)
+public class DocumentoVentaLineaImpuesto(Session session) : EntidadBase(session)
 {
     private decimal _baseImponible;
     private CuentaContable? _cuenta;
     private bool _esCompuesto;
     private bool _esRetencion;
     private decimal _importeImpuestos;
-    private LineaDocumentoVenta? _lineaDocumentoVenta;
+    private DocumentoVentaLinea? _documentoVentaLinea;
     private string? _nombre;
     private string? _notas;
     private int _secuencia;
     private decimal _tipo;
     private TipoImpuesto? _tipoImpuesto;
 
-    [Association("LineaDocumentoVenta-Impuestos")]
+    [Association("DocumentoVentaLinea-Impuestos")]
     [XafDisplayName("Línea Documento Venta")]
-    public LineaDocumentoVenta? LineaDocumentoVenta
+    public DocumentoVentaLinea? DocumentoVentaLinea
     {
-        get => _lineaDocumentoVenta;
-        set => SetPropertyValue(nameof(LineaDocumentoVenta), ref _lineaDocumentoVenta, value);
+        get => _documentoVentaLinea;
+        set => SetPropertyValue(nameof(DocumentoVentaLinea), ref _documentoVentaLinea, value);
     }
 
     [XafDisplayName("Tipo Impuesto")]

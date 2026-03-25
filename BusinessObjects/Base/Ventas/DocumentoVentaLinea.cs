@@ -13,7 +13,7 @@ using erp.Module.Helpers.Contactos;
 namespace erp.Module.BusinessObjects.Base.Ventas;
 
 [ImageName("BO_Order_Item")]
-public class LineaDocumentoVenta(Session session) : EntidadBase(session)
+public class DocumentoVentaLinea(Session session) : EntidadBase(session)
 {
     private decimal _baseImponible;
     private decimal _cantidad;
@@ -28,7 +28,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     private CuentaContable? _cuentaContable;
     private decimal _porcentajeComision;
     private decimal _importeComisionFijo;
-    private GrupoDocumentoVenta? _grupo;
+    private DocumentoVentaGrupo? _grupo;
 
     [Association("DocumentoVenta-Lineas")]
     [XafDisplayName("Documento Venta")]
@@ -38,9 +38,9 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(DocumentoVenta), ref _documentoVenta, value);
     }
 
-    [Association("GrupoDocumentoVenta-Lineas")]
+    [Association("DocumentoVentaGrupo-Lineas")]
     [XafDisplayName("Grupo")]
-    public GrupoDocumentoVenta? Grupo
+    public DocumentoVentaGrupo? Grupo
     {
         get => _grupo;
         set => SetPropertyValue(nameof(Grupo), ref _grupo, value);
@@ -188,7 +188,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
-    [Association("LineaDocumentoVenta-TipoImpuestos")]
+    [Association("DocumentoVentaLinea-TipoImpuestos")]
     [DataSourceCriteria("DisponibleEnVentas = True AND EstaActivo = True")]
     [XafDisplayName("Impuestos")]
     public XPCollection<TipoImpuesto> TiposImpuestoVenta
@@ -204,9 +204,9 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
 
     [DevExpress.Xpo.Aggregated]
     [VisibleInDetailView(false)]
-    [Association("LineaDocumentoVenta-Impuestos")]
+    [Association("DocumentoVentaLinea-Impuestos")]
     [XafDisplayName("Detalle Impuestos")]
-    public XPCollection<ImpuestoLineaDocumentoVenta> Impuestos => GetCollection<ImpuestoLineaDocumentoVenta>();
+    public XPCollection<DocumentoVentaLineaImpuesto> Impuestos => GetCollection<DocumentoVentaLineaImpuesto>();
 
     protected virtual void OnProductoChanged()
     {
@@ -220,6 +220,16 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
     {
         if (IsLoading || IsSaving || IsDeleted) return;
         ReconstruirImpuestos();
+    }
+
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        if (DocumentoVenta?.Vendedor != null)
+        {
+            PorcentajeComision = DocumentoVenta.Vendedor.PorcentajeComision;
+            ImporteComisionFijo = DocumentoVenta.Vendedor.ImporteComisionFijo;
+        }
     }
 
     private void AplicarInstantaneaProducto()
@@ -258,9 +268,9 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
         for (var i = Impuestos.Count - 1; i >= 0; i--) Impuestos[i].Delete();
 
         foreach (var tax in TiposImpuestoVenta)
-            _ = new ImpuestoLineaDocumentoVenta(Session)
+            _ = new DocumentoVentaLineaImpuesto(Session)
             {
-                LineaDocumentoVenta = this,
+                DocumentoVentaLinea = this,
                 TipoImpuesto = tax,
                 BaseImponible = BaseImponible,
                 ImporteImpuestos = AmountCalculator.GetTaxAmount(BaseImponible, tax.Tipo, tax.EsRetencion)

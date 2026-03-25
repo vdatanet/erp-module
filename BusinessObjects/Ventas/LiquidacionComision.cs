@@ -103,7 +103,7 @@ public class LiquidacionComision(Session session) : EntidadBase(session)
                 {
                     var nuevaComision = new Comision(Session);
                     nuevaComision.Liquidacion = this;
-                    nuevaComision.LineaDocumentoVenta = linea;
+                    nuevaComision.DocumentoVentaLinea = linea;
                     nuevaComision.Importe = linea.ComisionCalculada;
                 }
             }

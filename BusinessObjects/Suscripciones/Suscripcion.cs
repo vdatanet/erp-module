@@ -222,7 +222,7 @@ public class Suscripcion(Session session) : EntidadBase(session)
             PeriodicidadSuscripcion = TipoSuscripcion?.Periodicidad ?? Periodicidad.Mensual
         };
 
-        var linea = new LineaDocumentoVenta(Session)
+        var linea = new DocumentoVentaLinea(Session)
         {
             DocumentoVenta = nuevoPedido,
             Producto = Producto,
@@ -264,7 +264,7 @@ public class Suscripcion(Session session) : EntidadBase(session)
             Fecha = localTime.Date
         };
 
-        var linea = new LineaDocumentoVenta(Session)
+        var linea = new DocumentoVentaLinea(Session)
         {
             DocumentoVenta = factura,
             Producto = Producto,

@@ -178,10 +178,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     protected virtual void OnClienteChanged(Tercero value)
     {
-        if (value is Cliente c)
-        {
-            CondicionPago = c.CondicionPago;
-        }
+        CondicionPago = (value as Cliente)?.CondicionPago;
 
         NombreCliente = value.Nombre;
         DocumentoIdentificacionCliente = value.Nif;
@@ -294,10 +291,18 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Fecha")]
+    [ImmediatePostData]
     public DateTime Fecha
     {
         get => _fecha;
-        set => SetPropertyValue(nameof(Fecha), ref _fecha, value);
+        set
+        {
+            var modified = SetPropertyValue(nameof(Fecha), ref _fecha, value);
+            if (modified && !IsLoading && !IsSaving)
+            {
+                OnChanged(nameof(IsFechaNoBloqueada));
+            }
+        }
     }
 
     [XafDisplayName("Hora")]
@@ -309,10 +314,18 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     [XafDisplayName("Ejercicio")]
     [RuleRequiredField("RuleRequiredField_DocumentoVenta_Ejercicio", DefaultContexts.Save)]
+    [ImmediatePostData]
     public Ejercicio? Ejercicio
     {
         get => _ejercicio;
-        set => SetPropertyValue(nameof(Ejercicio), ref _ejercicio, value);
+        set
+        {
+            var modified = SetPropertyValue(nameof(Ejercicio), ref _ejercicio, value);
+            if (modified && !IsLoading && !IsSaving)
+            {
+                OnChanged(nameof(IsFechaNoBloqueada));
+            }
+        }
     }
 
     [XafDisplayName("Ejercicio Fiscal")]
@@ -347,7 +360,26 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     public EstadoDocumentoVenta Estado
     {
         get => _estado;
-        set => SetPropertyValue(nameof(Estado), ref _estado, value);
+        set
+        {
+            var modified = SetPropertyValue(nameof(Estado), ref _estado, value);
+            if (modified && !IsLoading && !IsSaving)
+            {
+                ActualizarBanderasEstado(value);
+            }
+        }
+    }
+
+    private void ActualizarBanderasEstado(EstadoDocumentoVenta nuevoEstado)
+    {
+        Borrador = nuevoEstado == EstadoDocumentoVenta.Borrador;
+        Confirmado = nuevoEstado == EstadoDocumentoVenta.Confirmado;
+        Emitido = nuevoEstado == EstadoDocumentoVenta.Emitido;
+        Impreso = nuevoEstado == EstadoDocumentoVenta.Impreso;
+        Anulado = nuevoEstado == EstadoDocumentoVenta.Anulado;
+        Bloqueado = nuevoEstado == EstadoDocumentoVenta.Bloqueado;
+        Sincronizado = nuevoEstado == EstadoDocumentoVenta.Sincronizado;
+        Cobrado = nuevoEstado == EstadoDocumentoVenta.Cobrado;
     }
 
     [XafDisplayName("TPV")]
@@ -660,6 +692,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(CuentaBanco), ref _cuentaBanco, value);
     }
 
+    [NonCloneable]
     [XafDisplayName("Borrador")]
     public bool Borrador
     {
@@ -667,6 +700,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Borrador), ref _borrador, value);
     }
 
+    [NonCloneable]
     [XafDisplayName("Confirmado")]
     public bool Confirmado
     {
@@ -674,6 +708,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Confirmado), ref _confirmado, value);
     }
 
+    [NonCloneable]
     [XafDisplayName("Emitido")]
     public bool Emitido
     {
@@ -681,6 +716,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Emitido), ref _emitido, value);
     }
 
+    [NonCloneable]
     [XafDisplayName("Impreso")]
     public bool Impreso
     {
@@ -688,6 +724,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Impreso), ref _impreso, value);
     }
 
+    [NonCloneable]
     [XafDisplayName("Anulado")]
     public bool Anulado
     {
@@ -695,6 +732,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Anulado), ref _anulado, value);
     }
 
+    [NonCloneable]
     [XafDisplayName("Bloqueado")]
     public bool Bloqueado
     {
@@ -702,6 +740,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Bloqueado), ref _bloqueado, value);
     }
 
+    [NonCloneable]
     [XafDisplayName("Sincronizado")]
     public bool Sincronizado
     {
@@ -709,6 +748,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Sincronizado), ref _sincronizado, value);
     }
 
+    [NonCloneable]
     [XafDisplayName("Fecha Confirmación")]
     public DateTime? FechaConfirmacion
     {
@@ -716,6 +756,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(FechaConfirmacion), ref _fechaConfirmacion, value);
     }
 
+    [NonCloneable]
     [XafDisplayName("Fecha Emisión")]
     public DateTime? FechaEmision
     {
@@ -723,6 +764,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(FechaEmision), ref _fechaEmision, value);
     }
 
+    [NonCloneable]
     [XafDisplayName("Fecha Impresión")]
     public DateTime? FechaImpresion
     {
@@ -730,6 +772,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(FechaImpresion), ref _fechaImpresion, value);
     }
 
+    [NonCloneable]
     [XafDisplayName("Fecha Anulación")]
     public DateTime? FechaAnulacion
     {
@@ -798,6 +841,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(DocumentoRectificado), ref _documentoRectificado, value);
     }
 
+    [NonCloneable]
     [XafDisplayName("Usuario Creación")]
     public ApplicationUser? UsuarioCreacion
     {
@@ -805,6 +849,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(UsuarioCreacion), ref _usuarioCreacion, value);
     }
 
+    [NonCloneable]
     [XafDisplayName("Usuario Modificación")]
     public ApplicationUser? UsuarioModificacion
     {
@@ -812,6 +857,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(UsuarioModificacion), ref _usuarioModificacion, value);
     }
 
+    [NonCloneable]
     [XafDisplayName("Fecha Creación")]
     public DateTime FechaCreacion
     {
@@ -819,6 +865,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(FechaCreacion), ref _fechaCreacion, value);
     }
 
+    [NonCloneable]
     [XafDisplayName("Fecha Modificación")]
     public DateTime FechaModificacion
     {
@@ -866,7 +913,8 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     protected virtual void OnMetodoEntregaChanged(MetodoEntrega value)
     {
         Transportista = value.TransportistaPorDefecto;
-        if (GastosEnvio == 0)
+        // Solo asignamos si no tiene valor o es 0 y es un objeto nuevo (para no sobreescribir intencionadamente 0 en edición)
+        if (GastosEnvio == 0 && Session.IsNewObject(this))
         {
             GastosEnvio = value.CosteFijo;
         }
@@ -1006,10 +1054,16 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         if (value.EquipoVenta != null)
             EquipoVenta = value.EquipoVenta;
 
+        SincronizarComisionesLineas();
+    }
+
+    public void SincronizarComisionesLineas()
+    {
+        if (Vendedor == null) return;
         foreach (var linea in Lineas)
         {
-            linea.PorcentajeComision = value.PorcentajeComision;
-            linea.ImporteComisionFijo = value.ImporteComisionFijo;
+            linea.PorcentajeComision = Vendedor.PorcentajeComision;
+            linea.ImporteComisionFijo = Vendedor.ImporteComisionFijo;
         }
     }
 
@@ -1030,12 +1084,12 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     [DevExpress.Xpo.Aggregated]
     [Association("DocumentoVenta-Grupos")]
     [XafDisplayName("Grupos")]
-    public XPCollection<GrupoDocumentoVenta> Grupos => GetCollection<GrupoDocumentoVenta>(nameof(Grupos));
+    public XPCollection<DocumentoVentaGrupo> Grupos => GetCollection<DocumentoVentaGrupo>(nameof(Grupos));
 
     [DevExpress.Xpo.Aggregated]
     [Association("DocumentoVenta-Lineas")]
     [XafDisplayName("Líneas")]
-    public XPCollection<LineaDocumentoVenta> Lineas => GetCollection<LineaDocumentoVenta>();
+    public XPCollection<DocumentoVentaLinea> Lineas => GetCollection<DocumentoVentaLinea>();
 
     protected override XPCollection<T> CreateCollection<T>(XPMemberInfo property)
     {
@@ -1050,7 +1104,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     [DevExpress.Xpo.Aggregated]
     [Association("DocumentoVenta-Impuestos")]
     [XafDisplayName("Impuestos")]
-    public XPCollection<ImpuestoDocumentoVenta> Impuestos => GetCollection<ImpuestoDocumentoVenta>();
+    public XPCollection<DocumentoVentaImpuesto> Impuestos => GetCollection<DocumentoVentaImpuesto>();
 
     [DevExpress.Xpo.Aggregated]
     [Association("DocumentoVenta-Tareas")]

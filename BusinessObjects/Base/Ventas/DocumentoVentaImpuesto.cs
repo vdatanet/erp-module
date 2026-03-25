@@ -14,7 +14,7 @@ namespace erp.Module.BusinessObjects.Base.Ventas;
 
 [ImageName("RowTotalsPosition")]
 [DefaultProperty(nameof(Secuencia))]
-public class ImpuestoDocumentoVenta(Session session) : EntidadBase(session)
+public class DocumentoVentaImpuesto(Session session) : EntidadBase(session)
 {
     private decimal _baseImponible;
     private CausaExencion? _causaExencion;
