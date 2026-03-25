@@ -3,6 +3,8 @@ using System.Linq;
 using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.DC;
+using DevExpress.ExpressApp.Security;
+using Microsoft.Extensions.DependencyInjection;
 using DevExpress.ExpressApp.Editors;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
@@ -32,6 +34,8 @@ public class SesionTpv(Session session) : EntidadBase(session)
     private EstadoSesionTpv _estado;
     private decimal _importeApertura;
     private decimal _importeCierre;
+    private decimal _importeEsperado;
+    private decimal _diferenciaArqueo;
     private string? _observaciones;
     private Tpv? _tpv;
     private ApplicationUser? _usuario;
@@ -79,7 +83,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(ImporteApertura), ref _importeApertura, value);
     }
 
-    [XafDisplayName("Importe Cierre")]
+    [XafDisplayName("Importe Contado")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     [Appearance("ImporteCierreVisibleWhenClosed", Visibility = ViewItemVisibility.Hide,
@@ -88,6 +92,26 @@ public class SesionTpv(Session session) : EntidadBase(session)
     {
         get => _importeCierre;
         set => SetPropertyValue(nameof(ImporteCierre), ref _importeCierre, value);
+    }
+
+    [XafDisplayName("Importe Esperado")]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    [ModelDefault("AllowEdit", "False")]
+    public decimal ImporteEsperado
+    {
+        get => _importeEsperado;
+        set => SetPropertyValue(nameof(ImporteEsperado), ref _importeEsperado, value);
+    }
+
+    [XafDisplayName("Diferencia Arqueo")]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    [ModelDefault("AllowEdit", "False")]
+    public decimal DiferenciaArqueo
+    {
+        get => _diferenciaArqueo;
+        set => SetPropertyValue(nameof(DiferenciaArqueo), ref _diferenciaArqueo, value);
     }
 
     [Size(SizeAttribute.Unlimited)]
@@ -109,6 +133,10 @@ public class SesionTpv(Session session) : EntidadBase(session)
     [Association("SesionTpv-FacturasSimplificadas")]
     [XafDisplayName("Facturas Simplificadas")]
     public XPCollection<FacturaSimplificada> FacturasSimplificadas => GetCollection<FacturaSimplificada>();
+
+    [Association("SesionTpv-Movimientos")]
+    [XafDisplayName("Movimientos de Caja")]
+    public XPCollection<MovimientoCajaTpv> Movimientos => GetCollection<MovimientoCajaTpv>();
 
     [Browsable(false)]
     public bool EstaAbierta => Estado == EstadoSesionTpv.Abierta;
@@ -142,6 +170,16 @@ public class SesionTpv(Session session) : EntidadBase(session)
         ImporteApertura = importeApertura;
         Apertura = Tpv.GetLocalTime();
         Estado = EstadoSesionTpv.Abierta;
+
+        var mov = new MovimientoCajaTpv(Session);
+        mov.Tipo = TipoMovimientoCajaTpv.Apertura;
+        mov.Importe = importeApertura;
+        mov.SesionTpv = this;
+        mov.Fecha = Apertura;
+        mov.Usuario = usuario;
+        mov.Save();
+        
+        CalcularImporteEsperado();
     }
 
     [Action(Caption = "Cerrar Sesión", TargetObjectsCriteria = "Estado = 'Abierta'",
@@ -159,14 +197,53 @@ public class SesionTpv(Session session) : EntidadBase(session)
         Estado = EstadoSesionTpv.Cerrada;
         Cierre = Tpv?.GetLocalTime() ?? InformacionEmpresaHelper.GetLocalTime(Session);
         
+        CalcularImporteEsperado();
+
         if (importeCierreManual.HasValue)
         {
             ImporteCierre = importeCierreManual.Value;
         }
-        else if (ImporteCierre == 0)
-        {
-            ImporteCierre = CalcularImporteCierre();
-        }
+
+        DiferenciaArqueo = ImporteCierre - ImporteEsperado;
+
+        var mov = new MovimientoCajaTpv(Session);
+        mov.Tipo = TipoMovimientoCajaTpv.Cierre;
+        mov.Importe = ImporteCierre;
+        mov.SesionTpv = this;
+        mov.Fecha = Cierre.Value;
+        mov.Usuario = Usuario;
+        mov.Save();
+    }
+
+    public void RegistrarMovimiento(TipoMovimientoCajaTpv tipo, decimal importe, string? motivo)
+    {
+        if (!EstaAbierta)
+            throw new InvalidOperationException("La sesión no está abierta.");
+
+        if (importe <= 0 && (tipo == TipoMovimientoCajaTpv.Retirada || tipo == TipoMovimientoCajaTpv.Ingreso))
+            throw new InvalidOperationException("El importe debe ser mayor que cero.");
+        
+        if (string.IsNullOrEmpty(motivo) && tipo == TipoMovimientoCajaTpv.Retirada)
+            throw new InvalidOperationException("El motivo es obligatorio para retiradas de efectivo.");
+
+        var mov = new MovimientoCajaTpv(Session);
+        mov.Tipo = tipo;
+        mov.Importe = importe;
+        mov.Motivo = motivo;
+        mov.SesionTpv = this;
+        mov.Fecha = Tpv?.GetLocalTime() ?? InformacionEmpresaHelper.GetLocalTime(Session);
+        var userId = Session.ServiceProvider?.GetService<ISecurityStrategyBase>()?.UserId;
+        mov.Usuario = userId != null ? Session.GetObjectByKey<ApplicationUser>(userId) : null;
+        mov.Save();
+
+        CalcularImporteEsperado();
+    }
+
+    [Action(Caption = "Retirar Efectivo", TargetObjectsCriteria = "Estado = 'Abierta'", ImageName = "Action_MoneyWithdraw")]
+    public void RetirarEfectivoAction(decimal importe, string motivo)
+    {
+        RegistrarMovimiento(TipoMovimientoCajaTpv.Retirada, importe, motivo);
+        Save();
     }
 
     public void ValidarCierre()
@@ -188,10 +265,28 @@ public class SesionTpv(Session session) : EntidadBase(session)
         return EstaAbierta && Tpv != null && Usuario != null;
     }
 
-    public decimal CalcularImporteCierre()
+    public decimal CalcularImporteEsperado()
     {
-        // El importe esperado es el de apertura más la suma de todas las facturas simplificadas
-        return ImporteApertura + FacturasSimplificadas.Sum(f => f.ImporteTotal);
+        // Importe esperado = Importe de apertura + total de ventas - total retirado + otros ingresos/ajustes
+        // Las ventas se suman si están en la colección FacturasSimplificadas vinculada a esta sesión
+        var totalVentas = FacturasSimplificadas.Sum(f => f.ImporteTotal);
+        
+        // Sumamos ingresos, aperturas, cierres (aunque cierre no debería afectar antes de cerrarse, lo incluimos por si acaso)
+        // Restamos retiradas
+        // Ajustes pueden ser positivos o negativos, pero aquí el modelo los tiene como decimal positivos, 
+        // asumiremos que se registra el signo en el importe o tratamos el tipo.
+        
+        var totalMovimientos = Movimientos.Sum(m => m.Tipo switch
+        {
+            TipoMovimientoCajaTpv.Apertura => m.Importe,
+            TipoMovimientoCajaTpv.Ingreso => m.Importe,
+            TipoMovimientoCajaTpv.Ajuste => m.Importe, // Podría ser negativo
+            TipoMovimientoCajaTpv.Retirada => -m.Importe,
+            _ => 0
+        });
+
+        ImporteEsperado = totalVentas + totalMovimientos;
+        return ImporteEsperado;
     }
 
     public void ReabrirSesion()
