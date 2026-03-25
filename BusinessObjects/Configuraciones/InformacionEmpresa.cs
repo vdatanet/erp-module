@@ -35,6 +35,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private string? _movil;
     private string? _correoElectronico;
     private string? _sitioWeb;
+    private ZonaHoraria? _zonaHorariaPorDefecto;
 
     private CuentaContable? _cuentaAcreedoresPorDefecto;
     private CuentaContable? _cuentaPadreAcreedores;
@@ -168,6 +169,13 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     {
         get => _sitioWeb;
         set => SetPropertyValue(nameof(SitioWeb), ref _sitioWeb, value);
+    }
+
+    [XafDisplayName("Zona Horaria por Defecto")]
+    public ZonaHoraria? ZonaHorariaPorDefecto
+    {
+        get => _zonaHorariaPorDefecto;
+        set => SetPropertyValue(nameof(ZonaHorariaPorDefecto), ref _zonaHorariaPorDefecto, value);
     }
 
     [DataSourceCriteria("EstaActivo = True")]

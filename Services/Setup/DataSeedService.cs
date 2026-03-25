@@ -43,6 +43,9 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
         new PaisProvinciaPoblacionSetupService(objectSpace).CreateInitialData();
         objectSpace.CommitChanges();
 
+        new ZonaHorariaSetupService(objectSpace).CreateInitialData();
+        objectSpace.CommitChanges();
+
         if (tenantId != null)
         {
             new InformacionEmpresaSetupService(objectSpace).CreateInitialInformacionEmpresa();

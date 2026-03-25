@@ -76,6 +76,11 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
             informacionEmpresa.PaddingCuentaContable = 10;
         }
 
+        if (isNew || informacionEmpresa.ZonaHorariaPorDefecto == null)
+        {
+            informacionEmpresa.ZonaHorariaPorDefecto = OS.FirstOrDefault<ZonaHoraria>(z => z.IdZonaHoraria == "Europe/Madrid");
+        }
+
         OS.CommitChanges(); // Nos aseguramos de guardar la empresa inicial para evitar nulos en otras partes si es necesario
     }
 }
