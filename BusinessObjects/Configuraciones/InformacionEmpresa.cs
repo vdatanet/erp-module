@@ -78,8 +78,13 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private string? _textoDefectoVeriFactu;
     private string? _versionSistemaVeriFactu;
     private bool _activarVeriFactu;
+    private bool _activarFacturae;
+    private string? _serieCertificadoFacturae;
     private string? _nombreReporteTicket;
     private bool _impresionDirectaTicket;
+    private string? _unidadOrganicaOficinaContable;
+    private string? _unidadOrganicaOrganoGestor;
+    private string? _unidadOrganicaUnidadTramitadora;
     private int _paddingNumero;
     private int _paddingCuentaContable;
 
@@ -497,6 +502,45 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     {
         get => _activarVeriFactu;
         set => SetPropertyValue(nameof(ActivarVeriFactu), ref _activarVeriFactu, value);
+    }
+
+    [XafDisplayName("Activar Facturae")]
+    public bool ActivarFacturae
+    {
+        get => _activarFacturae;
+        set => SetPropertyValue(nameof(ActivarFacturae), ref _activarFacturae, value);
+    }
+
+    [Size(255)]
+    [XafDisplayName("Serie Certificado Facturae")]
+    public string? SerieCertificadoFacturae
+    {
+        get => _serieCertificadoFacturae;
+        set => SetPropertyValue(nameof(SerieCertificadoFacturae), ref _serieCertificadoFacturae, value);
+    }
+
+    [Size(50)]
+    [XafDisplayName("Oficina Contable (FACe)")]
+    public string? UnidadOrganicaOficinaContable
+    {
+        get => _unidadOrganicaOficinaContable;
+        set => SetPropertyValue(nameof(UnidadOrganicaOficinaContable), ref _unidadOrganicaOficinaContable, value);
+    }
+
+    [Size(50)]
+    [XafDisplayName("Órgano Gestor (FACe)")]
+    public string? UnidadOrganicaOrganoGestor
+    {
+        get => _unidadOrganicaOrganoGestor;
+        set => SetPropertyValue(nameof(UnidadOrganicaOrganoGestor), ref _unidadOrganicaOrganoGestor, value);
+    }
+
+    [Size(50)]
+    [XafDisplayName("Unidad Tramitadora (FACe)")]
+    public string? UnidadOrganicaUnidadTramitadora
+    {
+        get => _unidadOrganicaUnidadTramitadora;
+        set => SetPropertyValue(nameof(UnidadOrganicaUnidadTramitadora), ref _unidadOrganicaUnidadTramitadora, value);
     }
 
     [XafDisplayName("Nombre Admin Sistema VeriFactu")]
