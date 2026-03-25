@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Linq;
 using DevExpress.Data.Filtering;
+using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Security;
@@ -13,6 +14,8 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 
 using erp.Module.Helpers.Contactos;
+
+using erp.Module.Services.Tpv;
 
 namespace erp.Module.BusinessObjects.Tpv;
 
@@ -27,6 +30,8 @@ public enum EstadoSesionTpv
 [XafDisplayName("Sesión TPV")]
 [Persistent("SesionTpv")]
 [DefaultProperty(nameof(Apertura))]
+[RuleCriteria("UnicaSesionAbiertaPorTpv", DefaultContexts.Save, "Estado != 'Abierta' || [Tpv.Sesiones][Estado = 'Abierta' && Oid != ^.Oid].Count() = 0", 
+    CustomMessageTemplate = "Ya existe otra sesión abierta para este TPV.", SkipNullOrEmptyValues = false)]
 public class SesionTpv(Session session) : EntidadBase(session)
 {
     private DateTime _apertura;
@@ -38,7 +43,23 @@ public class SesionTpv(Session session) : EntidadBase(session)
     private decimal _diferenciaArqueo;
     private string? _observaciones;
     private Tpv? _tpv;
+    private Guid? _estadoAbiertoUnico;
     private ApplicationUser? _usuario;
+    private ApplicationUser? _abiertaPor;
+    private ApplicationUser? _cerradaPor;
+    private ApplicationUser? _reabiertaPor;
+    private string? _motivoReapertura;
+    private int _numeroReaperturas;
+    private DateTime? _fechaUltimaModificacion;
+
+    [XafDisplayName("Estado Abierto Único")]
+    [Browsable(false)]
+    [Indexed("Tpv", Unique = true)]
+    public Guid? EstadoAbiertoUnico
+    {
+        get => _estadoAbiertoUnico;
+        private set => SetPropertyValue(nameof(EstadoAbiertoUnico), ref _estadoAbiertoUnico, value);
+    }
 
     [XafDisplayName("TPV")]
     [RuleRequiredField("RuleRequiredField_SesionTpv_Tpv", DefaultContexts.Save, CustomMessageTemplate = "El TPV de la Sesión es obligatorio")]
@@ -55,6 +76,48 @@ public class SesionTpv(Session session) : EntidadBase(session)
     {
         get => _usuario;
         set => SetPropertyValue(nameof(Usuario), ref _usuario, value);
+    }
+
+    [XafDisplayName("Abierta por")]
+    public ApplicationUser? AbiertaPor
+    {
+        get => _abiertaPor;
+        set => SetPropertyValue(nameof(AbiertaPor), ref _abiertaPor, value);
+    }
+
+    [XafDisplayName("Cerrada por")]
+    public ApplicationUser? CerradaPor
+    {
+        get => _cerradaPor;
+        set => SetPropertyValue(nameof(CerradaPor), ref _cerradaPor, value);
+    }
+
+    [XafDisplayName("Reabierta por")]
+    public ApplicationUser? ReabiertaPor
+    {
+        get => _reabiertaPor;
+        set => SetPropertyValue(nameof(ReabiertaPor), ref _reabiertaPor, value);
+    }
+
+    [XafDisplayName("Motivo Reapertura")]
+    public string? MotivoReapertura
+    {
+        get => _motivoReapertura;
+        set => SetPropertyValue(nameof(MotivoReapertura), ref _motivoReapertura, value);
+    }
+
+    [XafDisplayName("Número de Reaperturas")]
+    public int NumeroReaperturas
+    {
+        get => _numeroReaperturas;
+        set => SetPropertyValue(nameof(NumeroReaperturas), ref _numeroReaperturas, value);
+    }
+
+    [XafDisplayName("Última Modificación")]
+    public DateTime? FechaUltimaModificacion
+    {
+        get => _fechaUltimaModificacion;
+        set => SetPropertyValue(nameof(FechaUltimaModificacion), ref _fechaUltimaModificacion, value);
     }
 
     [XafDisplayName("Apertura")]
@@ -100,7 +163,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
     public decimal ImporteEsperado
     {
         get => _importeEsperado;
-        set => SetPropertyValue(nameof(ImporteEsperado), ref _importeEsperado, value);
+        internal set => SetPropertyValue(nameof(ImporteEsperado), ref _importeEsperado, value);
     }
 
     [XafDisplayName("Diferencia Arqueo")]
@@ -110,7 +173,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
     public decimal DiferenciaArqueo
     {
         get => _diferenciaArqueo;
-        set => SetPropertyValue(nameof(DiferenciaArqueo), ref _diferenciaArqueo, value);
+        internal set => SetPropertyValue(nameof(DiferenciaArqueo), ref _diferenciaArqueo, value);
     }
 
     [Size(SizeAttribute.Unlimited)]
@@ -126,12 +189,36 @@ public class SesionTpv(Session session) : EntidadBase(session)
     public EstadoSesionTpv Estado
     {
         get => _estado;
-        set => SetPropertyValue(nameof(Estado), ref _estado, value);
+        internal set => SetPropertyValue(nameof(Estado), ref _estado, value);
     }
 
     [Association("SesionTpv-FacturasSimplificadas")]
     [XafDisplayName("Facturas Simplificadas")]
     public XPCollection<FacturaSimplificada> FacturasSimplificadas => GetCollection<FacturaSimplificada>();
+
+    [Association("SesionTpv-Eventos")]
+    [XafDisplayName("Historial de Eventos")]
+    public XPCollection<SesionTpvEvento> Eventos => GetCollection<SesionTpvEvento>();
+
+    public void RegistrarEvento(TipoEventoSesionTpv tipo, string? descripcion = null, decimal importeAnterior = 0, decimal importeNuevo = 0, string? estadoAnterior = null, string? estadoNuevo = null)
+    {
+        var service = Session.ServiceProvider?.GetService<ISesionTpvService>();
+        var user = (service as SesionTpvService)?.InvokeGetUsuarioActual(Session);
+
+        var evento = new SesionTpvEvento(Session);
+        evento.Sesion = this;
+        evento.TipoEvento = tipo;
+        evento.Usuario = user;
+        evento.FechaHora = Tpv?.GetLocalTime() ?? InformacionEmpresaHelper.GetLocalTime(Session);
+        evento.Descripcion = descripcion;
+        evento.ImporteAnterior = importeAnterior;
+        evento.ImporteNuevo = importeNuevo;
+        evento.EstadoAnterior = estadoAnterior;
+        evento.EstadoNuevo = estadoNuevo;
+    }
+
+    [Browsable(false)]
+    public bool IsBeingSaved => Session.IsObjectToSave(this);
 
     [Association("SesionTpv-Movimientos")]
     [XafDisplayName("Movimientos de Caja")]
@@ -155,106 +242,77 @@ public class SesionTpv(Session session) : EntidadBase(session)
         }
     }
 
+    [Browsable(false)]
+    public ISesionTpvService? SesionTpvService => Session.ServiceProvider?.GetService<ISesionTpvService>();
+
+    private void CambiarEstado(EstadoSesionTpv nuevoEstado)
+    {
+        if (Estado == nuevoEstado) return;
+        
+        Estado = nuevoEstado;
+        
+        if (nuevoEstado == EstadoSesionTpv.Abierta)
+        {
+            Cierre = null;
+            EstadoAbiertoUnico = Guid.NewGuid();
+        }
+        else
+        {
+            EstadoAbiertoUnico = null;
+        }
+    }
+
     public void AbrirSesion(Tpv tpv, ApplicationUser usuario, decimal importeApertura = 0)
     {
-        if (tpv == null) throw new ArgumentNullException(nameof(tpv));
-        if (usuario == null) throw new ArgumentNullException(nameof(usuario));
+        var service = SesionTpvService;
+        if (service == null)
+            throw new InvalidOperationException("El servicio de Sesión TPV no está disponible.");
 
-        if (tpv.SesionAbierta)
-            throw new InvalidOperationException("Ya existe una sesión abierta para este TPV.");
-
-        // Evitar abrir si ya está abierta (si es una nueva instancia, el estado será Abierta por defecto)
-        // Pero este método sirve para inicializar una sesión recién creada.
-        Tpv = tpv;
-        Usuario = usuario;
-        ImporteApertura = Math.Round(importeApertura, 2);
-        Apertura = Tpv.GetLocalTime();
-        Estado = EstadoSesionTpv.Abierta;
-
-        var mov = new MovimientoCajaTpv(Session);
-        mov.Tipo = TipoMovimientoCajaTpv.Apertura;
-        mov.Importe = ImporteApertura;
-        mov.SesionTpv = this;
-        mov.Fecha = Apertura;
-        mov.Usuario = usuario;
-        mov.Save();
-        
-        CalcularImporteEsperado();
+        CambiarEstado(EstadoSesionTpv.Abierta);
+        service.InicializarSesion(this, tpv, usuario, importeApertura);
     }
 
-    public void CerrarSesionAction()
+    public void CerrarSesionAction(string? observaciones = null)
     {
-        CerrarSesion();
-        Save();
+        CambiarEstado(EstadoSesionTpv.Cerrada);
+        SesionTpvService?.CerrarSesion(this, null, observaciones);
     }
 
-    public void CerrarSesion(decimal? importeCierreManual = null)
+    public void CerrarSesion(decimal? importeCierreManual = null, string? observaciones = null)
     {
-        ValidarCierre();
+        var service = SesionTpvService;
+        if (service == null)
+            throw new InvalidOperationException("El servicio de Sesión TPV no está disponible.");
 
-        Estado = EstadoSesionTpv.Cerrada;
-        Cierre = Tpv?.GetLocalTime() ?? InformacionEmpresaHelper.GetLocalTime(Session);
-        
-        CalcularImporteEsperado();
-
-        if (importeCierreManual.HasValue)
-        {
-            ImporteCierre = Math.Round(importeCierreManual.Value, 2);
-        }
-
-        DiferenciaArqueo = Math.Round(ImporteCierre - ImporteEsperado, 2);
-
-        var mov = new MovimientoCajaTpv(Session);
-        mov.Tipo = TipoMovimientoCajaTpv.Cierre;
-        mov.Importe = ImporteCierre;
-        mov.SesionTpv = this;
-        mov.Fecha = Cierre.Value;
-        mov.Usuario = Usuario;
-        mov.Save();
+        CambiarEstado(EstadoSesionTpv.Cerrada);
+        service.CerrarSesion(this, importeCierreManual, observaciones);
     }
 
     public void RegistrarMovimiento(TipoMovimientoCajaTpv tipo, decimal importe, string? motivo)
     {
-        if (!EstaAbierta)
-            throw new InvalidOperationException("La sesión no está abierta.");
+        var service = SesionTpvService;
+        if (service == null)
+            throw new InvalidOperationException("El servicio de Sesión TPV no está disponible.");
 
-        if (importe <= 0 && (tipo == TipoMovimientoCajaTpv.Retirada || tipo == TipoMovimientoCajaTpv.Ingreso))
-            throw new InvalidOperationException("El importe debe ser mayor que cero.");
-        
-        if (string.IsNullOrEmpty(motivo) && tipo == TipoMovimientoCajaTpv.Retirada)
-            throw new InvalidOperationException("El motivo es obligatorio para retiradas de efectivo.");
-
-        var mov = new MovimientoCajaTpv(Session);
-        mov.Tipo = tipo;
-        mov.Importe = Math.Round(importe, 2);
-        mov.Motivo = motivo;
-        mov.SesionTpv = this;
-        mov.Fecha = Tpv?.GetLocalTime() ?? InformacionEmpresaHelper.GetLocalTime(Session);
-        var userId = Session.ServiceProvider?.GetService<ISecurityStrategyBase>()?.UserId;
-        mov.Usuario = userId != null ? Session.GetObjectByKey<ApplicationUser>(userId) : null;
-        mov.Save();
-
-        CalcularImporteEsperado();
+        service.RegistrarMovimiento(this, tipo, importe, motivo);
     }
 
     public void RetirarEfectivoAction(decimal importe, string motivo)
     {
         RegistrarMovimiento(TipoMovimientoCajaTpv.Retirada, importe, motivo);
-        Save();
     }
 
     public void ValidarCierre()
     {
-        if (!EstaAbierta)
-            throw new InvalidOperationException("La sesión no está abierta.");
-
-        if (Tpv == null)
-            throw new InvalidOperationException("La sesión debe tener un TPV asociado.");
-
-        if (Usuario == null)
-            throw new InvalidOperationException("La sesión debe tener un Usuario asociado.");
-
-        // Reglas adicionales de negocio podrían ir aquí
+        if (SesionTpvService != null)
+        {
+            if (!SesionTpvService.PuedeCerrarSesion(this, out var error))
+                throw new InvalidOperationException(error ?? "No se puede cerrar la sesión.");
+        }
+        else if (!PuedeCerrarSesion())
+        {
+            throw new InvalidOperationException("No se puede cerrar la sesión.");
+        }
     }
 
     public bool PuedeCerrarSesion()
@@ -264,55 +322,42 @@ public class SesionTpv(Session session) : EntidadBase(session)
 
     public decimal CalcularImporteEsperado()
     {
-        // Importe esperado = Importe de apertura + total de ventas - total retirado + otros ingresos/ajustes
-        // Las ventas se suman si están en la colección FacturasSimplificadas vinculada a esta sesión
-        var totalVentas = FacturasSimplificadas.Sum(f => Math.Round(f.ImporteTotal, 2));
-        
-        // Sumamos ingresos, aperturas, cierres (aunque cierre no debería afectar antes de cerrarse, lo incluimos por si acaso)
-        // Restamos retiradas
-        // Ajustes pueden ser positivos o negativos, pero aquí el modelo los tiene como decimal positivos, 
-        // asumiremos que se registra el signo en el importe o tratamos el tipo.
-        
-        var totalMovimientos = Movimientos.Sum(m => m.Tipo switch
-        {
-            TipoMovimientoCajaTpv.Apertura => Math.Round(m.Importe, 2),
-            TipoMovimientoCajaTpv.Ingreso => Math.Round(m.Importe, 2),
-            TipoMovimientoCajaTpv.Ajuste => Math.Round(m.Importe, 2), // Podría ser negativo
-            TipoMovimientoCajaTpv.Retirada => -Math.Round(m.Importe, 2),
-            _ => 0
-        });
-
-        ImporteEsperado = Math.Round(totalVentas + totalMovimientos, 2);
-        return ImporteEsperado;
+        return SesionTpvService?.CalcularImporteEsperado(this) ?? 0;
     }
 
-    public void ReabrirSesion()
+    public void ReabrirSesion(string? motivo = null)
     {
-        if (!EstaCerrada)
-            throw new InvalidOperationException("Solo se pueden reabrir sesiones cerradas.");
+        var service = SesionTpvService;
+        if (service == null)
+            throw new InvalidOperationException("El servicio de Sesión TPV no está disponible.");
 
-        if (Tpv?.SesionAbierta ?? false)
-            throw new InvalidOperationException("No se puede reabrir la sesión porque ya existe otra sesión abierta para este TPV.");
-
-        // Comprobar si el negocio permite la reapertura (por ejemplo, solo el mismo día)
-        // Por ahora lo permitimos sin restricciones adicionales según el requerimiento.
-        
-        Estado = EstadoSesionTpv.Abierta;
-        Cierre = null;
-        // Se podría dejar trazabilidad en Observaciones si fuera necesario.
-        Observaciones += $"\nSesión reabierta el {Tpv?.GetLocalTime() ?? InformacionEmpresaHelper.GetLocalTime(Session)}";
+        CambiarEstado(EstadoSesionTpv.Abierta);
+        service.ReabrirSesion(this, motivo);
     }
 
     public void ReabrirSesionAction()
     {
         ReabrirSesion();
-        Save();
+    }
+
+    protected override void OnSaving()
+    {
+        base.OnSaving();
+        if (Tpv != null && Estado == EstadoSesionTpv.Abierta)
+        {
+            // Revalidación en el momento de guardar para evitar condiciones de carrera.
+            // Se comprueba si existe OTRA sesión abierta diferente a la actual.
+            var sesionAbierta = Session.FindObject<SesionTpv>(
+                CriteriaOperator.Parse("Tpv.Oid = ? AND Estado = ? AND Oid != ?", Tpv.Oid, EstadoSesionTpv.Abierta, Oid));
+            
+            if (sesionAbierta != null)
+                throw new UserFriendlyException("Ya existe una sesión abierta para este TPV. No se pueden tener dos sesiones abiertas simultáneamente.");
+        }
     }
 
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        Apertura = Tpv?.GetLocalTime() ?? InformacionEmpresaHelper.GetLocalTime(Session);
-        Estado = EstadoSesionTpv.Abierta;
+        // Se deja en estado neutro. La apertura real se gestiona en AbrirSesion.
     }
 }

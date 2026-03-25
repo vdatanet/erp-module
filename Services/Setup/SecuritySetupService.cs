@@ -289,7 +289,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             tpvRole.Name = "Tpv";
         }
 
-        tpvRole.AddTypePermissionsRecursively<Tpv>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
+        tpvRole.AddTypePermissionsRecursively<erp.Module.BusinessObjects.Tpv.Tpv>(SecurityOperations.FullAccess, SecurityPermissionState.Allow);
         tpvRole.AddTypePermissionsRecursively<FacturaSimplificada>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
         tpvRole.AddTypePermissionsRecursively<SesionTpv>(SecurityOperations.FullAccess,

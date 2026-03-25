@@ -92,6 +92,7 @@ public class TpvSessionController : ViewController
         
         tpv.AbrirSesionAction(parameters.ImporteReal);
         ObjectSpace.CommitChanges();
+        ObjectSpace.Refresh();
     }
 
     private void ReabrirSesion_Execute(object sender, SimpleActionExecuteEventArgs e)
@@ -99,6 +100,7 @@ public class TpvSessionController : ViewController
         var tpv = (BusinessObjects.Tpv.Tpv)e.CurrentObject;
         tpv.ReabrirSesionAction();
         ObjectSpace.CommitChanges();
+        ObjectSpace.Refresh();
     }
 
     private void ContinuarSesion_Execute(object sender, SimpleActionExecuteEventArgs e)
@@ -140,6 +142,7 @@ public class TpvSessionController : ViewController
         sesion.CerrarSesion(parameters.ImporteContado);
         
         ObjectSpace.CommitChanges();
+        ObjectSpace.Refresh();
     }
 
     private void RetirarEfectivo_CustomizePopupWindowParams(object sender, CustomizePopupWindowParamsEventArgs e)

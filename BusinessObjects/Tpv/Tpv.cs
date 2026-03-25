@@ -6,6 +6,8 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.Services.Tpv;
+using Microsoft.Extensions.DependencyInjection;
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.Helpers.Contactos;
 
@@ -106,15 +108,27 @@ public class Tpv(Session session) : EntidadBase(session)
 
     public void AbrirSesionAction(decimal importeApertura = 0)
     {
-        var sesionAbierta = SesionActualAbierta;
-        if (sesionAbierta != null) return;
+        var service = Session.ServiceProvider?.GetService<ISesionTpvService>();
+        if (service != null)
+        {
+            service.AbrirSesion(this, Session.GetObjectByKey<ApplicationUser>(SecuritySystem.CurrentUserId), importeApertura);
+        }
+        else
+        {
+            var sesionAbierta = SesionActualAbierta;
+            if (sesionAbierta != null) return;
 
-        var usuarioActual = Session.GetObjectByKey<ApplicationUser>(SecuritySystem.CurrentUserId);
-        if (usuarioActual == null) return;
+            if (!Activo)
+                throw new UserFriendlyException("No se puede abrir una sesión en un TPV inactivo.");
 
-        var nuevaSesion = new SesionTpv(Session);
-        nuevaSesion.AbrirSesion(this, usuarioActual, importeApertura);
-        nuevaSesion.Save();
+            var usuarioActual = Session.GetObjectByKey<ApplicationUser>(SecuritySystem.CurrentUserId);
+            if (usuarioActual == null) return;
+
+            var nuevaSesion = new SesionTpv(Session);
+            nuevaSesion.AbrirSesion(this, usuarioActual, importeApertura);
+        }
+        
+        Session.Reload(this);
         OnChanged(nameof(SesionActualAbierta));
         OnChanged(nameof(SesionAbierta));
     }
@@ -126,13 +140,22 @@ public class Tpv(Session session) : EntidadBase(session)
         // En XAF, esta acción solo sirve para navegar o validar.
     }
 
-    public void CerrarSesionAction()
+    public void CerrarSesionAction(string? observaciones = null)
     {
         var sesionAbierta = SesionActualAbierta;
         if (sesionAbierta == null) return;
 
-        sesionAbierta.CerrarSesion();
-        sesionAbierta.Save();
+        var service = Session.ServiceProvider?.GetService<ISesionTpvService>();
+        if (service != null)
+        {
+            service.CerrarSesion(sesionAbierta, null, observaciones);
+        }
+        else
+        {
+            sesionAbierta.CerrarSesion(null, observaciones);
+        }
+        
+        Session.Reload(this);
         OnChanged(nameof(SesionActualAbierta));
         OnChanged(nameof(SesionAbierta));
     }
@@ -140,10 +163,20 @@ public class Tpv(Session session) : EntidadBase(session)
     public void ReabrirSesionAction()
     {
         var ultimaSesion = Sesiones.OrderByDescending(s => s.Apertura).FirstOrDefault();
-        if (ultimaSesion == null || ultimaSesion.EstaAbierta) return;
+        if (ultimaSesion == null) return;
+
+        var service = Session.ServiceProvider?.GetService<ISesionTpvService>();
+        if (service != null)
+        {
+            service.ReabrirSesion(ultimaSesion);
+        }
+        else
+        {
+            if (ultimaSesion.EstaAbierta) return;
+            ultimaSesion.ReabrirSesion();
+        }
         
-        ultimaSesion.ReabrirSesion();
-        ultimaSesion.Save();
+        Session.Reload(this);
         OnChanged(nameof(SesionActualAbierta));
         OnChanged(nameof(SesionAbierta));
     }
