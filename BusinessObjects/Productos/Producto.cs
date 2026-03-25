@@ -29,6 +29,12 @@ public class Producto(Session session) : EntidadBase(session)
     private bool _disponibleEnCompras;
     private bool _disponibleEnTpv;
     private bool _disponibleEnVentas;
+    private bool _disponibleEnWeb;
+    private bool _gestionaStock;
+    private bool _permiteVentaSinStock;
+    private bool _requiereReservaStock;
+    private bool _esServicio;
+    private bool _esConsumible;
     private bool _estaActivo;
     private MediaDataObject? _foto;
     private string? _nombre;
@@ -126,6 +132,48 @@ public class Producto(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(DisponibleEnTpv), ref _disponibleEnTpv, value);
     }
 
+    [XafDisplayName("Disponible en Web")]
+    public bool DisponibleEnWeb
+    {
+        get => _disponibleEnWeb;
+        set => SetPropertyValue(nameof(DisponibleEnWeb), ref _disponibleEnWeb, value);
+    }
+
+    [XafDisplayName("Gestiona Stock")]
+    public bool GestionaStock
+    {
+        get => _gestionaStock;
+        set => SetPropertyValue(nameof(GestionaStock), ref _gestionaStock, value);
+    }
+
+    [XafDisplayName("Permite Venta Sin Stock")]
+    public bool PermiteVentaSinStock
+    {
+        get => _permiteVentaSinStock;
+        set => SetPropertyValue(nameof(PermiteVentaSinStock), ref _permiteVentaSinStock, value);
+    }
+
+    [XafDisplayName("Requiere Reserva Stock")]
+    public bool RequiereReservaStock
+    {
+        get => _requiereReservaStock;
+        set => SetPropertyValue(nameof(RequiereReservaStock), ref _requiereReservaStock, value);
+    }
+
+    [XafDisplayName("Es Servicio")]
+    public bool EsServicio
+    {
+        get => _esServicio;
+        set => SetPropertyValue(nameof(EsServicio), ref _esServicio, value);
+    }
+
+    [XafDisplayName("Es Consumible")]
+    public bool EsConsumible
+    {
+        get => _esConsumible;
+        set => SetPropertyValue(nameof(EsConsumible), ref _esConsumible, value);
+    }
+
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Notas")]
     public string? Notas
@@ -189,6 +237,12 @@ public class Producto(Session session) : EntidadBase(session)
         DisponibleEnVentas = false;
         DisponibleEnCompras = false;
         DisponibleEnTpv = false;
+        DisponibleEnWeb = false;
+        GestionaStock = false;
+        PermiteVentaSinStock = false;
+        RequiereReservaStock = false;
+        EsServicio = false;
+        EsConsumible = false;
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null) return;
         if (companyInfo.CuentaVentasPorDefecto != null) CuentaVentas = companyInfo.CuentaVentasPorDefecto;
