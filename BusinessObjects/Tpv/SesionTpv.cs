@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Linq;
 using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Editors;
@@ -107,20 +108,88 @@ public class SesionTpv(Session session) : EntidadBase(session)
     [XafDisplayName("Facturas Simplificadas")]
     public XPCollection<FacturaSimplificada> FacturasSimplificadas => GetCollection<FacturaSimplificada>();
 
-    public override void AfterConstruction()
+    [Browsable(false)]
+    public bool EstaAbierta => Estado == EstadoSesionTpv.Abierta;
+
+    [Browsable(false)]
+    public bool EstaCerrada => Estado == EstadoSesionTpv.Cerrada;
+
+    public void AbrirSesion(Tpv tpv, ApplicationUser usuario, decimal importeApertura = 0)
     {
-        base.AfterConstruction();
-        Apertura = Tpv?.GetLocalTime() ?? InformacionEmpresaHelper.GetLocalTime(Session);
+        if (tpv == null) throw new ArgumentNullException(nameof(tpv));
+        if (usuario == null) throw new ArgumentNullException(nameof(usuario));
+
+        // Evitar abrir si ya está abierta (si es una nueva instancia, el estado será Abierta por defecto)
+        // Pero este método sirve para inicializar una sesión recién creada.
+        Tpv = tpv;
+        Usuario = usuario;
+        ImporteApertura = importeApertura;
+        Apertura = Tpv.GetLocalTime();
         Estado = EstadoSesionTpv.Abierta;
     }
 
     /*[Action(Caption = "Cerrar Sesión", TargetObjectsCriteria = "Estado = 'Abierta'",
         ConfirmationMessage = "¿Desea cerrar la sesión?", ImageName = "Action_Close")]*/
-    public void CerrarSesion()
+    public void CerrarSesion(decimal? importeCierreManual = null)
     {
+        ValidarCierre();
+
         Estado = EstadoSesionTpv.Cerrada;
         Cierre = Tpv?.GetLocalTime() ?? InformacionEmpresaHelper.GetLocalTime(Session);
-        // El importe de cierre se suele introducir manualmente en la vista de detalle antes de cerrar, 
-        // o se podría calcular aquí la suma de facturas si fuera necesario.
+        
+        if (importeCierreManual.HasValue)
+        {
+            ImporteCierre = importeCierreManual.Value;
+        }
+        else if (ImporteCierre == 0)
+        {
+            ImporteCierre = CalcularImporteCierre();
+        }
+    }
+
+    public void ValidarCierre()
+    {
+        if (!EstaAbierta)
+            throw new InvalidOperationException("La sesión no está abierta.");
+
+        if (Tpv == null)
+            throw new InvalidOperationException("La sesión debe tener un TPV asociado.");
+
+        if (Usuario == null)
+            throw new InvalidOperationException("La sesión debe tener un Usuario asociado.");
+
+        // Reglas adicionales de negocio podrían ir aquí
+    }
+
+    public bool PuedeCerrarSesion()
+    {
+        return EstaAbierta && Tpv != null && Usuario != null;
+    }
+
+    public decimal CalcularImporteCierre()
+    {
+        // El importe esperado es el de apertura más la suma de todas las facturas simplificadas
+        return ImporteApertura + FacturasSimplificadas.Sum(f => f.ImporteTotal);
+    }
+
+    public void ReabrirSesion()
+    {
+        if (!EstaCerrada)
+            throw new InvalidOperationException("Solo se pueden reabrir sesiones cerradas.");
+
+        // Comprobar si el negocio permite la reapertura (por ejemplo, solo el mismo día)
+        // Por ahora lo permitimos sin restricciones adicionales según el requerimiento.
+        
+        Estado = EstadoSesionTpv.Abierta;
+        Cierre = null;
+        // Se podría dejar trazabilidad en Observaciones si fuera necesario.
+        Observaciones += $"\nSesión reabierta el {Tpv?.GetLocalTime() ?? InformacionEmpresaHelper.GetLocalTime(Session)}";
+    }
+
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        Apertura = Tpv?.GetLocalTime() ?? InformacionEmpresaHelper.GetLocalTime(Session);
+        Estado = EstadoSesionTpv.Abierta;
     }
 }
