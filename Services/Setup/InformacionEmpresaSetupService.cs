@@ -47,6 +47,7 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
             informacionEmpresa.PrefijoFacturasSimplificadasPorDefecto = "VS";
             informacionEmpresa.PrefijoParteTrabajoPorDefecto = "PT";
             informacionEmpresa.NombreReporteTicket = "Ticket Factura Simplificada";
+            informacionEmpresa.ActivarVeriFactu = false; // Default to false
             isNew = true;
         }
 

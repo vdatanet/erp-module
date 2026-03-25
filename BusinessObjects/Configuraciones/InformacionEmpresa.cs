@@ -77,6 +77,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private string? _serieCertificadoVeriFactu;
     private string? _textoDefectoVeriFactu;
     private string? _versionSistemaVeriFactu;
+    private bool _activarVeriFactu;
     private string? _nombreReporteTicket;
     private bool _impresionDirectaTicket;
     private int _paddingNumero;
@@ -489,6 +490,13 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     {
         get => _versionSistemaVeriFactu;
         set => SetPropertyValue(nameof(VersionSistemaVeriFactu), ref _versionSistemaVeriFactu, value);
+    }
+
+    [XafDisplayName("Activar VeriFactu")]
+    public bool ActivarVeriFactu
+    {
+        get => _activarVeriFactu;
+        set => SetPropertyValue(nameof(ActivarVeriFactu), ref _activarVeriFactu, value);
     }
 
     [XafDisplayName("Nombre Admin Sistema VeriFactu")]

@@ -232,10 +232,10 @@ public class VentaTpv(Session session) : EntidadBase(session)
         MaterializarVenta();
     }
 
-    private void MaterializarVenta()
+    public FacturaSimplificada? MaterializarVenta()
     {
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        if (companyInfo == null) return;
+        if (companyInfo == null) return null;
 
         var factura = new FacturaSimplificada(Session)
         {
@@ -288,6 +288,8 @@ public class VentaTpv(Session session) : EntidadBase(session)
         factura.RecalcularTotales();
         factura.AsignarNumero();
         RegistrarEvento("Materializada", $"Factura simplificada {factura.Secuencia} generada.");
+
+        return factura;
     }
 
     public void Cancelar(string motivo)

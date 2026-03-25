@@ -29,6 +29,7 @@ public class Tpv(Session session) : EntidadBase(session)
     private DateTime? _ultimaConexion;
     private string? _nombreReporteTicket;
     private bool? _impresionDirectaTicket;
+    private bool _activarVeriFactu;
 
     [Size(100)]
     [RuleRequiredField("RuleRequiredField_Tpv_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre del TPV es obligatorio")]
@@ -98,6 +99,13 @@ public class Tpv(Session session) : EntidadBase(session)
     {
         get => _impresionDirectaTicket;
         set => SetPropertyValue(nameof(ImpresionDirectaTicket), ref _impresionDirectaTicket, value);
+    }
+
+    [XafDisplayName("Activar VeriFactu")]
+    public bool ActivarVeriFactu
+    {
+        get => _activarVeriFactu;
+        set => SetPropertyValue(nameof(ActivarVeriFactu), ref _activarVeriFactu, value);
     }
 
     public DateTime GetLocalTime()
