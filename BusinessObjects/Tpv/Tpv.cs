@@ -8,6 +8,7 @@ using DevExpress.Persistent.BaseImpl.PermissionPolicy;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.Services.Tpv;
 using Microsoft.Extensions.DependencyInjection;
+using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.Helpers.Contactos;
 
@@ -94,9 +95,12 @@ public class Tpv(Session session) : EntidadBase(session)
         return InformacionEmpresaHelper.GetLocalTime(Session);
     }
 
-    [Association("Tpv-FacturasSimplificadas")]
     [XafDisplayName("Facturas Simplificadas")]
-    public XPCollection<FacturaSimplificada> FacturasSimplificadas => GetCollection<FacturaSimplificada>();
+    public XPCollection<FacturaSimplificada> FacturasSimplificadas => new XPCollection<FacturaSimplificada>(Session, CriteriaOperator.Parse("Tpv.Oid = ? AND TipoDocumento = ?", Oid, TipoDocumentoVenta.FacturaSimplificada));
+
+    [Association("Tpv-DocumentosVenta")]
+    [XafDisplayName("Documentos de Venta")]
+    public XPCollection<DocumentoVenta> DocumentosVenta => GetCollection<DocumentoVenta>();
 
     [Association("Tpv-Sesiones")]
     [XafDisplayName("Sesiones")]

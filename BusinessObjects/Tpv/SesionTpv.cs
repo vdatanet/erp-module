@@ -13,6 +13,7 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 
+using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.Helpers.Contactos;
 
 using erp.Module.Services.Tpv;
@@ -192,9 +193,12 @@ public class SesionTpv(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Estado), ref _estado, value);
     }
 
-    [Association("SesionTpv-FacturasSimplificadas")]
     [XafDisplayName("Facturas Simplificadas")]
-    public XPCollection<FacturaSimplificada> FacturasSimplificadas => GetCollection<FacturaSimplificada>();
+    public XPCollection<FacturaSimplificada> FacturasSimplificadas => new XPCollection<FacturaSimplificada>(Session, CriteriaOperator.Parse("SesionTpv.Oid = ? AND TipoDocumento = ?", Oid, TipoDocumentoVenta.FacturaSimplificada));
+
+    [Association("SesionTpv-DocumentosVenta")]
+    [XafDisplayName("Documentos de Venta")]
+    public XPCollection<DocumentoVenta> DocumentosVenta => GetCollection<DocumentoVenta>();
 
     [Association("SesionTpv-Eventos")]
     [XafDisplayName("Historial de Eventos")]

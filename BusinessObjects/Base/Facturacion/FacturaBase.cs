@@ -162,7 +162,8 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
         TipoRectificativa = (TipoRectificativa)1; // I
         EsSubsanacion = false;
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        Texto ??= companyInfo?.TextoDefectoVeriFactu;
+        if (companyInfo == null) return;
+        Texto ??= companyInfo.TextoDefectoVeriFactu;
     }
 
     public abstract bool EsValida();

@@ -27,7 +27,7 @@ public class TrabajoImpresion : OfertaVenta
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        Estado = EstadosOferta.Borrador;
+        EstadoTrabajo = EstadosOferta.Borrador;
     }
 
     #region Datos Generales
@@ -43,12 +43,13 @@ public class TrabajoImpresion : OfertaVenta
         set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
     }
 
-    private EstadosOferta? _estado;
+    private EstadosOferta? _estadoTrabajo;
 
-    public EstadosOferta? Estado
+    [XafDisplayName("Estado Trabajo")]
+    public EstadosOferta? EstadoTrabajo
     {
-        get => _estado;
-        set => SetPropertyValue(nameof(Estado), ref _estado, value);
+        get => _estadoTrabajo;
+        set => SetPropertyValue(nameof(EstadoTrabajo), ref _estadoTrabajo, value);
     }
 
     private DateTime _fechaEntrega;

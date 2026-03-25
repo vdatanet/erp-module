@@ -5,6 +5,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Alquileres;
 using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Base.Facturacion;
+using erp.Module.BusinessObjects.Base.Ventas;
 
 using erp.Module.Helpers.Contactos;
 using erp.Module.Services.Tesoreria;
@@ -40,6 +41,8 @@ public class FacturaVenta(Session session) : FacturaBase(session)
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null) return;
         Serie ??= companyInfo.PrefijoFacturasVentaPorDefecto;
+        EsFactura = true;
+        TipoDocumento = TipoDocumentoVenta.Factura;
     }
 
     public override bool EsValida()
