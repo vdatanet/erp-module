@@ -6,10 +6,10 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Productos;
 
-namespace erp.Module.BusinessObjects.Almacen;
+namespace erp.Module.BusinessObjects.Inventario;
 
 [DefaultClassOptions]
-[NavigationItem("Almacén")]
+[NavigationItem("Inventario")]
 [XafDisplayName("Almacén")]
 [Persistent("Almacen")]
 [DefaultProperty(nameof(Nombre))]
@@ -55,6 +55,10 @@ public class Almacen(Session session) : EntidadBase(session)
     [Association("Almacen-Movimientos")]
     [XafDisplayName("Movimientos")]
     public XPCollection<MovimientoAlmacen> Movimientos => GetCollection<MovimientoAlmacen>();
+
+    [Association("Almacen-StockActual")]
+    [XafDisplayName("Stock Actual")]
+    public XPCollection<StockActual> StockActual => GetCollection<StockActual>();
 
     public override void AfterConstruction()
     {

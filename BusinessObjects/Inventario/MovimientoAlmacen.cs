@@ -4,48 +4,46 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
-using erp.Module.BusinessObjects.Productos;
 using erp.Module.Helpers.Contactos;
 
-namespace erp.Module.BusinessObjects.Almacen;
+namespace erp.Module.BusinessObjects.Inventario;
 
 public enum TipoMovimientoAlmacen
 {
     Entrada,
     Salida,
-    Ajuste
+    Ajuste,
+    Transferencia
 }
 
 [DefaultClassOptions]
-[NavigationItem("Almacén")]
+[NavigationItem("Inventario")]
 [XafDisplayName("Movimiento de Almacén")]
 [Persistent("MovimientoAlmacen")]
 [DefaultProperty(nameof(Fecha))]
 public class MovimientoAlmacen(Session session) : EntidadBase(session)
 {
     private Almacen? _almacen;
-    private Producto? _producto;
+    private Almacen? _almacenDestino;
     private DateTime _fecha;
-    private decimal _cantidad;
     private TipoMovimientoAlmacen _tipo;
     private string? _referencia;
     private string? _observaciones;
 
     [Association("Almacen-Movimientos")]
     [RuleRequiredField("RuleRequiredField_MovimientoAlmacen_Almacen", DefaultContexts.Save)]
-    [XafDisplayName("Almacén")]
+    [XafDisplayName("Almacén Origen")]
     public Almacen? Almacen
     {
         get => _almacen;
         set => SetPropertyValue(nameof(Almacen), ref _almacen, value);
     }
 
-    [RuleRequiredField("RuleRequiredField_MovimientoAlmacen_Producto", DefaultContexts.Save)]
-    [XafDisplayName("Producto")]
-    public Producto? Producto
+    [XafDisplayName("Almacén Destino")]
+    public Almacen? AlmacenDestino
     {
-        get => _producto;
-        set => SetPropertyValue(nameof(Producto), ref _producto, value);
+        get => _almacenDestino;
+        set => SetPropertyValue(nameof(AlmacenDestino), ref _almacenDestino, value);
     }
 
     [XafDisplayName("Fecha")]
@@ -54,13 +52,6 @@ public class MovimientoAlmacen(Session session) : EntidadBase(session)
     {
         get => _fecha;
         set => SetPropertyValue(nameof(Fecha), ref _fecha, value);
-    }
-
-    [XafDisplayName("Cantidad")]
-    public decimal Cantidad
-    {
-        get => _cantidad;
-        set => SetPropertyValue(nameof(Cantidad), ref _cantidad, value);
     }
 
     [XafDisplayName("Tipo")]
@@ -84,6 +75,11 @@ public class MovimientoAlmacen(Session session) : EntidadBase(session)
         get => _observaciones;
         set => SetPropertyValue(nameof(Observaciones), ref _observaciones, value);
     }
+
+    [Association("Movimiento-Lineas")]
+    [DevExpress.Xpo.Aggregated]
+    [XafDisplayName("Líneas")]
+    public XPCollection<MovimientoAlmacenLinea> Lineas => GetCollection<MovimientoAlmacenLinea>();
 
     public override void AfterConstruction()
     {

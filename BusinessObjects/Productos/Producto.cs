@@ -9,6 +9,7 @@ using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Impuestos;
+using erp.Module.BusinessObjects.Inventario;
 using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Productos;
@@ -171,6 +172,10 @@ public class Producto(Session session) : EntidadBase(session)
     [Association("Producto-PreciosPorCantidad")]
     [XafDisplayName("Precios por Cantidad")]
     public XPCollection<PrecioPorCantidad> PreciosPorCantidad => GetCollection<PrecioPorCantidad>();
+
+    [Association("Producto-StockActual")]
+    [XafDisplayName("Stock Actual")]
+    public XPCollection<StockActual> StockActual => GetCollection<StockActual>();
 
     public override void AfterConstruction()
     {

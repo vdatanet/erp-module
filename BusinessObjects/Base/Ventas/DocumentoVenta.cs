@@ -8,6 +8,7 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Ventas;
+using erp.Module.BusinessObjects.Inventario;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
@@ -51,7 +52,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private SesionTpv? _sesionTpv;
     private ApplicationUser? _usuario;
     private Contacto? _comercial;
-    // private Almacen? _almacen; // TODO: Crear entidad Almacen
+    private Almacen? _almacen;
 
     // --- CLIENTE / DESTINATARIO ---
     private string? _nombreCliente;
@@ -366,6 +367,14 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     {
         get => _comercial;
         set => SetPropertyValue(nameof(Comercial), ref _comercial, value);
+    }
+
+    [XafDisplayName("Almacén")]
+    [DataSourceCriteria("EstaActivo = True")]
+    public Almacen? Almacen
+    {
+        get => _almacen;
+        set => SetPropertyValue(nameof(Almacen), ref _almacen, value);
     }
 
     [Browsable(false)]
