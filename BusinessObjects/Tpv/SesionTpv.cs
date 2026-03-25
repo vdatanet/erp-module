@@ -110,7 +110,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        Apertura = InformacionEmpresaHelper.GetLocalTime(Session);
+        Apertura = Tpv?.GetLocalTime() ?? InformacionEmpresaHelper.GetLocalTime(Session);
         Estado = EstadoSesionTpv.Abierta;
     }
 
@@ -119,7 +119,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
     public void CerrarSesion()
     {
         Estado = EstadoSesionTpv.Cerrada;
-        Cierre = InformacionEmpresaHelper.GetLocalTime(Session);
+        Cierre = Tpv?.GetLocalTime() ?? InformacionEmpresaHelper.GetLocalTime(Session);
         // El importe de cierre se suele introducir manualmente en la vista de detalle antes de cerrar, 
         // o se podría calcular aquí la suma de facturas si fuera necesario.
     }

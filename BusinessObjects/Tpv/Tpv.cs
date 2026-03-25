@@ -78,6 +78,17 @@ public class Tpv(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(UltimaConexion), ref _ultimaConexion, value);
     }
 
+    public DateTime GetLocalTime()
+    {
+        var tz = ZonaHoraria?.GetTimeZoneInfo();
+        if (tz != null)
+        {
+            return TimeZoneInfo.ConvertTime(DateTime.UtcNow, tz);
+        }
+
+        return InformacionEmpresaHelper.GetLocalTime(Session);
+    }
+
     [Association("Tpv-FacturasSimplificadas")]
     [XafDisplayName("Facturas Simplificadas")]
     public XPCollection<FacturaSimplificada> FacturasSimplificadas => GetCollection<FacturaSimplificada>();
