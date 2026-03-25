@@ -202,6 +202,7 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
     [Persistent(nameof(BaseImponible))]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Base Imponible")]
     public decimal BaseImponible
     {
@@ -212,6 +213,7 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
     [Persistent(nameof(ImporteImpuestos))]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Impuestos")]
     public decimal ImporteImpuestos
     {
@@ -222,6 +224,7 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
     [Persistent(nameof(ImporteTotal))]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Total")]
     public decimal ImporteTotal
     {

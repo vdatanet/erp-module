@@ -512,6 +512,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(ImportePagado), ref _importePagado, value);
     }
 
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Importe Pendiente")]
     public decimal ImportePendiente
     {
@@ -554,6 +555,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Anticipo), ref _anticipo, value);
     }
 
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Total Bruto")]
     public decimal TotalBruto
     {
@@ -561,6 +563,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(TotalBruto), ref _totalBruto, value);
     }
 
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Total Neto")]
     public decimal TotalNeto
     {
@@ -582,6 +585,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(PorcentajeRecargo), ref _porcentajeRecargo, value);
     }
 
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Base Exenta")]
     public decimal BaseExenta
     {
@@ -589,6 +593,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(BaseExenta), ref _baseExenta, value);
     }
 
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Base No Sujeta")]
     public decimal BaseNoSujeta
     {
@@ -596,6 +601,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(BaseNoSujeta), ref _baseNoSujeta, value);
     }
 
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Base Sujeta")]
     public decimal BaseSujeta
     {
@@ -603,6 +609,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(BaseSujeta), ref _baseSujeta, value);
     }
 
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Importe IVA")]
     public decimal ImporteIva
     {
@@ -610,6 +617,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(ImporteIva), ref _importeIva, value);
     }
 
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("IVA Repercutido")]
     public decimal ImporteIvaRepercutido
     {
@@ -617,6 +625,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(ImporteIvaRepercutido), ref _importeIvaRepercutido, value);
     }
 
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("IVA Soportado")]
     public decimal ImporteIvaSoportado
     {
@@ -624,6 +633,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(ImporteIvaSoportado), ref _importeIvaSoportado, value);
     }
 
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Importe Retención")]
     public decimal ImporteRetencion
     {
@@ -741,6 +751,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     public bool Sincronizado => Estado == EstadoDocumentoVenta.Sincronizado;
 
     [NonCloneable]
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Fecha Confirmación")]
     public DateTime? FechaConfirmacion
     {
@@ -749,6 +760,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [NonCloneable]
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Fecha Emisión")]
     public DateTime? FechaEmision
     {
@@ -757,6 +769,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [NonCloneable]
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Fecha Impresión")]
     public DateTime? FechaImpresion
     {
@@ -765,6 +778,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [NonCloneable]
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Fecha Anulación")]
     public DateTime? FechaAnulacion
     {
@@ -834,6 +848,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [NonCloneable]
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Usuario Creación")]
     public ApplicationUser? UsuarioCreacion
     {
@@ -842,6 +857,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [NonCloneable]
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Usuario Modificación")]
     public ApplicationUser? UsuarioModificacion
     {
@@ -850,6 +866,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [NonCloneable]
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Fecha Creación")]
     public DateTime FechaCreacion
     {
@@ -858,6 +875,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [NonCloneable]
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Fecha Modificación")]
     public DateTime FechaModificacion
     {
