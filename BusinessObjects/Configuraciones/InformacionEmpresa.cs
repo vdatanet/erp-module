@@ -7,7 +7,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Contabilidad;
-using erp.Module.BusinessObjects.Contactos;
+using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Impuestos;
 
 namespace erp.Module.BusinessObjects.Configuraciones;
@@ -21,8 +21,21 @@ namespace erp.Module.BusinessObjects.Configuraciones;
     CustomMessageTemplate = "La información de la empresa ya existe.")]
 [RuleCriteria("NotDeleteInformacionEmpresa", DefaultContexts.Delete, "False",
     CustomMessageTemplate = "No se puede eliminar la información de la empresa.")]
-public class InformacionEmpresa(Session session) : Contacto(session)
+public class InformacionEmpresa(Session session) : EntidadBase(session)
 {
+    private string? _nombre;
+    private string? _nombreComercial;
+    private string? _nif;
+    private string? _direccion;
+    private string? _codigoPostal;
+    private Pais? _pais;
+    private Provincia? _provincia;
+    private Poblacion? _poblacion;
+    private string? _telefono;
+    private string? _movil;
+    private string? _correoElectronico;
+    private string? _sitioWeb;
+
     private CuentaContable? _cuentaAcreedoresPorDefecto;
     private CuentaContable? _cuentaPadreAcreedores;
     private CuentaContable? _cuentaPadreClientes;
@@ -64,6 +77,98 @@ public class InformacionEmpresa(Session session) : Contacto(session)
     private string? _versionSistemaVeriFactu;
     private int _paddingNumero;
     private int _paddingCuentaContable;
+
+    [Size(255)]
+    [XafDisplayName("Nombre")]
+    [RuleRequiredField("RuleRequiredField_InformacionEmpresa_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre es obligatorio")]
+    public string? Nombre
+    {
+        get => _nombre;
+        set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
+    }
+
+    [Size(255)]
+    [XafDisplayName("Nombre Comercial")]
+    public string? NombreComercial
+    {
+        get => _nombreComercial;
+        set => SetPropertyValue(nameof(NombreComercial), ref _nombreComercial, value);
+    }
+
+    [Size(50)]
+    [XafDisplayName("NIF")]
+    public string? Nif
+    {
+        get => _nif;
+        set => SetPropertyValue(nameof(Nif), ref _nif, value);
+    }
+
+    [Size(255)]
+    [XafDisplayName("Dirección")]
+    public string? Direccion
+    {
+        get => _direccion;
+        set => SetPropertyValue(nameof(Direccion), ref _direccion, value);
+    }
+
+    [Size(10)]
+    [XafDisplayName("Código Postal")]
+    public string? CodigoPostal
+    {
+        get => _codigoPostal;
+        set => SetPropertyValue(nameof(CodigoPostal), ref _codigoPostal, value);
+    }
+
+    [XafDisplayName("País")]
+    public Pais? Pais
+    {
+        get => _pais;
+        set => SetPropertyValue(nameof(Pais), ref _pais, value);
+    }
+
+    [DataSourceProperty("Pais.Provincias")]
+    [XafDisplayName("Provincia")]
+    public Provincia? Provincia
+    {
+        get => _provincia;
+        set => SetPropertyValue(nameof(Provincia), ref _provincia, value);
+    }
+
+    [DataSourceProperty("Provincia.Poblaciones")]
+    [XafDisplayName("Población")]
+    public Poblacion? Poblacion
+    {
+        get => _poblacion;
+        set => SetPropertyValue(nameof(Poblacion), ref _poblacion, value);
+    }
+
+    [XafDisplayName("Teléfono")]
+    public string? Telefono
+    {
+        get => _telefono;
+        set => SetPropertyValue(nameof(Telefono), ref _telefono, value);
+    }
+
+    [XafDisplayName("Móvil")]
+    public string? Movil
+    {
+        get => _movil;
+        set => SetPropertyValue(nameof(Movil), ref _movil, value);
+    }
+
+    [XafDisplayName("Correo Electrónico")]
+    public string? CorreoElectronico
+    {
+        get => _correoElectronico;
+        set => SetPropertyValue(nameof(CorreoElectronico), ref _correoElectronico, value);
+    }
+
+    [XafDisplayName("Sitio Web")]
+    public string? SitioWeb
+    {
+        get => _sitioWeb;
+        set => SetPropertyValue(nameof(SitioWeb), ref _sitioWeb, value);
+    }
 
     [DataSourceCriteria("EstaActivo = True")]
     [XafDisplayName("Diario Ventas por Defecto")]
