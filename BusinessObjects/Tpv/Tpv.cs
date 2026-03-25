@@ -1,3 +1,5 @@
+using DevExpress.Data.Filtering;
+using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
@@ -101,6 +103,59 @@ public class Tpv(Session session) : EntidadBase(session)
     [Association("RolesAutorizados-Tpvs")]
     [XafDisplayName("Roles autorizados")]
     public XPCollection<ApplicationRole> RolesAutorizados => GetCollection<ApplicationRole>();
+
+    [Action(Caption = "Abrir Sesión", TargetObjectsCriteria = "SesionAbierta = false", ImageName = "Action_Open")]
+    public void AbrirSesionAction()
+    {
+        var sesionAbierta = SesionActualAbierta;
+        if (sesionAbierta != null) return;
+
+        var usuarioActual = Session.GetObjectByKey<ApplicationUser>(SecuritySystem.CurrentUserId);
+        if (usuarioActual == null) return;
+
+        var nuevaSesion = new SesionTpv(Session);
+        nuevaSesion.AbrirSesion(this, usuarioActual);
+        nuevaSesion.Save();
+        OnChanged(nameof(SesionActualAbierta));
+        OnChanged(nameof(SesionAbierta));
+    }
+
+    [Action(Caption = "Continuar Sesión", TargetObjectsCriteria = "SesionAbierta = true", ImageName = "Action_LinkUnlink_Link")]
+    public void ContinuarSesionAction()
+    {
+        var sesionAbierta = SesionActualAbierta;
+        if (sesionAbierta == null) return;
+        // En XAF, esta acción solo sirve para navegar o validar.
+    }
+
+    [Action(Caption = "Cerrar Sesión", TargetObjectsCriteria = "SesionAbierta = true", ImageName = "Action_Close")]
+    public void CerrarSesionAction()
+    {
+        var sesionAbierta = SesionActualAbierta;
+        if (sesionAbierta == null) return;
+
+        sesionAbierta.CerrarSesion();
+        sesionAbierta.Save();
+        OnChanged(nameof(SesionActualAbierta));
+        OnChanged(nameof(SesionAbierta));
+    }
+
+    [Action(Caption = "Reabrir Sesión", TargetObjectsCriteria = "SesionAbierta = false AND Sesiones.Count > 0", ImageName = "Action_ResetViewSettings")]
+    public void ReabrirSesionAction()
+    {
+        var ultimaSesion = Sesiones.OrderByDescending(s => s.Apertura).FirstOrDefault();
+        if (ultimaSesion == null || ultimaSesion.EstaAbierta) return;
+        
+        ultimaSesion.ReabrirSesion();
+        ultimaSesion.Save();
+        OnChanged(nameof(SesionActualAbierta));
+        OnChanged(nameof(SesionAbierta));
+    }
+
+    public SesionTpv? SesionActualAbierta => Sesiones.FirstOrDefault(s => s.Estado == EstadoSesionTpv.Abierta);
+
+    [XafDisplayName("Sesión Abierta")]
+    public bool SesionAbierta => SesionActualAbierta != null;
 
     public override void AfterConstruction()
     {

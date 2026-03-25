@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Linq;
+using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Editors;
@@ -37,6 +38,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
 
     [XafDisplayName("TPV")]
     [RuleRequiredField("RuleRequiredField_SesionTpv_Tpv", DefaultContexts.Save, CustomMessageTemplate = "El TPV de la Sesión es obligatorio")]
+    [RuleFromBoolProperty("RuleFromBoolProperty_SesionTpv_UnaSolaSesionAbierta", DefaultContexts.Save, "Ya existe una sesión abierta para este TPV.", UsedProperties = "Tpv, Estado")]
     [Association("Tpv-Sesiones")]
     public Tpv? Tpv
     {
@@ -114,10 +116,24 @@ public class SesionTpv(Session session) : EntidadBase(session)
     [Browsable(false)]
     public bool EstaCerrada => Estado == EstadoSesionTpv.Cerrada;
 
+    [Browsable(false)]
+    public bool UnaSolaSesionAbierta
+    {
+        get
+        {
+            if (Tpv == null || Estado != EstadoSesionTpv.Abierta) return true;
+            var sesionAbierta = Session.FindObject<SesionTpv>(CriteriaOperator.Parse("Tpv.Oid = ? AND Estado = ? AND Oid != ?", Tpv.Oid, EstadoSesionTpv.Abierta, Oid));
+            return sesionAbierta == null;
+        }
+    }
+
     public void AbrirSesion(Tpv tpv, ApplicationUser usuario, decimal importeApertura = 0)
     {
         if (tpv == null) throw new ArgumentNullException(nameof(tpv));
         if (usuario == null) throw new ArgumentNullException(nameof(usuario));
+
+        if (tpv.SesionAbierta)
+            throw new InvalidOperationException("Ya existe una sesión abierta para este TPV.");
 
         // Evitar abrir si ya está abierta (si es una nueva instancia, el estado será Abierta por defecto)
         // Pero este método sirve para inicializar una sesión recién creada.
@@ -128,8 +144,14 @@ public class SesionTpv(Session session) : EntidadBase(session)
         Estado = EstadoSesionTpv.Abierta;
     }
 
-    /*[Action(Caption = "Cerrar Sesión", TargetObjectsCriteria = "Estado = 'Abierta'",
-        ConfirmationMessage = "¿Desea cerrar la sesión?", ImageName = "Action_Close")]*/
+    [Action(Caption = "Cerrar Sesión", TargetObjectsCriteria = "Estado = 'Abierta'",
+        ConfirmationMessage = "¿Desea cerrar la sesión?", ImageName = "Action_Close")]
+    public void CerrarSesionAction()
+    {
+        CerrarSesion();
+        Save();
+    }
+
     public void CerrarSesion(decimal? importeCierreManual = null)
     {
         ValidarCierre();
@@ -177,6 +199,9 @@ public class SesionTpv(Session session) : EntidadBase(session)
         if (!EstaCerrada)
             throw new InvalidOperationException("Solo se pueden reabrir sesiones cerradas.");
 
+        if (Tpv?.SesionAbierta ?? false)
+            throw new InvalidOperationException("No se puede reabrir la sesión porque ya existe otra sesión abierta para este TPV.");
+
         // Comprobar si el negocio permite la reapertura (por ejemplo, solo el mismo día)
         // Por ahora lo permitimos sin restricciones adicionales según el requerimiento.
         
@@ -184,6 +209,13 @@ public class SesionTpv(Session session) : EntidadBase(session)
         Cierre = null;
         // Se podría dejar trazabilidad en Observaciones si fuera necesario.
         Observaciones += $"\nSesión reabierta el {Tpv?.GetLocalTime() ?? InformacionEmpresaHelper.GetLocalTime(Session)}";
+    }
+
+    [Action(Caption = "Reabrir Sesión", TargetObjectsCriteria = "Estado = 'Cerrada'", ImageName = "Action_ResetViewSettings")]
+    public void ReabrirSesionAction()
+    {
+        ReabrirSesion();
+        Save();
     }
 
     public override void AfterConstruction()
