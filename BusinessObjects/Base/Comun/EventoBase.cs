@@ -6,6 +6,8 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
 using Microsoft.Extensions.DependencyInjection;
+using erp.Module.BusinessObjects.Configuraciones;
+using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Base.Comun;
 
@@ -65,14 +67,16 @@ public abstract class EventoBase(Session session) : Event(session)
         base.OnSaving();
         try
         {
+            var localTime = InformacionEmpresaHelper.GetLocalTime(Session);
+
             if (Session.IsNewObject(this))
             {
-                CreadoEl = DateTime.Now;
+                CreadoEl = localTime;
                 CreadoPor = GetCurrentUser();
             }
             else
             {
-                ModificadoEl = DateTime.Now;
+                ModificadoEl = localTime;
                 ModificadoPor = GetCurrentUser();
             }
         }

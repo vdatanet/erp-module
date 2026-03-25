@@ -8,6 +8,8 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 
+using erp.Module.Helpers.Contactos;
+
 namespace erp.Module.BusinessObjects.Tpv;
 
 public enum EstadoSesionTpv
@@ -108,7 +110,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        Apertura = DateTime.Now;
+        Apertura = InformacionEmpresaHelper.GetLocalTime(Session);
         Estado = EstadoSesionTpv.Abierta;
     }
 
@@ -117,7 +119,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
     public void CerrarSesion()
     {
         Estado = EstadoSesionTpv.Cerrada;
-        Cierre = DateTime.Now;
+        Cierre = InformacionEmpresaHelper.GetLocalTime(Session);
         // El importe de cierre se suele introducir manualmente en la vista de detalle antes de cerrar, 
         // o se podría calcular aquí la suma de facturas si fuera necesario.
     }

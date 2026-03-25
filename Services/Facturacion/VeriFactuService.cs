@@ -23,10 +23,10 @@ public class VeriFactuService
             throw new UserFriendlyException(
                 "La factura no es válida para el envío a VeriFactu. Revise que tenga Cliente, Texto e Impuestos.");
 
-        if (invoice.Fecha == DateTime.MinValue) invoice.Fecha = DateTime.Now.Date;
-        if (string.IsNullOrEmpty(invoice.Secuencia)) invoice.AsignarNumero();
-
         var companyInfo = objectSpace.FindObject<InformacionEmpresa>(null);
+
+        if (invoice.Fecha == DateTime.MinValue) invoice.Fecha = companyInfo?.GetLocalTime().Date ?? DateTime.Now.Date;
+        if (string.IsNullOrEmpty(invoice.Secuencia)) invoice.AsignarNumero();
 
         if (companyInfo == null || string.IsNullOrEmpty(companyInfo.Nombre) || string.IsNullOrEmpty(companyInfo.Nif))
             throw new UserFriendlyException("La información de la empresa (Nombre/NIF) es incompleta.");

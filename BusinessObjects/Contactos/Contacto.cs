@@ -98,7 +98,7 @@ public class Contacto(Session session) : EntidadBase(session)
             if (value)
                 FechaBaja = null;
             else
-                FechaBaja = DateTime.Now;
+                FechaBaja = InformacionEmpresaHelper.GetLocalTime(Session);
         }
     }
 
@@ -422,6 +422,6 @@ public class Contacto(Session session) : EntidadBase(session)
     {
         TipoIdentificacion = IDType.NIF_IVA;
         Activo = true;
-        FechaAlta = DateTime.Now;
+        FechaAlta = InformacionEmpresaHelper.GetLocalTime(Session);
     }
 }

@@ -7,6 +7,8 @@ using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
 using System.ComponentModel;
 
+using erp.Module.Helpers.Contactos;
+
 namespace erp.Module.BusinessObjects.Tesoreria;
 
 public enum TipoMandatoSepa
@@ -176,13 +178,13 @@ public class MandatoSepa(Session session) : EntidadBase(session)
     {
         base.AfterConstruction();
         Estado = EstadoMandatoSepa.Activo;
-        FechaFirma = DateTime.Today;
+        FechaFirma = InformacionEmpresaHelper.GetLocalTime(Session).Date;
     }
 
     public void Revocar(string motivo)
     {
         Estado = EstadoMandatoSepa.Revocado;
-        FechaRevocacion = DateTime.Now;
+        FechaRevocacion = InformacionEmpresaHelper.GetLocalTime(Session);
         MotivoRevocacion = motivo;
     }
 }

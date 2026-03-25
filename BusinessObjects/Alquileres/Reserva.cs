@@ -15,6 +15,8 @@ using erp.Module.Services.Reserva;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 
+using erp.Module.Helpers.Contactos;
+
 namespace erp.Module.BusinessObjects.Alquileres;
 
 [DefaultClassOptions]
@@ -359,9 +361,10 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        StartOn = DateTime.Now.Date;
-        EndOn = DateTime.Now.Date.AddDays(1);
-        FechaReserva = DateTime.Now.Date;
+        var localTime = InformacionEmpresaHelper.GetLocalTime(Session).Date;
+        StartOn = localTime;
+        EndOn = localTime.AddDays(1);
+        FechaReserva = localTime;
         ValidaHasta = FechaReserva.AddDays(7);
         Alojamiento = true;
         Parking = false;

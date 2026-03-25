@@ -511,4 +511,10 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         get => _nifAdministradorSistemaVeriFactu;
         set => SetPropertyValue(nameof(NifAdministradorSistemaVeriFactu), ref _nifAdministradorSistemaVeriFactu, value);
     }
+
+    public DateTime GetLocalTime()
+    {
+        var tz = ZonaHorariaPorDefecto?.GetTimeZoneInfo();
+        return tz != null ? TimeZoneInfo.ConvertTime(DateTime.UtcNow, tz) : DateTime.Now;
+    }
 }

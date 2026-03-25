@@ -7,6 +7,8 @@ using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.Services.Reserva;
 using Microsoft.Extensions.DependencyInjection;
 
+using erp.Module.Helpers.Contactos;
+
 namespace erp.Module.BusinessObjects.Alquileres;
 
 [DefaultClassOptions]
@@ -292,7 +294,7 @@ public class Simulacion(Session session) : EntidadBase(session), IReservaCalcula
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        StartOn = DateTime.Now.Date;
+        StartOn = InformacionEmpresaHelper.GetLocalTime(Session).Date;
         EndOn = StartOn.AddDays(1);
         Alojamiento = false;
         Parking = false;
