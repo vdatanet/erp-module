@@ -121,7 +121,8 @@ public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVent
     public override string GetPrefijoCodigo()
     {
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        return companyInfo?.PrefijoClientes ?? "C";
+        if (companyInfo == null) return "C";
+        return companyInfo.PrefijoClientes ?? "C";
     }
 
     public static int ImportarDesdeCsv(Session session, string csvContent)

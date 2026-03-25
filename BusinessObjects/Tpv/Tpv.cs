@@ -3,6 +3,8 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Configuraciones;
+using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Tpv;
 
@@ -16,6 +18,9 @@ public class Tpv(Session session) : EntidadBase(session)
     private string? _codigo;
     private string? _nombre;
     private string? _seriePorDefecto;
+    private string? _ubicacion;
+    private ZonaHoraria? _zonaHoraria;
+    private DateTime? _ultimaConexion;
 
     [Size(100)]
     [RuleRequiredField("RuleRequiredField_Tpv_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre del TPV es obligatorio")]
@@ -51,6 +56,28 @@ public class Tpv(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Activo), ref _activo, value);
     }
 
+    [Size(255)]
+    [XafDisplayName("Ubicación")]
+    public string? Ubicacion
+    {
+        get => _ubicacion;
+        set => SetPropertyValue(nameof(Ubicacion), ref _ubicacion, value);
+    }
+
+    [XafDisplayName("Zona horaria")]
+    public ZonaHoraria? ZonaHoraria
+    {
+        get => _zonaHoraria;
+        set => SetPropertyValue(nameof(ZonaHoraria), ref _zonaHoraria, value);
+    }
+
+    [XafDisplayName("Última conexión")]
+    public DateTime? UltimaConexion
+    {
+        get => _ultimaConexion;
+        set => SetPropertyValue(nameof(UltimaConexion), ref _ultimaConexion, value);
+    }
+
     [Association("Tpv-FacturasSimplificadas")]
     [XafDisplayName("Facturas Simplificadas")]
     public XPCollection<FacturaSimplificada> FacturasSimplificadas => GetCollection<FacturaSimplificada>();
@@ -63,5 +90,10 @@ public class Tpv(Session session) : EntidadBase(session)
     {
         base.AfterConstruction();
         Activo = true;
+
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        if (companyInfo == null) return;
+        ZonaHoraria ??= companyInfo.ZonaHorariaPorDefecto;
+        SeriePorDefecto ??= companyInfo.PrefijoFacturasSimplificadasPorDefecto;
     }
 }

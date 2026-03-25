@@ -30,7 +30,8 @@ public class Acreedor(Session session) : Tercero(session), IPuedeParticiparEnCom
     public override string GetPrefijoCodigo()
     {
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        return companyInfo?.PrefijoAcreedores ?? "A";
+        if (companyInfo == null) return "A";
+        return companyInfo.PrefijoAcreedores ?? "A";
     }
 
     public override void AfterConstruction()

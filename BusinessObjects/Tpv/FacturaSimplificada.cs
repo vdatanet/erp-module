@@ -37,7 +37,8 @@ public class FacturaSimplificada(Session session) : FacturaBase(session)
     {
         base.AfterConstruction();
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        Serie ??= companyInfo?.PrefijoFacturasSimplificadasPorDefecto;
+        if (companyInfo == null) return;
+        Serie ??= companyInfo.PrefijoFacturasSimplificadasPorDefecto;
         TipoFactura = TipoFactura.F2;
     }
 

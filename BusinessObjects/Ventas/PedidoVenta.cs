@@ -94,6 +94,7 @@ public class PedidoVenta(Session session) : DocumentoVenta(session)
     {
         base.AfterConstruction();
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        Serie ??= companyInfo?.PrefijoPedidosPorDefecto;
+        if (companyInfo == null) return;
+        Serie ??= companyInfo.PrefijoPedidosPorDefecto;
     }
 }

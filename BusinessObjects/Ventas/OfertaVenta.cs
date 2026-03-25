@@ -36,6 +36,7 @@ public class OfertaVenta(Session session) : DocumentoVenta(session)
     {
         base.AfterConstruction();
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        Serie ??= companyInfo?.PrefijoOfertasVentaPorDefecto;
+        if (companyInfo == null) return;
+        Serie ??= companyInfo.PrefijoOfertasVentaPorDefecto;
     }
 }

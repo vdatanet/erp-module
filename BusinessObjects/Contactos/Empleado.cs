@@ -68,6 +68,7 @@ public class Empleado(Session session) : Contacto(session)
     public override string GetPrefijoCodigo()
     {
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        return companyInfo?.PrefijoEmpleados ?? "E";
+        if (companyInfo == null) return "E";
+        return companyInfo.PrefijoEmpleados ?? "E";
     }
 }

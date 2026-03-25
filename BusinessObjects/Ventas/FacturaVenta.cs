@@ -38,7 +38,8 @@ public class FacturaVenta(Session session) : FacturaBase(session)
     {
         base.AfterConstruction();
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        Serie ??= companyInfo?.PrefijoFacturasVentaPorDefecto;
+        if (companyInfo == null) return;
+        Serie ??= companyInfo.PrefijoFacturasVentaPorDefecto;
     }
 
     public override bool EsValida()

@@ -376,9 +376,13 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
         {
             if (Ejercicio != null && Ejercicio.Anio.HasValue)
             {
-                var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session) ?? throw new UserFriendlyException("No se ha podido obtener la configuración de la empresa.");
+                var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+                if (companyInfo == null)
+                    throw new UserFriendlyException("No se ha podido obtener la configuración de la empresa.");
+
                 int padding = companyInfo.PaddingNumero;
-                string prefijo = companyInfo.PrefijoReservas ?? throw new UserFriendlyException("El prefijo de reservas no está configurado.");
+                string prefijo = companyInfo.PrefijoReservas ??
+                                 throw new UserFriendlyException("El prefijo de reservas no está configurado.");
                 string prefixSequence = $"{prefijo}/{Ejercicio.Anio}";
 
                 Numero = SequenceFactory.GetNextSequence(Session, $"{GetType().FullName}-{Ejercicio.Anio}",

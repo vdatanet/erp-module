@@ -37,6 +37,7 @@ public class FacturaCompra(Session session) : DocumentoCompra(session)
     {
         base.AfterConstruction();
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        Serie ??= companyInfo?.PrefijoFacturasCompraPorDefecto;
+        if (companyInfo == null) return;
+        Serie ??= companyInfo.PrefijoFacturasCompraPorDefecto;
     }
 }

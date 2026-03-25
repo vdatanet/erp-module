@@ -147,7 +147,8 @@ public class ParteTrabajo(Session session) : DocumentoVenta(session)
     {
         base.AfterConstruction();
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        Serie ??= companyInfo?.PrefijoParteTrabajoPorDefecto;
+        if (companyInfo == null) return;
+        Serie ??= companyInfo.PrefijoParteTrabajoPorDefecto;
         EsFacturable = true;
     }
 }

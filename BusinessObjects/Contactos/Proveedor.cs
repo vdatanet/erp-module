@@ -38,7 +38,8 @@ public class Proveedor(Session session) : Tercero(session), IPuedeParticiparEnCo
     public override string GetPrefijoCodigo()
     {
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        return companyInfo?.PrefijoProveedores ?? "P";
+        if (companyInfo == null) return "P";
+        return companyInfo.PrefijoProveedores ?? "P";
     }
     public override void AfterConstruction()
     {

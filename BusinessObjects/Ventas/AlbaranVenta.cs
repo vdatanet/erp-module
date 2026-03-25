@@ -15,6 +15,7 @@ public class AlbaranVenta(Session session) : DocumentoVenta(session)
     {
         base.AfterConstruction();
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        Serie ??= companyInfo?.PrefijoAlbaranesVentaPorDefecto;
+        if (companyInfo == null) return;
+        Serie ??= companyInfo.PrefijoAlbaranesVentaPorDefecto;
     }
 }
