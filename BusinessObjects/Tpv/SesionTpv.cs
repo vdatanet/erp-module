@@ -182,8 +182,6 @@ public class SesionTpv(Session session) : EntidadBase(session)
         CalcularImporteEsperado();
     }
 
-    [Action(Caption = "Cerrar Sesión", TargetObjectsCriteria = "Estado = 'Abierta'",
-        ConfirmationMessage = "¿Desea cerrar la sesión?", ImageName = "Action_Close")]
     public void CerrarSesionAction()
     {
         CerrarSesion();
@@ -239,7 +237,6 @@ public class SesionTpv(Session session) : EntidadBase(session)
         CalcularImporteEsperado();
     }
 
-    [Action(Caption = "Retirar Efectivo", TargetObjectsCriteria = "Estado = 'Abierta'", ImageName = "Action_MoneyWithdraw")]
     public void RetirarEfectivoAction(decimal importe, string motivo)
     {
         RegistrarMovimiento(TipoMovimientoCajaTpv.Retirada, importe, motivo);
@@ -306,7 +303,6 @@ public class SesionTpv(Session session) : EntidadBase(session)
         Observaciones += $"\nSesión reabierta el {Tpv?.GetLocalTime() ?? InformacionEmpresaHelper.GetLocalTime(Session)}";
     }
 
-    [Action(Caption = "Reabrir Sesión", TargetObjectsCriteria = "Estado = 'Cerrada'", ImageName = "Action_ResetViewSettings")]
     public void ReabrirSesionAction()
     {
         ReabrirSesion();
