@@ -15,6 +15,7 @@ using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Tpv;
+using erp.Module.BusinessObjects.Logistica;
 using erp.Module.Factories;
 using erp.Module.Helpers.Comun;
 using erp.Module.Helpers.Contactos;
@@ -132,7 +133,8 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private string? _direccionEntrega;
     private DateTime? _fechaEntregaPrevista;
     private DateTime? _fechaEntregaReal;
-    private string? _transportista; // TODO: Crear entidad Transportista
+    private Transportista? _transportista;
+    private MetodoEntrega? _metodoEntrega;
     private string? _numeroSeguimiento;
     private bool _entregado;
     private string? _recibidoPor;
@@ -826,9 +828,27 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(FechaEntregaReal), ref _fechaEntregaReal, value);
     }
 
-    [Size(100)]
+    [XafDisplayName("Método de Entrega")]
+    [ImmediatePostData]
+    public MetodoEntrega? MetodoEntrega
+    {
+        get => _metodoEntrega;
+        set
+        {
+            var modified = SetPropertyValue(nameof(MetodoEntrega), ref _metodoEntrega, value);
+            if (modified && !IsLoading && !IsSaving && value != null)
+            {
+                Transportista = value.TransportistaPorDefecto;
+                if (GastosEnvio == 0)
+                {
+                    GastosEnvio = value.CosteFijo;
+                }
+            }
+        }
+    }
+
     [XafDisplayName("Transportista")]
-    public string? Transportista
+    public Transportista? Transportista
     {
         get => _transportista;
         set => SetPropertyValue(nameof(Transportista), ref _transportista, value);

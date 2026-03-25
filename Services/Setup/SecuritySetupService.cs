@@ -18,6 +18,7 @@ using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Imprenta;
 using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.BusinessObjects.Inventario;
+using erp.Module.BusinessObjects.Logistica;
 using erp.Module.BusinessObjects.Servicios.PartesTrabajo;
 using erp.Module.BusinessObjects.Servicios.Mantenimientos;
 using erp.Module.BusinessObjects.Servicios.TrabajoDeCampo;
@@ -73,6 +74,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             CreateSuscripcionesRole();
             CreateTesoreriaRole();
             CreateInventarioRole();
+            CreateLogisticaRole();
             CreateReportsRole();
         }
     }
@@ -589,6 +591,26 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             SecurityPermissionState.Allow);
 
         return inventarioRole;
+    }
+
+    private ApplicationRole CreateLogisticaRole()
+    {
+        var logisticaRole = OS.FirstOrDefault<ApplicationRole>(role => role.Name == "Logística");
+        if (logisticaRole == null)
+        {
+            logisticaRole = OS.CreateObject<ApplicationRole>();
+            logisticaRole.Name = "Logística";
+        }
+
+        logisticaRole.AddTypePermissionsRecursively<Transportista>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        logisticaRole.AddTypePermissionsRecursively<MetodoEntrega>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+
+        logisticaRole.AddNavigationPermission(@"Application/NavigationItems/Items/Logística",
+            SecurityPermissionState.Allow);
+
+        return logisticaRole;
     }
 
     private ApplicationRole CreateReportsRole()
