@@ -12,7 +12,7 @@ public class MovimientoCajaParameters
     public TipoMovimientoCajaTpv Tipo { get; set; } = TipoMovimientoCajaTpv.Retirada;
 
     [XafDisplayName("Importe")]
-    [RuleRange(0.01, (double)decimal.MaxValue, CustomMessageTemplate = "El importe debe ser mayor que cero")]
+    [RuleRange(0.01, 999999999.99, CustomMessageTemplate = "El importe debe ser mayor que cero")]
     public decimal Importe { get; set; }
 
     [XafDisplayName("Motivo")]
