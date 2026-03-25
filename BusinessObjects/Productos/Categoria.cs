@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
+using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
@@ -18,6 +19,8 @@ public class Categoria(Session session) : EntidadBase(session)
     private bool _estaActivo;
     private string? _nombre;
     private string? _notas;
+    private MediaDataObject? _foto;
+    private MediaDataObject? _miniatura;
 
     [Size(255)]
     [RuleRequiredField("RuleRequiredField_Categoria_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre de la Categoría es obligatorio")]
@@ -27,6 +30,61 @@ public class Categoria(Session session) : EntidadBase(session)
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
+    }
+    
+    [XafDisplayName("Foto")]
+    public MediaDataObject? Foto
+    {
+        get => _foto;
+        set
+        {
+            var oldFoto = _foto;
+            if (SetPropertyValue(nameof(Foto), ref _foto, value))
+            {
+                if (oldFoto != null)
+                {
+                    oldFoto.Changed -= Foto_Changed;
+                }
+                if (_foto != null)
+                {
+                    _foto.Changed += Foto_Changed;
+                }
+                if (!IsSaving)
+                {
+                    UpdateThumbnail(value);
+                }
+            }
+        }
+    }
+
+    private void Foto_Changed(object sender, ObjectChangeEventArgs e)
+    {
+        if (e.PropertyName == "MediaData" && !IsSaving)
+        {
+            UpdateThumbnail(Foto);
+        }
+    }
+
+    [XafDisplayName("Miniatura")]
+    [ImageEditor(DetailViewImageEditorMode = ImageEditorMode.PictureEdit, ListViewImageEditorMode = ImageEditorMode.PictureEdit)]
+    public MediaDataObject? Miniatura
+    {
+        get => _miniatura;
+        set => SetPropertyValue(nameof(Miniatura), ref _miniatura, value);
+    }
+
+    private void UpdateThumbnail(MediaDataObject? sourceFoto)
+    {
+        if (sourceFoto?.MediaData != null)
+        {
+            Miniatura ??= new MediaDataObject(Session);
+            Miniatura.MediaData = erp.Module.Helpers.ImageHelper.GetThumbnailBytes(sourceFoto.MediaData);
+            OnChanged(nameof(Miniatura));
+        }
+        else
+        {
+            Miniatura = null;
+        }
     }
 
     [Association("Categoria-Subcategorias")]
@@ -51,7 +109,7 @@ public class Categoria(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(DisponibleEnTpv), ref _disponibleEnTpV, value);
     }
 
-    [Size(1000)]
+    [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Notas")]
     public string? Notas
     {
@@ -85,6 +143,25 @@ public class Categoria(Session session) : EntidadBase(session)
     [Association("Categoria-Productos")]
     [XafDisplayName("Productos")]
     public XPCollection<Producto> Productos => GetCollection<Producto>();
+
+    protected override void OnLoaded()
+    {
+        base.OnLoaded();
+        if (_foto != null)
+        {
+            _foto.Changed += Foto_Changed;
+        }
+    }
+
+    protected override void OnChanged(string propertyName, object oldValue, object newValue)
+    {
+        base.OnChanged(propertyName, oldValue, newValue);
+        if (IsSaving) return;
+        if (propertyName == nameof(Foto))
+        {
+            UpdateThumbnail(Foto);
+        }
+    }
 
     public override void AfterConstruction()
     {

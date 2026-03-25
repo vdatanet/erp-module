@@ -45,6 +45,7 @@ public class Contacto(Session session) : EntidadBase(session)
     private DateTime _expedicion;
     private DateTime? _fechaNacimiento;
     private MediaDataObject? _foto;
+    private MediaDataObject? _miniatura;
     private string? _movil;
     private Nacionalidad? _nacionalidad;
     private string? _nif;
@@ -330,7 +331,55 @@ public class Contacto(Session session) : EntidadBase(session)
     public MediaDataObject? Foto
     {
         get => _foto;
-        set => SetPropertyValue(nameof(Foto), ref _foto, value);
+        set
+        {
+            var oldFoto = _foto;
+            if (SetPropertyValue(nameof(Foto), ref _foto, value))
+            {
+                if (oldFoto != null)
+                {
+                    oldFoto.Changed -= Foto_Changed;
+                }
+                if (_foto != null)
+                {
+                    _foto.Changed += Foto_Changed;
+                }
+                if (!IsSaving)
+                {
+                    UpdateThumbnail(value);
+                }
+            }
+        }
+    }
+
+    private void Foto_Changed(object sender, ObjectChangeEventArgs e)
+    {
+        if (e.PropertyName == "MediaData" && !IsSaving)
+        {
+            UpdateThumbnail(Foto);
+        }
+    }
+
+    [XafDisplayName("Miniatura")]
+    [ImageEditor(DetailViewImageEditorMode = ImageEditorMode.PictureEdit, ListViewImageEditorMode = ImageEditorMode.PictureEdit)]
+    public MediaDataObject? Miniatura
+    {
+        get => _miniatura;
+        set => SetPropertyValue(nameof(Miniatura), ref _miniatura, value);
+    }
+
+    private void UpdateThumbnail(MediaDataObject? sourceFoto)
+    {
+        if (sourceFoto?.MediaData != null)
+        {
+            Miniatura ??= new MediaDataObject(Session);
+            Miniatura.MediaData = erp.Module.Helpers.ImageHelper.GetThumbnailBytes(sourceFoto.MediaData);
+            OnChanged(nameof(Miniatura));
+        }
+        else
+        {
+            Miniatura = null;
+        }
     }
 
     [Size(SizeAttribute.Unlimited)]
@@ -392,9 +441,23 @@ public class Contacto(Session session) : EntidadBase(session)
         base.OnSaving();
     }
 
+    protected override void OnLoaded()
+    {
+        base.OnLoaded();
+        if (_foto != null)
+        {
+            _foto.Changed += Foto_Changed;
+        }
+    }
+
     protected override void OnChanged(string propertyName, object oldValue, object newValue)
     {
         base.OnChanged(propertyName, oldValue, newValue);
+        if (IsSaving) return;
+        if (propertyName == nameof(Foto))
+        {
+            UpdateThumbnail(Foto);
+        }
     }
 
     public virtual bool GetAsignarCodigoAlGuardar()

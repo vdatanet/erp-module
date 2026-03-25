@@ -1,9 +1,14 @@
+using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.DC;
+using DevExpress.ExpressApp.Security;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
+using erp.Module.BusinessObjects.Impuestos;
+using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.Helpers.Contactos;
 using System.ComponentModel;
@@ -31,6 +36,7 @@ public class VentaTpv(Session session) : EntidadBase(session)
     private VentaTpvEstado _estado;
     private SesionTpv? _sesionTpv;
     private Tercero? _cliente;
+    private ApplicationUser? _usuario;
     private decimal _totalBruto;
     private decimal _totalDescuentos;
     private decimal _totalImpuestos;
@@ -74,6 +80,13 @@ public class VentaTpv(Session session) : EntidadBase(session)
     {
         get => _cliente;
         set => SetPropertyValue(nameof(Cliente), ref _cliente, value);
+    }
+
+    [XafDisplayName("Usuario")]
+    public ApplicationUser? Usuario
+    {
+        get => _usuario;
+        set => SetPropertyValue(nameof(Usuario), ref _usuario, value);
     }
 
     [XafDisplayName("Total Bruto")]
@@ -175,5 +188,95 @@ public class VentaTpv(Session session) : EntidadBase(session)
             pagado += pago.Importe;
         }
         TotalPagado = pagado;
+        
+        if (Estado == VentaTpvEstado.PendienteCobro && TotalPagado >= TotalFinal)
+        {
+            Finalizar();
+        }
+    }
+
+    public void RegistrarEvento(string accion, string? descripcion = null)
+    {
+        var evento = new VentaTpvEvento(Session)
+        {
+            VentaTpv = this,
+            Accion = accion,
+            Descripcion = descripcion,
+            Usuario = Usuario ?? SecuritySystem.CurrentUser as ApplicationUser
+        };
+        Eventos.Add(evento);
+    }
+
+    public void Confirmar()
+    {
+        if (Estado != VentaTpvEstado.Borrador && Estado != VentaTpvEstado.EnCurso) return;
+        
+        if (Lineas.Count == 0)
+            throw new UserFriendlyException("No se puede confirmar una venta sin líneas.");
+
+        RecalcularTotales();
+        Estado = VentaTpvEstado.PendienteCobro;
+        RegistrarEvento("Confirmada", "Venta confirmada y pendiente de cobro.");
+    }
+
+    public void Finalizar()
+    {
+        if (Estado != VentaTpvEstado.PendienteCobro) return;
+
+        if (TotalPagado < TotalFinal)
+            throw new UserFriendlyException("El importe pagado es insuficiente.");
+
+        Estado = VentaTpvEstado.Finalizada;
+        RegistrarEvento("Finalizada", "Venta finalizada correctamente.");
+        
+        MaterializarVenta();
+    }
+
+    private void MaterializarVenta()
+    {
+        var factura = new FacturaSimplificada(Session)
+        {
+            VentaTpv = this,
+            Fecha = Fecha,
+            Cliente = Cliente,
+            Notas = Notas,
+            Usuario = Usuario
+        };
+
+        foreach (var lineaTpv in Lineas)
+        {
+            var lineaFactura = new DocumentoVentaLinea(Session)
+            {
+                DocumentoVenta = factura,
+                Producto = lineaTpv.Producto,
+                NombreProducto = lineaTpv.Descripcion,
+                Cantidad = lineaTpv.Cantidad,
+                PrecioUnitario = lineaTpv.PrecioUnitario,
+                PorcentajeDescuento = lineaTpv.DescuentoPorcentaje
+            };
+
+            foreach (var impuestoTpv in lineaTpv.Impuestos)
+            {
+                var impuestoFactura = new DocumentoVentaLineaImpuesto(Session)
+                {
+                    DocumentoVentaLinea = lineaFactura,
+                    TipoImpuesto = impuestoTpv
+                };
+                lineaFactura.Impuestos.Add(impuestoFactura);
+            }
+            
+            factura.Lineas.Add(lineaFactura);
+        }
+
+        factura.RecalcularTotales();
+        // Nota: El número de factura se asignará al guardar según la lógica de DocumentoVenta
+    }
+
+    public void Cancelar(string motivo)
+    {
+        if (Estado == VentaTpvEstado.Finalizada || Estado == VentaTpvEstado.Cancelada) return;
+
+        Estado = VentaTpvEstado.Cancelada;
+        RegistrarEvento("Cancelada", $"Venta cancelada. Motivo: {motivo}");
     }
 }

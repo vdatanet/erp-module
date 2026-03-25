@@ -18,6 +18,7 @@ public class LineaVentaTpv(Session session) : EntidadBase(session)
     private string? _descripcion;
     private decimal _cantidad;
     private decimal _precioUnitario;
+    private decimal _precioUnitarioConImpuestos;
     private decimal _descuentoPorcentaje;
     private decimal _descuentoImporte;
     private decimal _baseImponible;
@@ -42,6 +43,10 @@ public class LineaVentaTpv(Session session) : EntidadBase(session)
             if (SetPropertyValue(nameof(Producto), ref _producto, value) && !IsLoading && value != null)
             {
                 Descripcion = value.Nombre;
+                foreach (var imp in value.ImpuestosVentas)
+                {
+                    Impuestos.Add(imp);
+                }
                 PrecioUnitario = value.PrecioVenta;
                 Recalcular();
             }
@@ -74,7 +79,24 @@ public class LineaVentaTpv(Session session) : EntidadBase(session)
         set 
         {
             if (SetPropertyValue(nameof(PrecioUnitario), ref _precioUnitario, value) && !IsLoading)
+            {
+                ActualizarPrecioConImpuestos();
                 Recalcular();
+            }
+        }
+    }
+
+    [XafDisplayName("Precio con Impuestos")]
+    public decimal PrecioUnitarioConImpuestos
+    {
+        get => _precioUnitarioConImpuestos;
+        set
+        {
+            if (SetPropertyValue(nameof(PrecioUnitarioConImpuestos), ref _precioUnitarioConImpuestos, value) && !IsLoading)
+            {
+                ActualizarPrecioBase();
+                Recalcular();
+            }
         }
     }
 
@@ -133,6 +155,11 @@ public class LineaVentaTpv(Session session) : EntidadBase(session)
 
     public void Recalcular()
     {
+        if (VentaTpv is { Estado: not (VentaTpvEstado.Borrador or VentaTpvEstado.EnCurso) })
+            return;
+
+        ActualizarPrecioConImpuestos();
+
         decimal bruto = Cantidad * PrecioUnitario;
         DescuentoImporte = bruto * (DescuentoPorcentaje / 100);
         BaseImponible = bruto - DescuentoImporte;
@@ -148,5 +175,29 @@ public class LineaVentaTpv(Session session) : EntidadBase(session)
         TotalLinea = BaseImponible + ImpuestoImporte;
 
         VentaTpv?.RecalcularTotales();
+    }
+
+    private void ActualizarPrecioConImpuestos()
+    {
+        if (IsLoading) return;
+        decimal porcentajeImpuesto = 0;
+        foreach (var imp in Impuestos)
+        {
+            porcentajeImpuesto += imp.Tipo;
+        }
+        _precioUnitarioConImpuestos = PrecioUnitario * (1 + (porcentajeImpuesto / 100));
+        OnChanged(nameof(PrecioUnitarioConImpuestos));
+    }
+
+    private void ActualizarPrecioBase()
+    {
+        if (IsLoading) return;
+        decimal porcentajeImpuesto = 0;
+        foreach (var imp in Impuestos)
+        {
+            porcentajeImpuesto += imp.Tipo;
+        }
+        _precioUnitario = PrecioUnitarioConImpuestos / (1 + (porcentajeImpuesto / 100));
+        OnChanged(nameof(PrecioUnitario));
     }
 }

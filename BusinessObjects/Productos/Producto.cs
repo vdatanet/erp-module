@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Editors;
+using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.Validation;
@@ -37,6 +38,7 @@ public class Producto(Session session) : EntidadBase(session)
     private bool _esConsumible;
     private bool _estaActivo;
     private MediaDataObject? _foto;
+    private MediaDataObject? _miniatura;
     private string? _nombre;
     private string? _notas;
     private decimal _precioVenta;
@@ -88,6 +90,21 @@ public class Producto(Session session) : EntidadBase(session)
     {
         get => _precioVenta;
         set => SetPropertyValue(nameof(PrecioVenta), ref _precioVenta, value);
+    }
+
+    [XafDisplayName("Precio Venta con Impuestos")]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    public decimal PrecioVentaConImpuestos
+    {
+        get
+        {
+            decimal porcentajeImpuesto = 0;
+            foreach (var imp in ImpuestosVentas)
+            {
+                porcentajeImpuesto += imp.Tipo;
+            }
+            return PrecioVenta * (1 + (porcentajeImpuesto / 100));
+        }
     }
 
     [XafDisplayName("Cuenta Contable Ventas")]
@@ -186,7 +203,55 @@ public class Producto(Session session) : EntidadBase(session)
     public MediaDataObject? Foto
     {
         get => _foto;
-        set => SetPropertyValue(nameof(Foto), ref _foto, value);
+        set
+        {
+            var oldFoto = _foto;
+            if (SetPropertyValue(nameof(Foto), ref _foto, value))
+            {
+                if (oldFoto != null)
+                {
+                    oldFoto.Changed -= Foto_Changed;
+                }
+                if (_foto != null)
+                {
+                    _foto.Changed += Foto_Changed;
+                }
+                if (!IsSaving)
+                {
+                    UpdateThumbnail(value);
+                }
+            }
+        }
+    }
+
+    private void Foto_Changed(object sender, ObjectChangeEventArgs e)
+    {
+        if (e.PropertyName == "MediaData" && !IsSaving)
+        {
+            UpdateThumbnail(Foto);
+        }
+    }
+
+    [XafDisplayName("Miniatura")]
+    [ImageEditor(DetailViewImageEditorMode = ImageEditorMode.PictureEdit, ListViewImageEditorMode = ImageEditorMode.PictureEdit)]
+    public MediaDataObject? Miniatura
+    {
+        get => _miniatura;
+        set => SetPropertyValue(nameof(Miniatura), ref _miniatura, value);
+    }
+
+    private void UpdateThumbnail(MediaDataObject? sourceFoto)
+    {
+        if (sourceFoto?.MediaData != null)
+        {
+            Miniatura ??= new MediaDataObject(Session);
+            Miniatura.MediaData = erp.Module.Helpers.ImageHelper.GetThumbnailBytes(sourceFoto.MediaData);
+            OnChanged(nameof(Miniatura));
+        }
+        else
+        {
+            Miniatura = null;
+        }
     }
 
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
@@ -224,6 +289,25 @@ public class Producto(Session session) : EntidadBase(session)
     [Association("Producto-StockActual")]
     [XafDisplayName("Stock Actual")]
     public XPCollection<StockActual> StockActual => GetCollection<StockActual>();
+
+    protected override void OnLoaded()
+    {
+        base.OnLoaded();
+        if (_foto != null)
+        {
+            _foto.Changed += Foto_Changed;
+        }
+    }
+
+    protected override void OnChanged(string propertyName, object oldValue, object newValue)
+    {
+        base.OnChanged(propertyName, oldValue, newValue);
+        if (IsSaving) return;
+        if (propertyName == nameof(Foto))
+        {
+            UpdateThumbnail(Foto);
+        }
+    }
 
     public override void AfterConstruction()
     {

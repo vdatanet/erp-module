@@ -20,6 +20,39 @@
     <SchemaModule Name="SystemModule" Version="25.2.5.0" IsNewNode="True" />
   </SchemaModules>
   <Views>
+    <DetailView Id="Categoria_DetailView">
+      <Items>
+        <PropertyEditor Id="Miniatura" Removed="True" />
+      </Items>
+    </DetailView>
+    <ListView Id="Categoria_ListView">
+      <Columns>
+        <ColumnInfo Id="Foto" Removed="True" />
+        <ColumnInfo Id="Miniatura" Index="1" IsNewNode="True" Width="100" />
+      </Columns>
+    </ListView>
+    <DetailView Id="Contacto_DetailView">
+      <Items>
+        <PropertyEditor Id="Miniatura" Removed="True" />
+      </Items>
+    </DetailView>
+    <ListView Id="Contacto_ListView">
+      <Columns>
+        <ColumnInfo Id="Foto" Removed="True" />
+        <ColumnInfo Id="Miniatura" Index="1" IsNewNode="True" Width="100" />
+      </Columns>
+    </ListView>
+    <DetailView Id="Producto_DetailView">
+      <Items>
+        <PropertyEditor Id="Miniatura" Removed="True" />
+      </Items>
+    </DetailView>
+    <ListView Id="Producto_ListView">
+      <Columns>
+        <ColumnInfo Id="Foto" Removed="True" />
+        <ColumnInfo Id="Miniatura" Index="1" IsNewNode="True" Width="100" />
+      </Columns>
+    </ListView>
     <DetailView Id="Adjunto_DetailView" FreezeLayout="True">
       <Layout IsNewNode="True" Removed="True">
         <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
