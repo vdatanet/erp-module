@@ -46,6 +46,7 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
             informacionEmpresa.PrefijoFacturasVentaPorDefecto = "VF";
             informacionEmpresa.PrefijoFacturasSimplificadasPorDefecto = "VS";
             informacionEmpresa.PrefijoParteTrabajoPorDefecto = "PT";
+            informacionEmpresa.NombreReporteTicket = "Ticket Factura Simplificada";
             isNew = true;
         }
 
@@ -89,6 +90,7 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
             {
                 medioPagoEfectivo = OS.CreateObject<MedioPago>();
                 medioPagoEfectivo.Nombre = "Efectivo";
+                medioPagoEfectivo.EsEfectivo = true;
             }
             informacionEmpresa.MedioPagoPorDefecto = medioPagoEfectivo;
         }

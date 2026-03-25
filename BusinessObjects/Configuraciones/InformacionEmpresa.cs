@@ -77,6 +77,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private string? _serieCertificadoVeriFactu;
     private string? _textoDefectoVeriFactu;
     private string? _versionSistemaVeriFactu;
+    private string? _nombreReporteTicket;
     private int _paddingNumero;
     private int _paddingCuentaContable;
 
@@ -518,6 +519,13 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     {
         get => _nifAdministradorSistemaVeriFactu;
         set => SetPropertyValue(nameof(NifAdministradorSistemaVeriFactu), ref _nifAdministradorSistemaVeriFactu, value);
+    }
+
+    [XafDisplayName("Nombre Reporte Ticket")]
+    public string? NombreReporteTicket
+    {
+        get => _nombreReporteTicket;
+        set => SetPropertyValue(nameof(NombreReporteTicket), ref _nombreReporteTicket, value);
     }
 
     public DateTime GetLocalTime()

@@ -27,6 +27,7 @@ public class Tpv(Session session) : EntidadBase(session)
     private string? _ubicacion;
     private ZonaHoraria? _zonaHoraria;
     private DateTime? _ultimaConexion;
+    private string? _nombreReporteTicket;
 
     [Size(100)]
     [RuleRequiredField("RuleRequiredField_Tpv_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre del TPV es obligatorio")]
@@ -82,6 +83,13 @@ public class Tpv(Session session) : EntidadBase(session)
     {
         get => _ultimaConexion;
         set => SetPropertyValue(nameof(UltimaConexion), ref _ultimaConexion, value);
+    }
+
+    [XafDisplayName("Nombre Reporte Ticket")]
+    public string? NombreReporteTicket
+    {
+        get => _nombreReporteTicket;
+        set => SetPropertyValue(nameof(NombreReporteTicket), ref _nombreReporteTicket, value);
     }
 
     public DateTime GetLocalTime()

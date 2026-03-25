@@ -15,6 +15,7 @@ namespace erp.Module.BusinessObjects.Tesoreria;
 public class MedioPago(Session session) : EntidadBase(session)
 {
     private string? _nombre;
+    private bool _esEfectivo;
     private string? _notas;
 
     [RuleRequiredField("RuleRequiredField_MedioPago_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre del Medio de Pago es obligatorio")]
@@ -24,6 +25,13 @@ public class MedioPago(Session session) : EntidadBase(session)
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
+    }
+
+    [XafDisplayName("Es Efectivo")]
+    public bool EsEfectivo
+    {
+        get => _esEfectivo;
+        set => SetPropertyValue(nameof(EsEfectivo), ref _esEfectivo, value);
     }
 
     [XafDisplayName("Notas")]

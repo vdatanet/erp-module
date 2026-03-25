@@ -234,14 +234,22 @@ public class VentaTpv(Session session) : EntidadBase(session)
 
     private void MaterializarVenta()
     {
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        if (companyInfo == null) return;
+
         var factura = new FacturaSimplificada(Session)
         {
             VentaTpv = this,
+            Tpv = SesionTpv?.Tpv,
+            SesionTpv = SesionTpv,
             Fecha = Fecha,
             Cliente = Cliente,
             Notas = Notas,
-            Usuario = Usuario
+            Usuario = Usuario ?? SecuritySystem.CurrentUser as ApplicationUser
         };
+
+        factura.Serie ??= SesionTpv?.Tpv?.SeriePorDefecto;
+        factura.Serie ??= companyInfo.PrefijoFacturasSimplificadasPorDefecto;
 
         foreach (var lineaTpv in Lineas)
         {
@@ -262,14 +270,24 @@ public class VentaTpv(Session session) : EntidadBase(session)
                     DocumentoVentaLinea = lineaFactura,
                     TipoImpuesto = impuestoTpv
                 };
-                lineaFactura.Impuestos.Add(impuestoFactura);
             }
             
             factura.Lineas.Add(lineaFactura);
         }
 
+        foreach (var pagoTpv in Pagos)
+        {
+            factura.ImportePagado += pagoTpv.Importe;
+        }
+
+        if (SesionTpv != null)
+        {
+            SesionTpv.CalcularImporteEsperado();
+        }
+
         factura.RecalcularTotales();
-        // Nota: El número de factura se asignará al guardar según la lógica de DocumentoVenta
+        factura.AsignarNumero();
+        RegistrarEvento("Materializada", $"Factura simplificada {factura.Secuencia} generada.");
     }
 
     public void Cancelar(string motivo)
