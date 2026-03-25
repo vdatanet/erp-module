@@ -13,13 +13,14 @@ public class TpvSessionController : ViewController
     {
         TargetObjectType = typeof(BusinessObjects.Tpv.Tpv);
         
-        var abrirSesion = new SimpleAction(this, "Tpv_AbrirSesion", PredefinedCategory.RecordEdit)
+        var abrirSesion = new PopupWindowShowAction(this, "Tpv_AbrirSesion", PredefinedCategory.RecordEdit)
         {
             Caption = "Abrir Sesión",
             ImageName = "Action_Open",
             TargetObjectsCriteria = "SesionAbierta = false",
             SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
+        abrirSesion.CustomizePopupWindowParams += AbrirSesion_CustomizePopupWindowParams;
         abrirSesion.Execute += AbrirSesion_Execute;
         Actions.Add(abrirSesion);
 
@@ -65,10 +66,31 @@ public class TpvSessionController : ViewController
         Actions.Add(reabrirSesion);
     }
 
-    private void AbrirSesion_Execute(object sender, SimpleActionExecuteEventArgs e)
+    private void AbrirSesion_CustomizePopupWindowParams(object sender, CustomizePopupWindowParamsEventArgs e)
+    {
+        var tpv = (BusinessObjects.Tpv.Tpv)View.CurrentObject;
+        
+        // Calculamos el importe teórico de apertura
+        // Suele ser el importe de cierre de la última sesión
+        var ultimaSesion = tpv.Sesiones.OrderByDescending(s => s.Cierre).FirstOrDefault(s => s.Estado == EstadoSesionTpv.Cerrada);
+        decimal importeTeorico = ultimaSesion?.ImporteCierre ?? 0;
+
+        var parameters = new AperturaSesionParameters
+        {
+            ImporteTeorico = importeTeorico,
+            ImporteReal = importeTeorico
+        };
+
+        var objectSpace = Application.CreateObjectSpace(typeof(AperturaSesionParameters));
+        e.View = Application.CreateDetailView(objectSpace, parameters);
+    }
+
+    private void AbrirSesion_Execute(object sender, PopupWindowShowActionExecuteEventArgs e)
     {
         var tpv = (BusinessObjects.Tpv.Tpv)e.CurrentObject;
-        tpv.AbrirSesionAction();
+        var parameters = (AperturaSesionParameters)e.PopupWindowViewCurrentObject;
+        
+        tpv.AbrirSesionAction(parameters.ImporteReal);
         ObjectSpace.CommitChanges();
     }
 

@@ -23,6 +23,21 @@ public class MovimientoCajaParameters
 }
 
 [DomainComponent]
+public class AperturaSesionParameters
+{
+    [XafDisplayName("Importe Real")]
+    public decimal ImporteReal { get; set; }
+
+    [XafDisplayName("Importe Teórico")]
+    [ModelDefault("AllowEdit", "False")]
+    public decimal ImporteTeorico { get; set; }
+
+    [XafDisplayName("Diferencia")]
+    [ModelDefault("AllowEdit", "False")]
+    public decimal Diferencia => ImporteReal - ImporteTeorico;
+}
+
+[DomainComponent]
 public class CierreSesionParameters
 {
     [XafDisplayName("Importe Contado")]

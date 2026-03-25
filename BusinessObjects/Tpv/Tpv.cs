@@ -104,7 +104,7 @@ public class Tpv(Session session) : EntidadBase(session)
     [XafDisplayName("Roles autorizados")]
     public XPCollection<ApplicationRole> RolesAutorizados => GetCollection<ApplicationRole>();
 
-    public void AbrirSesionAction()
+    public void AbrirSesionAction(decimal importeApertura = 0)
     {
         var sesionAbierta = SesionActualAbierta;
         if (sesionAbierta != null) return;
@@ -113,7 +113,7 @@ public class Tpv(Session session) : EntidadBase(session)
         if (usuarioActual == null) return;
 
         var nuevaSesion = new SesionTpv(Session);
-        nuevaSesion.AbrirSesion(this, usuarioActual);
+        nuevaSesion.AbrirSesion(this, usuarioActual, importeApertura);
         nuevaSesion.Save();
         OnChanged(nameof(SesionActualAbierta));
         OnChanged(nameof(SesionAbierta));
