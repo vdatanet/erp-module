@@ -23,6 +23,8 @@ using erp.Module.Models.Ventas;
 using erp.Module.Services.Ventas;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
 
+using DevExpress.Xpo.Metadata;
+
 namespace erp.Module.BusinessObjects.Base.Ventas;
 
 public abstract class DocumentoVenta(Session session) : EntidadBase(session)
@@ -169,21 +171,27 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
             var modified = SetPropertyValue(nameof(Cliente), ref _cliente, value);
             if (modified && !IsLoading && !IsSaving && value != null)
             {
-                if (value is Cliente c)
-                {
-                    CondicionPago = c.CondicionPago;
-                }
-                NombreCliente = value.Nombre;
-                DocumentoIdentificacionCliente = value.Nif;
-                EmailCliente = value.CorreoElectronico;
-                TelefonoCliente = value.Telefono;
-                DireccionCliente = value.Direccion;
-                PoblacionCliente = value.Poblacion?.Nombre;
-                ProvinciaCliente = value.Provincia?.Nombre;
-                CodigoPostalCliente = value.CodigoPostal;
-                PaisCliente = value.Pais;
+                OnClienteChanged(value);
             }
         }
+    }
+
+    protected virtual void OnClienteChanged(Tercero value)
+    {
+        if (value is Cliente c)
+        {
+            CondicionPago = c.CondicionPago;
+        }
+
+        NombreCliente = value.Nombre;
+        DocumentoIdentificacionCliente = value.Nif;
+        EmailCliente = value.CorreoElectronico;
+        TelefonoCliente = value.Telefono;
+        DireccionCliente = value.Direccion;
+        PoblacionCliente = value.Poblacion?.Nombre;
+        ProvinciaCliente = value.Provincia?.Nombre;
+        CodigoPostalCliente = value.CodigoPostal;
+        PaisCliente = value.Pais;
     }
 
     [Size(100)]
@@ -578,8 +586,15 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(ImpuestoIncluido), ref _impuestoIncluido, value);
     }
 
+    private TotalesDocumento? _totalesCache;
+
     [Browsable(false)]
-    public TotalesDocumento Totales => DocumentoVentaService.CalcularTotales(this);
+    public TotalesDocumento Totales => _totalesCache ??= DocumentoVentaService.CalcularTotales(this);
+
+    public void InvalidadCacheTotales()
+    {
+        _totalesCache = null;
+    }
 
     [XafDisplayName("Forma de Pago")]
     public CondicionPago? FormaPago
@@ -813,10 +828,10 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     [Size(255)]
     [XafDisplayName("Dirección Entrega")]
-    public string? _direccionEntregaProperty
+    public string? DireccionEntrega
     {
         get => _direccionEntrega;
-        set => SetPropertyValue(nameof(_direccionEntregaProperty), ref _direccionEntrega, value);
+        set => SetPropertyValue(nameof(DireccionEntrega), ref _direccionEntrega, value);
     }
 
     [XafDisplayName("Fecha Entrega Prevista")]
@@ -843,12 +858,17 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
             var modified = SetPropertyValue(nameof(MetodoEntrega), ref _metodoEntrega, value);
             if (modified && !IsLoading && !IsSaving && value != null)
             {
-                Transportista = value.TransportistaPorDefecto;
-                if (GastosEnvio == 0)
-                {
-                    GastosEnvio = value.CosteFijo;
-                }
+                OnMetodoEntregaChanged(value);
             }
+        }
+    }
+
+    protected virtual void OnMetodoEntregaChanged(MetodoEntrega value)
+    {
+        Transportista = value.TransportistaPorDefecto;
+        if (GastosEnvio == 0)
+        {
+            GastosEnvio = value.CosteFijo;
         }
     }
 
@@ -976,15 +996,20 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
             var modified = SetPropertyValue(nameof(Vendedor), ref _vendedor, value);
             if (modified && !IsLoading && !IsSaving && value != null)
             {
-                if (value.EquipoVenta != null)
-                    EquipoVenta = value.EquipoVenta;
-
-                foreach (var linea in Lineas)
-                {
-                    linea.PorcentajeComision = value.PorcentajeComision;
-                    linea.ImporteComisionFijo = value.ImporteComisionFijo;
-                }
+                OnVendedorChanged(value);
             }
+        }
+    }
+
+    protected virtual void OnVendedorChanged(Contacto value)
+    {
+        if (value.EquipoVenta != null)
+            EquipoVenta = value.EquipoVenta;
+
+        foreach (var linea in Lineas)
+        {
+            linea.PorcentajeComision = value.PorcentajeComision;
+            linea.ImporteComisionFijo = value.ImporteComisionFijo;
         }
     }
 
@@ -1010,15 +1035,16 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     [DevExpress.Xpo.Aggregated]
     [Association("DocumentoVenta-Lineas")]
     [XafDisplayName("Líneas")]
-    public XPCollection<LineaDocumentoVenta> Lineas
+    public XPCollection<LineaDocumentoVenta> Lineas => GetCollection<LineaDocumentoVenta>();
+
+    protected override XPCollection<T> CreateCollection<T>(XPMemberInfo property)
     {
-        get
+        var collection = base.CreateCollection<T>(property);
+        if (property.Name == nameof(Lineas))
         {
-            var collection = GetCollection<LineaDocumentoVenta>();
-            collection.CollectionChanged -= Lineas_CollectionChanged;
             collection.CollectionChanged += Lineas_CollectionChanged;
-            return collection;
         }
+        return collection;
     }
 
     [DevExpress.Xpo.Aggregated]
@@ -1056,6 +1082,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private void Lineas_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
     {
         if (IsLoading || IsSaving || IsDeleted) return;
+        InvalidadCacheTotales();
         RecalcularTotales();
     }
 
@@ -1080,6 +1107,13 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     public override void AfterConstruction()
     {
         base.AfterConstruction();
+        InitInformacionTemporal();
+        InitEstadoYControl();
+        InitAuditoria();
+    }
+
+    private void InitInformacionTemporal()
+    {
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null)
         {
@@ -1095,9 +1129,16 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
             EjercicioFiscal ??= Ejercicio;
             EjercicioContable ??= Ejercicio;
         }
+    }
 
+    private void InitEstadoYControl()
+    {
         Origen = OrigenDocumentoVenta.Manual;
         Estado = EstadoDocumentoVenta.Borrador;
+    }
+
+    private void InitAuditoria()
+    {
         FechaCreacion = InformacionEmpresaHelper.GetLocalTime(Session);
         UsuarioCreacion = Session.GetObjectByKey<ApplicationUser>(SecuritySystem.CurrentUserId);
     }
@@ -1110,9 +1151,18 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     protected override void OnSaving()
     {
         base.OnSaving();
+        ActualizarAuditoriaModificacion();
+        ProcesarNumeracion();
+    }
+
+    private void ActualizarAuditoriaModificacion()
+    {
         FechaModificacion = InformacionEmpresaHelper.GetLocalTime(Session);
         UsuarioModificacion = Session.GetObjectByKey<ApplicationUser>(SecuritySystem.CurrentUserId);
+    }
 
+    private void ProcesarNumeracion()
+    {
         if (GetAsignarNumeroAlGuardar() && string.IsNullOrEmpty(Secuencia) && !string.IsNullOrEmpty(Serie))
             AsignarNumero();
     }

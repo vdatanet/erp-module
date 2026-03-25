@@ -210,12 +210,13 @@ public class Suscripcion(Session session) : EntidadBase(session)
 
     private void CrearPedidoVigente()
     {
+        var localTime = InformacionEmpresaHelper.GetLocalTime(Session);
         var nuevoPedido = new PedidoVenta(Session)
         {
             Suscripcion = this,
             Cliente = Cliente,
-            Fecha = DateTime.Today,
-            FechaInicioVigencia = DateTime.Today,
+            Fecha = localTime.Date,
+            FechaInicioVigencia = localTime.Date,
             EstadoVigencia = EstadoVigenciaPedido.Vigente,
             ImporteSuscripcion = ImporteFinal,
             PeriodicidadSuscripcion = TipoSuscripcion?.Periodicidad ?? Periodicidad.Mensual
@@ -246,7 +247,7 @@ public class Suscripcion(Session session) : EntidadBase(session)
         }
 
         nuevoPedido.Lineas.Add(linea);
-        nuevoPedido.ReconstruirResumenImpuestos();
+        nuevoPedido.RecalcularTotales();
 
         PedidoVigente = nuevoPedido;
     }
@@ -256,10 +257,11 @@ public class Suscripcion(Session session) : EntidadBase(session)
         if (Cliente == null)
             throw new InvalidOperationException("La suscripción debe tener un cliente asignado.");
 
+        var localTime = InformacionEmpresaHelper.GetLocalTime(Session);
         var factura = new FacturaVenta(Session)
         {
             Cliente = Cliente,
-            Fecha = DateTime.Today
+            Fecha = localTime.Date
         };
 
         var linea = new LineaDocumentoVenta(Session)
@@ -287,11 +289,11 @@ public class Suscripcion(Session session) : EntidadBase(session)
         }
 
         factura.Lineas.Add(linea);
-        factura.ReconstruirResumenImpuestos();
+        factura.RecalcularTotales();
 
         // Actualizar fechas
-        UltimaFechaCobro = DateTime.Today;
-        ProximaFechaCobro = CalcularProximaFecha(ProximaFechaCobro ?? DateTime.Today);
+        UltimaFechaCobro = localTime.Date;
+        ProximaFechaCobro = CalcularProximaFecha(ProximaFechaCobro ?? localTime.Date);
 
         return factura;
     }
@@ -322,7 +324,7 @@ public class Suscripcion(Session session) : EntidadBase(session)
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        FechaInicio = DateTime.Today;
+        FechaInicio = InformacionEmpresaHelper.GetLocalTime(Session).Date;
         Estado = EstadoSuscripcion.Activa;
 
         if (!IsLoading && TipoSuscripcion != null)
@@ -344,7 +346,7 @@ public class Suscripcion(Session session) : EntidadBase(session)
 
     public static int ProcesarFacturacionMensual(Session session)
     {
-        var hoy = DateTime.Today;
+        var hoy = InformacionEmpresaHelper.GetLocalTime(session).Date;
         var primerDiaMes = new DateTime(hoy.Year, hoy.Month, 1);
         var ultimoDiaMes = primerDiaMes.AddMonths(1).AddDays(-1);
 
