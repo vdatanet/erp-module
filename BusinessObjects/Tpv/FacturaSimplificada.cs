@@ -15,6 +15,16 @@ namespace erp.Module.BusinessObjects.Tpv;
 [DefaultProperty(nameof(Secuencia))]
 public class FacturaSimplificada(Session session) : FacturaBase(session)
 {
+    [Persistent(nameof(VentaTpv))]
+    private VentaTpv? _ventaTpv;
+
+    [XafDisplayName("Venta TPV")]
+    public VentaTpv? VentaTpv
+    {
+        get => _ventaTpv;
+        set => SetPropertyValue(nameof(VentaTpv), ref _ventaTpv, value);
+    }
+
     public override void AfterConstruction()
     {
         base.AfterConstruction();

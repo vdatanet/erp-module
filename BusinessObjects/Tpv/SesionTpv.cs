@@ -200,6 +200,10 @@ public class SesionTpv(Session session) : EntidadBase(session)
     [XafDisplayName("Documentos de Venta")]
     public XPCollection<DocumentoVenta> DocumentosVenta => GetCollection<DocumentoVenta>();
 
+    [Association("SesionTpv-VentasTpv")]
+    [XafDisplayName("Ventas TPV")]
+    public XPCollection<VentaTpv> VentasTpv => GetCollection<VentaTpv>();
+
     [Association("SesionTpv-Eventos")]
     [XafDisplayName("Historial de Eventos")]
     public XPCollection<SesionTpvEvento> Eventos => GetCollection<SesionTpvEvento>();
