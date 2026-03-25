@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Security;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
@@ -19,7 +20,7 @@ public sealed class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLog
 
     [Browsable(false)]
     [NonCloneable]
-    [Aggregated]
+    [DevExpress.Xpo.Aggregated]
     [Association("User-LoginInfo")]
     public XPCollection<ApplicationUserLoginInfo> LoginInfo => GetCollection<ApplicationUserLoginInfo>();
 

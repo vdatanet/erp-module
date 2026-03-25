@@ -2,6 +2,7 @@ using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
+using DevExpress.Persistent.BaseImpl.PermissionPolicy;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.Helpers.Contactos;
@@ -96,6 +97,10 @@ public class Tpv(Session session) : EntidadBase(session)
     [Association("Tpv-Sesiones")]
     [XafDisplayName("Sesiones")]
     public XPCollection<SesionTpv> Sesiones => GetCollection<SesionTpv>();
+
+    [Association("RolesAutorizados-Tpvs")]
+    [XafDisplayName("Roles autorizados")]
+    public XPCollection<ApplicationRole> RolesAutorizados => GetCollection<ApplicationRole>();
 
     public override void AfterConstruction()
     {
