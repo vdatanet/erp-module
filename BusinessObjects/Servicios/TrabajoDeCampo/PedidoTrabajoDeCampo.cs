@@ -4,6 +4,7 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Ventas;
+using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Servicios.TrabajoDeCampo;
 
@@ -53,6 +54,6 @@ public class PedidoTrabajoDeCampo(Session session) : EntidadBase(session)
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        FechaPedido = DateTime.Now;
+        FechaPedido = InformacionEmpresaHelper.GetLocalTime(Session);
     }
 }

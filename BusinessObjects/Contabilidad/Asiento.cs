@@ -293,7 +293,7 @@ public class Asiento(Session session) : EntidadBase(session)
     {
         base.AfterConstruction();
         Estado = EstadoAsiento.Borrador;
-        Fecha = DateTime.Today;
+        Fecha = InformacionEmpresaHelper.GetLocalTime(Session).Date;
         
         Ejercicio = Session.Query<Ejercicio>().FirstOrDefault(e => e.Estado == EstadoEjercicio.Abierto && e.FechaInicio <= Fecha && e.FechaFin >= Fecha);
         

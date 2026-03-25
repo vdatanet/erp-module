@@ -163,7 +163,7 @@ public class Suscripcion(Session session) : EntidadBase(session)
         {
             if (Estado != EstadoSuscripcion.Activa || !ProximaFechaCobro.HasValue)
                 return false;
-            return ProximaFechaCobro.Value <= DateTime.Today;
+            return ProximaFechaCobro.Value <= InformacionEmpresaHelper.GetLocalTime(Session).Date;
         }
     }
 
@@ -174,7 +174,7 @@ public class Suscripcion(Session session) : EntidadBase(session)
         {
             if (Estado != EstadoSuscripcion.Activa || !ProximaFechaCobro.HasValue)
                 return false;
-            var hoy = DateTime.Today;
+            var hoy = InformacionEmpresaHelper.GetLocalTime(Session).Date;
             return ProximaFechaCobro.Value.Year == hoy.Year && ProximaFechaCobro.Value.Month == hoy.Month;
         }
     }
@@ -195,7 +195,7 @@ public class Suscripcion(Session session) : EntidadBase(session)
         if (PedidoVigente != null)
         {
             PedidoVigente.EstadoVigencia = EstadoVigenciaPedido.Sustituido;
-            PedidoVigente.FechaFinVigencia = DateTime.Today;
+            PedidoVigente.FechaFinVigencia = InformacionEmpresaHelper.GetLocalTime(Session).Date;
             PedidoVigente.MotivoSustitucion = motivo;
         }
 

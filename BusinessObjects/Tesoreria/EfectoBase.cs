@@ -5,6 +5,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Tesoreria;
 
@@ -98,6 +99,6 @@ public abstract class EfectoBase(Session session) : EntidadBase(session)
     {
         base.AfterConstruction();
         Estado = EstadoEfecto.Pendiente;
-        FechaVencimiento = DateTime.Today;
+        FechaVencimiento = InformacionEmpresaHelper.GetLocalTime(Session).Date;
     }
 }

@@ -4,6 +4,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Contabilidad;
 
@@ -60,7 +61,8 @@ public class PeriodoBloqueado(Session session) : EntidadBase(session)
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        FechaInicio = DateTime.Today;
-        FechaFin = DateTime.Today;
+        var hoy = InformacionEmpresaHelper.GetLocalTime(Session).Date;
+        FechaInicio = hoy;
+        FechaFin = hoy;
     }
 }

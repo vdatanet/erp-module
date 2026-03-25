@@ -1192,15 +1192,6 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     private void InitInformacionTemporal()
     {
-        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        if (companyInfo == null)
-        {
-            var now = DateTime.Now;
-            Fecha = now.Date;
-            Hora = now.TimeOfDay;
-            return;
-        }
-
         var localTime = InformacionEmpresaHelper.GetLocalTime(Session);
         Fecha = localTime.Date;
         Hora = localTime.TimeOfDay;

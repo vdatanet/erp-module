@@ -3,6 +3,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
+using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Servicios.PartesTrabajo;
 
@@ -74,6 +75,6 @@ public class ParteTrabajoTiempo(Session session) : EntidadBase(session)
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        FechaInicio = DateTime.Now;
+        FechaInicio = InformacionEmpresaHelper.GetLocalTime(Session);
     }
 }

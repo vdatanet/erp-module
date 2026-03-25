@@ -5,6 +5,7 @@ using DevExpress.Persistent.BaseImpl;
 using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.Helpers.Comun;
+using erp.Module.Helpers.Contactos;
 using VeriFactu.Business;
 using VeriFactu.Config;
 
@@ -25,7 +26,7 @@ public class VeriFactuService
 
         var companyInfo = objectSpace.FindObject<InformacionEmpresa>(null);
 
-        if (invoice.Fecha == DateTime.MinValue) invoice.Fecha = companyInfo?.GetLocalTime().Date ?? DateTime.Now.Date;
+        if (invoice.Fecha == DateTime.MinValue) invoice.Fecha = InformacionEmpresaHelper.GetLocalTime(objectSpace).Date;
         if (string.IsNullOrEmpty(invoice.Secuencia)) invoice.AsignarNumero();
 
         if (companyInfo == null || string.IsNullOrEmpty(companyInfo.Nombre) || string.IsNullOrEmpty(companyInfo.Nif))

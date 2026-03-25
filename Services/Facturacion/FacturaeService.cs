@@ -48,16 +48,16 @@ public class FacturaeService : IFacturaeService
         f.FileHeader.InvoiceIssuerType = InvoiceIssuerType.EM; // Emisor
 
         // 2. Emisor
-        f.Parties.SellerParty.TaxIdentification.TaxIdentificationNumber = company.Nif;
+        f.Parties.SellerParty.TaxIdentification.TaxIdentificationNumber = company.Nif ?? string.Empty;
         f.Parties.SellerParty.TaxIdentification.PersonTypeCode = company.Nif?.Length == 9 && char.IsLetter(company.Nif[0]) ? PersonTypeCode.J : PersonTypeCode.F;
 
         var sellerLegalEntity = new LegalEntity();
-        sellerLegalEntity.CorporateName = company.Nombre;
+        sellerLegalEntity.CorporateName = company.Nombre ?? string.Empty;
         var sellerAddress = new Address();
-        sellerAddress.AddressText = company.Direccion;
-        sellerAddress.PostCode = company.CodigoPostal;
-        sellerAddress.Town = company.Poblacion?.Nombre;
-        sellerAddress.Province = company.Provincia?.Nombre;
+        sellerAddress.AddressText = company.Direccion ?? string.Empty;
+        sellerAddress.PostCode = company.CodigoPostal ?? string.Empty;
+        sellerAddress.Town = company.Poblacion?.Nombre ?? string.Empty;
+        sellerAddress.Province = company.Provincia?.Nombre ?? string.Empty;
         sellerAddress.CountryCode = Country.ESP;
         sellerLegalEntity.Address = sellerAddress;
         f.Parties.SellerParty.Party = sellerLegalEntity;
@@ -66,16 +66,16 @@ public class FacturaeService : IFacturaeService
         var cliente = invoice.Cliente;
         if (cliente == null) throw new UserFriendlyException("La factura no tiene cliente asignado.");
 
-        f.Parties.BuyerParty.TaxIdentification.TaxIdentificationNumber = cliente.Nif;
+        f.Parties.BuyerParty.TaxIdentification.TaxIdentificationNumber = cliente.Nif ?? string.Empty;
         f.Parties.BuyerParty.TaxIdentification.PersonTypeCode = cliente.Nif?.Length == 9 && char.IsLetter(cliente.Nif[0]) ? PersonTypeCode.J : PersonTypeCode.F;
 
         var buyerLegalEntity = new LegalEntity();
-        buyerLegalEntity.CorporateName = cliente.Nombre;
+        buyerLegalEntity.CorporateName = cliente.Nombre ?? string.Empty;
         var buyerAddress = new Address();
-        buyerAddress.AddressText = cliente.Direccion;
-        buyerAddress.PostCode = cliente.CodigoPostal;
-        buyerAddress.Town = cliente.Poblacion?.Nombre;
-        buyerAddress.Province = cliente.Provincia?.Nombre;
+        buyerAddress.AddressText = cliente.Direccion ?? string.Empty;
+        buyerAddress.PostCode = cliente.CodigoPostal ?? string.Empty;
+        buyerAddress.Town = cliente.Poblacion?.Nombre ?? string.Empty;
+        buyerAddress.Province = cliente.Provincia?.Nombre ?? string.Empty;
         buyerAddress.CountryCode = Country.ESP;
         buyerLegalEntity.Address = buyerAddress;
         f.Parties.BuyerParty.Party = buyerLegalEntity;
@@ -112,7 +112,7 @@ public class FacturaeService : IFacturaeService
         // 4. Detalle de factura
         var inv = new Invoice();
         inv.InvoiceHeader.InvoiceNumber = invoice.Secuencia ?? invoice.Numero.ToString();
-        inv.InvoiceHeader.InvoiceSeriesCode = invoice.Serie;
+        inv.InvoiceHeader.InvoiceSeriesCode = invoice.Serie ?? string.Empty;
         inv.InvoiceHeader.InvoiceDocumentType = InvoiceDocumentType.FC; // Factura Completa
         inv.InvoiceHeader.InvoiceClass = InvoiceClass.OO; // Original
 
@@ -150,7 +150,7 @@ public class FacturaeService : IFacturaeService
         foreach (var line in invoice.Lineas)
         {
             var l = new InvoiceLine();
-            l.ItemDescription = line.NombreProducto;
+            l.ItemDescription = line.NombreProducto ?? string.Empty;
             l.Quantity = (decimal)line.Cantidad;
             l.UnitOfMeasure = UnitOfMeasure.Units; // Unidades
             l.UnitPriceWithoutTax = (decimal)line.PrecioUnitario;

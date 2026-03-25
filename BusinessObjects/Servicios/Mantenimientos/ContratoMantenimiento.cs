@@ -3,6 +3,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
+using erp.Module.Helpers.Contactos;
 using erp.Module.BusinessObjects.Servicios.Mantenimientos.Enums;
 using erp.Module.BusinessObjects.Ventas;
 
@@ -99,8 +100,8 @@ public class ContratoMantenimiento(Session session) : EntidadBase(session)
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        Estado = EstadoContratoMantenimiento.Borrador;
-        FechaInicio = DateTime.Today;
-        FechaFin = DateTime.Today.AddYears(1);
+        var hoy = InformacionEmpresaHelper.GetLocalTime(Session).Date;
+        FechaInicio = hoy;
+        FechaFin = hoy.AddYears(1);
     }
 }

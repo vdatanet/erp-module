@@ -12,6 +12,7 @@ using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Productos;
+using erp.Module.Helpers.Contactos;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace erp.Module.BusinessObjects.Auxiliares;
@@ -89,7 +90,7 @@ public class Tarea(Session session) : EntidadBase(session)
                     if (value == EstadoTarea.Completada)
                     {
                         PorcentajeCompletado = 100;
-                        FechaFin = DateTime.Now;
+                        FechaFin = InformacionEmpresaHelper.GetLocalTime(Session);
                         CompletadaPor = GetCurrentEmpleado();
                     }
                     else if (value == EstadoTarea.Pendiente && PorcentajeCompletado == 100)

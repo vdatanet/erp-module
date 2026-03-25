@@ -5,6 +5,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Servicios.TrabajoDeCampo;
+using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Servicios.Mantenimientos;
 
@@ -109,7 +110,7 @@ public class IncidenciaMantenimiento(Session session) : EntidadBase(session)
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        FechaApertura = DateTime.Now;
+        FechaApertura = InformacionEmpresaHelper.GetLocalTime(Session);
         Prioridad = 1;
         Estado = "Abierta";
     }

@@ -3,6 +3,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Servicios.TrabajoDeCampo;
 
@@ -41,7 +42,7 @@ public class TareaTrabajoDeCampo(Session session) : EntidadBase(session)
             {
                 if (!IsLoading && !IsSaving)
                 {
-                    FechaFinalizacion = value ? DateTime.Now : null;
+                    FechaFinalizacion = value ? InformacionEmpresaHelper.GetLocalTime(Session) : null;
                 }
             }
         }

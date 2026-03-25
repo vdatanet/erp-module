@@ -50,13 +50,14 @@ public class FacturaSimplificada(Session session) : FacturaBase(session)
         if (cliente == null) throw new UserFriendlyException("Se requiere un cliente para generar una factura nominal.");
         if (string.IsNullOrEmpty(cliente.Nif)) throw new UserFriendlyException("El cliente seleccionado no tiene NIF.");
 
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         // 1. Crear la Factura Simplificada Rectificativa (para anular la actual)
         var rectificativa = new FacturaSimplificada(Session)
         {
             VentaTpv = VentaTpv,
             Tpv = Tpv,
             SesionTpv = SesionTpv,
-            Fecha = DateTime.Now,
+            Fecha = companyInfo?.GetLocalTime() ?? DateTime.Now,
             Cliente = Cliente,
             Notas = $"Anulación de factura {Secuencia} para emisión de factura nominal.",
             Usuario = Usuario,
@@ -95,7 +96,7 @@ public class FacturaSimplificada(Session session) : FacturaBase(session)
         // 2. Crear la Factura de Venta Nominal
         var nominal = new FacturaVenta(Session)
         {
-            Fecha = DateTime.Now,
+            Fecha = companyInfo?.GetLocalTime() ?? DateTime.Now,
             Cliente = cliente,
             Notas = $"Factura generada a partir de la simplificada {Secuencia}.",
             Usuario = Usuario,
@@ -104,7 +105,6 @@ public class FacturaSimplificada(Session session) : FacturaBase(session)
             TipoDocumento = TipoDocumentoVenta.Factura
         };
         
-        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         nominal.Serie = companyInfo?.PrefijoFacturasVentaPorDefecto;
 
         // Copiar líneas en positivo

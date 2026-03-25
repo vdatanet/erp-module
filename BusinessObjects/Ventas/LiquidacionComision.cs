@@ -4,6 +4,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
+using erp.Module.Helpers.Contactos;
 using erp.Module.BusinessObjects.Ventas;
 using erp.Module.BusinessObjects.Alquileres;
 using erp.Module.BusinessObjects.Tesoreria;
@@ -113,8 +114,9 @@ public class LiquidacionComision(Session session) : EntidadBase(session)
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        FechaLiquidacion = DateTime.Today;
-        Mes = DateTime.Today.Month;
-        Anio = DateTime.Today.Year;
+        var hoy = InformacionEmpresaHelper.GetLocalTime(Session).Date;
+        FechaLiquidacion = hoy;
+        Mes = hoy.Month;
+        Anio = hoy.Year;
     }
 }
