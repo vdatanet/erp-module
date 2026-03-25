@@ -2,7 +2,6 @@ using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
-using DevExpress.Xpo;
 
 namespace erp.Module.BusinessObjects.Tpv;
 
@@ -17,7 +16,7 @@ public class MovimientoCajaParameters
     public decimal Importe { get; set; }
 
     [XafDisplayName("Motivo")]
-    [Size(SizeAttribute.Unlimited)]
+    [FieldSize(FieldSizeAttribute.Unlimited)]
     [RuleRequiredField("RuleRequiredField_MovimientoCajaParameters_Motivo", DefaultContexts.Save, 
         TargetCriteria = "Tipo = 'Retirada'", CustomMessageTemplate = "El motivo es obligatorio para retiradas")]
     public string? Motivo { get; set; }
@@ -38,6 +37,6 @@ public class CierreSesionParameters
     public decimal DiferenciaArqueo => ImporteContado - ImporteEsperado;
 
     [XafDisplayName("Observaciones")]
-    [Size(SizeAttribute.Unlimited)]
+    [FieldSize(FieldSizeAttribute.Unlimited)]
     public string? Observaciones { get; set; }
 }

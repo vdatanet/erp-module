@@ -423,5 +423,6 @@ public class Contacto(Session session) : EntidadBase(session)
         TipoIdentificacion = IDType.NIF_IVA;
         Activo = true;
         FechaAlta = InformacionEmpresaHelper.GetLocalTime(Session);
+        NfcUid = Oid.ToString();
     }
 }
