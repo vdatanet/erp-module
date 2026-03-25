@@ -78,6 +78,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private string? _textoDefectoVeriFactu;
     private string? _versionSistemaVeriFactu;
     private string? _nombreReporteTicket;
+    private bool _impresionDirectaTicket;
     private int _paddingNumero;
     private int _paddingCuentaContable;
 
@@ -526,6 +527,13 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     {
         get => _nombreReporteTicket;
         set => SetPropertyValue(nameof(NombreReporteTicket), ref _nombreReporteTicket, value);
+    }
+
+    [XafDisplayName("Impresión Directa Ticket")]
+    public bool ImpresionDirectaTicket
+    {
+        get => _impresionDirectaTicket;
+        set => SetPropertyValue(nameof(ImpresionDirectaTicket), ref _impresionDirectaTicket, value);
     }
 
     public DateTime GetLocalTime()
