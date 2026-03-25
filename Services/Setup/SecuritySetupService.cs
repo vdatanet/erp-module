@@ -17,6 +17,7 @@ using erp.Module.BusinessObjects.ControlHorario;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Imprenta;
 using erp.Module.BusinessObjects.Impuestos;
+using erp.Module.BusinessObjects.Inventario;
 using erp.Module.BusinessObjects.Servicios.PartesTrabajo;
 using erp.Module.BusinessObjects.Servicios.Mantenimientos;
 using erp.Module.BusinessObjects.Servicios.TrabajoDeCampo;
@@ -71,6 +72,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             CreateAlquileresRole();
             CreateSuscripcionesRole();
             CreateTesoreriaRole();
+            CreateInventarioRole();
             CreateReportsRole();
         }
     }
@@ -168,6 +170,8 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         contactosRole.AddTypePermissionsRecursively<Empleado>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
         contactosRole.AddTypePermissionsRecursively<Proveedor>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        contactosRole.AddTypePermissionsRecursively<Acreedor>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
         contactosRole.AddTypePermissionsRecursively<Tercero>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
@@ -294,6 +298,10 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             SecurityPermissionState.Allow);
         tpvRole.AddTypePermissionsRecursively<SesionTpv>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
+        tpvRole.AddTypePermissionsRecursively<SesionTpvEvento>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        tpvRole.AddTypePermissionsRecursively<MovimientoCajaTpv>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
 
         tpvRole.AddNavigationPermission(@"Application/NavigationItems/Items/Tpv", SecurityPermissionState.Allow);
 
@@ -311,9 +319,15 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
         contabilidadRole.AddTypePermissionsRecursively<CuentaContable>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
+        contabilidadRole.AddTypePermissionsRecursively<Asiento>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        contabilidadRole.AddTypePermissionsRecursively<Apunte>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
         contabilidadRole.AddTypePermissionsRecursively<Diario>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
         contabilidadRole.AddTypePermissionsRecursively<Ejercicio>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        contabilidadRole.AddTypePermissionsRecursively<PeriodoBloqueado>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
 
         contabilidadRole.AddNavigationPermission(@"Application/NavigationItems/Items/Contabilidad",
@@ -369,6 +383,8 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         configuracionesRole.AddTypePermissionsRecursively<InformacionEmpresa>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
         configuracionesRole.AddTypePermissionsRecursively<Secuencia>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        configuracionesRole.AddTypePermissionsRecursively<ZonaHoraria>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
 
         configuracionesRole.AddNavigationPermission(@"Application/NavigationItems/Items/Configuraciones",
@@ -549,6 +565,30 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             SecurityPermissionState.Allow);
 
         return tesoreriaRole;
+    }
+
+    private ApplicationRole CreateInventarioRole()
+    {
+        var inventarioRole = OS.FirstOrDefault<ApplicationRole>(role => role.Name == "Inventario");
+        if (inventarioRole == null)
+        {
+            inventarioRole = OS.CreateObject<ApplicationRole>();
+            inventarioRole.Name = "Inventario";
+        }
+
+        inventarioRole.AddTypePermissionsRecursively<Almacen>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        inventarioRole.AddTypePermissionsRecursively<MovimientoAlmacen>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        inventarioRole.AddTypePermissionsRecursively<MovimientoAlmacenLinea>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        inventarioRole.AddTypePermissionsRecursively<StockActual>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+
+        inventarioRole.AddNavigationPermission(@"Application/NavigationItems/Items/Inventario",
+            SecurityPermissionState.Allow);
+
+        return inventarioRole;
     }
 
     private ApplicationRole CreateReportsRole()
