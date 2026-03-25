@@ -49,9 +49,9 @@ public class TrabajoImpresionServicio(Session session) : DocumentoVentaLinea(ses
         set => SetAndRecalculate(nameof(PrecioEntrada), ref _precioEntrada, value);
     }
 
-    protected override void OnProductoChanged()
+    protected override void OnAsignarProductoFinished()
     {
-        base.OnProductoChanged();
+        base.OnAsignarProductoFinished();
         if (Producto != null) TotalizarLinea();
     }
 

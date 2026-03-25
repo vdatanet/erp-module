@@ -3,6 +3,7 @@ using DevExpress.ExpressApp.Editors;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
+using DevExpress.Xpo.Metadata;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Impuestos;
@@ -64,11 +65,52 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
         {
             var modified = SetPropertyValue(nameof(Producto), ref _producto, value);
             if (!modified || IsLoading || IsSaving || IsDeleted) return;
-            BorrarImpuestosProducto();
-            AplicarInstantaneaProducto();
-            ReconstruirImpuestos();
-            OnProductoChanged();
+            AsignarProducto(value);
         }
+    }
+
+    /// <summary>
+    /// Regla de negocio: Al asignar un producto se actualizan los datos de la línea 
+    /// (nombre, precio, cuenta contable e impuestos) desde el producto.
+    /// </summary>
+    public virtual void AsignarProducto(Producto? value)
+    {
+        BorrarImpuestosProducto();
+        
+        if (value == null)
+        {
+            NombreProducto = null;
+            Notas = null;
+            PrecioUnitario = 0m;
+            // No reseteamos cantidad ni descuento por defecto si se quita el producto, 
+            // aunque se podría valorar.
+            RecalcularYNotificar();
+            return;
+        }
+
+        NombreProducto = value.Nombre;
+        Notas = value.Notas;
+        PrecioUnitario = value.PrecioVenta;
+
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        CuentaContable = value.CuentaVentas ?? companyInfo?.CuentaVentasPorDefecto;
+
+        if (Cantidad == 0m)
+            Cantidad = 1m;
+
+        foreach (var tax in value.ImpuestosVentas.OrderBy(t => t.Secuencia)) 
+            TiposImpuestoVenta.Add(tax);
+            
+        RecalcularYNotificar();
+        OnAsignarProductoFinished();
+    }
+
+    protected virtual void OnAsignarProductoFinished()
+    {
+    }
+
+    protected virtual void OnCantidadChanged()
+    {
     }
 
     [Size(SizeAttribute.Unlimited)]
@@ -98,7 +140,7 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
         {
             var modified = SetPropertyValue(nameof(Cantidad), ref _cantidad, value);
             if (!modified || IsLoading || IsSaving || IsDeleted) return;
-            EstablecerBaseImponible();
+            RecalcularYNotificar();
             OnCantidadChanged();
         }
     }
@@ -114,7 +156,7 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
         {
             var modified = SetPropertyValue(nameof(PrecioUnitario), ref _precioUnitario, value);
             if (!modified || IsLoading || IsSaving || IsDeleted) return;
-            EstablecerBaseImponible();
+            RecalcularYNotificar();
         }
     }
 
@@ -129,7 +171,7 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
         {
             var modified = SetPropertyValue(nameof(PorcentajeDescuento), ref _porcentajeDescuento, value);
             if (!modified || IsLoading || IsSaving || IsDeleted) return;
-            EstablecerBaseImponible();
+            RecalcularYNotificar();
         }
     }
 
@@ -191,15 +233,16 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
     [Association("DocumentoVentaLinea-TipoImpuestos")]
     [DataSourceCriteria("DisponibleEnVentas = True AND EstaActivo = True")]
     [XafDisplayName("Impuestos")]
-    public XPCollection<TipoImpuesto> TiposImpuestoVenta
+    public XPCollection<TipoImpuesto> TiposImpuestoVenta => GetCollection<TipoImpuesto>();
+
+    protected override XPCollection<T> CreateCollection<T>(XPMemberInfo property)
     {
-        get
+        var collection = base.CreateCollection<T>(property);
+        if (property.Name == nameof(TiposImpuestoVenta))
         {
-            var collection = GetCollection<TipoImpuesto>();
-            collection.CollectionChanged -= TiposImpuestoVenta_CollectionChanged;
             collection.CollectionChanged += TiposImpuestoVenta_CollectionChanged;
-            return collection;
         }
+        return collection;
     }
 
     [DevExpress.Xpo.Aggregated]
@@ -208,18 +251,10 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
     [XafDisplayName("Detalle Impuestos")]
     public XPCollection<DocumentoVentaLineaImpuesto> Impuestos => GetCollection<DocumentoVentaLineaImpuesto>();
 
-    protected virtual void OnProductoChanged()
-    {
-    }
-
-    protected virtual void OnCantidadChanged()
-    {
-    }
-
     private void TiposImpuestoVenta_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
     {
         if (IsLoading || IsSaving || IsDeleted) return;
-        ReconstruirImpuestos();
+        RecalcularYNotificar();
     }
 
     public override void AfterConstruction()
@@ -232,35 +267,17 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
         }
     }
 
-    private void AplicarInstantaneaProducto()
+    private void RecalcularYNotificar()
     {
-        if (Producto is null)
-        {
-            NombreProducto = null;
-            Notas = null;
-            Cantidad = 0;
-            PrecioUnitario = 0m;
-            PorcentajeDescuento = 0m;
-            return;
-        }
-
-        NombreProducto = Producto.Nombre;
-        Notas = Producto.Notas;
-        PrecioUnitario = Producto.PrecioVenta;
-
-        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        CuentaContable = Producto.CuentaVentas ?? companyInfo?.CuentaVentasPorDefecto;
-
-        if (Cantidad == 0m)
-            Cantidad = 1m;
-
-        foreach (var tax in Producto.ImpuestosVentas.OrderBy(t => t.Secuencia)) TiposImpuestoVenta.Add(tax);
+        EstablecerBaseImponible();
+        ReconstruirImpuestos();
+        DocumentoVenta?.InvalidadCacheTotales();
+        DocumentoVenta?.RecalcularTotales();
     }
 
     private void EstablecerBaseImponible()
     {
         BaseImponible = AmountCalculator.GetTaxableAmount(Cantidad, PrecioUnitario, PorcentajeDescuento);
-        ReconstruirImpuestos();
     }
 
     private void ReconstruirImpuestos()
@@ -278,10 +295,6 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
 
         ImporteImpuestos = Impuestos.Sum(t => t.ImporteImpuestos);
         ImporteTotal = BaseImponible + ImporteImpuestos;
-
-        if (DocumentoVenta is null) return;
-
-        DocumentoVenta.RecalcularTotales();
     }
 
     private void BorrarImpuestosProducto()

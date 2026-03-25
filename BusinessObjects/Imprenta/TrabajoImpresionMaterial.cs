@@ -23,9 +23,9 @@ public class TrabajoImpresionMaterial(Session session) : DocumentoVentaLinea(ses
         }
     }
 
-    protected override void OnProductoChanged()
+    protected override void OnAsignarProductoFinished()
     {
-        base.OnProductoChanged();
+        base.OnAsignarProductoFinished();
         if (Producto != null) TotalizarLinea();
     }
 

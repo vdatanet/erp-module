@@ -66,9 +66,9 @@ public class TrabajoImpresionPapel(Session session) : DocumentoVentaLinea(sessio
         set => SetAndRecalculate(nameof(Gramaje), ref _gramaje, value);
     }
 
-    protected override void OnProductoChanged()
+    protected override void OnAsignarProductoFinished()
     {
-        base.OnProductoChanged();
+        base.OnAsignarProductoFinished();
         if (Producto != null) TotalizarLinea();
     }
 

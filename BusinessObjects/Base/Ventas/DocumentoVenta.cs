@@ -107,13 +107,6 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private CuentaContable? _cuentaBanco;
 
     // --- ESTADO Y CONTROL ---
-    private bool _borrador;
-    private bool _confirmado;
-    private bool _emitido;
-    private bool _impreso;
-    private bool _anulado;
-    private bool _bloqueado;
-    private bool _sincronizado;
     private DateTime? _fechaConfirmacion;
     private DateTime? _fechaEmision;
     private DateTime? _fechaImpresion;
@@ -169,15 +162,33 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set
         {
             var modified = SetPropertyValue(nameof(Cliente), ref _cliente, value);
-            if (modified && !IsLoading && !IsSaving && value != null)
+            if (modified && !IsLoading && !IsSaving)
             {
-                OnClienteChanged(value);
+                AsignarCliente(value);
             }
         }
     }
 
-    protected virtual void OnClienteChanged(Tercero value)
+    /// <summary>
+    /// Regla de negocio: Al asignar un cliente se copian sus datos de contacto y facturación al documento.
+    /// </summary>
+    public virtual void AsignarCliente(Tercero? value)
     {
+        if (value == null)
+        {
+            CondicionPago = null;
+            NombreCliente = null;
+            DocumentoIdentificacionCliente = null;
+            EmailCliente = null;
+            TelefonoCliente = null;
+            DireccionCliente = null;
+            PoblacionCliente = null;
+            ProvinciaCliente = null;
+            CodigoPostalCliente = null;
+            PaisCliente = null;
+            return;
+        }
+
         CondicionPago = (value as Cliente)?.CondicionPago;
 
         NombreCliente = value.Nombre;
@@ -362,24 +373,33 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         get => _estado;
         set
         {
+            var oldEstado = _estado;
             var modified = SetPropertyValue(nameof(Estado), ref _estado, value);
             if (modified && !IsLoading && !IsSaving)
             {
-                ActualizarBanderasEstado(value);
+                OnChanged(nameof(Borrador));
+                OnChanged(nameof(Confirmado));
+                OnChanged(nameof(Emitido));
+                OnChanged(nameof(Impreso));
+                OnChanged(nameof(Anulado));
+                OnChanged(nameof(Bloqueado));
+                OnChanged(nameof(Sincronizado));
+                
+                ActualizarFechasEstado(oldEstado, value);
             }
         }
     }
 
-    private void ActualizarBanderasEstado(EstadoDocumentoVenta nuevoEstado)
+    private void ActualizarFechasEstado(EstadoDocumentoVenta oldEstado, EstadoDocumentoVenta nuevoEstado)
     {
-        Borrador = nuevoEstado == EstadoDocumentoVenta.Borrador;
-        Confirmado = nuevoEstado == EstadoDocumentoVenta.Confirmado;
-        Emitido = nuevoEstado == EstadoDocumentoVenta.Emitido;
-        Impreso = nuevoEstado == EstadoDocumentoVenta.Impreso;
-        Anulado = nuevoEstado == EstadoDocumentoVenta.Anulado;
-        Bloqueado = nuevoEstado == EstadoDocumentoVenta.Bloqueado;
-        Sincronizado = nuevoEstado == EstadoDocumentoVenta.Sincronizado;
-        Cobrado = nuevoEstado == EstadoDocumentoVenta.Cobrado;
+        if (nuevoEstado == EstadoDocumentoVenta.Confirmado && FechaConfirmacion == null)
+            FechaConfirmacion = InformacionEmpresaHelper.GetLocalTime(Session);
+        else if (nuevoEstado == EstadoDocumentoVenta.Emitido && FechaEmision == null)
+            FechaEmision = InformacionEmpresaHelper.GetLocalTime(Session);
+        else if (nuevoEstado == EstadoDocumentoVenta.Impreso && FechaImpresion == null)
+            FechaImpresion = InformacionEmpresaHelper.GetLocalTime(Session);
+        else if (nuevoEstado == EstadoDocumentoVenta.Anulado && FechaAnulacion == null)
+            FechaAnulacion = InformacionEmpresaHelper.GetLocalTime(Session);
     }
 
     [XafDisplayName("TPV")]
@@ -694,59 +714,31 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     [NonCloneable]
     [XafDisplayName("Borrador")]
-    public bool Borrador
-    {
-        get => _borrador;
-        set => SetPropertyValue(nameof(Borrador), ref _borrador, value);
-    }
+    public bool Borrador => Estado == EstadoDocumentoVenta.Borrador;
 
     [NonCloneable]
     [XafDisplayName("Confirmado")]
-    public bool Confirmado
-    {
-        get => _confirmado;
-        set => SetPropertyValue(nameof(Confirmado), ref _confirmado, value);
-    }
+    public bool Confirmado => Estado == EstadoDocumentoVenta.Confirmado;
 
     [NonCloneable]
     [XafDisplayName("Emitido")]
-    public bool Emitido
-    {
-        get => _emitido;
-        set => SetPropertyValue(nameof(Emitido), ref _emitido, value);
-    }
+    public bool Emitido => Estado == EstadoDocumentoVenta.Emitido;
 
     [NonCloneable]
     [XafDisplayName("Impreso")]
-    public bool Impreso
-    {
-        get => _impreso;
-        set => SetPropertyValue(nameof(Impreso), ref _impreso, value);
-    }
+    public bool Impreso => Estado == EstadoDocumentoVenta.Impreso;
 
     [NonCloneable]
     [XafDisplayName("Anulado")]
-    public bool Anulado
-    {
-        get => _anulado;
-        set => SetPropertyValue(nameof(Anulado), ref _anulado, value);
-    }
+    public bool Anulado => Estado == EstadoDocumentoVenta.Anulado;
 
     [NonCloneable]
     [XafDisplayName("Bloqueado")]
-    public bool Bloqueado
-    {
-        get => _bloqueado;
-        set => SetPropertyValue(nameof(Bloqueado), ref _bloqueado, value);
-    }
+    public bool Bloqueado => Estado == EstadoDocumentoVenta.Bloqueado;
 
     [NonCloneable]
     [XafDisplayName("Sincronizado")]
-    public bool Sincronizado
-    {
-        get => _sincronizado;
-        set => SetPropertyValue(nameof(Sincronizado), ref _sincronizado, value);
-    }
+    public bool Sincronizado => Estado == EstadoDocumentoVenta.Sincronizado;
 
     [NonCloneable]
     [XafDisplayName("Fecha Confirmación")]
@@ -903,17 +895,25 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set
         {
             var modified = SetPropertyValue(nameof(MetodoEntrega), ref _metodoEntrega, value);
-            if (modified && !IsLoading && !IsSaving && value != null)
+            if (modified && !IsLoading && !IsSaving)
             {
-                OnMetodoEntregaChanged(value);
+                AsignarMetodoEntrega(value);
             }
         }
     }
 
-    protected virtual void OnMetodoEntregaChanged(MetodoEntrega value)
+    /// <summary>
+    /// Regla de negocio: Al asignar un método de entrega se establece el transportista por defecto 
+    /// y se inicializan los gastos de envío si el documento es nuevo.
+    /// </summary>
+    public virtual void AsignarMetodoEntrega(MetodoEntrega? value)
     {
+        if (value == null) return;
+
         Transportista = value.TransportistaPorDefecto;
-        // Solo asignamos si no tiene valor o es 0 y es un objeto nuevo (para no sobreescribir intencionadamente 0 en edición)
+        
+        // Solo asignamos si no tiene valor o es 0 y es un objeto nuevo 
+        // (para no sobreescribir intencionadamente 0 en edición)
         if (GastosEnvio == 0 && Session.IsNewObject(this))
         {
             GastosEnvio = value.CosteFijo;
@@ -1042,15 +1042,21 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set
         {
             var modified = SetPropertyValue(nameof(Vendedor), ref _vendedor, value);
-            if (modified && !IsLoading && !IsSaving && value != null)
+            if (modified && !IsLoading && !IsSaving)
             {
-                OnVendedorChanged(value);
+                AsignarVendedor(value);
             }
         }
     }
 
-    protected virtual void OnVendedorChanged(Contacto value)
+    /// <summary>
+    /// Regla de negocio: Al asignar un vendedor se establece su equipo de venta 
+    /// y se sincronizan las comisiones de las líneas existentes.
+    /// </summary>
+    public virtual void AsignarVendedor(Contacto? value)
     {
+        if (value == null) return;
+
         if (value.EquipoVenta != null)
             EquipoVenta = value.EquipoVenta;
 
@@ -1171,18 +1177,19 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null)
         {
-            Fecha = DateTime.Today;
-            Hora = DateTime.Now.TimeOfDay;
+            var now = DateTime.Now;
+            Fecha = now.Date;
+            Hora = now.TimeOfDay;
+            return;
         }
-        else
-        {
-            var localTime = InformacionEmpresaHelper.GetLocalTime(Session);
-            Fecha = localTime.Date;
-            Hora = localTime.TimeOfDay;
-            Ejercicio ??= Session.Query<Ejercicio>().FirstOrDefault(e => e.Estado == EstadoEjercicio.Abierto && e.FechaInicio <= Fecha && e.FechaFin >= Fecha);
-            EjercicioFiscal ??= Ejercicio;
-            EjercicioContable ??= Ejercicio;
-        }
+
+        var localTime = InformacionEmpresaHelper.GetLocalTime(Session);
+        Fecha = localTime.Date;
+        Hora = localTime.TimeOfDay;
+        
+        Ejercicio ??= Session.Query<Ejercicio>().FirstOrDefault(e => e.Estado == EstadoEjercicio.Abierto && e.FechaInicio <= Fecha && e.FechaFin >= Fecha);
+        EjercicioFiscal ??= Ejercicio;
+        EjercicioContable ??= Ejercicio;
     }
 
     private void InitEstadoYControl()

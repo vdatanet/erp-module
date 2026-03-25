@@ -23,9 +23,9 @@ public class TrabajoImpresionHora(Session session) : DocumentoVentaLinea(session
         }
     }
 
-    protected override void OnProductoChanged()
+    protected override void OnAsignarProductoFinished()
     {
-        base.OnProductoChanged();
+        base.OnAsignarProductoFinished();
         if (Producto != null) TotalizarLinea();
     }
 
