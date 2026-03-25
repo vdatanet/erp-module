@@ -11,26 +11,26 @@ namespace erp.Module.BusinessObjects.Base.Compras;
 
 [ImageName("Top10Percent")]
 [DefaultProperty(nameof(TipoImpuesto))]
-public class ImpuestoLineaDocumentoCompra(Session session) : EntidadBase(session)
+public class DocumentoCompraLineaImpuesto(Session session) : EntidadBase(session)
 {
     private decimal _baseImponible;
     private CuentaContable? _cuenta;
     private bool _esCompuesto;
     private bool _esRetencion;
     private decimal _importeImpuestos;
-    private LineaDocumentoCompra? _lineaDocumentoCompra;
+    private DocumentoCompraLinea? _documentoCompraLinea;
     private string? _nombre;
     private string? _notas;
     private int _secuencia;
     private decimal _tipo;
     private TipoImpuesto? _tipoImpuesto;
 
-    [Association("LineaDocumentoCompra-Impuestos")]
+    [Association("DocumentoCompraLinea-DocumentoCompraLineaImpuestos")]
     [XafDisplayName("Línea Documento Compra")]
-    public LineaDocumentoCompra? LineaDocumentoCompra
+    public DocumentoCompraLinea? DocumentoCompraLinea
     {
-        get => _lineaDocumentoCompra;
-        set => SetPropertyValue(nameof(LineaDocumentoCompra), ref _lineaDocumentoCompra, value);
+        get => _documentoCompraLinea;
+        set => SetPropertyValue(nameof(DocumentoCompraLinea), ref _documentoCompraLinea, value);
     }
 
     [XafDisplayName("Tipo Impuesto")]

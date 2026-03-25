@@ -10,7 +10,7 @@ using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Base.Compras;
 
-public class LineaDocumentoCompra(Session session) : EntidadBase(session)
+public class DocumentoCompraLinea(Session session) : EntidadBase(session)
 {
     private decimal _baseImponible;
     private decimal _cantidad;
@@ -24,7 +24,7 @@ public class LineaDocumentoCompra(Session session) : EntidadBase(session)
     private CuentaContable? _cuentaContable;
     private int _secuencia;
 
-    [Association("DocumentoCompra-Lineas")]
+    [Association("DocumentoCompra-DocumentoCompraLineas")]
     [XafDisplayName("Documento Compra")]
     public DocumentoCompra? DocumentoCompra
     {
@@ -151,9 +151,9 @@ public class LineaDocumentoCompra(Session session) : EntidadBase(session)
     }
 
     [DevExpress.Xpo.Aggregated]
-    [Association("LineaDocumentoCompra-Impuestos")]
+    [Association("DocumentoCompraLinea-DocumentoCompraLineaImpuestos")]
     [XafDisplayName("Impuestos")]
-    public XPCollection<ImpuestoLineaDocumentoCompra> Impuestos => GetCollection<ImpuestoLineaDocumentoCompra>();
+    public XPCollection<DocumentoCompraLineaImpuesto> Impuestos => GetCollection<DocumentoCompraLineaImpuesto>();
 
     private void OnProductoChanged()
     {
@@ -167,9 +167,9 @@ public class LineaDocumentoCompra(Session session) : EntidadBase(session)
         BorrarImpuestosProducto();
         foreach (var t in Producto.ImpuestosCompras)
         {
-            var tax = new ImpuestoLineaDocumentoCompra(Session)
+            var tax = new DocumentoCompraLineaImpuesto(Session)
             {
-                LineaDocumentoCompra = this,
+                DocumentoCompraLinea = this,
                 TipoImpuesto = t
             };
             Impuestos.Add(tax);

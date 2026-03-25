@@ -156,13 +156,13 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
     }
 
     [DevExpress.Xpo.Aggregated]
-    [Association("DocumentoCompra-Lineas")]
+    [Association("DocumentoCompra-DocumentoCompraLineas")]
     [XafDisplayName("Líneas")]
-    public XPCollection<LineaDocumentoCompra> Lineas
+    public XPCollection<DocumentoCompraLinea> Lineas
     {
         get
         {
-            var collection = GetCollection<LineaDocumentoCompra>();
+            var collection = GetCollection<DocumentoCompraLinea>();
             collection.CollectionChanged -= Lineas_CollectionChanged;
             collection.CollectionChanged += Lineas_CollectionChanged;
             return collection;
@@ -170,9 +170,9 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
     }
 
     [DevExpress.Xpo.Aggregated]
-    [Association("DocumentoCompra-Impuestos")]
+    [Association("DocumentoCompra-DocumentoCompraImpuestos")]
     [XafDisplayName("Impuestos")]
-    public XPCollection<ImpuestoDocumentoCompra> Impuestos => GetCollection<ImpuestoDocumentoCompra>();
+    public XPCollection<DocumentoCompraImpuesto> Impuestos => GetCollection<DocumentoCompraImpuesto>();
 
     [DevExpress.Xpo.Aggregated]
     [Association("DocumentoCompra-Tareas")]
@@ -217,7 +217,7 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
 
         var newTaxes = groups.Select(g =>
         {
-            var tax = new ImpuestoDocumentoCompra(Session)
+            var tax = new DocumentoCompraImpuesto(Session)
             {
                 DocumentoCompra = this,
                 TipoImpuesto = g.TaxType,

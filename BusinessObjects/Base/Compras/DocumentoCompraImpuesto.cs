@@ -12,7 +12,7 @@ namespace erp.Module.BusinessObjects.Base.Compras;
 
 [ImageName("RowTotalsPosition")]
 [DefaultProperty(nameof(Secuencia))]
-public class ImpuestoDocumentoCompra(Session session) : EntidadBase(session)
+public class DocumentoCompraImpuesto(Session session) : EntidadBase(session)
 {
     private decimal _baseImponible;
     private CuentaContable? _cuenta;
@@ -23,7 +23,7 @@ public class ImpuestoDocumentoCompra(Session session) : EntidadBase(session)
     private decimal _tipo;
     private TipoImpuesto? _tipoImpuesto;
 
-    [Association("DocumentoCompra-Impuestos")]
+    [Association("DocumentoCompra-DocumentoCompraImpuestos")]
     [XafDisplayName("Documento Compra")]
     public DocumentoCompra? DocumentoCompra
     {
