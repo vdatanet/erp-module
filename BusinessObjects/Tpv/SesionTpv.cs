@@ -30,8 +30,8 @@ public enum EstadoSesionTpv
 [XafDisplayName("Sesión TPV")]
 [Persistent("SesionTpv")]
 [DefaultProperty(nameof(Apertura))]
-[RuleCriteria("UnicaSesionAbiertaPorTpv", DefaultContexts.Save, "Estado != 'Abierta' || [Tpv.Sesiones][Estado = 'Abierta' && Oid != ^.Oid].Count() = 0", 
-    CustomMessageTemplate = "Ya existe otra sesión abierta para este TPV.", SkipNullOrEmptyValues = false)]
+[RuleCriteria("UnicaSesionAbiertaPorTpv", DefaultContexts.Save, "Estado != 'Abierta' || [Tpv.Sesiones][Estado = 'Abierta' && Oid != ^.Oid].Count() == 0", 
+    CustomMessageTemplate = "Ya existe otra sesión abierta para este TPV.", SkipNullOrEmptyValues = false, ResultType = ValidationResultType.Information)]
 public class SesionTpv(Session session) : EntidadBase(session)
 {
     private DateTime _apertura;
@@ -58,7 +58,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
     public Guid? EstadoAbiertoUnico
     {
         get => _estadoAbiertoUnico;
-        private set => SetPropertyValue(nameof(EstadoAbiertoUnico), ref _estadoAbiertoUnico, value);
+        set => SetPropertyValue(nameof(EstadoAbiertoUnico), ref _estadoAbiertoUnico, value);
     }
 
     [XafDisplayName("TPV")]
@@ -163,7 +163,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
     public decimal ImporteEsperado
     {
         get => _importeEsperado;
-        internal set => SetPropertyValue(nameof(ImporteEsperado), ref _importeEsperado, value);
+        set => SetPropertyValue(nameof(ImporteEsperado), ref _importeEsperado, value);
     }
 
     [XafDisplayName("Diferencia Arqueo")]
@@ -173,7 +173,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
     public decimal DiferenciaArqueo
     {
         get => _diferenciaArqueo;
-        internal set => SetPropertyValue(nameof(DiferenciaArqueo), ref _diferenciaArqueo, value);
+        set => SetPropertyValue(nameof(DiferenciaArqueo), ref _diferenciaArqueo, value);
     }
 
     [Size(SizeAttribute.Unlimited)]
@@ -189,7 +189,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
     public EstadoSesionTpv Estado
     {
         get => _estado;
-        internal set => SetPropertyValue(nameof(Estado), ref _estado, value);
+        set => SetPropertyValue(nameof(Estado), ref _estado, value);
     }
 
     [Association("SesionTpv-FacturasSimplificadas")]
@@ -231,13 +231,15 @@ public class SesionTpv(Session session) : EntidadBase(session)
     public bool EstaCerrada => Estado == EstadoSesionTpv.Cerrada;
 
     [Browsable(false)]
-    [RuleFromBoolProperty("RuleFromBoolProperty_SesionTpv_UnaSolaSesionAbierta", DefaultContexts.Save, "Ya existe una sesión abierta para este TPV.", UsedProperties = "Tpv, Estado")]
+    // Removido temporalmente RuleFromBoolProperty para evitar conflictos con la validación de OnSaving y el servicio de dominio.
     public bool UnaSolaSesionAbierta
     {
         get
         {
             if (Tpv == null || Estado != EstadoSesionTpv.Abierta) return true;
-            var sesionAbierta = Session.FindObject<SesionTpv>(CriteriaOperator.Parse("Tpv.Oid = ? AND Estado = ? AND Oid != ?", Tpv.Oid, EstadoSesionTpv.Abierta, Oid));
+            // Usar InTransaction para que el validador vea los cambios pendientes
+            var sesionAbierta = Session.FindObject<SesionTpv>(PersistentCriteriaEvaluationBehavior.InTransaction,
+                CriteriaOperator.Parse("Tpv.Oid = ? AND Estado = ? AND Oid != ?", Tpv.Oid, EstadoSesionTpv.Abierta, Oid));
             return sesionAbierta == null;
         }
     }
@@ -268,13 +270,11 @@ public class SesionTpv(Session session) : EntidadBase(session)
         if (service == null)
             throw new InvalidOperationException("El servicio de Sesión TPV no está disponible.");
 
-        CambiarEstado(EstadoSesionTpv.Abierta);
         service.InicializarSesion(this, tpv, usuario, importeApertura);
     }
 
     public void CerrarSesionAction(string? observaciones = null)
     {
-        CambiarEstado(EstadoSesionTpv.Cerrada);
         SesionTpvService?.CerrarSesion(this, null, observaciones);
     }
 
@@ -284,7 +284,6 @@ public class SesionTpv(Session session) : EntidadBase(session)
         if (service == null)
             throw new InvalidOperationException("El servicio de Sesión TPV no está disponible.");
 
-        CambiarEstado(EstadoSesionTpv.Cerrada);
         service.CerrarSesion(this, importeCierreManual, observaciones);
     }
 
@@ -331,7 +330,6 @@ public class SesionTpv(Session session) : EntidadBase(session)
         if (service == null)
             throw new InvalidOperationException("El servicio de Sesión TPV no está disponible.");
 
-        CambiarEstado(EstadoSesionTpv.Abierta);
         service.ReabrirSesion(this, motivo);
     }
 
@@ -343,15 +341,19 @@ public class SesionTpv(Session session) : EntidadBase(session)
     protected override void OnSaving()
     {
         base.OnSaving();
-        if (Tpv != null && Estado == EstadoSesionTpv.Abierta)
+        
+        // Solo validamos si el estado ACTUAL en memoria es Abierta.
+        // Si estamos cambiando a Cerrada, no debería saltar esta validación.
+        if (Tpv != null && Estado == EstadoSesionTpv.Abierta && !Session.IsObjectToDelete(this))
         {
             // Revalidación en el momento de guardar para evitar condiciones de carrera.
             // Se comprueba si existe OTRA sesión abierta diferente a la actual.
             var sesionAbierta = Session.FindObject<SesionTpv>(
+                PersistentCriteriaEvaluationBehavior.InTransaction,
                 CriteriaOperator.Parse("Tpv.Oid = ? AND Estado = ? AND Oid != ?", Tpv.Oid, EstadoSesionTpv.Abierta, Oid));
             
             if (sesionAbierta != null)
-                throw new UserFriendlyException("Ya existe una sesión abierta para este TPV. No se pueden tener dos sesiones abiertas simultáneamente.");
+                throw new UserFriendlyException($"Ya existe otra sesión abierta para este TPV ({Tpv.Nombre}). No se pueden tener dos sesiones abiertas simultáneamente.");
         }
     }
 

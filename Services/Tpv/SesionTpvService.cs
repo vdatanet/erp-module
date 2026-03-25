@@ -26,7 +26,8 @@ public class SesionTpvService : ISesionTpvService
             uow.CommitChanges();
             uow.CommitTransaction();
             
-            return tpv.Session.GetObjectByKey<SesionTpv>(sesion.Oid);
+            try { sesion.Reload(); } catch { /* Ignore reload errors in disconnected contexts */ }
+            return sesion;
         }
         catch
         {
@@ -49,6 +50,8 @@ public class SesionTpvService : ISesionTpvService
         sesion.ImporteApertura = Math.Round(importeApertura, 2);
         sesion.Apertura = fechaLocal;
         sesion.FechaUltimaModificacion = fechaLocal;
+        sesion.Estado = EstadoSesionTpv.Abierta;
+        sesion.EstadoAbiertoUnico = Guid.NewGuid();
 
         var mov = new MovimientoCajaTpv(sesion.Session);
         mov.Tipo = TipoMovimientoCajaTpv.Apertura;
@@ -88,10 +91,22 @@ public class SesionTpvService : ISesionTpvService
             var estadoAnterior = sesionInUow.Estado.ToString();
             var importeAnterior = sesionInUow.ImporteEsperado;
 
+            // Actualizar el estado antes de los cálculos para asegurar que se persiste.
+            sesionInUow.Estado = EstadoSesionTpv.Cerrada;
+            sesionInUow.EstadoAbiertoUnico = null;
             sesionInUow.Cierre = fechaCierre;
             sesionInUow.CerradaPor = user;
             sesionInUow.FechaUltimaModificacion = fechaCierre;
             
+            // Actualizar el objeto original si estamos en la misma sesión de XPO
+            if (sesion.Session == sesionInUow.Session)
+            {
+                sesion.Estado = EstadoSesionTpv.Cerrada;
+                sesion.EstadoAbiertoUnico = null;
+                sesion.Cierre = fechaCierre;
+                sesion.CerradaPor = user;
+            }
+
             CalcularImporteEsperado(sesionInUow);
 
             if (importeCierreManual.HasValue)
@@ -129,7 +144,7 @@ public class SesionTpvService : ISesionTpvService
             uow.CommitChanges();
             uow.CommitTransaction();
             
-            sesion.Reload();
+            try { sesion.Reload(); } catch { /* Ignore reload errors in disconnected contexts */ }
         }
         catch
         {
@@ -156,8 +171,17 @@ public class SesionTpvService : ISesionTpvService
             var estadoAnterior = sesionInUow.Estado.ToString();
             var importeAnterior = sesionInUow.ImporteCierre;
 
+            sesionInUow.Estado = EstadoSesionTpv.Abierta;
+            sesionInUow.EstadoAbiertoUnico = Guid.NewGuid();
             sesionInUow.Cierre = null;
             sesionInUow.ReabiertaPor = user;
+
+            // Actualizar el objeto original
+            if (sesion.Session == sesionInUow.Session)
+            {
+                sesion.Estado = EstadoSesionTpv.Abierta;
+                sesion.EstadoAbiertoUnico = sesionInUow.EstadoAbiertoUnico;
+            }
             sesionInUow.MotivoReapertura = motivo;
             sesionInUow.NumeroReaperturas++;
             sesionInUow.FechaUltimaModificacion = fechaLocal;
@@ -182,7 +206,7 @@ public class SesionTpvService : ISesionTpvService
             uow.CommitChanges();
             uow.CommitTransaction();
             
-            sesion.Reload();
+            try { sesion.Reload(); } catch { /* Ignore reload errors in disconnected contexts */ }
         }
         catch
         {
@@ -240,7 +264,7 @@ public class SesionTpvService : ISesionTpvService
             uow.CommitChanges();
             uow.CommitTransaction();
             
-            sesion.Reload();
+            try { sesion.Reload(); } catch { /* Ignore reload errors in disconnected contexts */ }
         }
         catch
         {
