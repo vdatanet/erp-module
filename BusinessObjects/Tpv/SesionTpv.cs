@@ -74,7 +74,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Importe Apertura")]
-    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("DisplayFormat", "{0:n2} €")]
     [ModelDefault("EditMask", "n2")]
     public decimal ImporteApertura
     {
@@ -83,7 +83,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Importe Contado")]
-    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("DisplayFormat", "{0:n2} €")]
     [ModelDefault("EditMask", "n2")]
     [Appearance("ImporteCierreVisibleWhenClosed", Visibility = ViewItemVisibility.Hide,
         Criteria = "Estado = 'Abierta'")]
@@ -94,7 +94,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Importe Esperado")]
-    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("DisplayFormat", "{0:n2} €")]
     [ModelDefault("EditMask", "n2")]
     [ModelDefault("AllowEdit", "False")]
     public decimal ImporteEsperado
@@ -104,7 +104,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Diferencia Arqueo")]
-    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("DisplayFormat", "{0:n2} €")]
     [ModelDefault("EditMask", "n2")]
     [ModelDefault("AllowEdit", "False")]
     public decimal DiferenciaArqueo
@@ -167,13 +167,13 @@ public class SesionTpv(Session session) : EntidadBase(session)
         // Pero este método sirve para inicializar una sesión recién creada.
         Tpv = tpv;
         Usuario = usuario;
-        ImporteApertura = importeApertura;
+        ImporteApertura = Math.Round(importeApertura, 2);
         Apertura = Tpv.GetLocalTime();
         Estado = EstadoSesionTpv.Abierta;
 
         var mov = new MovimientoCajaTpv(Session);
         mov.Tipo = TipoMovimientoCajaTpv.Apertura;
-        mov.Importe = importeApertura;
+        mov.Importe = ImporteApertura;
         mov.SesionTpv = this;
         mov.Fecha = Apertura;
         mov.Usuario = usuario;
@@ -199,10 +199,10 @@ public class SesionTpv(Session session) : EntidadBase(session)
 
         if (importeCierreManual.HasValue)
         {
-            ImporteCierre = importeCierreManual.Value;
+            ImporteCierre = Math.Round(importeCierreManual.Value, 2);
         }
 
-        DiferenciaArqueo = ImporteCierre - ImporteEsperado;
+        DiferenciaArqueo = Math.Round(ImporteCierre - ImporteEsperado, 2);
 
         var mov = new MovimientoCajaTpv(Session);
         mov.Tipo = TipoMovimientoCajaTpv.Cierre;
@@ -226,7 +226,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
 
         var mov = new MovimientoCajaTpv(Session);
         mov.Tipo = tipo;
-        mov.Importe = importe;
+        mov.Importe = Math.Round(importe, 2);
         mov.Motivo = motivo;
         mov.SesionTpv = this;
         mov.Fecha = Tpv?.GetLocalTime() ?? InformacionEmpresaHelper.GetLocalTime(Session);
@@ -266,7 +266,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
     {
         // Importe esperado = Importe de apertura + total de ventas - total retirado + otros ingresos/ajustes
         // Las ventas se suman si están en la colección FacturasSimplificadas vinculada a esta sesión
-        var totalVentas = FacturasSimplificadas.Sum(f => f.ImporteTotal);
+        var totalVentas = FacturasSimplificadas.Sum(f => Math.Round(f.ImporteTotal, 2));
         
         // Sumamos ingresos, aperturas, cierres (aunque cierre no debería afectar antes de cerrarse, lo incluimos por si acaso)
         // Restamos retiradas
@@ -275,14 +275,14 @@ public class SesionTpv(Session session) : EntidadBase(session)
         
         var totalMovimientos = Movimientos.Sum(m => m.Tipo switch
         {
-            TipoMovimientoCajaTpv.Apertura => m.Importe,
-            TipoMovimientoCajaTpv.Ingreso => m.Importe,
-            TipoMovimientoCajaTpv.Ajuste => m.Importe, // Podría ser negativo
-            TipoMovimientoCajaTpv.Retirada => -m.Importe,
+            TipoMovimientoCajaTpv.Apertura => Math.Round(m.Importe, 2),
+            TipoMovimientoCajaTpv.Ingreso => Math.Round(m.Importe, 2),
+            TipoMovimientoCajaTpv.Ajuste => Math.Round(m.Importe, 2), // Podría ser negativo
+            TipoMovimientoCajaTpv.Retirada => -Math.Round(m.Importe, 2),
             _ => 0
         });
 
-        ImporteEsperado = totalVentas + totalMovimientos;
+        ImporteEsperado = Math.Round(totalVentas + totalMovimientos, 2);
         return ImporteEsperado;
     }
 

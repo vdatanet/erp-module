@@ -12,6 +12,8 @@ public class MovimientoCajaParameters
     public TipoMovimientoCajaTpv Tipo { get; set; } = TipoMovimientoCajaTpv.Retirada;
 
     [XafDisplayName("Importe")]
+    [ModelDefault("DisplayFormat", "{0:n2} €")]
+    [ModelDefault("EditMask", "n2")]
     [RuleRange(0.01, 999999999.99, CustomMessageTemplate = "El importe debe ser mayor que cero")]
     public decimal Importe { get; set; }
 
@@ -26,14 +28,20 @@ public class MovimientoCajaParameters
 public class AperturaSesionParameters
 {
     [XafDisplayName("Importe Real")]
+    [ModelDefault("DisplayFormat", "{0:n2} €")]
+    [ModelDefault("EditMask", "n2")]
     public decimal ImporteReal { get; set; }
 
     [XafDisplayName("Importe Teórico")]
     [ModelDefault("AllowEdit", "False")]
+    [ModelDefault("DisplayFormat", "{0:n2} €")]
+    [ModelDefault("EditMask", "n2")]
     public decimal ImporteTeorico { get; set; }
 
     [XafDisplayName("Diferencia")]
     [ModelDefault("AllowEdit", "False")]
+    [ModelDefault("DisplayFormat", "{0:n2} €")]
+    [ModelDefault("EditMask", "n2")]
     public decimal Diferencia => ImporteReal - ImporteTeorico;
 }
 
@@ -41,14 +49,20 @@ public class AperturaSesionParameters
 public class CierreSesionParameters
 {
     [XafDisplayName("Importe Contado")]
+    [ModelDefault("DisplayFormat", "{0:n2} €")]
+    [ModelDefault("EditMask", "n2")]
     public decimal ImporteContado { get; set; }
 
     [XafDisplayName("Importe Esperado")]
     [ModelDefault("AllowEdit", "False")]
+    [ModelDefault("DisplayFormat", "{0:n2} €")]
+    [ModelDefault("EditMask", "n2")]
     public decimal ImporteEsperado { get; set; }
 
     [XafDisplayName("Diferencia Arqueo")]
     [ModelDefault("AllowEdit", "False")]
+    [ModelDefault("DisplayFormat", "{0:n2} €")]
+    [ModelDefault("EditMask", "n2")]
     public decimal DiferenciaArqueo => ImporteContado - ImporteEsperado;
 
     [XafDisplayName("Observaciones")]

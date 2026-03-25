@@ -50,7 +50,7 @@ public class MovimientoCajaTpv(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Importe")]
-    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("DisplayFormat", "{0:n2} €")]
     [ModelDefault("EditMask", "n2")]
     public decimal Importe
     {
