@@ -42,7 +42,6 @@ public class SesionTpv(Session session) : EntidadBase(session)
 
     [XafDisplayName("TPV")]
     [RuleRequiredField("RuleRequiredField_SesionTpv_Tpv", DefaultContexts.Save, CustomMessageTemplate = "El TPV de la Sesión es obligatorio")]
-    [RuleFromBoolProperty("RuleFromBoolProperty_SesionTpv_UnaSolaSesionAbierta", DefaultContexts.Save, "Ya existe una sesión abierta para este TPV.", UsedProperties = "Tpv, Estado")]
     [Association("Tpv-Sesiones")]
     public Tpv? Tpv
     {
@@ -145,6 +144,7 @@ public class SesionTpv(Session session) : EntidadBase(session)
     public bool EstaCerrada => Estado == EstadoSesionTpv.Cerrada;
 
     [Browsable(false)]
+    [RuleFromBoolProperty("RuleFromBoolProperty_SesionTpv_UnaSolaSesionAbierta", DefaultContexts.Save, "Ya existe una sesión abierta para este TPV.", UsedProperties = "Tpv, Estado")]
     public bool UnaSolaSesionAbierta
     {
         get
