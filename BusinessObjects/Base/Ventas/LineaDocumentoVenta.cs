@@ -271,8 +271,7 @@ public class LineaDocumentoVenta(Session session) : EntidadBase(session)
 
         if (DocumentoVenta is null) return;
 
-        DocumentoVenta.BorrarResumenImpuestos();
-        DocumentoVenta.ReconstruirResumenImpuestos();
+        DocumentoVenta.RecalcularTotales();
     }
 
     private void BorrarImpuestosProducto()

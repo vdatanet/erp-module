@@ -19,6 +19,8 @@ using erp.Module.BusinessObjects.Logistica;
 using erp.Module.Factories;
 using erp.Module.Helpers.Comun;
 using erp.Module.Helpers.Contactos;
+using erp.Module.Models.Ventas;
+using erp.Module.Services.Ventas;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
 
 namespace erp.Module.BusinessObjects.Base.Ventas;
@@ -576,6 +578,9 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(ImpuestoIncluido), ref _impuestoIncluido, value);
     }
 
+    [Browsable(false)]
+    public TotalesDocumento Totales => DocumentoVentaService.CalcularTotales(this);
+
     [XafDisplayName("Forma de Pago")]
     public CondicionPago? FormaPago
     {
@@ -1045,50 +1050,31 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     [XafDisplayName("Documentos Relacionados")]
     public XPCollection<DocumentoVenta> DocumentosRelacionados => GetCollection<DocumentoVenta>();
 
+    private IDocumentoVentaService? _documentoVentaService;
+    protected IDocumentoVentaService DocumentoVentaService => _documentoVentaService ??= new DocumentoVentaService();
+
     private void Lineas_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
     {
         if (IsLoading || IsSaving || IsDeleted) return;
-        BorrarResumenImpuestos();
-        ReconstruirResumenImpuestos();
+        RecalcularTotales();
     }
 
+    public void RecalcularTotales()
+    {
+        DocumentoVentaService.RecalcularTotales(this);
+    }
+
+    [Obsolete("Use RecalcularTotales() through DocumentoVentaService")]
     public void BorrarResumenImpuestos()
     {
         for (var i = Impuestos.Count - 1; i >= 0; i--)
             Impuestos[i].Delete();
     }
 
+    [Obsolete("Use RecalcularTotales() through DocumentoVentaService")]
     public void ReconstruirResumenImpuestos()
     {
-        var groups = Lineas.SelectMany(l => l.Impuestos)
-            .Where(t => t.TipoImpuesto != null)
-            .GroupBy(t => t.TipoImpuesto!)
-            .Select(g => new
-            {
-                TaxType = g.Key,
-                BaseSum = g.Sum(x => x.BaseImponible)
-            })
-            .OrderBy(x => x.TaxType.Secuencia)
-            .ToList();
-
-        var newTaxes = groups.Select(g =>
-        {
-            var tax = new ImpuestoDocumentoVenta(Session)
-            {
-                DocumentoVenta = this,
-                TipoImpuesto = g.TaxType,
-                BaseImponible = g.BaseSum
-            };
-            tax.Secuencia = g.TaxType.Secuencia;
-            tax.ImporteImpuestos = AmountCalculator.GetTaxAmount(g.BaseSum, g.TaxType.Tipo, g.TaxType.EsRetencion);
-            return tax;
-        }).ToList();
-
-        Impuestos.AddRange(newTaxes);
-
-        BaseImponible = MoneyMath.RoundMoney(Lineas.Sum(t => t.BaseImponible));
-        ImporteImpuestos = MoneyMath.RoundMoney(Impuestos.Sum(t => t.ImporteImpuestos));
-        ImporteTotal = BaseImponible + ImporteImpuestos;
+        RecalcularTotales();
     }
 
     public override void AfterConstruction()
@@ -1112,7 +1098,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
         Origen = OrigenDocumentoVenta.Manual;
         Estado = EstadoDocumentoVenta.Borrador;
-        FechaCreacion = DateTime.Now;
+        FechaCreacion = InformacionEmpresaHelper.GetLocalTime(Session);
         UsuarioCreacion = Session.GetObjectByKey<ApplicationUser>(SecuritySystem.CurrentUserId);
     }
 
@@ -1124,7 +1110,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     protected override void OnSaving()
     {
         base.OnSaving();
-        FechaModificacion = DateTime.Now;
+        FechaModificacion = InformacionEmpresaHelper.GetLocalTime(Session);
         UsuarioModificacion = Session.GetObjectByKey<ApplicationUser>(SecuritySystem.CurrentUserId);
 
         if (GetAsignarNumeroAlGuardar() && string.IsNullOrEmpty(Secuencia) && !string.IsNullOrEmpty(Serie))
