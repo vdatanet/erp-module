@@ -41,20 +41,20 @@ public class Asiento(Session session) : EntidadBase(session)
         }
     }
 
+    protected bool SetPropertyValueWithValidation<T>(string propertyName, ref T propertyValueHolder, T newValue)
+    {
+        if (Equals(propertyValueHolder, newValue)) return false;
+        EnsureNotPublished();
+        return SetPropertyValue(propertyName, ref propertyValueHolder, newValue);
+    }
+
     [XafDisplayName("Diario")]
     [RuleRequiredField]
     [DataSourceCriteria("EstaActivo = True")]
     public Diario? Diario
     {
         get => _diario;
-        set
-        {
-            if (value != _diario)
-            {
-                EnsureNotPublished();
-                SetPropertyValue(nameof(Diario), ref _diario, value);
-            }
-        }
+        set => SetPropertyValueWithValidation(nameof(Diario), ref _diario, value);
     }
 
     [XafDisplayName("Fecha")]
@@ -63,14 +63,7 @@ public class Asiento(Session session) : EntidadBase(session)
     public DateTime Fecha
     {
         get => _fecha;
-        set
-        {
-            if (value != _fecha)
-            {
-                EnsureNotPublished();
-                SetPropertyValue(nameof(Fecha), ref _fecha, value);
-            }
-        }
+        set => SetPropertyValueWithValidation(nameof(Fecha), ref _fecha, value);
     }
 
     [XafDisplayName("Ejercicio")]
@@ -79,14 +72,7 @@ public class Asiento(Session session) : EntidadBase(session)
     public Ejercicio? Ejercicio
     {
         get => _ejercicio;
-        set
-        {
-            if (value != _ejercicio)
-            {
-                EnsureNotPublished();
-                SetPropertyValue(nameof(Ejercicio), ref _ejercicio, value);
-            }
-        }
+        set => SetPropertyValueWithValidation(nameof(Ejercicio), ref _ejercicio, value);
     }
 
     [XafDisplayName("Serie")]
@@ -96,14 +82,7 @@ public class Asiento(Session session) : EntidadBase(session)
     public string? Serie
     {
         get => _serie;
-        set
-        {
-            if (value != _serie)
-            {
-                EnsureNotPublished();
-                SetPropertyValue(nameof(Serie), ref _serie, value);
-            }
-        }
+        set => SetPropertyValueWithValidation(nameof(Serie), ref _serie, value);
     }
 
     [XafDisplayName("Número")]
@@ -141,14 +120,7 @@ public class Asiento(Session session) : EntidadBase(session)
     public string? Concepto
     {
         get => _concepto;
-        set
-        {
-            if (value != _concepto)
-            {
-                EnsureNotPublished();
-                SetPropertyValue(nameof(Concepto), ref _concepto, value);
-            }
-        }
+        set => SetPropertyValueWithValidation(nameof(Concepto), ref _concepto, value);
     }
 
     [Persistent(nameof(SumaDebe))]
@@ -180,14 +152,7 @@ public class Asiento(Session session) : EntidadBase(session)
     public string? Notas
     {
         get => _notas;
-        set
-        {
-            if (value != _notas)
-            {
-                EnsureNotPublished();
-                SetPropertyValue(nameof(Notas), ref _notas, value);
-            }
-        }
+        set => SetPropertyValueWithValidation(nameof(Notas), ref _notas, value);
     }
 
     [XafDisplayName("Estado")]

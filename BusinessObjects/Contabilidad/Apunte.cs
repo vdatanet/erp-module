@@ -41,20 +41,20 @@ public class Apunte(Session session) : EntidadBase(session)
         }
     }
 
+    protected bool SetPropertyValueWithValidation<T>(string propertyName, ref T propertyValueHolder, T newValue)
+    {
+        if (Equals(propertyValueHolder, newValue)) return false;
+        EnsureAsientoNotPublished();
+        return SetPropertyValue(propertyName, ref propertyValueHolder, newValue);
+    }
+
     [XafDisplayName("Asiento")]
     [Association("Asiento-Apuntes")]
     [RuleRequiredField]
     public Asiento? Asiento
     {
         get => _asiento;
-        set
-        {
-            if (value != _asiento)
-            {
-                EnsureAsientoNotPublished();
-                SetPropertyValue(nameof(Asiento), ref _asiento, value);
-            }
-        }
+        set => SetPropertyValueWithValidation(nameof(Asiento), ref _asiento, value);
     }
     
     private string? _cuentaBusqueda;
@@ -79,14 +79,7 @@ public class Apunte(Session session) : EntidadBase(session)
     public CuentaContable? CuentaContable
     {
         get => _cuenta;
-        set
-        {
-            if (value != _cuenta)
-            {
-                EnsureAsientoNotPublished();
-                SetPropertyValue(nameof(CuentaContable), ref _cuenta, value);
-            }
-        }
+        set => SetPropertyValueWithValidation(nameof(CuentaContable), ref _cuenta, value);
     }
 
     [XafDisplayName("Tercero")]
@@ -94,14 +87,7 @@ public class Apunte(Session session) : EntidadBase(session)
     public Tercero? Tercero
     {
         get => _tercero;
-        set
-        {
-            if (value != _tercero)
-            {
-                EnsureAsientoNotPublished();
-                SetPropertyValue(nameof(Tercero), ref _tercero, value);
-            }
-        }
+        set => SetPropertyValueWithValidation(nameof(Tercero), ref _tercero, value);
     }
     
     [XafDisplayName("Concepto")]
@@ -110,14 +96,7 @@ public class Apunte(Session session) : EntidadBase(session)
     public string? Concepto
     {
         get => _concepto;
-        set
-        {
-            if (value != _concepto)
-            {
-                EnsureAsientoNotPublished();
-                SetPropertyValue(nameof(Concepto), ref _concepto, value);
-            }
-        }
+        set => SetPropertyValueWithValidation(nameof(Concepto), ref _concepto, value);
     }
 
     [XafDisplayName("Debe")]
@@ -127,16 +106,9 @@ public class Apunte(Session session) : EntidadBase(session)
         get => _debe;
         set
         {
-            if (value != _debe)
+            if (SetPropertyValueWithValidation(nameof(Debe), ref _debe, value))
             {
-                EnsureAsientoNotPublished();
-                if (SetPropertyValue(nameof(Debe), ref _debe, value))
-                {
-                    if (!IsLoading && !IsSaving && Asiento != null)
-                    {
-                        Asiento.UpdateSums();
-                    }
-                }
+                UpdateAsientoSums();
             }
         }
     }
@@ -148,16 +120,9 @@ public class Apunte(Session session) : EntidadBase(session)
         get => _haber;
         set
         {
-            if (value != _haber)
+            if (SetPropertyValueWithValidation(nameof(Haber), ref _haber, value))
             {
-                EnsureAsientoNotPublished();
-                if (SetPropertyValue(nameof(Haber), ref _haber, value))
-                {
-                    if (!IsLoading && !IsSaving && Asiento != null)
-                    {
-                        Asiento.UpdateSums();
-                    }
-                }
+                UpdateAsientoSums();
             }
         }
     }
@@ -172,43 +137,36 @@ public class Apunte(Session session) : EntidadBase(session)
     public string? Notas
     {
         get => _notas;
-        set
-        {
-            if (value != _notas)
-            {
-                EnsureAsientoNotPublished();
-                SetPropertyValue(nameof(Notas), ref _notas, value);
-            }
-        }
+        set => SetPropertyValueWithValidation(nameof(Notas), ref _notas, value);
     }
     
+    private void UpdateAsientoSums()
+    {
+        if (!IsLoading && !IsSaving)
+        {
+            Asiento?.UpdateSums();
+        }
+    }
+
+    private string NormalizeCuentaCode(string pattern)
+    {
+        if (!pattern.Contains('.')) return pattern;
+
+        var partes = pattern.Split('.');
+        if (partes.Length != 2) return pattern;
+
+        string prefijo = partes[0];
+        string sufijo = partes[1];
+        int cerosNecesarios = 10 - prefijo.Length - sufijo.Length;
+        
+        return cerosNecesarios > 0 
+            ? prefijo + new string('0', cerosNecesarios) + sufijo 
+            : prefijo + sufijo;
+    }
+
     private void BuscarCuenta(string pattern)
     {
-        // Lógica: si contiene un punto, expandimos el primer dígito después del punto con ceros
-        // Ejemplo: 430.1 -> 4300000001 (si la longitud es 10)
-        string searchCode = pattern;
-        if (pattern.Contains('.'))
-        {
-            var partes = pattern.Split('.');
-            if (partes.Length == 2)
-            {
-                string prefijo = partes[0];
-                string sufijo = partes[1];
-                int cerosNecesarios = 10 - prefijo.Length - sufijo.Length;
-                if (cerosNecesarios > 0)
-                {
-                    searchCode = prefijo + new string('0', cerosNecesarios) + sufijo;
-                }
-                else
-                {
-                    searchCode = prefijo + sufijo;
-                }
-            }
-        }
-        else
-        {
-            searchCode = pattern;
-        }
+        string searchCode = NormalizeCuentaCode(pattern);
 
         var cuentaEncontrada = Session.Query<CuentaContable>()
             .FirstOrDefault(c => (c.Codigo == searchCode || c.Codigo!.StartsWith(searchCode)) && c.EstaActiva && c.EsAsentable);
