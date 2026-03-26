@@ -4,6 +4,7 @@ using DevExpress.ExpressApp.Editors;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
+using DevExpress.Persistent.BaseImpl;
 using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Contabilidad;
@@ -79,6 +80,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private string? _serieCertificadoVeriFactu;
     private string? _textoDefectoVeriFactu;
     private string? _versionSistemaVeriFactu;
+    private MediaDataObject? _logo;
     private bool _activarVeriFactu;
     private bool _activarFacturae;
     private string? _serieCertificadoFacturae;
@@ -513,6 +515,14 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     {
         get => _versionSistemaVeriFactu;
         set => SetPropertyValue(nameof(VersionSistemaVeriFactu), ref _versionSistemaVeriFactu, value);
+    }
+
+    [XafDisplayName("Logo")]
+    [ImageEditor]
+    public MediaDataObject? Logo
+    {
+        get => _logo;
+        set => SetPropertyValue(nameof(Logo), ref _logo, value);
     }
 
     [XafDisplayName("Activar VeriFactu")]
