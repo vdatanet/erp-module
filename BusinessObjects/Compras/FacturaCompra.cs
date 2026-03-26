@@ -12,6 +12,7 @@ using DevExpress.Persistent.Validation;
 namespace erp.Module.BusinessObjects.Compras;
 
 [DefaultClassOptions]
+[XafDisplayName("Factura de Compra")]
 [NavigationItem("Compras")]
 [ImageName("BO_Invoice")]
 [DefaultProperty(nameof(Secuencia))]
