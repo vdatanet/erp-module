@@ -29,39 +29,49 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
     public void CreateInitialInformacionEmpresa()
     {
         var informacionEmpresa = OS.FirstOrDefault<InformacionEmpresa>(i => true);
-        bool isNew = false;
         if (informacionEmpresa == null)
         {
             informacionEmpresa = OS.CreateObject<InformacionEmpresa>();
-            informacionEmpresa.Nombre = "Empresa por Defecto";
-            informacionEmpresa.Nif = "B00000000";
-            informacionEmpresa.PrefijoAsientosPorDefecto = "AS";
-            informacionEmpresa.PrefijoOfertasCompraPorDefecto = "CO";
-            informacionEmpresa.PrefijoPedidosCompraPorDefecto = "CP";
-            informacionEmpresa.PrefijoAlbaranesCompraPorDefecto = "CA";
-            informacionEmpresa.PrefijoFacturasCompraPorDefecto = "CF";
-            informacionEmpresa.PrefijoOfertasVentaPorDefecto = "VO";
-            informacionEmpresa.PrefijoPedidosPorDefecto = "VP";
-            informacionEmpresa.PrefijoAlbaranesVentaPorDefecto = "VA";
-            informacionEmpresa.PrefijoFacturasVentaPorDefecto = "VF";
-            informacionEmpresa.PrefijoFacturasSimplificadasPorDefecto = "VS";
-            informacionEmpresa.PrefijoSesionTpvPorDefecto = "TS";
-            informacionEmpresa.PrefijoVentaTpvPorDefecto = "TV";
-            informacionEmpresa.PrefijoParteTrabajoPorDefecto = "PT";
-            informacionEmpresa.NombreReporteTicket = "Ticket Factura Simplificada";
-            informacionEmpresa.ActivarVeriFactu = false; // Default to false
-            isNew = true;
         }
 
         // Siempre establecemos estos valores o nos aseguramos de que existan
-        if (isNew || string.IsNullOrEmpty(informacionEmpresa.PrefijoClientes))
+        informacionEmpresa.Nombre = string.IsNullOrEmpty(informacionEmpresa.Nombre) ? "Empresa por Defecto" : informacionEmpresa.Nombre;
+        informacionEmpresa.Nif = string.IsNullOrEmpty(informacionEmpresa.Nif) ? "B00000000" : informacionEmpresa.Nif;
+        informacionEmpresa.PrefijoAsientosPorDefecto = string.IsNullOrEmpty(informacionEmpresa.PrefijoAsientosPorDefecto) ? "AS" : informacionEmpresa.PrefijoAsientosPorDefecto;
+        informacionEmpresa.PrefijoOfertasCompraPorDefecto = string.IsNullOrEmpty(informacionEmpresa.PrefijoOfertasCompraPorDefecto) ? "CO" : informacionEmpresa.PrefijoOfertasCompraPorDefecto;
+        informacionEmpresa.PrefijoPedidosCompraPorDefecto = string.IsNullOrEmpty(informacionEmpresa.PrefijoPedidosCompraPorDefecto) ? "CP" : informacionEmpresa.PrefijoPedidosCompraPorDefecto;
+        informacionEmpresa.PrefijoAlbaranesCompraPorDefecto = string.IsNullOrEmpty(informacionEmpresa.PrefijoAlbaranesCompraPorDefecto) ? "CA" : informacionEmpresa.PrefijoAlbaranesCompraPorDefecto;
+        informacionEmpresa.PrefijoFacturasCompraPorDefecto = string.IsNullOrEmpty(informacionEmpresa.PrefijoFacturasCompraPorDefecto) ? "CF" : informacionEmpresa.PrefijoFacturasCompraPorDefecto;
+        informacionEmpresa.PrefijoOfertasVentaPorDefecto = string.IsNullOrEmpty(informacionEmpresa.PrefijoOfertasVentaPorDefecto) ? "VO" : informacionEmpresa.PrefijoOfertasVentaPorDefecto;
+        informacionEmpresa.PrefijoPedidosPorDefecto = string.IsNullOrEmpty(informacionEmpresa.PrefijoPedidosPorDefecto) ? "VP" : informacionEmpresa.PrefijoPedidosPorDefecto;
+        informacionEmpresa.PrefijoAlbaranesVentaPorDefecto = string.IsNullOrEmpty(informacionEmpresa.PrefijoAlbaranesVentaPorDefecto) ? "VA" : informacionEmpresa.PrefijoAlbaranesVentaPorDefecto;
+        informacionEmpresa.PrefijoFacturasVentaPorDefecto = string.IsNullOrEmpty(informacionEmpresa.PrefijoFacturasVentaPorDefecto) ? "VF" : informacionEmpresa.PrefijoFacturasVentaPorDefecto;
+        informacionEmpresa.PrefijoFacturasSimplificadasPorDefecto = string.IsNullOrEmpty(informacionEmpresa.PrefijoFacturasSimplificadasPorDefecto) ? "VS" : informacionEmpresa.PrefijoFacturasSimplificadasPorDefecto;
+        informacionEmpresa.PrefijoSesionTpvPorDefecto = string.IsNullOrEmpty(informacionEmpresa.PrefijoSesionTpvPorDefecto) ? "TS" : informacionEmpresa.PrefijoSesionTpvPorDefecto;
+        informacionEmpresa.PrefijoVentaTpvPorDefecto = string.IsNullOrEmpty(informacionEmpresa.PrefijoVentaTpvPorDefecto) ? "TV" : informacionEmpresa.PrefijoVentaTpvPorDefecto;
+        informacionEmpresa.PrefijoParteTrabajoPorDefecto = string.IsNullOrEmpty(informacionEmpresa.PrefijoParteTrabajoPorDefecto) ? "PT" : informacionEmpresa.PrefijoParteTrabajoPorDefecto;
+        informacionEmpresa.NombreReporteTicket = string.IsNullOrEmpty(informacionEmpresa.NombreReporteTicket) ? "Ticket Factura Simplificada" : informacionEmpresa.NombreReporteTicket;
+
+        if (string.IsNullOrEmpty(informacionEmpresa.PrefijoClientes))
             informacionEmpresa.PrefijoClientes = "TC";
 
-        if (isNew || string.IsNullOrEmpty(informacionEmpresa.PrefijoProveedores))
+        if (string.IsNullOrEmpty(informacionEmpresa.PrefijoProveedores))
             informacionEmpresa.PrefijoProveedores = "TP";
 
-        if (isNew || string.IsNullOrEmpty(informacionEmpresa.PrefijoAcreedores))
+        if (string.IsNullOrEmpty(informacionEmpresa.PrefijoAcreedores))
             informacionEmpresa.PrefijoAcreedores = "TA";
+
+        if (string.IsNullOrEmpty(informacionEmpresa.PrefijoEmpleados))
+            informacionEmpresa.PrefijoEmpleados = "TE";
+
+        if (string.IsNullOrEmpty(informacionEmpresa.PrefijoReservas))
+            informacionEmpresa.PrefijoReservas = "AR";
+
+        if (informacionEmpresa.PaddingNumero == 0)
+            informacionEmpresa.PaddingNumero = 5;
+
+        if (informacionEmpresa.PaddingCuentaContable == 0)
+            informacionEmpresa.PaddingCuentaContable = 10;
 
         // Establecer CuentaPadre para clientes, proveedores y acreedores
         if (informacionEmpresa.CuentaPadreClientes == null)
@@ -73,15 +83,7 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
         if (informacionEmpresa.CuentaPadreAcreedores == null)
             informacionEmpresa.CuentaPadreAcreedores = OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "41000");
 
-        if (isNew)
-        {
-            informacionEmpresa.PrefijoEmpleados = "TE";
-            informacionEmpresa.PrefijoReservas = "AR";
-            informacionEmpresa.PaddingNumero = 5;
-            informacionEmpresa.PaddingCuentaContable = 10;
-        }
-
-        if (isNew || informacionEmpresa.ZonaHorariaPorDefecto == null)
+        if (informacionEmpresa.ZonaHorariaPorDefecto == null)
         {
             informacionEmpresa.ZonaHorariaPorDefecto = OS.FirstOrDefault<ZonaHoraria>(z => z.IdZonaHoraria == "Europe/Madrid");
         }
