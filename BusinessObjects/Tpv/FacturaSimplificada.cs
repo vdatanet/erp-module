@@ -8,6 +8,7 @@ using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Ventas;
 using erp.Module.Helpers.Contactos;
+using erp.Module.Services.Contabilidad;
 using VeriFactu.Xml.Factu.Alta;
 
 namespace erp.Module.BusinessObjects.Tpv;
@@ -19,6 +20,12 @@ namespace erp.Module.BusinessObjects.Tpv;
 [DefaultProperty(nameof(Secuencia))]
 public class FacturaSimplificada(Session session) : FacturaBase(session)
 {
+    [Action(Caption = "Contabilizar", ConfirmationMessage = "¿Desea generar el asiento contable para esta factura simplificada?", ImageName = "Action_LinkUnlink_Link", TargetObjectsCriteria = "AsientoContable is null")]
+    public void Contabilizar()
+    {
+        ContabilidadService.ContabilizarFactura(this);
+    }
+
     private VentaTpv? _ventaTpv;
 
     [XafDisplayName("Venta TPV")]

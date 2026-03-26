@@ -8,6 +8,7 @@ using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Base.Ventas;
 
 using erp.Module.Helpers.Contactos;
+using erp.Module.Services.Contabilidad;
 using erp.Module.Services.Tesoreria;
 using DevExpress.Persistent.Validation;
 
@@ -21,6 +22,12 @@ namespace erp.Module.BusinessObjects.Ventas;
 [RuleCriteria("Factura_SumaEfectosCoherente", DefaultContexts.Save, "EfectosCobro.Sum(Importe) = ImporteTotal", "La suma de los importes de los efectos debe coincidir con el total de la factura.")]
 public class FacturaVenta(Session session) : FacturaBase(session)
 {
+    [Action(Caption = "Contabilizar", ConfirmationMessage = "¿Desea generar el asiento contable para esta factura?", ImageName = "Action_LinkUnlink_Link", TargetObjectsCriteria = "AsientoContable is null")]
+    public void Contabilizar()
+    {
+        ContabilidadService.ContabilizarFactura(this);
+    }
+
     [XafDisplayName("Efectos de Cobro")]
     [Association("FacturaVenta-EfectosCobro")]
     [DevExpress.Xpo.Aggregated]

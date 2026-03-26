@@ -5,6 +5,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Ventas;
+using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.Helpers.Contactos;
 using VeriFactu.Xml.Factu.Alta;
 
@@ -29,6 +30,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     private bool _esSubsanacion;
     private string? _estadoEntradaFactura;
     private ValoresEstadoVeriFactu _estadoVeriFactu;
+    private Asiento? _asientoContable;
     private MediaDataObject? _qr;
     private string? _respuestaAgenciaTributaria;
     private string? _texto;
@@ -36,6 +38,14 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     private TipoRectificativa _tipoRectificativa;
     private string? _urlValidacion;
     private string? _xmlAgenciaTributaria;
+
+    [XafDisplayName("Asiento Contable")]
+    [ModelDefault("AllowEdit", "False")]
+    public Asiento? AsientoContable
+    {
+        get => _asientoContable;
+        set => SetPropertyValue(nameof(AsientoContable), ref _asientoContable, value);
+    }
 
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
