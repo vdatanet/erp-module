@@ -12,37 +12,92 @@ namespace erp.Module.Controllers.Reports;
 /// </summary>
 public class ReportCompanyInfoController : ViewController
 {
+    private readonly SingleChoiceAction printReportAction;
+
     public ReportCompanyInfoController()
     {
-        var printReportAction = new SimpleAction(this, "PrintWithCompanyInfo", DevExpress.Persistent.Base.PredefinedCategory.Reports)
+        TargetViewType = ViewType.Any;
+
+        printReportAction = new SingleChoiceAction(this, "PrintInplaceWithCompanyInfo", DevExpress.Persistent.Base.PredefinedCategory.Reports)
         {
-            Caption = "Imprimir con Info Empresa",
-            ImageName = "Action_Printing_Print"
+            Caption = "Imprimir",
+            ImageName = "Action_Printing_Print",
+            ItemType = SingleChoiceActionItemType.ItemIsOperation,
+            SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
         printReportAction.Execute += PrintReportAction_Execute;
     }
 
-    private void PrintReportAction_Execute(object sender, SimpleActionExecuteEventArgs e)
+    protected override void OnActivated()
     {
-        // Obtenemos el reporte por su nombre (ejemplo: "Factura", como se ve en los logs)
-        var os = Application.CreateObjectSpace(typeof(ReportDataV2));
-        var reportData = os.FindObject<ReportDataV2>(new DevExpress.Data.Filtering.BinaryOperator("DisplayName", "Factura"));
-        
-        if (reportData != null)
+        base.OnActivated();
+        UpdateActionState();
+
+        // Desactivamos los controladores nativos de reportes de XAF que gestionan la impresión Inplace
+        foreach (var controller in Frame.Controllers)
+        {
+            var typeName = controller.GetType().Name;
+            if (typeName == "PrintSelectionController" || 
+                typeName == "InplaceReportCacheController" ||
+                typeName == "InplaceReportsController" ||
+                typeName == "InplaceReportController") // Añadimos InplaceReportController (singular) por si acaso
+            {
+                controller.Active["CustomPrintActionActive"] = false;
+            }
+        }
+
+        // Además, desactivamos directamente cualquier acción nativa en la categoría de Reportes
+        // que no sea la nuestra. Esto es una medida de seguridad adicional.
+        foreach (var controller in Frame.Controllers)
+        {
+            foreach (var action in controller.Actions)
+            {
+                if (action.Category == DevExpress.Persistent.Base.PredefinedCategory.Reports.ToString() && 
+                    action.Id != printReportAction.Id)
+                {
+                    action.Active["CustomPrintActionActive"] = false;
+                }
+            }
+        }
+    }
+
+    private void UpdateActionState()
+    {
+        printReportAction.Items.Clear();
+
+        if (View != null && View.ObjectTypeInfo != null)
+        {
+            var os = Application.CreateObjectSpace(typeof(ReportDataV2));
+            var reports = os.GetObjects<ReportDataV2>(DevExpress.Data.Filtering.CriteriaOperator.Parse("IsInplaceReport = true AND DataTypeName = ?", View.ObjectTypeInfo.Type.FullName));
+
+            foreach (var report in reports)
+            {
+                var item = new ChoiceActionItem(report.DisplayName, report)
+                {
+                    ImageName = "Action_Printing_Print"
+                };
+                printReportAction.Items.Add(item);
+            }
+        }
+
+        printReportAction.Active["HasInplaceReports"] = printReportAction.Items.Count > 0;
+    }
+
+    private void PrintReportAction_Execute(object sender, SingleChoiceActionExecuteEventArgs e)
+    {
+        if (e.SelectedChoiceActionItem?.Data is ReportDataV2 reportData)
         {
             var controller = Frame.GetController<ReportServiceController>();
             if (controller != null)
             {
-                // Al llamar a ShowPreview, el sistema XAF cargará el reporte.
-                // La inyección de datos de la empresa ahora es AUTOMÁTICA y GLOBAL
-                // gracias a la suscripción en erpModule.cs.
-                string handle = ReportDataProvider.ReportsStorage.GetReportContainerHandle(reportData);
-                controller.ShowPreview(handle);
+                var reportStorage = ReportDataProvider.GetReportStorage(Application.ServiceProvider);
+                string handle = reportStorage.GetReportContainerHandle(reportData);
+                
+                // Si queremos que el reporte se filtre por el objeto seleccionado (comportamiento Inplace estándar)
+                // pasamos los criterios de selección.
+                var criteria = DevExpress.Data.Filtering.CriteriaOperator.Parse("Oid = ?", ObjectSpace.GetKeyValue(View.CurrentObject));
+                controller.ShowPreview(handle, criteria);
             }
-        }
-        else
-        {
-            throw new UserFriendlyException("No se encontró el reporte 'Factura' en la base de datos.");
         }
     }
 }

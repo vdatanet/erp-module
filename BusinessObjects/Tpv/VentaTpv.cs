@@ -14,7 +14,6 @@ using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Tesoreria;
-using erp.Module.Helpers.Contactos;
 using System.ComponentModel;
 
 namespace erp.Module.BusinessObjects.Tpv;

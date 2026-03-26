@@ -15,10 +15,7 @@ using erp.Module.Factories;
 using erp.Module.Helpers.Contactos;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Configuraciones;
-
 using erp.Module.BusinessObjects.Base.Ventas;
-using erp.Module.Helpers.Contactos;
-
 using erp.Module.Services.Tpv;
 
 namespace erp.Module.BusinessObjects.Tpv;

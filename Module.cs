@@ -108,11 +108,17 @@ public sealed class erpModule : ModuleBase
         // En XAF, el ObjectSpace suele estar disponible a través del DataSource del reporte o el sender
         IObjectSpace? objectSpace = null;
         
-        // Intentamos obtenerlo del sender (ReportsDataSourceHelper)
+        // Intentamos obtener el ObjectSpace del sender mediante reflexión
         var prop = sender?.GetType().GetProperty("ObjectSpace");
         if (prop != null)
         {
             objectSpace = prop.GetValue(sender) as IObjectSpace;
+        }
+
+        // Si es nulo y estamos en un reporte de XAF, intentamos obtenerlo de Application si está disponible
+        if (objectSpace == null && Application != null)
+        {
+            objectSpace = Application.CreateObjectSpace(typeof(ReportDataV2));
         }
 
         if (objectSpace != null)
@@ -132,12 +138,13 @@ public sealed class erpModule : ModuleBase
         var properties = typeof(InformacionEmpresaDto).GetProperties();
         foreach (var prop in properties)
         {
-            var paramName = $"Empresa_{prop.Name}";
-            var parameter = report.Parameters[paramName];
-            if (parameter != null)
-            {
-                parameter.Value = prop.GetValue(companyDto);
-            }
+            var value = prop.GetValue(companyDto);
+            
+            // Inyectamos con prefijo Empresa_ (Ej: Empresa_Nombre)
+            SetReportParameter(report, $"Empresa_{prop.Name}", value);
+            
+            // Inyectamos también con prefijo Empresa (Ej: EmpresaNombre) por si acaso
+            SetReportParameter(report, $"Empresa{prop.Name}", value);
         }
 
         // Opción 2: ObjectDataSource configurado con InformacionEmpresaDto
@@ -147,6 +154,32 @@ public sealed class erpModule : ModuleBase
             {
                 dataSource.DataSource = companyDto;
             }
+        }
+    }
+
+    private void SetReportParameter(XtraReport report, string paramName, object? value)
+    {
+        var parameter = report.Parameters[paramName];
+        if (parameter == null)
+        {
+            parameter = new DevExpress.XtraReports.Parameters.Parameter
+            {
+                Name = paramName,
+                Visible = false,
+                Value = value
+            };
+            report.Parameters.Add(parameter);
+        }
+        else
+        {
+            parameter.Value = value;
+        }
+
+        // Si el valor es una cadena y es nula o vacía, nos aseguramos de que el parámetro tenga al menos un valor vacío
+        // para evitar que el reporte pida el valor al usuario si está marcado como no nulo.
+        if (parameter.Type == typeof(string) && parameter.Value == null)
+        {
+            parameter.Value = string.Empty;
         }
     }
 
