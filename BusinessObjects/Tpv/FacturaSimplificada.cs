@@ -9,6 +9,7 @@ using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Ventas;
 using erp.Module.Helpers.Contactos;
 using erp.Module.Services.Contabilidad;
+using erp.Module.Services.Ventas.StateMachines;
 using VeriFactu.Xml.Factu.Alta;
 
 namespace erp.Module.BusinessObjects.Tpv;
@@ -53,6 +54,8 @@ public class FacturaSimplificada(Session session) : FacturaBase(session)
                && !string.IsNullOrEmpty(Texto)
                && Impuestos.Count > 0;
     }
+
+    protected override IDocumentoVentaStateMachine CreateStateMachine() => new FacturaSimplificadaStateMachine(this);
 
     public (FacturaSimplificada Rectificativa, FacturaVenta Nominal) ConvertirAFacturaNominal(Tercero cliente)
     {

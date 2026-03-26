@@ -2,6 +2,7 @@ using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Ventas;
+using erp.Module.Services.Ventas.StateMachines;
 
 using erp.Module.Helpers.Contactos;
 
@@ -20,4 +21,5 @@ public class AlbaranVenta(Session session) : DocumentoVenta(session)
         if (companyInfo == null) return;
         Serie ??= companyInfo.PrefijoAlbaranesVentaPorDefecto;
     }
+    protected override IDocumentoVentaStateMachine CreateStateMachine() => new AlbaranVentaStateMachine(this);
 }

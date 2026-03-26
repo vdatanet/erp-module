@@ -21,6 +21,7 @@ using erp.Module.Helpers.Comun;
 using erp.Module.Helpers.Contactos;
 using erp.Module.Models.Ventas;
 using erp.Module.Services.Ventas;
+using erp.Module.Services.Ventas.StateMachines;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
 
 using DevExpress.Xpo.Metadata;
@@ -125,6 +126,13 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private ApplicationUser? _usuarioModificacion;
     private DateTime _fechaCreacion;
     private DateTime _fechaModificacion;
+
+    private IDocumentoVentaStateMachine? _stateMachine;
+
+    [Browsable(false)]
+    public IDocumentoVentaStateMachine StateMachine => _stateMachine ??= CreateStateMachine();
+
+    protected abstract IDocumentoVentaStateMachine CreateStateMachine();
 
     // --- ENTREGA / LOGÍSTICA ---
     private string? _direccionEntrega;
@@ -371,35 +379,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     public EstadoDocumentoVenta Estado
     {
         get => _estado;
-        set
-        {
-            var oldEstado = _estado;
-            var modified = SetPropertyValue(nameof(Estado), ref _estado, value);
-            if (modified && !IsLoading && !IsSaving)
-            {
-                OnChanged(nameof(Borrador));
-                OnChanged(nameof(Confirmado));
-                OnChanged(nameof(Emitido));
-                OnChanged(nameof(Impreso));
-                OnChanged(nameof(Anulado));
-                OnChanged(nameof(Bloqueado));
-                OnChanged(nameof(Sincronizado));
-                
-                ActualizarFechasEstado(oldEstado, value);
-            }
-        }
-    }
-
-    private void ActualizarFechasEstado(EstadoDocumentoVenta oldEstado, EstadoDocumentoVenta nuevoEstado)
-    {
-        if (nuevoEstado == EstadoDocumentoVenta.Confirmado && FechaConfirmacion == null)
-            FechaConfirmacion = InformacionEmpresaHelper.GetLocalTime(Session);
-        else if (nuevoEstado == EstadoDocumentoVenta.Emitido && FechaEmision == null)
-            FechaEmision = InformacionEmpresaHelper.GetLocalTime(Session);
-        else if (nuevoEstado == EstadoDocumentoVenta.Impreso && FechaImpresion == null)
-            FechaImpresion = InformacionEmpresaHelper.GetLocalTime(Session);
-        else if (nuevoEstado == EstadoDocumentoVenta.Anulado && FechaAnulacion == null)
-            FechaAnulacion = InformacionEmpresaHelper.GetLocalTime(Session);
+        set => SetPropertyValue(nameof(Estado), ref _estado, value);
     }
 
     [XafDisplayName("TPV")]

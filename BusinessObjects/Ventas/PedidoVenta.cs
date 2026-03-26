@@ -4,6 +4,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Suscripciones;
+using erp.Module.Services.Ventas.StateMachines;
 using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Ventas;
@@ -98,4 +99,5 @@ public class PedidoVenta(Session session) : DocumentoVenta(session)
         if (companyInfo == null) return;
         Serie ??= companyInfo.PrefijoPedidosPorDefecto;
     }
+    protected override IDocumentoVentaStateMachine CreateStateMachine() => new PedidoVentaStateMachine(this);
 }

@@ -3,6 +3,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Crm;
+using erp.Module.Services.Ventas.StateMachines;
 
 using erp.Module.Helpers.Contactos;
 
@@ -40,4 +41,6 @@ public class OfertaVenta(Session session) : DocumentoVenta(session)
         if (companyInfo == null) return;
         Serie ??= companyInfo.PrefijoOfertasVentaPorDefecto;
     }
+
+    protected override IDocumentoVentaStateMachine CreateStateMachine() => new OfertaVentaStateMachine(this);
 }

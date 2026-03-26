@@ -12,6 +12,7 @@ using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.Helpers.Contactos;
 using erp.Module.Services.Contabilidad;
 using erp.Module.Services.Tesoreria;
+using erp.Module.Services.Ventas.StateMachines;
 using DevExpress.Persistent.Validation;
 
 namespace erp.Module.BusinessObjects.Ventas;
@@ -66,7 +67,9 @@ public class FacturaVenta(Session session) : FacturaBase(session)
                && Cliente != null
                && !string.IsNullOrEmpty(Cliente.Nombre)
                && !string.IsNullOrEmpty(Cliente.Nif)
-               && !string.IsNullOrEmpty(Texto)
+                && !string.IsNullOrEmpty(Texto)
                && Impuestos.Count > 0;
     }
+
+    protected override IDocumentoVentaStateMachine CreateStateMachine() => new FacturaVentaStateMachine(this);
 }
