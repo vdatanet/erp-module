@@ -6,6 +6,7 @@ using DevExpress.Xpo;
 namespace erp.Module.BusinessObjects;
 
 [MapInheritance(MapInheritanceType.ParentTable)]
+[XafDisplayName("Rol")]
 public class ApplicationRole : PermissionPolicyRole
 {
     public ApplicationRole(Session session) : base(session)
