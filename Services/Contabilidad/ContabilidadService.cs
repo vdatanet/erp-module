@@ -17,6 +17,11 @@ public static class ContabilidadService
         if (factura == null) return null;
         if (factura.AsientoContable != null) return factura.AsientoContable;
 
+        if (string.IsNullOrEmpty(factura.Secuencia))
+        {
+            factura.AsignarNumero();
+        }
+
         var session = factura.Session;
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(session);
         if (companyInfo == null) return null;
@@ -52,7 +57,7 @@ public static class ContabilidadService
         };
 
         // 1. Apunte de Cliente (Debe)
-        var cuentaCliente = (factura.Cliente as Cliente)?.CuentaCobro ?? companyInfo.CuentaClientesPorDefecto;
+        var cuentaCliente = (factura.Cliente as Cliente)?.CuentaContable ?? companyInfo.CuentaClientesPorDefecto;
         if (cuentaCliente == null)
         {
             throw new UserFriendlyException("No se ha definido la cuenta contable del cliente ni una por defecto.");
@@ -67,40 +72,41 @@ public static class ContabilidadService
             Debe = factura.ImporteTotal,
             Haber = 0
         };
+        asiento.Apuntes.Add(apunteCliente);
 
-        // 2. Apuntes de Ventas (Haber) - Agrupados por cuenta contable
-        var basesPorCuenta = factura.Lineas
-            .GroupBy(l => l.CuentaContable ?? companyInfo.CuentaVentasPorDefecto)
-            .Where(g => g.Key != null);
-
-        foreach (var grupo in basesPorCuenta)
+        // 2. Apuntes de Ventas (Haber) - Uno por cada línea de factura sin agrupar
+        foreach (var linea in factura.Lineas.Where(l => (l.CuentaContable ?? companyInfo.CuentaVentasPorDefecto) != null))
         {
             var apunteVenta = new Apunte(session)
             {
                 Asiento = asiento,
-                CuentaContable = grupo.Key,
+                CuentaContable = linea.CuentaContable ?? companyInfo.CuentaVentasPorDefecto,
                 Concepto = asiento.Concepto,
                 Debe = 0,
-                Haber = grupo.Sum(l => l.BaseImponible)
+                Haber = linea.BaseImponible
             };
+            asiento.Apuntes.Add(apunteVenta);
         }
 
-        // 3. Apuntes de IVA (Haber) - Agrupados por cuenta de impuesto
-        var impuestosAgrupados = factura.Lineas
+        // 3. Apuntes de Impuestos (IVA/Retenciones) - Uno por cada tipo de impuesto de cada línea sin agrupar
+        var impuestos = factura.Lineas
             .SelectMany(l => l.Impuestos)
-            .GroupBy(i => i.CuentaContable)
-            .Where(g => g.Key != null);
+            .Where(i => i.CuentaContable != null);
 
-        foreach (var grupo in impuestosAgrupados)
+        foreach (var impuesto in impuestos)
         {
-            var apunteIva = new Apunte(session)
+            var esRetencion = impuesto.EsRetencion;
+            var importe = impuesto.ImporteImpuestos;
+
+            var apunteImpuesto = new Apunte(session)
             {
                 Asiento = asiento,
-                CuentaContable = grupo.Key,
+                CuentaContable = impuesto.CuentaContable,
                 Concepto = asiento.Concepto,
-                Debe = 0,
-                Haber = grupo.Sum(i => i.ImporteImpuestos)
+                Debe = esRetencion ? Math.Abs(importe) : 0,
+                Haber = esRetencion ? 0 : importe
             };
+            asiento.Apuntes.Add(apunteImpuesto);
         }
 
         // Validar descuadre (por redondeos u otros)

@@ -28,6 +28,8 @@ public class FacturaVenta(Session session) : FacturaBase(session)
     public void Contabilizar()
     {
         ContabilidadService.ContabilizarFactura(this);
+        OnChanged(nameof(AsientoContable));
+        OnChanged(nameof(ApuntesContables));
     }
 
     [XafDisplayName("Efectos de Cobro")]

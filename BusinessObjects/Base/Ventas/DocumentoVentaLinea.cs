@@ -77,6 +77,14 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
     {
         BorrarImpuestosProducto();
 
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        if (companyInfo != null)
+        {
+            CuentaContable = companyInfo.CuentaVentasPorDefecto;
+            foreach (var tax in companyInfo.ImpuestosVentas.OrderBy(t => t.Secuencia))
+                TiposImpuestoVenta.Add(tax);
+        }
+
         if (value == null)
         {
             NombreProducto = null;
@@ -91,23 +99,18 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
         NombreProducto = value.Nombre;
         Notas = value.Notas;
         PrecioUnitario = value.PrecioVenta;
+        CuentaContable = value.CuentaVentas ?? CuentaContable;
 
-        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        if (companyInfo == null)
+        if (value.ImpuestosVentas.Count > 0)
         {
-            CuentaContable = value.CuentaVentas;
-        }
-        else
-        {
-            CuentaContable = value.CuentaVentas ?? companyInfo.CuentaVentasPorDefecto;
+            BorrarImpuestosProducto();
+            foreach (var tax in value.ImpuestosVentas.OrderBy(t => t.Secuencia))
+                TiposImpuestoVenta.Add(tax);
         }
 
         if (Cantidad == 0m)
             Cantidad = 1m;
 
-        foreach (var tax in value.ImpuestosVentas.OrderBy(t => t.Secuencia)) 
-            TiposImpuestoVenta.Add(tax);
-            
         RecalcularYNotificar();
         OnAsignarProductoFinished();
     }
@@ -279,6 +282,8 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null) return;
         CuentaContable ??= companyInfo.CuentaVentasPorDefecto;
+        foreach (var tax in companyInfo.ImpuestosVentas.OrderBy(t => t.Secuencia)) 
+            TiposImpuestoVenta.Add(tax);
     }
 
     private void RecalcularYNotificar()

@@ -24,6 +24,7 @@ public class FacturaSimplificada(Session session) : FacturaBase(session)
     public void Contabilizar()
     {
         ContabilidadService.ContabilizarFactura(this);
+        OnChanged(nameof(AsientoContable));
     }
 
     private VentaTpv? _ventaTpv;
