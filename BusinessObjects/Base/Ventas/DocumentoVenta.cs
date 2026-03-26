@@ -6,155 +6,153 @@ using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
+using DevExpress.Xpo.Metadata;
 using erp.Module.BusinessObjects.Auxiliares;
-using erp.Module.BusinessObjects.Ventas;
-using erp.Module.BusinessObjects.Inventario;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
-using erp.Module.BusinessObjects.Tesoreria;
-using erp.Module.BusinessObjects.Contabilidad;
-using erp.Module.BusinessObjects.Tpv;
+using erp.Module.BusinessObjects.Inventario;
 using erp.Module.BusinessObjects.Logistica;
+using erp.Module.BusinessObjects.Tesoreria;
+using erp.Module.BusinessObjects.Tpv;
+using erp.Module.BusinessObjects.Ventas;
 using erp.Module.Factories;
-using erp.Module.Helpers.Comun;
 using erp.Module.Helpers.Contactos;
 using erp.Module.Models.Ventas;
 using erp.Module.Services.Ventas;
 using erp.Module.Services.Ventas.StateMachines;
-using DevExpress.Persistent.BaseImpl.PermissionPolicy;
-
-using DevExpress.Xpo.Metadata;
 
 namespace erp.Module.BusinessObjects.Base.Ventas;
 
 public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 {
-    private decimal _baseImponible;
-    private Cliente? _cliente;
-    private DateTime _fecha;
-    private decimal _importeImpuestos;
-    private decimal _importeTotal;
-    private string? _notas;
-    private int _numero;
-    private string? _secuencia;
-    private string? _serie;
-    private EquipoVenta? _equipoVenta;
-    private Contacto? _vendedor;
-    private CategoriaVenta? _categoriaVenta;
-    private CondicionPago? _condicionPago;
-    private Ejercicio? _ejercicio;
-
-    // --- IDENTIFICACIÓN ---
-    private TimeSpan _hora;
-    private Ejercicio? _ejercicioFiscal;
-    private Ejercicio? _ejercicioContable;
-    private OrigenDocumentoVenta _origen;
-    private TipoDocumentoVenta _tipoDocumento;
-    private EstadoDocumentoVenta _estado;
-
-    // --- RELACIÓN OPERATIVA ---
-    private Tpv.Tpv? _tpv;
-    private SesionTpv? _sesionTpv;
-    private ApplicationUser? _usuario;
-    private Contacto? _comercial;
+    private bool _aCuenta;
     private Almacen? _almacen;
-
-    // --- CLIENTE / DESTINATARIO ---
-    private string? _nombreCliente;
-    private string? _documentoIdentificacionCliente;
-    private string? _emailCliente;
-    private string? _telefonoCliente;
-    private string? _direccionCliente;
-    private string? _poblacionCliente;
-    private string? _provinciaCliente;
+    private decimal _anticipo;
+    private decimal _baseExenta;
+    private decimal _baseImponible;
+    private decimal _baseNoSujeta;
+    private decimal _baseSujeta;
+    private decimal _cambio;
+    private CategoriaVenta? _categoriaVenta;
+    private Cliente? _cliente;
+    private bool _cobrado;
+    private string? _codigoExterno;
     private string? _codigoPostalCliente;
-    private Pais? _paisCliente;
+    private Contacto? _comercial;
+    private CondicionPago? _condicionPago;
+    private CuentaContable? _cuentaBanco;
+    private CuentaContable? _cuentaCaja;
 
     // --- DATOS ECONÓMICOS ---
     private decimal _descuento;
-    private decimal _recargoEquivalencia;
+    private bool _devuelto;
+    private string? _direccionCliente;
+
+    // --- ENTREGA / LOGÍSTICA ---
+    private string? _direccionEntrega;
+    private string? _documentoIdentificacionCliente;
+    private DocumentoVenta? _documentoOrigen;
+    private DocumentoVenta? _documentoRectificado;
+    private DocumentoVenta? _documentoRelacionado;
+
+    private IDocumentoVentaService? _documentoVentaService;
+    private Ejercicio? _ejercicio;
+    private Ejercicio? _ejercicioContable;
+    private Ejercicio? _ejercicioFiscal;
+    private string? _emailCliente;
+    private bool _entregado;
+    private EquipoVenta? _equipoVenta;
+    private bool _esFactura;
+
+    // --- FISCAL / FACTURACIÓN ---
+    private bool _esFacturaSimplificada;
+    private bool _esOferta;
+    private bool _esPedido;
+    private bool _esPresupuesto;
+    private EstadoDocumentoVenta _estado;
+    private bool _esTicket;
+    private DateTime _fecha;
+    private DateTime? _fechaAnulacion;
+    private DateTime? _fechaCobro;
+
+    // --- ESTADO Y CONTROL ---
+    private DateTime? _fechaConfirmacion;
+    private DateTime _fechaCreacion;
+    private DateTime? _fechaEmision;
+    private DateTime? _fechaEntregaPrevista;
+    private DateTime? _fechaEntregaReal;
+    private DateTime? _fechaImpresion;
+    private DateTime _fechaModificacion;
+
+    // --- PAGO ---
+    private CondicionPago? _formaPago;
+    private decimal _gastosEnvio;
+
+    // --- IDENTIFICACIÓN ---
+    private TimeSpan _hora;
+    private string? _huellaFiscal;
+    private decimal _importeImpuestos;
+    private decimal _importeIva;
+    private decimal _importeIvaRepercutido;
+    private decimal _importeIvaSoportado;
     private decimal _importePagado;
     private decimal _importePendiente;
-    private decimal _cambio;
-    private decimal _redondeo;
-    private decimal _gastosEnvio;
+    private decimal _importeRetencion;
+    private decimal _importeTotal;
+    private bool _impuestoIncluido;
+    private MetodoCobroVenta _metodoCobro;
+    private MetodoEntrega? _metodoEntrega;
+    private string? _motivoAnulacion;
+
+    // --- CLIENTE / DESTINATARIO ---
+    private string? _nombreCliente;
+    private string? _notas;
+    private string? _notasInternas;
+    private int _numero;
+    private string? _numeroFiscal;
+    private string? _numeroSeguimiento;
+
+    // --- TRAZABILIDAD ---
+    private string? _observaciones;
+    private OrigenDocumentoVenta _origen;
     private decimal _otrosGastos;
-    private decimal _anticipo;
-    private decimal _totalBruto;
-    private decimal _totalNeto;
+    private Pais? _paisCliente;
+    private string? _poblacionCliente;
 
     // --- IMPUESTOS Y CÁLCULOS ---
     private decimal _porcentajeDescuento;
     private decimal _porcentajeRecargo;
-    private decimal _baseExenta;
-    private decimal _baseNoSujeta;
-    private decimal _baseSujeta;
-    private decimal _importeIva;
-    private decimal _importeIvaRepercutido;
-    private decimal _importeIvaSoportado;
-    private decimal _importeRetencion;
-    private bool _impuestoIncluido;
-
-    // --- PAGO ---
-    private CondicionPago? _formaPago;
-    private MetodoCobroVenta _metodoCobro;
-    private string? _referenciaPago;
-    private DateTime? _fechaCobro;
-    private bool _cobrado;
-    private bool _aCuenta;
-    private bool _devuelto;
-    private CuentaContable? _cuentaCaja;
-    private CuentaContable? _cuentaBanco;
-
-    // --- ESTADO Y CONTROL ---
-    private DateTime? _fechaConfirmacion;
-    private DateTime? _fechaEmision;
-    private DateTime? _fechaImpresion;
-    private DateTime? _fechaAnulacion;
-    private string? _motivoAnulacion;
-
-    // --- TRAZABILIDAD ---
-    private string? _observaciones;
-    private string? _notasInternas;
+    private string? _provinciaCliente;
+    private string? _qrVeriFactu;
+    private decimal _recargoEquivalencia;
+    private string? _recibidoPor;
+    private decimal _redondeo;
     private string? _referenciaExterna;
-    private string? _codigoExterno;
-    private DocumentoVenta? _documentoOrigen;
-    private DocumentoVenta? _documentoRelacionado;
-    private DocumentoVenta? _documentoRectificado;
-    private ApplicationUser? _usuarioCreacion;
-    private ApplicationUser? _usuarioModificacion;
-    private DateTime _fechaCreacion;
-    private DateTime _fechaModificacion;
+    private string? _referenciaPago;
+    private string? _secuencia;
+    private string? _serie;
+    private string? _serieFiscal;
+    private SesionTpv? _sesionTpv;
 
     private IDocumentoVentaStateMachine? _stateMachine;
+    private string? _telefonoCliente;
+    private TipoDocumentoVenta _tipoDocumento;
+    private decimal _totalBruto;
 
-    [Browsable(false)]
-    public IDocumentoVentaStateMachine StateMachine => _stateMachine ??= CreateStateMachine();
+    private TotalesDocumento? _totalesCache;
+    private decimal _totalNeto;
 
-    protected abstract IDocumentoVentaStateMachine CreateStateMachine();
-
-    // --- ENTREGA / LOGÍSTICA ---
-    private string? _direccionEntrega;
-    private DateTime? _fechaEntregaPrevista;
-    private DateTime? _fechaEntregaReal;
+    // --- RELACIÓN OPERATIVA ---
+    private Tpv.Tpv? _tpv;
     private Transportista? _transportista;
-    private MetodoEntrega? _metodoEntrega;
-    private string? _numeroSeguimiento;
-    private bool _entregado;
-    private string? _recibidoPor;
+    private ApplicationUser? _usuario;
+    private ApplicationUser? _usuarioCreacion;
+    private ApplicationUser? _usuarioModificacion;
+    private Contacto? _vendedor;
 
-    // --- FISCAL / FACTURACIÓN ---
-    private bool _esFacturaSimplificada;
-    private bool _esFactura;
-    private bool _esTicket;
-    private bool _esOferta;
-    private bool _esPresupuesto;
-    private bool _esPedido;
-    private string? _serieFiscal;
-    private string? _numeroFiscal;
-    private string? _huellaFiscal;
-    private string? _qrVeriFactu;
+    [Browsable(false)] public IDocumentoVentaStateMachine StateMachine => _stateMachine ??= CreateStateMachine();
 
     [RuleRequiredField("erp.Module.BusinessObjects.Ventas.FacturaVenta.Cliente_Required", DefaultContexts.Save,
         TargetCriteria =
@@ -170,44 +168,8 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set
         {
             var modified = SetPropertyValue(nameof(Cliente), ref _cliente, value);
-            if (modified && !IsLoading && !IsSaving)
-            {
-                AsignarCliente(value);
-            }
+            if (modified && !IsLoading && !IsSaving) AsignarCliente(value);
         }
-    }
-
-    /// <summary>
-    /// Regla de negocio: Al asignar un cliente se copian sus datos de contacto y facturación al documento.
-    /// </summary>
-    public virtual void AsignarCliente(Cliente? value)
-    {
-        if (value == null)
-        {
-            CondicionPago = null;
-            NombreCliente = null;
-            DocumentoIdentificacionCliente = null;
-            EmailCliente = null;
-            TelefonoCliente = null;
-            DireccionCliente = null;
-            PoblacionCliente = null;
-            ProvinciaCliente = null;
-            CodigoPostalCliente = null;
-            PaisCliente = null;
-            return;
-        }
-
-        CondicionPago = value.CondicionPago;
-
-        NombreCliente = value.Nombre;
-        DocumentoIdentificacionCliente = value.Nif;
-        EmailCliente = value.CorreoElectronico;
-        TelefonoCliente = value.Telefono;
-        DireccionCliente = value.Direccion;
-        PoblacionCliente = value.Poblacion?.Nombre;
-        ProvinciaCliente = value.Provincia?.Nombre;
-        CodigoPostalCliente = value.CodigoPostal;
-        PaisCliente = value.Pais;
     }
 
     [Size(100)]
@@ -291,7 +253,8 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Serie")]
-    [RuleRequiredField("RuleRequiredField_DocumentoVenta_Serie", DefaultContexts.Save, CustomMessageTemplate = "La Serie del documento de venta es obligatoria")]
+    [RuleRequiredField("RuleRequiredField_DocumentoVenta_Serie", DefaultContexts.Save,
+        CustomMessageTemplate = "La Serie del documento de venta es obligatoria")]
     [Appearance("BlockSerieWhenNumeroIsSet", Enabled = false,
         Criteria = "!IsNewObject(this) and !IsNullOrEmpty(Secuencia)", Context = "Any")]
     public string? Serie
@@ -326,10 +289,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set
         {
             var modified = SetPropertyValue(nameof(Fecha), ref _fecha, value);
-            if (modified && !IsLoading && !IsSaving)
-            {
-                OnChanged(nameof(IsFechaNoBloqueada));
-            }
+            if (modified && !IsLoading && !IsSaving) OnChanged(nameof(IsFechaNoBloqueada));
         }
     }
 
@@ -349,10 +309,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set
         {
             var modified = SetPropertyValue(nameof(Ejercicio), ref _ejercicio, value);
-            if (modified && !IsLoading && !IsSaving)
-            {
-                OnChanged(nameof(IsFechaNoBloqueada));
-            }
+            if (modified && !IsLoading && !IsSaving) OnChanged(nameof(IsFechaNoBloqueada));
         }
     }
 
@@ -431,7 +388,9 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [Browsable(false)]
-    [RuleFromBoolProperty("DocumentoVenta_FechaNoBloqueada", DefaultContexts.Save, "La fecha del documento se encuentra en un periodo bloqueado del ejercicio o el ejercicio está bloqueado.", UsedProperties = nameof(Fecha))]
+    [RuleFromBoolProperty("DocumentoVenta_FechaNoBloqueada", DefaultContexts.Save,
+        "La fecha del documento se encuentra en un periodo bloqueado del ejercicio o el ejercicio está bloqueado.",
+        UsedProperties = nameof(Fecha))]
     public bool IsFechaNoBloqueada
     {
         get
@@ -637,15 +596,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(ImpuestoIncluido), ref _impuestoIncluido, value);
     }
 
-    private TotalesDocumento? _totalesCache;
-
-    [Browsable(false)]
-    public TotalesDocumento Totales => _totalesCache ??= DocumentoVentaService.CalcularTotales(this);
-
-    public void InvalidadCacheTotales()
-    {
-        _totalesCache = null;
-    }
+    [Browsable(false)] public TotalesDocumento Totales => _totalesCache ??= DocumentoVentaService.CalcularTotales(this);
 
     [XafDisplayName("Forma de Pago")]
     public CondicionPago? FormaPago
@@ -902,28 +853,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set
         {
             var modified = SetPropertyValue(nameof(MetodoEntrega), ref _metodoEntrega, value);
-            if (modified && !IsLoading && !IsSaving)
-            {
-                AsignarMetodoEntrega(value);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Regla de negocio: Al asignar un método de entrega se establece el transportista por defecto 
-    /// y se inicializan los gastos de envío si el documento es nuevo.
-    /// </summary>
-    public virtual void AsignarMetodoEntrega(MetodoEntrega? value)
-    {
-        if (value == null) return;
-
-        Transportista = value.TransportistaPorDefecto;
-        
-        // Solo asignamos si no tiene valor o es 0 y es un objeto nuevo 
-        // (para no sobreescribir intencionadamente 0 en edición)
-        if (GastosEnvio == 0 && Session.IsNewObject(this))
-        {
-            GastosEnvio = value.CosteFijo;
+            if (modified && !IsLoading && !IsSaving) AsignarMetodoEntrega(value);
         }
     }
 
@@ -1049,34 +979,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set
         {
             var modified = SetPropertyValue(nameof(Vendedor), ref _vendedor, value);
-            if (modified && !IsLoading && !IsSaving)
-            {
-                AsignarVendedor(value);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Regla de negocio: Al asignar un vendedor se establece su equipo de venta 
-    /// y se sincronizan las comisiones de las líneas existentes.
-    /// </summary>
-    public virtual void AsignarVendedor(Contacto? value)
-    {
-        if (value == null) return;
-
-        if (value.EquipoVenta != null)
-            EquipoVenta = value.EquipoVenta;
-
-        SincronizarComisionesLineas();
-    }
-
-    public void SincronizarComisionesLineas()
-    {
-        if (Vendedor == null) return;
-        foreach (var linea in Lineas)
-        {
-            linea.PorcentajeComision = Vendedor.PorcentajeComision;
-            linea.ImporteComisionFijo = Vendedor.ImporteComisionFijo;
+            if (modified && !IsLoading && !IsSaving) AsignarVendedor(value);
         }
     }
 
@@ -1097,22 +1000,12 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     [DevExpress.Xpo.Aggregated]
     [Association("DocumentoVenta-Grupos")]
     [XafDisplayName("Grupos")]
-    public XPCollection<DocumentoVentaGrupo> Grupos => GetCollection<DocumentoVentaGrupo>(nameof(Grupos));
+    public XPCollection<DocumentoVentaGrupo> Grupos => GetCollection<DocumentoVentaGrupo>();
 
     [DevExpress.Xpo.Aggregated]
     [Association("DocumentoVenta-Lineas")]
     [XafDisplayName("Líneas")]
     public XPCollection<DocumentoVentaLinea> Lineas => GetCollection<DocumentoVentaLinea>();
-
-    protected override XPCollection<T> CreateCollection<T>(XPMemberInfo property)
-    {
-        var collection = base.CreateCollection<T>(property);
-        if (property.Name == nameof(Lineas))
-        {
-            collection.CollectionChanged += Lineas_CollectionChanged;
-        }
-        return collection;
-    }
 
     [DevExpress.Xpo.Aggregated]
     [Association("DocumentoVenta-Impuestos")]
@@ -1137,14 +1030,98 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     [XafDisplayName("Movimientos de Caja")]
     public XPCollection<MovimientoCajaTpv> MovimientosCaja => GetCollection<MovimientoCajaTpv>();
 
-    [XafDisplayName("Eventos")]
-    public XPCollection<SesionTpvEvento> Eventos => GetCollection<SesionTpvEvento>();
+    [XafDisplayName("Eventos")] public XPCollection<SesionTpvEvento> Eventos => GetCollection<SesionTpvEvento>();
 
     [XafDisplayName("Documentos Relacionados")]
     public XPCollection<DocumentoVenta> DocumentosRelacionados => GetCollection<DocumentoVenta>();
 
-    private IDocumentoVentaService? _documentoVentaService;
     protected IDocumentoVentaService DocumentoVentaService => _documentoVentaService ??= new DocumentoVentaService();
+
+    protected abstract IDocumentoVentaStateMachine CreateStateMachine();
+
+    /// <summary>
+    ///     Regla de negocio: Al asignar un cliente se copian sus datos de contacto y facturación al documento.
+    /// </summary>
+    public virtual void AsignarCliente(Cliente? value)
+    {
+        if (value == null)
+        {
+            CondicionPago = null;
+            NombreCliente = null;
+            DocumentoIdentificacionCliente = null;
+            EmailCliente = null;
+            TelefonoCliente = null;
+            DireccionCliente = null;
+            PoblacionCliente = null;
+            ProvinciaCliente = null;
+            CodigoPostalCliente = null;
+            PaisCliente = null;
+            return;
+        }
+
+        CondicionPago = value.CondicionPago;
+
+        NombreCliente = value.Nombre;
+        DocumentoIdentificacionCliente = value.Nif;
+        EmailCliente = value.CorreoElectronico;
+        TelefonoCliente = value.Telefono;
+        DireccionCliente = value.Direccion;
+        PoblacionCliente = value.Poblacion?.Nombre;
+        ProvinciaCliente = value.Provincia?.Nombre;
+        CodigoPostalCliente = value.CodigoPostal;
+        PaisCliente = value.Pais;
+    }
+
+    public void InvalidadCacheTotales()
+    {
+        _totalesCache = null;
+    }
+
+    /// <summary>
+    ///     Regla de negocio: Al asignar un método de entrega se establece el transportista por defecto
+    ///     y se inicializan los gastos de envío si el documento es nuevo.
+    /// </summary>
+    public virtual void AsignarMetodoEntrega(MetodoEntrega? value)
+    {
+        if (value == null) return;
+
+        Transportista = value.TransportistaPorDefecto;
+
+        // Solo asignamos si no tiene valor o es 0 y es un objeto nuevo 
+        // (para no sobreescribir intencionadamente 0 en edición)
+        if (GastosEnvio == 0 && Session.IsNewObject(this)) GastosEnvio = value.CosteFijo;
+    }
+
+    /// <summary>
+    ///     Regla de negocio: Al asignar un vendedor se establece su equipo de venta
+    ///     y se sincronizan las comisiones de las líneas existentes.
+    /// </summary>
+    public virtual void AsignarVendedor(Contacto? value)
+    {
+        if (value == null) return;
+
+        if (value.EquipoVenta != null)
+            EquipoVenta = value.EquipoVenta;
+
+        SincronizarComisionesLineas();
+    }
+
+    public void SincronizarComisionesLineas()
+    {
+        if (Vendedor == null) return;
+        foreach (var linea in Lineas)
+        {
+            linea.PorcentajeComision = Vendedor.PorcentajeComision;
+            linea.ImporteComisionFijo = Vendedor.ImporteComisionFijo;
+        }
+    }
+
+    protected override XPCollection<T> CreateCollection<T>(XPMemberInfo property)
+    {
+        var collection = base.CreateCollection<T>(property);
+        if (property.Name == nameof(Lineas)) collection.CollectionChanged += Lineas_CollectionChanged;
+        return collection;
+    }
 
     private void Lineas_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
     {
@@ -1184,8 +1161,9 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         var localTime = InformacionEmpresaHelper.GetLocalTime(Session);
         Fecha = localTime.Date;
         Hora = localTime.TimeOfDay;
-        
-        Ejercicio ??= Session.Query<Ejercicio>().FirstOrDefault(e => e.Estado == EstadoEjercicio.Abierto && e.FechaInicio <= Fecha && e.FechaFin >= Fecha);
+
+        Ejercicio ??= Session.Query<Ejercicio>().FirstOrDefault(e =>
+            e.Estado == EstadoEjercicio.Abierto && e.FechaInicio <= Fecha && e.FechaFin >= Fecha);
         EjercicioFiscal ??= Ejercicio;
         EjercicioContable ??= Ejercicio;
     }
@@ -1247,10 +1225,10 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
             var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
             if (companyInfo == null) return;
 
-            int padding = companyInfo.PaddingNumero;
+            var padding = companyInfo.PaddingNumero;
 
-            string sequenceName = $"{GetType().FullName}.{Ejercicio.Anio}.{Serie}";
-            string prefix = $"{Serie}/{Ejercicio.Anio}";
+            var sequenceName = $"{GetType().FullName}.{Ejercicio.Anio}.{Serie}";
+            var prefix = $"{Serie}/{Ejercicio.Anio}";
 
             Numero = SequenceFactory.GetNextSequence(Session, sequenceName, out var formattedSequence,
                 prefix, padding);
