@@ -197,12 +197,22 @@ public class VentaTpv(Session session) : EntidadBase(session)
 
     public void RegistrarEvento(string accion, string? descripcion = null)
     {
+        ApplicationUser? currentUser = null;
+        try
+        {
+            currentUser = SecuritySystem.CurrentUser as ApplicationUser;
+        }
+        catch (InvalidOperationException)
+        {
+            // El contexto de seguridad no está disponible (ej. desde API fuera de sesión Blazor)
+        }
+
         var evento = new VentaTpvEvento(Session)
         {
             VentaTpv = this,
             Accion = accion,
             Descripcion = descripcion,
-            Usuario = Usuario ?? SecuritySystem.CurrentUser as ApplicationUser
+            Usuario = Usuario ?? currentUser
         };
         Eventos.Add(evento);
     }
@@ -235,7 +245,21 @@ public class VentaTpv(Session session) : EntidadBase(session)
     public FacturaSimplificada? MaterializarVenta()
     {
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        if (companyInfo == null) return null;
+        if (companyInfo == null)
+        {
+            RegistrarEvento("Error Materialización", "No se pudo recuperar la configuración de la empresa.");
+            return null;
+        }
+
+        ApplicationUser? currentUser = null;
+        try
+        {
+            currentUser = SecuritySystem.CurrentUser as ApplicationUser;
+        }
+        catch (InvalidOperationException)
+        {
+            // Contexto no disponible
+        }
 
         var factura = new FacturaSimplificada(Session)
         {
@@ -243,9 +267,10 @@ public class VentaTpv(Session session) : EntidadBase(session)
             Tpv = SesionTpv?.Tpv,
             SesionTpv = SesionTpv,
             Fecha = Fecha,
+            Ejercicio = SesionTpv?.Tpv?.Session.Query<Contabilidad.Ejercicio>().FirstOrDefault(e => e.Estado == Contabilidad.EstadoEjercicio.Abierto && e.FechaInicio <= Fecha && e.FechaFin >= Fecha),
             Cliente = Cliente,
             Notas = Notas,
-            Usuario = Usuario ?? SecuritySystem.CurrentUser as ApplicationUser
+            Usuario = Usuario ?? currentUser
         };
 
         factura.Serie ??= SesionTpv?.Tpv?.SeriePorDefecto;
@@ -257,19 +282,24 @@ public class VentaTpv(Session session) : EntidadBase(session)
             {
                 DocumentoVenta = factura,
                 Producto = lineaTpv.Producto,
-                NombreProducto = lineaTpv.Descripcion,
                 Cantidad = lineaTpv.Cantidad,
                 PrecioUnitario = lineaTpv.PrecioUnitario,
                 PorcentajeDescuento = lineaTpv.DescuentoPorcentaje
             };
 
+            // Aseguramos que el nombre del producto sea el de la línea del TPV (por si se cambió manualmente)
+            lineaFactura.NombreProducto = lineaTpv.Descripcion;
+
+            // Transferimos los impuestos de la línea TPV a la línea de factura
+            // Borramos los que se hayan añadido automáticamente al asignar el Producto
+            foreach (var tax in lineaFactura.TiposImpuestoVenta.ToList())
+            {
+                lineaFactura.TiposImpuestoVenta.Remove(tax);
+            }
+
             foreach (var impuestoTpv in lineaTpv.Impuestos)
             {
-                var impuestoFactura = new DocumentoVentaLineaImpuesto(Session)
-                {
-                    DocumentoVentaLinea = lineaFactura,
-                    TipoImpuesto = impuestoTpv
-                };
+                lineaFactura.TiposImpuestoVenta.Add(impuestoTpv);
             }
             
             factura.Lineas.Add(lineaFactura);
@@ -287,6 +317,7 @@ public class VentaTpv(Session session) : EntidadBase(session)
 
         factura.RecalcularTotales();
         factura.AsignarNumero();
+        
         RegistrarEvento("Materializada", $"Factura simplificada {factura.Secuencia} generada.");
 
         return factura;

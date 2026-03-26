@@ -1210,7 +1210,14 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private void InitAuditoria()
     {
         FechaCreacion = InformacionEmpresaHelper.GetLocalTime(Session);
-        UsuarioCreacion = Session.GetObjectByKey<ApplicationUser>(SecuritySystem.CurrentUserId);
+        try
+        {
+            UsuarioCreacion = Session.GetObjectByKey<ApplicationUser>(SecuritySystem.CurrentUserId);
+        }
+        catch (InvalidOperationException)
+        {
+            // Contexto de seguridad no disponible (ej. desde API fuera de sesión Blazor)
+        }
     }
 
     public virtual bool GetAsignarNumeroAlGuardar()
@@ -1228,7 +1235,14 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private void ActualizarAuditoriaModificacion()
     {
         FechaModificacion = InformacionEmpresaHelper.GetLocalTime(Session);
-        UsuarioModificacion = Session.GetObjectByKey<ApplicationUser>(SecuritySystem.CurrentUserId);
+        try
+        {
+            UsuarioModificacion = Session.GetObjectByKey<ApplicationUser>(SecuritySystem.CurrentUserId);
+        }
+        catch (InvalidOperationException)
+        {
+            // Contexto de seguridad no disponible
+        }
     }
 
     private void ProcesarNumeracion()
