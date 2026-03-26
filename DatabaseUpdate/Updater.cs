@@ -29,8 +29,17 @@ public class Updater : ModuleUpdater
 #if DEBUG
         if (ObjectSpace.ServiceProvider != null)
         {
-            var securitySetup = new SecuritySetupService(ObjectSpace);
-            securitySetup.CreateRolesAndUsers(TenantName, onlyAdmin: true);
+            var dataSeedService = ObjectSpace.ServiceProvider.GetService<IDataSeedService>();
+            if (dataSeedService != null)
+            {
+                dataSeedService.Seed(ObjectSpace, TenantName, TenantId);
+            }
+            else
+            {
+                // Fallback for cases where DataSeedService might not be registered or available in the current context
+                var securitySetup = new SecuritySetupService(ObjectSpace);
+                securitySetup.CreateRolesAndUsers(TenantName, onlyAdmin: true);
+            }
         }
 #endif
 
