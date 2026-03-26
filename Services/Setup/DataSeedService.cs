@@ -48,13 +48,13 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
 
         if (tenantId != null)
         {
+            new ImpuestoSetupService(objectSpace).CreateInitialImpuestos();
+            objectSpace.CommitChanges();
+
             new InformacionEmpresaSetupService(objectSpace).CreateInitialInformacionEmpresa();
             objectSpace.CommitChanges();
 
             new ContabilidadSetupService(objectSpace).CreateInitialData();
-            objectSpace.CommitChanges();
-
-            new ImpuestoSetupService(objectSpace).CreateInitialImpuestos();
             objectSpace.CommitChanges();
         }
     }

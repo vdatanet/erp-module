@@ -75,6 +75,110 @@ public class ImpuestoSetupService(IObjectSpace objectSpace)
         CreateTipoImpuesto("IVA_INTRA", "IVA Intracomunitario (Repercutido)", 0, true, false, Impuesto.IVA, (ClaveRegimen)1, CalificacionOperacion.S2, CausaExencion.E5, false, "4770000000");
         // Exportaciones (E2)
         CreateTipoImpuesto("IVA_EXPORT", "Exportaciones (Repercutido)", 0, true, false, Impuesto.IVA, (ClaveRegimen)1, CalificacionOperacion.S2, CausaExencion.E2, false, "4770000000");
+
+        CreateInitialPosicionesFiscales();
+    }
+
+    public void CreateInitialPosicionesFiscales()
+    {
+        CreatePosicionFiscal("Régimen Nacional");
+        CreatePosicionFiscal("Intracomunitario");
+        CreatePosicionFiscal("Exportación");
+        CreatePosicionFiscal("Canarias, Ceuta y Melilla");
+        CreatePosicionFiscal("Sujeto Pasivo");
+    }
+
+    private void CreatePosicionFiscal(string nombre)
+    {
+        var posicionFiscal = OS.FirstOrDefault<PosicionFiscal>(p => p.Nombre == nombre);
+        if (posicionFiscal == null)
+        {
+            posicionFiscal = OS.CreateObject<PosicionFiscal>();
+            posicionFiscal.Nombre = nombre;
+        }
+
+        if (nombre == "Intracomunitario")
+        {
+            AddMapeo(posicionFiscal, "IVA21_REP", "IVA_INTRA");
+            AddMapeo(posicionFiscal, "IVA10_REP", "IVA_INTRA");
+            AddMapeo(posicionFiscal, "IVA4_REP", "IVA_INTRA");
+
+            // Mapeos de Cuentas
+            AddMapeoCuenta(posicionFiscal, "4300000000", "4300400000"); // Clientes
+            AddMapeoCuenta(posicionFiscal, "4000000000", "4000400000"); // Proveedores
+            AddMapeoCuenta(posicionFiscal, "4100000000", "4100400000"); // Acreedores
+            AddMapeoCuenta(posicionFiscal, "7000000000", "7000400000"); // Ventas
+            AddMapeoCuenta(posicionFiscal, "6000000000", "6000400000"); // Compras
+        }
+        else if (nombre == "Exportación")
+        {
+            AddMapeo(posicionFiscal, "IVA21_REP", "IVA_EXPORT");
+            AddMapeo(posicionFiscal, "IVA10_REP", "IVA_EXPORT");
+            AddMapeo(posicionFiscal, "IVA4_REP", "IVA_EXPORT");
+
+            // Mapeos de Cuentas
+            AddMapeoCuenta(posicionFiscal, "4300000000", "4300900000"); // Clientes
+            AddMapeoCuenta(posicionFiscal, "4000000000", "4000900000"); // Proveedores
+            AddMapeoCuenta(posicionFiscal, "7000000000", "7000900000"); // Ventas
+            AddMapeoCuenta(posicionFiscal, "6000000000", "6000900000"); // Compras
+        }
+        else if (nombre == "Canarias, Ceuta y Melilla")
+        {
+            AddMapeo(posicionFiscal, "IVA21_REP", "IVA_EXPORT");
+            AddMapeo(posicionFiscal, "IVA10_REP", "IVA_EXPORT");
+            AddMapeo(posicionFiscal, "IVA4_REP", "IVA_EXPORT");
+
+            // Cuentas similares a exportación para fuera de península/baleares
+            AddMapeoCuenta(posicionFiscal, "4300000000", "4300900000");
+            AddMapeoCuenta(posicionFiscal, "4000000000", "4000900000");
+            AddMapeoCuenta(posicionFiscal, "7000000000", "7000900000");
+            AddMapeoCuenta(posicionFiscal, "6000000000", "6000900000");
+        }
+        else if (nombre == "Sujeto Pasivo")
+        {
+            AddMapeo(posicionFiscal, "IVA21_REP", "IVA_ISP");
+            AddMapeo(posicionFiscal, "IVA10_REP", "IVA_ISP");
+            AddMapeo(posicionFiscal, "IVA4_REP", "IVA_ISP");
+        }
+    }
+
+    private void AddMapeoCuenta(PosicionFiscal pf, string origenCod, string destinoCod)
+    {
+        var origen = OS.FirstOrDefault<CuentaContable>(c => c.Codigo == origenCod);
+        var destino = OS.FirstOrDefault<CuentaContable>(c => c.Codigo == destinoCod);
+
+        if (origen != null && destino != null)
+        {
+            var mapeo = pf.MapeosCuenta.FirstOrDefault(m => m.CuentaOrigen == origen);
+            if (mapeo == null)
+            {
+                mapeo = OS.CreateObject<MapeoCuenta>();
+                mapeo.PosicionFiscal = pf;
+                mapeo.CuentaOrigen = origen;
+            }
+            mapeo.CuentaDestino = destino;
+        }
+    }
+
+    private void AddMapeo(PosicionFiscal pf, string origenCod, string destinoCod)
+    {
+        var origen = OS.FirstOrDefault<TipoImpuesto>(t => t.Codigo == origenCod);
+        var destino = OS.FirstOrDefault<TipoImpuesto>(t => t.Codigo == destinoCod);
+
+        if (origen != null && destino != null)
+        {
+            var mapeo = pf.Mapeos.FirstOrDefault(m => m.ImpuestoOrigen == origen);
+            if (mapeo == null)
+            {
+                mapeo = OS.CreateObject<MapeoImpuesto>();
+                mapeo.PosicionFiscal = pf;
+                mapeo.ImpuestoOrigen = origen;
+            }
+            if (!mapeo.ImpuestosDestino.Contains(destino))
+            {
+                mapeo.ImpuestosDestino.Add(destino);
+            }
+        }
     }
 
     private void CreateTipoImpuesto(string codigo, string nombre, decimal tipo, bool enVentas, bool enCompras,

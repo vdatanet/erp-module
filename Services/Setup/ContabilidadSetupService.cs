@@ -134,14 +134,26 @@ public class ContabilidadSetupService(IObjectSpace objectSpace)
         CreateCuenta("400", "Proveedores", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora);
         CreateCuenta("40000", "Proveedores (euros) - Nacionales", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora);
         CreateCuenta("4000000000", "Proveedores (euros) - Nacionales", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora, true);
+        CreateCuenta("40004", "Proveedores (euros) - Intracomunitarios", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora);
+        CreateCuenta("4000400000", "Proveedores (euros) - Intracomunitarios", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora, true);
+        CreateCuenta("40009", "Proveedores (euros) - Importaciones", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora);
+        CreateCuenta("4000900000", "Proveedores (euros) - Importaciones", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora, true);
+
         CreateCuenta("41", "Acreedores varios", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora);
         CreateCuenta("410", "Acreedores por prestaciones de servicios", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora);
         CreateCuenta("41000", "Acreedores por prestaciones de servicios (euros)", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora);
         CreateCuenta("4100000000", "Acreedores por prestaciones de servicios (euros)", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora, true);
+        CreateCuenta("41004", "Acreedores por prestaciones de servicios (euros) - Intracomunitarios", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora);
+        CreateCuenta("4100400000", "Acreedores por prestaciones de servicios (euros) - Intracomunitarios", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora, true);
+
         CreateCuenta("43", "Clientes", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("430", "Clientes", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("43000", "Clientes (euros) - Nacionales", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("4300000000", "Clientes (euros) - Nacionales", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora, true);
+        CreateCuenta("43004", "Clientes (euros) - Intracomunitarios", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
+        CreateCuenta("4300400000", "Clientes (euros) - Intracomunitarios", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora, true);
+        CreateCuenta("43009", "Clientes (euros) - Exportaciones", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
+        CreateCuenta("4300900000", "Clientes (euros) - Exportaciones", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora, true);
         CreateCuenta("44", "Deudores varios", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("440", "Deudores", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("4400", "Deudores (euros)", CuentaContable.TipoCuenta.Activo, CuentaContable.NaturalezaCuenta.Deudora);
@@ -212,6 +224,10 @@ public class ContabilidadSetupService(IObjectSpace objectSpace)
         CreateCuenta("600", "Compras de mercaderías", CuentaContable.TipoCuenta.Gastos, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("60000", "Compras de mercaderías - Nacionales", CuentaContable.TipoCuenta.Gastos, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("6000000000", "Compras de mercaderías - Nacionales", CuentaContable.TipoCuenta.Gastos, CuentaContable.NaturalezaCuenta.Deudora, true);
+        CreateCuenta("60004", "Compras de mercaderías - Intracomunitarias", CuentaContable.TipoCuenta.Gastos, CuentaContable.NaturalezaCuenta.Deudora);
+        CreateCuenta("6000400000", "Compras de mercaderías - Intracomunitarias", CuentaContable.TipoCuenta.Gastos, CuentaContable.NaturalezaCuenta.Deudora, true);
+        CreateCuenta("60009", "Compras de mercaderías - Importaciones", CuentaContable.TipoCuenta.Gastos, CuentaContable.NaturalezaCuenta.Deudora);
+        CreateCuenta("6000900000", "Compras de mercaderías - Importaciones", CuentaContable.TipoCuenta.Gastos, CuentaContable.NaturalezaCuenta.Deudora, true);
         CreateCuenta("62", "Servicios exteriores", CuentaContable.TipoCuenta.Gastos, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("621", "Arrendamientos y cánones", CuentaContable.TipoCuenta.Gastos, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("622", "Reparaciones y conservación", CuentaContable.TipoCuenta.Gastos, CuentaContable.NaturalezaCuenta.Deudora);
@@ -232,6 +248,10 @@ public class ContabilidadSetupService(IObjectSpace objectSpace)
         CreateCuenta("700", "Ventas de mercaderías", CuentaContable.TipoCuenta.Ingresos, CuentaContable.NaturalezaCuenta.Acreedora);
         CreateCuenta("70000", "Ventas de mercaderías - Nacionales", CuentaContable.TipoCuenta.Ingresos, CuentaContable.NaturalezaCuenta.Acreedora);
         CreateCuenta("7000000000", "Ventas de mercaderías - Nacionales", CuentaContable.TipoCuenta.Ingresos, CuentaContable.NaturalezaCuenta.Acreedora, true);
+        CreateCuenta("70004", "Ventas de mercaderías - Intracomunitarias", CuentaContable.TipoCuenta.Ingresos, CuentaContable.NaturalezaCuenta.Acreedora);
+        CreateCuenta("7000400000", "Ventas de mercaderías - Intracomunitarias", CuentaContable.TipoCuenta.Ingresos, CuentaContable.NaturalezaCuenta.Acreedora, true);
+        CreateCuenta("70009", "Ventas de mercaderías - Exportaciones", CuentaContable.TipoCuenta.Ingresos, CuentaContable.NaturalezaCuenta.Acreedora);
+        CreateCuenta("7000900000", "Ventas de mercaderías - Exportaciones", CuentaContable.TipoCuenta.Ingresos, CuentaContable.NaturalezaCuenta.Acreedora, true);
         CreateCuenta("705", "Prestaciones de servicios", CuentaContable.TipoCuenta.Ingresos, CuentaContable.NaturalezaCuenta.Acreedora);
         CreateCuenta("70500", "Prestaciones de servicios (euros)", CuentaContable.TipoCuenta.Ingresos, CuentaContable.NaturalezaCuenta.Acreedora);
         CreateCuenta("7050000000", "Prestaciones de servicios (euros)", CuentaContable.TipoCuenta.Ingresos, CuentaContable.NaturalezaCuenta.Acreedora, true);

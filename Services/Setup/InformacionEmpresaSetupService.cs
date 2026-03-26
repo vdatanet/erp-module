@@ -3,6 +3,7 @@ using DevExpress.ExpressApp.Xpo;
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Tesoreria;
+using erp.Module.BusinessObjects.Impuestos;
 
 namespace erp.Module.Services.Setup;
 
@@ -69,6 +70,7 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
         informacionEmpresa.CuentaVentasPorDefecto ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "7000000000");
         informacionEmpresa.CuentaCobrosPorDefecto ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "5720000000");
         informacionEmpresa.CuentaPagosPorDefecto ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "5720000000");
+        informacionEmpresa.PosicionFiscalPorDefecto ??= OS.FirstOrDefault<PosicionFiscal>(p => p.Nombre == "Régimen Nacional");
         informacionEmpresa.ZonaHorariaPorDefecto ??= OS.FirstOrDefault<ZonaHoraria>(z => z.IdZonaHoraria == "Europe/Madrid");
 
         informacionEmpresa.MedioPagoPorDefecto ??= OS.FirstOrDefault<MedioPago>(m => m.Nombre == "Efectivo") ?? OS.CreateObject<MedioPago>();
@@ -78,10 +80,10 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
             informacionEmpresa.MedioPagoPorDefecto.EsEfectivo = true;
         }
 
-        informacionEmpresa.CondicionPagoPorDefecto ??= OS.FirstOrDefault<CondicionPago>(c => c.Nombre == "Efectivo") ?? OS.CreateObject<CondicionPago>();
+        informacionEmpresa.CondicionPagoPorDefecto ??= OS.FirstOrDefault<CondicionPago>(c => c.Nombre == "Efectivo a la vista") ?? OS.CreateObject<CondicionPago>();
         if (informacionEmpresa.CondicionPagoPorDefecto.Session.IsNewObject(informacionEmpresa.CondicionPagoPorDefecto))
         {
-            informacionEmpresa.CondicionPagoPorDefecto.Nombre = "Efectivo";
+            informacionEmpresa.CondicionPagoPorDefecto.Nombre = "Efectivo a la vista";
             informacionEmpresa.CondicionPagoPorDefecto.NumeroPlazos = 1;
             informacionEmpresa.CondicionPagoPorDefecto.PlazoPrimerPago = 0;
             informacionEmpresa.CondicionPagoPorDefecto.DiasEntrePlazos = 0;
