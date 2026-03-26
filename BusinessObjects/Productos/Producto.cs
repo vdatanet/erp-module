@@ -38,6 +38,7 @@ public class Producto(Session session) : EntidadBase(session)
     private bool _requiereReservaStock;
     private bool _esServicio;
     private bool _esConsumible;
+    private bool _esCompuesto;
     private bool _estaActivo;
     private MediaDataObject? _foto;
     private MediaDataObject? _miniatura;
@@ -93,6 +94,18 @@ public class Producto(Session session) : EntidadBase(session)
         get => _precioVenta;
         set => SetPropertyValue(nameof(PrecioVenta), ref _precioVenta, value);
     }
+
+    [PersistentAlias("PrecioVenta - CosteEstandar")]
+    [XafDisplayName("Margen Bruto (Importe)")]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("AllowEdit", "False")]
+    public decimal MargenBrutoImporte => Convert.ToDecimal(EvaluateAlias(nameof(MargenBrutoImporte)));
+
+    [PersistentAlias("Iif(PrecioVenta != 0, (PrecioVenta - CosteEstandar) * 100 / PrecioVenta, 0)")]
+    [XafDisplayName("Margen Bruto (%)")]
+    [ModelDefault("DisplayFormat", "{0:n2}%")]
+    [ModelDefault("AllowEdit", "False")]
+    public decimal MargenBrutoPorcentaje => Convert.ToDecimal(EvaluateAlias(nameof(MargenBrutoPorcentaje)));
 
     [XafDisplayName("Precio Venta con Impuestos")]
     [ModelDefault("DisplayFormat", "{0:n2}")]
@@ -191,6 +204,22 @@ public class Producto(Session session) : EntidadBase(session)
     {
         get => _esConsumible;
         set => SetPropertyValue(nameof(EsConsumible), ref _esConsumible, value);
+    }
+
+    [XafDisplayName("Es Compuesto")]
+    public bool EsCompuesto
+    {
+        get => _esCompuesto;
+        set
+        {
+            if (SetPropertyValue(nameof(EsCompuesto), ref _esCompuesto, value))
+            {
+                if (value && !IsLoading && !IsSaving)
+                {
+                    RecalcularPreciosDesdeComponentes();
+                }
+            }
+        }
     }
 
     [Size(SizeAttribute.Unlimited)]
@@ -292,6 +321,53 @@ public class Producto(Session session) : EntidadBase(session)
     [XafDisplayName("Stock Actual")]
     public XPCollection<StockActual> StockActual => GetCollection<StockActual>();
 
+    [DevExpress.Xpo.Aggregated]
+    [Association("Producto-Componentes")]
+    [XafDisplayName("Componentes")]
+    public XPCollection<ProductoCompuestoItem> Componentes => GetCollection<ProductoCompuestoItem>();
+
+    [Association("Componente-ProductosPadres")]
+    [XafDisplayName("Donde es Componente")]
+    public XPCollection<ProductoCompuestoItem> DondeEsComponente => GetCollection<ProductoCompuestoItem>();
+
+    [Action(Caption = "Recalcular Precios desde Componentes",
+        ConfirmationMessage = "¿Desea recalcular el coste y precio de venta a partir de sus componentes?",
+        ToolTip = "Suma el coste y precio de venta de todos los componentes multiplicados por su cantidad.",
+        ImageName = "Action_ResetViewSettings",
+        TargetObjectsCriteria = "EsCompuesto = True",
+        SelectionDependencyType = MethodActionSelectionDependencyType.RequireSingleObject)]
+    public void RecalcularPreciosDesdeComponentes()
+    {
+        RecalcularPreciosDesdeComponentesInternal(new HashSet<Guid>());
+    }
+
+    private void RecalcularPreciosDesdeComponentesInternal(HashSet<Guid> procesados)
+    {
+        if (!EsCompuesto) return;
+        if (procesados.Contains(Oid)) return; // Evitar ciclos infinitos
+        procesados.Add(Oid);
+
+        decimal nuevoCoste = 0;
+        decimal nuevoPrecioVenta = 0;
+
+        foreach (var item in Componentes)
+        {
+            if (item.Componente == null) continue;
+
+            // Si el componente es compuesto, recalcularlo primero
+            if (item.Componente.EsCompuesto)
+            {
+                item.Componente.RecalcularPreciosDesdeComponentesInternal(procesados);
+            }
+
+            nuevoCoste += item.Componente.CosteEstandar * item.Cantidad;
+            nuevoPrecioVenta += item.Componente.PrecioVenta * item.Cantidad;
+        }
+
+        CosteEstandar = nuevoCoste;
+        PrecioVenta = nuevoPrecioVenta;
+    }
+
     [Action(Caption = "Restablecer Código de Barras", 
         ConfirmationMessage = "¿Desea restablecer el código de barras al valor original?", 
         ToolTip = "Restablece el valor del código de barras al Oid del producto",
@@ -319,6 +395,17 @@ public class Producto(Session session) : EntidadBase(session)
         {
             UpdateThumbnail(Foto);
         }
+
+        if (propertyName is nameof(CosteEstandar) or nameof(PrecioVenta))
+        {
+            if (!IsLoading && !IsSaving)
+            {
+                foreach (var item in DondeEsComponente)
+                {
+                    item.ProductoPadre?.RecalcularPreciosDesdeComponentes();
+                }
+            }
+        }
     }
 
     public override void AfterConstruction()
@@ -330,8 +417,8 @@ public class Producto(Session session) : EntidadBase(session)
     private void InitValues()
     {
         EstaActivo = true;
-        DisponibleEnVentas = false;
-        DisponibleEnCompras = false;
+        DisponibleEnVentas = true;
+        DisponibleEnCompras = true;
         DisponibleEnTpv = false;
         DisponibleEnWeb = false;
         GestionaStock = false;
@@ -339,6 +426,7 @@ public class Producto(Session session) : EntidadBase(session)
         RequiereReservaStock = false;
         EsServicio = false;
         EsConsumible = false;
+        EsCompuesto = false;
         CodigoBarras = GuidHelper.GetShortHash(Oid);
 
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
