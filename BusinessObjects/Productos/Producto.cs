@@ -340,9 +340,21 @@ public class Producto(Session session) : EntidadBase(session)
         EsServicio = false;
         EsConsumible = false;
         CodigoBarras = GuidHelper.GetShortHash(Oid);
+
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null) return;
-        if (companyInfo.CuentaVentasPorDefecto != null) CuentaVentas = companyInfo.CuentaVentasPorDefecto;
-        if (companyInfo.CuentaComprasPorDefecto != null) CuentaCompras = companyInfo.CuentaComprasPorDefecto;
+
+        CuentaVentas ??= companyInfo.CuentaVentasPorDefecto;
+        CuentaCompras ??= companyInfo.CuentaComprasPorDefecto;
+
+        foreach (var tax in companyInfo.ImpuestosVentas)
+        {
+            ImpuestosVentas.Add(tax);
+        }
+
+        foreach (var tax in companyInfo.ImpuestosCompras)
+        {
+            ImpuestosCompras.Add(tax);
+        }
     }
 }

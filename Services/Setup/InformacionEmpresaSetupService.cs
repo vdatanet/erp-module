@@ -90,6 +90,25 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
             informacionEmpresa.CondicionPagoPorDefecto.MedioPago = informacionEmpresa.MedioPagoPorDefecto;
         }
 
+        // --- IMPUESTOS POR DEFECTO ---
+        if (informacionEmpresa.ImpuestosVentas.Count == 0)
+        {
+            var iva21Rep = OS.FirstOrDefault<TipoImpuesto>(t => t.Codigo == "IVA21_REP");
+            if (iva21Rep != null)
+            {
+                informacionEmpresa.ImpuestosVentas.Add(iva21Rep);
+            }
+        }
+
+        if (informacionEmpresa.ImpuestosCompras.Count == 0)
+        {
+            var iva21Sop = OS.FirstOrDefault<TipoImpuesto>(t => t.Codigo == "IVA21_SOP");
+            if (iva21Sop != null)
+            {
+                informacionEmpresa.ImpuestosCompras.Add(iva21Sop);
+            }
+        }
+
         OS.CommitChanges(); // Nos aseguramos de guardar la empresa inicial para evitar nulos en otras partes si es necesario
     }
 }
