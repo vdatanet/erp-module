@@ -2,7 +2,8 @@ using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
-using erp.Module.BusinessObjects.Base.Ventas;
+using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Servicios.TrabajoDeCampo;
 using erp.Module.BusinessObjects.Suscripciones;
 using erp.Module.Helpers.Contactos;
@@ -12,14 +13,30 @@ namespace erp.Module.BusinessObjects.Servicios.PartesTrabajo;
 [DefaultClassOptions]
 [NavigationItem("Servicios")]
 [XafDisplayName("Parte de Trabajo")]
-public class ParteTrabajo(Session session) : DocumentoVenta(session)
+public class ParteTrabajo(Session session) : EntidadBase(session)
 {
+    private Cliente? _cliente;
+    private string? _serie;
     private bool _esFacturable;
     private double _horasTotales;
     private decimal _importeManoObra;
     private decimal _importeMateriales;
     private Suscripcion? _suscripcionCubridora;
     private CoberturaSuscripcion? _coberturaAplicada;
+
+    [XafDisplayName("Cliente")]
+    public Cliente? Cliente
+    {
+        get => _cliente;
+        set => SetPropertyValue(nameof(Cliente), ref _cliente, value);
+    }
+
+    [XafDisplayName("Serie")]
+    public string? Serie
+    {
+        get => _serie;
+        set => SetPropertyValue(nameof(Serie), ref _serie, value);
+    }
 
     [XafDisplayName("Suscripción Cubridora")]
     public Suscripcion? SuscripcionCubridora
