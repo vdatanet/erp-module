@@ -428,6 +428,7 @@ public class Producto(Session session) : EntidadBase(session)
         EsConsumible = false;
         EsCompuesto = false;
         CodigoBarras = GuidHelper.GetShortHash(Oid);
+        Codigo = CodigoBarras;
 
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null) return;

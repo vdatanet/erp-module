@@ -1,4 +1,5 @@
 using DevExpress.ExpressApp.DC;
+using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
@@ -51,6 +52,8 @@ public class ProductoCompuestoItem(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Cantidad")]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
     [RuleValueComparison("", DefaultContexts.Save, ValueComparisonType.GreaterThan, 0)]
     public decimal Cantidad
     {
