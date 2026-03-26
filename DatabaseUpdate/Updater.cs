@@ -26,7 +26,8 @@ public class Updater : ModuleUpdater
     {
         base.UpdateDatabaseAfterUpdateSchema();
 
-#if DEBUG
+// TODO: quitar cuando la aplicación este en producción
+#if DEBUG || RELEASE
         if (ObjectSpace.ServiceProvider != null)
         {
             var dataSeedService = ObjectSpace.ServiceProvider.GetService<IDataSeedService>();
