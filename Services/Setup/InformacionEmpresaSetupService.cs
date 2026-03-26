@@ -45,6 +45,8 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
             informacionEmpresa.PrefijoAlbaranesVentaPorDefecto = "VA";
             informacionEmpresa.PrefijoFacturasVentaPorDefecto = "VF";
             informacionEmpresa.PrefijoFacturasSimplificadasPorDefecto = "VS";
+            informacionEmpresa.PrefijoSesionTpvPorDefecto = "TS";
+            informacionEmpresa.PrefijoVentaTpvPorDefecto = "TV";
             informacionEmpresa.PrefijoParteTrabajoPorDefecto = "PT";
             informacionEmpresa.NombreReporteTicket = "Ticket Factura Simplificada";
             informacionEmpresa.ActivarVeriFactu = false; // Default to false

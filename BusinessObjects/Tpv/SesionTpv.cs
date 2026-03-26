@@ -11,7 +11,10 @@ using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
+using erp.Module.Factories;
+using erp.Module.Helpers.Contactos;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Configuraciones;
 
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.Helpers.Contactos;
@@ -52,6 +55,24 @@ public class SesionTpv(Session session) : EntidadBase(session)
     private string? _motivoReapertura;
     private int _numeroReaperturas;
     private DateTime? _fechaUltimaModificacion;
+    private int _numero;
+    private string? _secuencia;
+
+    [XafDisplayName("Número")]
+    [Browsable(false)]
+    public int Numero
+    {
+        get => _numero;
+        set => SetPropertyValue(nameof(Numero), ref _numero, value);
+    }
+
+    [XafDisplayName("Secuencia")]
+    [ModelDefault("AllowEdit", "False")]
+    public string? Secuencia
+    {
+        get => _secuencia;
+        set => SetPropertyValue(nameof(Secuencia), ref _secuencia, value);
+    }
 
     [XafDisplayName("Estado Abierto Único")]
     [Browsable(false)]
@@ -350,6 +371,8 @@ public class SesionTpv(Session session) : EntidadBase(session)
     {
         base.OnSaving();
         
+        ProcesarNumeracion();
+
         // Solo validamos si el estado ACTUAL en memoria es Abierta.
         // Si estamos cambiando a Cerrada, no debería saltar esta validación.
         if (Tpv != null && Estado == EstadoSesionTpv.Abierta && !Session.IsObjectToDelete(this))
@@ -369,5 +392,31 @@ public class SesionTpv(Session session) : EntidadBase(session)
     {
         base.AfterConstruction();
         // Se deja en estado neutro. La apertura real se gestiona en AbrirSesion.
+    }
+
+    private void ProcesarNumeracion()
+    {
+        if (string.IsNullOrEmpty(Secuencia) && Tpv != null)
+            AsignarNumero();
+    }
+
+    public virtual void AsignarNumero()
+    {
+        if (Tpv != null)
+        {
+            var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+            if (companyInfo == null) return;
+
+            int padding = companyInfo.PaddingNumero;
+            string serie = companyInfo.PrefijoSesionTpvPorDefecto ?? "TS";
+            int anio = Apertura != DateTime.MinValue ? Apertura.Year : InformacionEmpresaHelper.GetLocalTime(Session).Year;
+
+            string sequenceName = $"{GetType().FullName}.{anio}.{Tpv.Codigo}";
+            string prefix = $"{serie}/{anio}/{Tpv.Codigo}";
+
+            Numero = SequenceFactory.GetNextSequence(Session, sequenceName, out var formattedSequence,
+                prefix, padding);
+            Secuencia = formattedSequence;
+        }
     }
 }

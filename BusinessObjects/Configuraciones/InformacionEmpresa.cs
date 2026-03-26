@@ -74,6 +74,8 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private string? _prefijoAcreedores;
     private string? _prefijoEmpleados;
     private string? _prefijoReservas;
+    private string? _prefijoSesionTpvPorDefecto;
+    private string? _prefijoVentaTpvPorDefecto;
     private string? _serieCertificadoVeriFactu;
     private string? _textoDefectoVeriFactu;
     private string? _versionSistemaVeriFactu;
@@ -432,6 +434,22 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     {
         get => _prefijoReservas;
         set => SetPropertyValue(nameof(PrefijoReservas), ref _prefijoReservas, value);
+    }
+
+    [RuleRequiredField("InformacionEmpresa_PrefijoSesionTpvPorDefecto_Required", DefaultContexts.Save)]
+    [XafDisplayName("Prefijo Sesiones TPV")]
+    public string? PrefijoSesionTpvPorDefecto
+    {
+        get => _prefijoSesionTpvPorDefecto;
+        set => SetPropertyValue(nameof(PrefijoSesionTpvPorDefecto), ref _prefijoSesionTpvPorDefecto, value);
+    }
+
+    [RuleRequiredField("InformacionEmpresa_PrefijoVentaTpvPorDefecto_Required", DefaultContexts.Save)]
+    [XafDisplayName("Prefijo Ventas TPV")]
+    public string? PrefijoVentaTpvPorDefecto
+    {
+        get => _prefijoVentaTpvPorDefecto;
+        set => SetPropertyValue(nameof(PrefijoVentaTpvPorDefecto), ref _prefijoVentaTpvPorDefecto, value);
     }
 
     [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]

@@ -1,10 +1,14 @@
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.DC;
+using DevExpress.ExpressApp.Model;
 using DevExpress.ExpressApp.Security;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
+using erp.Module.Factories;
+using erp.Module.Helpers.Contactos;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Impuestos;
@@ -32,8 +36,17 @@ public enum VentaTpvEstado
 public class VentaTpv(Session session) : EntidadBase(session)
 {
     private DateTime _fecha;
+    private int _numeroInt;
     private string? _numero;
     private VentaTpvEstado _estado;
+
+    [XafDisplayName("Número")]
+    [Browsable(false)]
+    public int NumeroInt
+    {
+        get => _numeroInt;
+        set => SetPropertyValue(nameof(NumeroInt), ref _numeroInt, value);
+    }
     private SesionTpv? _sesionTpv;
     private Tercero? _cliente;
     private ApplicationUser? _usuario;
@@ -53,6 +66,7 @@ public class VentaTpv(Session session) : EntidadBase(session)
 
     [XafDisplayName("Número")]
     [Size(50)]
+    [ModelDefault("AllowEdit", "False")]
     public string? Numero
     {
         get => _numero;
@@ -162,6 +176,38 @@ public class VentaTpv(Session session) : EntidadBase(session)
         base.AfterConstruction();
         Fecha = InformacionEmpresaHelper.GetLocalTime(Session);
         Estado = VentaTpvEstado.Borrador;
+    }
+
+    protected override void OnSaving()
+    {
+        base.OnSaving();
+        ProcesarNumeracion();
+    }
+
+    private void ProcesarNumeracion()
+    {
+        if (string.IsNullOrEmpty(Numero) && SesionTpv != null)
+            AsignarNumero();
+    }
+
+    public virtual void AsignarNumero()
+    {
+        if (SesionTpv?.Tpv != null)
+        {
+            var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+            if (companyInfo == null) return;
+
+            int padding = companyInfo.PaddingNumero;
+            string serie = companyInfo.PrefijoVentaTpvPorDefecto ?? "TV";
+            int anio = Fecha != DateTime.MinValue ? Fecha.Year : InformacionEmpresaHelper.GetLocalTime(Session).Year;
+
+            string sequenceName = $"{GetType().FullName}.{anio}.{SesionTpv.Tpv.Codigo}";
+            string prefix = $"{serie}/{anio}/{SesionTpv.Tpv.Codigo}";
+
+            NumeroInt = SequenceFactory.GetNextSequence(Session, sequenceName, out var formattedSequence,
+                prefix, padding);
+            Numero = formattedSequence;
+        }
     }
 
     public void RecalcularTotales()
