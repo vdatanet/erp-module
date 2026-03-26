@@ -54,6 +54,28 @@ public class SecuritySetupService(IObjectSpace objectSpace)
     public void CreateRolesAndUsers(string? tenantName, bool onlyAdmin = false)
     {
         var adminRole = CreateAdminRole();
+
+#if DEBUG
+        if (!string.IsNullOrEmpty(tenantName))
+        {
+            var adminUserName = $"admin@{tenantName}.com";
+            var existingUser = OS.FirstOrDefault<ApplicationUser>(u => u.UserName == adminUserName);
+            if (existingUser == null)
+            {
+                var adminUser = OS.CreateObject<ApplicationUser>();
+                adminUser.UserName = adminUserName;
+                adminUser.SetPassword("");
+                adminUser.ChangePasswordOnFirstLogon = true;
+                adminUser.Roles.Add(adminRole);
+                
+                if (adminUser is ISecurityUserWithLoginInfo userWithLoginInfo)
+                {
+                    userWithLoginInfo.CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, adminUserName);
+                }
+            }
+        }
+#endif
+
         // Crear roles de negocio si no es onlyAdmin
         if (!onlyAdmin)
         {
