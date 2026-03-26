@@ -1,3 +1,4 @@
+using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
@@ -8,6 +9,7 @@ namespace erp.Module.BusinessObjects.Imprenta;
 
 [DefaultClassOptions]
 [NavigationItem("Imprenta")]
+[XafDisplayName("Tamaño de Papel")]
 public class TamanoPapel : EntidadBase
 {
     private decimal _alto;

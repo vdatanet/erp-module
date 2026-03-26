@@ -11,6 +11,7 @@ namespace erp.Module.BusinessObjects.Productos;
 
 [DefaultClassOptions]
 [NavigationItem("Productos")]
+[XafDisplayName("Categoría")]
 [ImageName("BO_Product_Group")]
 public class Categoria(Session session) : EntidadBase(session)
 {

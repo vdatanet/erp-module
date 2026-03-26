@@ -8,7 +8,7 @@ using erp.Module.Helpers.Contactos;
 namespace erp.Module.BusinessObjects.Compras;
 
 [DefaultClassOptions]
-[XafDisplayName("Factura de Compra")]
+[XafDisplayName("Pedido de Compra")]
 [NavigationItem("Compras")]
 [ImageName("BO_Order")]
 public class PedidoCompra(Session session) : DocumentoCompra(session)

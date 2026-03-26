@@ -13,6 +13,7 @@ namespace erp.Module.BusinessObjects.Contactos;
 
 [DefaultClassOptions]
 [NavigationItem("Contactos")]
+[XafDisplayName("Tercero")]
 [ImageName("BO_Organization")]
 public class Tercero(Session session) : Contacto(session)
 {

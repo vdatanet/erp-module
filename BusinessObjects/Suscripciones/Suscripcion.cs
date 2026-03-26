@@ -16,6 +16,7 @@ namespace erp.Module.BusinessObjects.Suscripciones;
 
 [DefaultClassOptions]
 [NavigationItem("Suscripciones")]
+[XafDisplayName("Suscripción")]
 [ImageName("BO_Contract")]
 [DefaultProperty(nameof(NombreDisplay))]
 public class Suscripcion(Session session) : EntidadBase(session)

@@ -12,6 +12,7 @@ namespace erp.Module.BusinessObjects.Contactos;
 
 [DefaultClassOptions]
 [NavigationItem("Contactos")]
+[XafDisplayName("Proveedor")]
 [ImageName("BO_Vendor")]
 public class Proveedor(Session session) : Tercero(session), IPuedeParticiparEnCompras
 {

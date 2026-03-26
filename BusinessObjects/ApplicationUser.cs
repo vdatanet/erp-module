@@ -9,6 +9,7 @@ namespace erp.Module.BusinessObjects;
 
 [MapInheritance(MapInheritanceType.ParentTable)]
 [DefaultProperty(nameof(UserName))]
+[XafDisplayName("Usuario")]
 public sealed class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLoginInfo, ISecurityUserLockout
 {
     private int accessFailedCount;

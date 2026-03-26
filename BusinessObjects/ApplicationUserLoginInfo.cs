@@ -1,4 +1,5 @@
-﻿using DevExpress.ExpressApp.ConditionalAppearance;
+﻿using DevExpress.ExpressApp.DC;
+using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.Security;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
@@ -7,6 +8,7 @@ namespace erp.Module.BusinessObjects;
 
 [DeferredDeletion(false)]
 [Persistent("PermissionPolicyUserLoginInfo")]
+[XafDisplayName("Información de Login")]
 public class ApplicationUserLoginInfo : BaseObject, ISecurityUserLoginInfo
 {
     private string? loginProviderName;

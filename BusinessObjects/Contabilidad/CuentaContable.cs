@@ -13,6 +13,7 @@ namespace erp.Module.BusinessObjects.Contabilidad;
 
 [DefaultClassOptions]
 [NavigationItem("Contabilidad")]
+[XafDisplayName("Cuenta Contable")]
 [ImageName("CustomerContactDirectory")]
 [DefaultProperty(nameof(Codigo))]
 public class CuentaContable(Session session) : EntidadBase(session)

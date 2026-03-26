@@ -17,6 +17,7 @@ namespace erp.Module.BusinessObjects.Contactos;
 
 [DefaultClassOptions]
 [NavigationItem("Contactos")]
+[XafDisplayName("Cliente")]
 [ImageName("BO_Customer")]
 public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVentas
 {

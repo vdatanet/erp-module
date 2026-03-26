@@ -1,3 +1,4 @@
+using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Ventas;
@@ -7,6 +8,7 @@ namespace erp.Module.BusinessObjects.Imprenta;
 
 [DefaultClassOptions]
 [NavigationItem("Imprenta")]
+[XafDisplayName("Servicio de Trabajo de Impresión")]
 public class TrabajoImpresionServicio(Session session) : DocumentoVentaLinea(session)
 {
     private decimal _numEntradasMaq;

@@ -5,6 +5,7 @@ using System.ComponentModel;
 namespace erp.Module.BusinessObjects.Tpv;
 
 [DomainComponent]
+[XafDisplayName("Resumen de Venta TPV")]
 public class ResumenVentaTpv
 {
     [XafDisplayName("Base Imponible")]

@@ -1,3 +1,4 @@
+using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
@@ -7,6 +8,7 @@ namespace erp.Module.BusinessObjects.Productos;
 
 [DefaultClassOptions]
 [NavigationItem("Productos")]
+[XafDisplayName("Precio por Cantidad")]
 public class PrecioPorCantidad : EntidadBase
 {
     private decimal _finIntervalo;

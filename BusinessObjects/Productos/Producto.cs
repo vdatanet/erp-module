@@ -18,6 +18,7 @@ namespace erp.Module.BusinessObjects.Productos;
 
 [DefaultClassOptions]
 [NavigationItem("Productos")]
+[XafDisplayName("Producto")]
 [ImageName("BO_Product")]
 [DefaultProperty(nameof(Codigo))]
 public class Producto(Session session) : EntidadBase(session)
