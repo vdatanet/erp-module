@@ -282,9 +282,9 @@
             </LayoutGroup>
             <LayoutGroup Id="Contabilidad" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="1" Caption="Contabilidad" RelativeSize="100" ImageName="Actions_Book" IsNewNode="True">
               <LayoutGroup Id="col1" Index="0" ShowCaption="False" RelativeSize="49.80392156862745" IsNewNode="True">
-                <LayoutItem Id="PosicionFiscalPorDefecto" ViewItem="PosicionFiscalPorDefecto" Index="0" RelativeSize="3.5794183445190155" IsNewNode="True" />
-                <LayoutItem Id="CondicionPagoPorDefecto" ViewItem="CondicionPagoPorDefecto" Index="1" RelativeSize="2.684563758389262" IsNewNode="True" />
-                <LayoutItem Id="MedioPagoPorDefecto" ViewItem="MedioPagoPorDefecto" Index="2" RelativeSize="2.684563758389262" IsNewNode="True" />
+                <LayoutItem Id="CondicionPagoPorDefecto" ViewItem="CondicionPagoPorDefecto" Index="0" RelativeSize="3.5794183445190155" IsNewNode="True" />
+                <LayoutItem Id="MedioPagoPorDefecto" ViewItem="MedioPagoPorDefecto" Index="1" RelativeSize="2.684563758389262" IsNewNode="True" />
+                <LayoutItem Id="PosicionFiscalPorDefecto" ViewItem="PosicionFiscalPorDefecto" Index="2" RelativeSize="2.684563758389262" IsNewNode="True" />
                 <LayoutItem Id="DiarioVentasPorDefecto" ViewItem="DiarioVentasPorDefecto" Index="3" RelativeSize="2.684563758389262" IsNewNode="True" />
                 <LayoutItem Id="DiarioComprasPorDefecto" ViewItem="DiarioComprasPorDefecto" Index="4" RelativeSize="2.684563758389262" IsNewNode="True" />
                 <LayoutItem Id="CuentaVentasPorDefecto" ViewItem="CuentaVentasPorDefecto" Index="5" RelativeSize="2.684563758389262" IsNewNode="True" />
@@ -328,11 +328,11 @@
               <LayoutGroup Id="col2" Index="1" ShowCaption="False" RelativeSize="50.19607843137255" Caption="col2" IsNewNode="True" />
             </LayoutGroup>
             <LayoutGroup Id="Informes" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="3" Caption="Informes" RelativeSize="100" ImageName="BO_Report" IsNewNode="True">
-              <LayoutGroup Id="col1" Index="0" ShowCaption="False" RelativeSize="49.90196078431372" Caption="col1" IsNewNode="True">
+              <LayoutGroup Id="col1" Index="0" ShowCaption="False" RelativeSize="49.80392156862745" Caption="col1" IsNewNode="True">
                 <LayoutItem Id="NombreReporteTicket" ViewItem="NombreReporteTicket" Index="0" RelativeSize="3.5794183445190155" IsNewNode="True" />
                 <LayoutItem Id="Item6" Index="1" RelativeSize="96.42058165548099" IsNewNode="True" />
               </LayoutGroup>
-              <LayoutGroup Id="col2" Index="1" ShowCaption="False" RelativeSize="50.09803921568628" IsNewNode="True" />
+              <LayoutGroup Id="col2" Index="1" ShowCaption="False" RelativeSize="50.19607843137255" IsNewNode="True" />
             </LayoutGroup>
             <LayoutGroup Id="VeriFactu" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="4" Caption="VeriFactu" RelativeSize="100" ImageName="Actions_Send" IsNewNode="True">
               <LayoutGroup Id="col1" Index="0" ShowCaption="False" RelativeSize="49.80392156862745" IsNewNode="True">
