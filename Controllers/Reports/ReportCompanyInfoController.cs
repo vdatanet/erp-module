@@ -33,6 +33,12 @@ public class ReportCompanyInfoController : ViewController
         base.OnActivated();
         UpdateActionState();
 
+        // No desactivar acciones si estamos en una vista de diseño/gestión de reportes
+        if (View.ObjectTypeInfo != null && View.ObjectTypeInfo.Type == typeof(ReportDataV2))
+        {
+            return;
+        }
+
         // Desactivamos los controladores nativos de reportes de XAF que gestionan la impresión Inplace
         foreach (var controller in Frame.Controllers)
         {
@@ -48,6 +54,9 @@ public class ReportCompanyInfoController : ViewController
 
         // Además, desactivamos directamente cualquier acción nativa en la categoría de Reportes
         // que no sea la nuestra. Esto es una medida de seguridad adicional.
+        // Solo lo hacemos para acciones que parezcan de impresión o ejecución de reportes inplace.
+        var actionsToDisable = new[] { "ShowInReportV2", "EditReportV2", "ExecuteReportV2" }; // Acciones comunes de impresión/visualización
+        
         foreach (var controller in Frame.Controllers)
         {
             foreach (var action in controller.Actions)
@@ -55,7 +64,11 @@ public class ReportCompanyInfoController : ViewController
                 if (action.Category == DevExpress.Persistent.Base.PredefinedCategory.Reports.ToString() && 
                     action.Id != printReportAction.Id)
                 {
-                    action.Active["CustomPrintActionActive"] = false;
+                    // Si el Id de la acción contiene "Inplace" o es una de las conocidas de visualización, la desactivamos
+                    if (action.Id.Contains("Inplace") || action.Id == "ShowInReportV2")
+                    {
+                        action.Active["CustomPrintActionActive"] = false;
+                    }
                 }
             }
         }
