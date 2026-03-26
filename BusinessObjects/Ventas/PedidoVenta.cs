@@ -9,6 +9,7 @@ using erp.Module.Helpers.Contactos;
 namespace erp.Module.BusinessObjects.Ventas;
 
 [DefaultClassOptions]
+[XafDisplayName("Pedido de Venta")]
 [NavigationItem("Ventas")]
 [ImageName("BO_Order")]
 public class PedidoVenta(Session session) : DocumentoVenta(session)

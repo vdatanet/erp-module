@@ -14,6 +14,7 @@ using DevExpress.Persistent.Validation;
 namespace erp.Module.BusinessObjects.Ventas;
 
 [DefaultClassOptions]
+[XafDisplayName("Factura de Venta")]
 [NavigationItem("Ventas")]
 [ImageName("BO_Invoice")]
 [DefaultProperty(nameof(Secuencia))]
