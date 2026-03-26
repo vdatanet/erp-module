@@ -36,7 +36,8 @@ public class ReportCompanyInfoController : ViewController
                 // Al llamar a ShowPreview, el sistema XAF cargará el reporte.
                 // La inyección de datos de la empresa ahora es AUTOMÁTICA y GLOBAL
                 // gracias a la suscripción en erpModule.cs.
-                controller.ShowPreview(reportData.Oid.ToString());
+                string handle = ReportDataProvider.ReportsStorage.GetReportContainerHandle(reportData);
+                controller.ShowPreview(handle);
             }
         }
         else
