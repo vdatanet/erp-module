@@ -12,6 +12,7 @@ using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.BusinessObjects.Inventario;
 using erp.Module.Helpers.Contactos;
+using erp.Module.Helpers.Comun;
 
 namespace erp.Module.BusinessObjects.Productos;
 
@@ -290,6 +291,16 @@ public class Producto(Session session) : EntidadBase(session)
     [XafDisplayName("Stock Actual")]
     public XPCollection<StockActual> StockActual => GetCollection<StockActual>();
 
+    [Action(Caption = "Restablecer Código de Barras", 
+        ConfirmationMessage = "¿Desea restablecer el código de barras al valor original?", 
+        ToolTip = "Restablece el valor del código de barras al Oid del producto",
+        ImageName = "Action_ResetViewSettings",
+        SelectionDependencyType = MethodActionSelectionDependencyType.RequireSingleObject)]
+    public void ResetCodigoBarras()
+    {
+        CodigoBarras = GuidHelper.GetShortHash(Oid);
+    }
+
     protected override void OnLoaded()
     {
         base.OnLoaded();
@@ -327,6 +338,7 @@ public class Producto(Session session) : EntidadBase(session)
         RequiereReservaStock = false;
         EsServicio = false;
         EsConsumible = false;
+        CodigoBarras = GuidHelper.GetShortHash(Oid);
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null) return;
         if (companyInfo.CuentaVentasPorDefecto != null) CuentaVentas = companyInfo.CuentaVentasPorDefecto;

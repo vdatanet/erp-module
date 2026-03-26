@@ -15,6 +15,7 @@ using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.Factories;
 using erp.Module.Helpers.Contactos;
+using erp.Module.Helpers.Comun;
 using VeriFactu.Xml.Factu;
 
 using erp.Module.BusinessObjects.Tesoreria;
@@ -420,7 +421,7 @@ public class Contacto(Session session) : EntidadBase(session)
         SelectionDependencyType = MethodActionSelectionDependencyType.RequireSingleObject)]
     public void ResetNfcUid()
     {
-        NfcUid = Oid.ToString();
+        NfcUid = GuidHelper.GetShortHash(Oid);
     }
 
     /*[Action(Caption = "Cambiar Estado", ConfirmationMessage = "¿Desea cambiar el estado de este contacto?", 
@@ -486,6 +487,6 @@ public class Contacto(Session session) : EntidadBase(session)
         TipoIdentificacion = IDType.NIF_IVA;
         Activo = true;
         FechaAlta = InformacionEmpresaHelper.GetLocalTime(Session);
-        NfcUid = Oid.ToString();
+        NfcUid = GuidHelper.GetShortHash(Oid);
     }
 }
