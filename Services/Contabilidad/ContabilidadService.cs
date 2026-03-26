@@ -74,7 +74,25 @@ public static class ContabilidadService
         };
         asiento.Apuntes.Add(apunteCliente);
 
-        // 2. Apuntes de Ventas (Haber) - Uno por cada línea de factura sin agrupar
+        // 2. Apuntes de Impuestos que son retenciones (Debe)
+        var lineasConImpuestos = factura.Lineas.Where(l => l.Impuestos.Any());
+        foreach (var linea in lineasConImpuestos)
+        {
+            foreach (var impuesto in linea.Impuestos.Where(i => i.CuentaContable != null && i.EsRetencion))
+            {
+                var apunteRetencion = new Apunte(session)
+                {
+                    Asiento = asiento,
+                    CuentaContable = impuesto.CuentaContable,
+                    Concepto = asiento.Concepto,
+                    Debe = Math.Abs(impuesto.ImporteImpuestos),
+                    Haber = 0
+                };
+                asiento.Apuntes.Add(apunteRetencion);
+            }
+        }
+
+        // 3. Apuntes de Ventas (Haber) - Uno por cada línea de factura sin agrupar
         foreach (var linea in factura.Lineas.Where(l => (l.CuentaContable ?? companyInfo.CuentaVentasPorDefecto) != null))
         {
             var apunteVenta = new Apunte(session)
@@ -88,25 +106,21 @@ public static class ContabilidadService
             asiento.Apuntes.Add(apunteVenta);
         }
 
-        // 3. Apuntes de Impuestos (IVA/Retenciones) - Uno por cada tipo de impuesto de cada línea sin agrupar
-        var impuestos = factura.Lineas
-            .SelectMany(l => l.Impuestos)
-            .Where(i => i.CuentaContable != null);
-
-        foreach (var impuesto in impuestos)
+        // 4. Apuntes de Impuestos que NO son retenciones (Haber)
+        foreach (var linea in lineasConImpuestos)
         {
-            var esRetencion = impuesto.EsRetencion;
-            var importe = impuesto.ImporteImpuestos;
-
-            var apunteImpuesto = new Apunte(session)
+            foreach (var impuesto in linea.Impuestos.Where(i => i.CuentaContable != null && !i.EsRetencion))
             {
-                Asiento = asiento,
-                CuentaContable = impuesto.CuentaContable,
-                Concepto = asiento.Concepto,
-                Debe = esRetencion ? Math.Abs(importe) : 0,
-                Haber = esRetencion ? 0 : importe
-            };
-            asiento.Apuntes.Add(apunteImpuesto);
+                var apunteImpuesto = new Apunte(session)
+                {
+                    Asiento = asiento,
+                    CuentaContable = impuesto.CuentaContable,
+                    Concepto = asiento.Concepto,
+                    Debe = 0,
+                    Haber = impuesto.ImporteImpuestos
+                };
+                asiento.Apuntes.Add(apunteImpuesto);
+            }
         }
 
         // Validar descuadre (por redondeos u otros)
