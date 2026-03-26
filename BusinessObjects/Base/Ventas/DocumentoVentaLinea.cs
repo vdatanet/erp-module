@@ -76,7 +76,7 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
     public virtual void AsignarProducto(Producto? value)
     {
         BorrarImpuestosProducto();
-        
+
         if (value == null)
         {
             NombreProducto = null;
@@ -93,7 +93,14 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
         PrecioUnitario = value.PrecioVenta;
 
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        CuentaContable = value.CuentaVentas ?? companyInfo?.CuentaVentasPorDefecto;
+        if (companyInfo == null)
+        {
+            CuentaContable = value.CuentaVentas;
+        }
+        else
+        {
+            CuentaContable = value.CuentaVentas ?? companyInfo.CuentaVentasPorDefecto;
+        }
 
         if (Cantidad == 0m)
             Cantidad = 1m;
@@ -268,6 +275,10 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
             PorcentajeComision = DocumentoVenta.Vendedor.PorcentajeComision;
             ImporteComisionFijo = DocumentoVenta.Vendedor.ImporteComisionFijo;
         }
+
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        if (companyInfo == null) return;
+        CuentaContable ??= companyInfo.CuentaVentasPorDefecto;
     }
 
     private void RecalcularYNotificar()
