@@ -31,6 +31,15 @@ public class ReportCompanyInfoController : ViewController
     protected override void OnActivated()
     {
         base.OnActivated();
+        
+        // Verificamos si estamos en el Host (donde existe el tipo Tenant)
+        // Este controlador solo debe estar disponible en los tenants.
+        if (ObjectSpace.IsKnownType(typeof(DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant)))
+        {
+            Active["AvailableInTenantOnly"] = false;
+            return;
+        }
+
         UpdateActionState();
 
         // No desactivar acciones si estamos en una vista de diseño/gestión de reportes
@@ -80,7 +89,15 @@ public class ReportCompanyInfoController : ViewController
 
         if (View != null && View.ObjectTypeInfo != null)
         {
-            var os = Application.CreateObjectSpace(typeof(ReportDataV2));
+            // Verificamos si el ObjectSpace actual puede manejar el tipo ReportDataV2
+            // Esto evita errores en el Host (donde no existen reportes de negocio)
+            if (!ObjectSpace.IsKnownType(typeof(ReportDataV2)))
+            {
+                printReportAction.Active["HasInplaceReports"] = false;
+                return;
+            }
+
+            using var os = Application.CreateObjectSpace(typeof(ReportDataV2));
             var reports = os.GetObjects<ReportDataV2>(DevExpress.Data.Filtering.CriteriaOperator.Parse("IsInplaceReport = true AND DataTypeName = ?", View.ObjectTypeInfo.Type.FullName));
 
             foreach (var report in reports)

@@ -53,22 +53,22 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         var adminRole = CreateAdminRole();
 
 #if DEBUG
-        if (!string.IsNullOrEmpty(tenantName))
+        // Solo en debug: Al crear la base de datos del tenant o actualizar, 
+        // sino existe admin o admin@... crearlo como administrador, sin contraseña 
+        // y forzar cambio de contraseña al siguiente inicio de sesión
+        var adminUserName = string.IsNullOrEmpty(tenantName) ? "admin" : $"admin@{tenantName.ToLower()}";
+        var existingUser = OS.FirstOrDefault<ApplicationUser>(u => u.UserName == adminUserName);
+        if (existingUser == null)
         {
-            var adminUserName = $"admin@{tenantName}.com";
-            var existingUser = OS.FirstOrDefault<ApplicationUser>(u => u.UserName == adminUserName);
-            if (existingUser == null)
+            var adminUser = OS.CreateObject<ApplicationUser>();
+            adminUser.UserName = adminUserName;
+            adminUser.SetPassword("");
+            adminUser.ChangePasswordOnFirstLogon = true;
+            adminUser.Roles.Add(adminRole);
+            
+            if (adminUser is ISecurityUserWithLoginInfo userWithLoginInfo)
             {
-                var adminUser = OS.CreateObject<ApplicationUser>();
-                adminUser.UserName = adminUserName;
-                adminUser.SetPassword("");
-                adminUser.ChangePasswordOnFirstLogon = true;
-                adminUser.Roles.Add(adminRole);
-                
-                if (adminUser is ISecurityUserWithLoginInfo userWithLoginInfo)
-                {
-                    userWithLoginInfo.CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, adminUserName);
-                }
+                userWithLoginInfo.CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, adminUserName);
             }
         }
 #endif
@@ -98,7 +98,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         }
     }
 
-    private ApplicationRole CreateAdminRole()
+    public ApplicationRole CreateAdminRole()
     {
         var adminRole = OS.FirstOrDefault<ApplicationRole>(r => r.Name == "Administradores");
         if (adminRole == null)
