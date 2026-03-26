@@ -212,6 +212,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     [Size(100)]
     [XafDisplayName("Nombre Cliente")]
+    [ModelDefault("AllowEdit", "False")]
     public string? NombreCliente
     {
         get => _nombreCliente;
@@ -220,6 +221,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     [Size(20)]
     [XafDisplayName("NIF Cliente")]
+    [ModelDefault("AllowEdit", "False")]
     public string? DocumentoIdentificacionCliente
     {
         get => _documentoIdentificacionCliente;
@@ -228,6 +230,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     [Size(255)]
     [XafDisplayName("Email Cliente")]
+    [ModelDefault("AllowEdit", "False")]
     public string? EmailCliente
     {
         get => _emailCliente;
@@ -236,6 +239,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     [Size(20)]
     [XafDisplayName("Teléfono Cliente")]
+    [ModelDefault("AllowEdit", "False")]
     public string? TelefonoCliente
     {
         get => _telefonoCliente;
@@ -244,6 +248,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     [Size(255)]
     [XafDisplayName("Dirección Cliente")]
+    [ModelDefault("AllowEdit", "False")]
     public string? DireccionCliente
     {
         get => _direccionCliente;
@@ -252,6 +257,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     [Size(100)]
     [XafDisplayName("Población Cliente")]
+    [ModelDefault("AllowEdit", "False")]
     public string? PoblacionCliente
     {
         get => _poblacionCliente;
@@ -260,6 +266,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     [Size(100)]
     [XafDisplayName("Provincia Cliente")]
+    [ModelDefault("AllowEdit", "False")]
     public string? ProvinciaCliente
     {
         get => _provinciaCliente;
@@ -268,6 +275,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     [Size(10)]
     [XafDisplayName("CP Cliente")]
+    [ModelDefault("AllowEdit", "False")]
     public string? CodigoPostalCliente
     {
         get => _codigoPostalCliente;
@@ -275,6 +283,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("País Cliente")]
+    [ModelDefault("AllowEdit", "False")]
     public Pais? PaisCliente
     {
         get => _paisCliente;
