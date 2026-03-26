@@ -26,6 +26,7 @@ public class ContabilidadSetupService(IObjectSpace objectSpace)
     {
         CreateInitialEjercicio();
         CreateInitialCuentas();
+        CreateInitialDiarios();
 
         // Actualizar relaciones con la empresa si ya existe
         var informacionEmpresa = OS.FirstOrDefault<erp.Module.BusinessObjects.Configuraciones.InformacionEmpresa>(i => true);
@@ -61,6 +62,38 @@ public class ContabilidadSetupService(IObjectSpace objectSpace)
     public void CreateInitialCuentas()
     {
         CreatePgcEspanol();
+    }
+
+    public void CreateInitialDiarios()
+    {
+        var informacionEmpresa = OS.FirstOrDefault<erp.Module.BusinessObjects.Configuraciones.InformacionEmpresa>(i => true);
+        if (informacionEmpresa == null) return;
+
+        informacionEmpresa.DiarioVentasPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Ventas") ?? OS.CreateObject<Diario>();
+        if (OS.IsNewObject(informacionEmpresa.DiarioVentasPorDefecto))
+        {
+            informacionEmpresa.DiarioVentasPorDefecto.Nombre = "Ventas";
+        }
+
+        informacionEmpresa.DiarioComprasPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Compras") ?? OS.CreateObject<Diario>();
+        if (OS.IsNewObject(informacionEmpresa.DiarioComprasPorDefecto))
+        {
+            informacionEmpresa.DiarioComprasPorDefecto.Nombre = "Compras";
+        }
+
+        informacionEmpresa.DiarioTesoreriaPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Tesorería") ?? OS.CreateObject<Diario>();
+        if (OS.IsNewObject(informacionEmpresa.DiarioTesoreriaPorDefecto))
+        {
+            informacionEmpresa.DiarioTesoreriaPorDefecto.Nombre = "Tesorería";
+        }
+
+        informacionEmpresa.DiarioOperacionesVariasPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Operaciones Varias") ?? OS.CreateObject<Diario>();
+        if (OS.IsNewObject(informacionEmpresa.DiarioOperacionesVariasPorDefecto))
+        {
+            informacionEmpresa.DiarioOperacionesVariasPorDefecto.Nombre = "Operaciones Varias";
+        }
+
+        OS.CommitChanges();
     }
 
     private void CreatePgcEspanol()

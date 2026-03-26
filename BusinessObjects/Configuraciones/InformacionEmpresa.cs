@@ -52,6 +52,8 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private MedioPago? _medioPagoPorDefecto;
     private Diario? _diarioComprasPorDefecto;
     private Diario? _diarioVentasPorDefecto;
+    private Diario? _diarioTesoreriaPorDefecto;
+    private Diario? _diarioOperacionesVariasPorDefecto;
     private string? _nifAdministradorSistemaVeriFactu;
     private string? _nombreAdministradorSistemaVeriFactu;
     private string? _nombreArchivoConfigVeriFactu;
@@ -205,6 +207,22 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     {
         get => _diarioComprasPorDefecto;
         set => SetPropertyValue(nameof(DiarioComprasPorDefecto), ref _diarioComprasPorDefecto, value);
+    }
+
+    [DataSourceCriteria("EstaActivo = True")]
+    [XafDisplayName("Diario Tesorería por Defecto")]
+    public Diario? DiarioTesoreriaPorDefecto
+    {
+        get => _diarioTesoreriaPorDefecto;
+        set => SetPropertyValue(nameof(DiarioTesoreriaPorDefecto), ref _diarioTesoreriaPorDefecto, value);
+    }
+
+    [DataSourceCriteria("EstaActivo = True")]
+    [XafDisplayName("Diario Operaciones Varias por Defecto")]
+    public Diario? DiarioOperacionesVariasPorDefecto
+    {
+        get => _diarioOperacionesVariasPorDefecto;
+        set => SetPropertyValue(nameof(DiarioOperacionesVariasPorDefecto), ref _diarioOperacionesVariasPorDefecto, value);
     }
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
