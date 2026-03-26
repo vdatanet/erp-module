@@ -16,12 +16,7 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
     {
         if (objectSpace is CompositeObjectSpace compositeOS)
         {
-            var result = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(InformacionEmpresa)));
-            if (result != null) return result;
-
-            // Fallback to the first persistent Object Space if no specific match is found for the type
-            var fallback = compositeOS.AdditionalObjectSpaces.FirstOrDefault();
-            if (fallback != null) return fallback;
+            return compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(InformacionEmpresa))) ?? objectSpace;
         }
 
         return objectSpace;
@@ -29,6 +24,8 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
 
     public void CreateInitialInformacionEmpresa()
     {
+        if (!OS.IsKnownType(typeof(InformacionEmpresa))) return;
+
         var informacionEmpresa = OS.FirstOrDefault<InformacionEmpresa>(i => true);
         if (informacionEmpresa == null)
         {

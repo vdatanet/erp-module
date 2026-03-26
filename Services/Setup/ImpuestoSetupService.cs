@@ -16,12 +16,7 @@ public class ImpuestoSetupService(IObjectSpace objectSpace)
     {
         if (objectSpace is CompositeObjectSpace compositeOS)
         {
-            var result = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(TipoImpuesto)));
-            if (result != null) return result;
-
-            // Fallback to the first persistent Object Space if no specific match is found for the type
-            var fallback = compositeOS.AdditionalObjectSpaces.FirstOrDefault();
-            if (fallback != null) return fallback;
+            return compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(TipoImpuesto))) ?? objectSpace;
         }
 
         return objectSpace;
@@ -29,6 +24,8 @@ public class ImpuestoSetupService(IObjectSpace objectSpace)
 
     public void CreateInitialImpuestos()
     {
+        if (!OS.IsKnownType(typeof(TipoImpuesto))) return;
+
         // --- IVA REPERCUTIDO (Ventas S1, Régimen 01) ---
         CreateTipoImpuesto("IVA21_REP", "IVA 21% (Repercutido)", 21, true, false, Impuesto.IVA, (ClaveRegimen)1, CalificacionOperacion.S1, null, false, "4772100000");
         CreateTipoImpuesto("IVA10_REP", "IVA 10% (Repercutido)", 10, true, false, Impuesto.IVA, (ClaveRegimen)1, CalificacionOperacion.S1, null, false, "4771000000");

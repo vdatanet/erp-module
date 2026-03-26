@@ -34,8 +34,12 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
             return;
         }
 
-        new TenantSetupService(objectSpace).CreateInitialTenants(tenantName ?? "Default");
-        objectSpace.CommitChanges();
+        // Si el ObjectSpace conoce el tipo Tenant, estamos en el Host.
+        // El usuario indica que la siembra solo debe hacerse en el tenant.
+        if (objectSpace.IsKnownType(typeof(DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant)))
+        {
+            return;
+        }
 
         new SecuritySetupService(objectSpace).CreateRolesAndUsers(tenantName);
         objectSpace.CommitChanges();

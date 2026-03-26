@@ -130,9 +130,8 @@ public class Tpv(Session session) : EntidadBase(session)
     [XafDisplayName("Sesiones")]
     public XPCollection<SesionTpv> Sesiones => GetCollection<SesionTpv>();
 
-    [Association("RolesAutorizados-Tpvs")]
     [XafDisplayName("Roles autorizados")]
-    public XPCollection<ApplicationRole> RolesAutorizados => GetCollection<ApplicationRole>();
+    public XPCollection<ApplicationRole> RolesAutorizados => GetCollection<ApplicationRole>(nameof(RolesAutorizados));
 
     public void AbrirSesionAction(decimal importeApertura = 0)
     {

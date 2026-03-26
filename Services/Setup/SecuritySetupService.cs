@@ -40,12 +40,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
     {
         if (objectSpace is CompositeObjectSpace compositeOS)
         {
-            var result = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(PermissionPolicyRole)));
-            if (result != null) return result;
-
-            // Fallback to the first persistent Object Space if no specific match is found for the type
-            var fallback = compositeOS.AdditionalObjectSpaces.FirstOrDefault();
-            if (fallback != null) return fallback;
+            return compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(PermissionPolicyRole))) ?? objectSpace;
         }
 
         return objectSpace;
@@ -53,6 +48,8 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     public void CreateRolesAndUsers(string? tenantName, bool onlyAdmin = false)
     {
+        if (!OS.IsKnownType(typeof(ApplicationRole))) return;
+
         var adminRole = CreateAdminRole();
 
 #if DEBUG

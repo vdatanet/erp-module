@@ -13,11 +13,7 @@ public class ZonaHorariaSetupService(IObjectSpace objectSpace)
     {
         if (objectSpace is CompositeObjectSpace compositeOS)
         {
-            var result = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(ZonaHoraria)));
-            if (result != null) return result;
-
-            var fallback = compositeOS.AdditionalObjectSpaces.FirstOrDefault();
-            if (fallback != null) return fallback;
+            return compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(ZonaHoraria))) ?? objectSpace;
         }
 
         return objectSpace;
@@ -25,6 +21,8 @@ public class ZonaHorariaSetupService(IObjectSpace objectSpace)
 
     public void CreateInitialData()
     {
+        if (!OS.IsKnownType(typeof(ZonaHoraria))) return;
+
         var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
         
         var timeZones = new[]

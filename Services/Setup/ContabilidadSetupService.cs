@@ -12,11 +12,7 @@ public class ContabilidadSetupService(IObjectSpace objectSpace)
     {
         if (objectSpace is CompositeObjectSpace compositeOS)
         {
-            var result = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(Ejercicio)));
-            if (result != null) return result;
-
-            var fallback = compositeOS.AdditionalObjectSpaces.FirstOrDefault();
-            if (fallback != null) return fallback;
+            return compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(Ejercicio))) ?? objectSpace;
         }
 
         return objectSpace;
@@ -24,6 +20,8 @@ public class ContabilidadSetupService(IObjectSpace objectSpace)
 
     public void CreateInitialData()
     {
+        if (!OS.IsKnownType(typeof(Ejercicio))) return;
+
         CreateInitialEjercicio();
         CreateInitialCuentas();
         CreateInitialDiarios();

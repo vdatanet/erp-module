@@ -12,11 +12,7 @@ public class TesoreriaSetupService(IObjectSpace objectSpace)
     {
         if (objectSpace is CompositeObjectSpace compositeOS)
         {
-            var result = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(MedioPago)));
-            if (result != null) return result;
-
-            var fallback = compositeOS.AdditionalObjectSpaces.FirstOrDefault();
-            if (fallback != null) return fallback;
+            return compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(MedioPago))) ?? objectSpace;
         }
 
         return objectSpace;
@@ -24,6 +20,8 @@ public class TesoreriaSetupService(IObjectSpace objectSpace)
 
     public void CreateInitialData()
     {
+        if (!OS.IsKnownType(typeof(MedioPago))) return;
+
         // 1. Crear Medios de Pago
         var efectivo = CreateMedioPago("Efectivo", true);
         var tarjeta = CreateMedioPago("Tarjeta de Crédito/Débito", false);
