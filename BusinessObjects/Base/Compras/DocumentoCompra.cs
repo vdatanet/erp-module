@@ -45,11 +45,15 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
         set
         {
             var modified = SetPropertyValue(nameof(Proveedor), ref _proveedor, value);
-            if (modified && !IsLoading && !IsSaving && value is IPuedeParticiparEnCompras p)
+            if (modified && !IsLoading && !IsSaving)
             {
                 if (value is Proveedor prov)
                 {
                     CondicionPago = prov.CondicionPago;
+                }
+                else if (value is Acreedor acree)
+                {
+                    CondicionPago = acree.CondicionPago;
                 }
             }
         }

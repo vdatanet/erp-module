@@ -47,7 +47,7 @@ public class VentaTpv(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(NumeroInt), ref _numeroInt, value);
     }
     private SesionTpv? _sesionTpv;
-    private Tercero? _cliente;
+    private Cliente? _cliente;
     private ApplicationUser? _usuario;
     private decimal _totalBruto;
     private decimal _totalDescuentos;
@@ -89,7 +89,7 @@ public class VentaTpv(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Cliente")]
-    public Tercero? Cliente
+    public Cliente? Cliente
     {
         get => _cliente;
         set => SetPropertyValue(nameof(Cliente), ref _cliente, value);

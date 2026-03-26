@@ -101,6 +101,10 @@ public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVent
     [XafDisplayName("Facturas")]
     public XPCollection<FacturaVenta> Facturas => new(Session, CriteriaOperator.Parse("Cliente.Oid = ?", Oid));
 
+    [Association("Cliente-DocumentosVenta")]
+    [XafDisplayName("Documentos de Venta")]
+    public XPCollection<DocumentoVenta> DocumentosVenta => GetCollection<DocumentoVenta>();
+
     [Association("Cliente-Suscripciones")]
     [XafDisplayName("Suscripciones")]
     public XPCollection<Suscripciones.Suscripcion> Suscripciones => GetCollection<Suscripciones.Suscripcion>();

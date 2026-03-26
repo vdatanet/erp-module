@@ -57,7 +57,7 @@ public class FacturaSimplificada(Session session) : FacturaBase(session)
 
     protected override IDocumentoVentaStateMachine CreateStateMachine() => new FacturaSimplificadaStateMachine(this);
 
-    public (FacturaSimplificada Rectificativa, FacturaVenta Nominal) ConvertirAFacturaNominal(Tercero cliente)
+    public (FacturaSimplificada Rectificativa, FacturaVenta Nominal) ConvertirAFacturaNominal(Cliente cliente)
     {
         if (cliente == null) throw new UserFriendlyException("Se requiere un cliente para generar una factura nominal.");
         if (string.IsNullOrEmpty(cliente.Nif)) throw new UserFriendlyException("El cliente seleccionado no tiene NIF.");

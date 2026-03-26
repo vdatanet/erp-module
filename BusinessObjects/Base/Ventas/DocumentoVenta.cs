@@ -31,7 +31,7 @@ namespace erp.Module.BusinessObjects.Base.Ventas;
 public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 {
     private decimal _baseImponible;
-    private Tercero? _cliente;
+    private Cliente? _cliente;
     private DateTime _fecha;
     private decimal _importeImpuestos;
     private decimal _importeTotal;
@@ -160,11 +160,11 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         TargetCriteria =
             "IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.FacturaVenta') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.OfertaVenta') or IsInstanceOfType(this, 'erp.Module.BusinessObjects.Ventas.AlbaranVenta')",
         CustomMessageTemplate = "El Cliente del documento de venta es obligatorio")]
-    [Association("Tercero-DocumentosVenta")]
+    [Association("Cliente-DocumentosVenta")]
     [XafDisplayName("Cliente")]
     [DataSourceCriteria("Activo = true and IsIPuedeParticiparEnVentas")]
     [ImmediatePostData]
-    public Tercero? Cliente
+    public Cliente? Cliente
     {
         get => _cliente;
         set
@@ -180,7 +180,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     /// <summary>
     /// Regla de negocio: Al asignar un cliente se copian sus datos de contacto y facturación al documento.
     /// </summary>
-    public virtual void AsignarCliente(Tercero? value)
+    public virtual void AsignarCliente(Cliente? value)
     {
         if (value == null)
         {
@@ -197,7 +197,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
             return;
         }
 
-        CondicionPago = (value as Cliente)?.CondicionPago;
+        CondicionPago = value.CondicionPago;
 
         NombreCliente = value.Nombre;
         DocumentoIdentificacionCliente = value.Nif;

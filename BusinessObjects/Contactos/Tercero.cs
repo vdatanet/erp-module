@@ -27,10 +27,7 @@ public class Tercero(Session session) : Contacto(session)
         set => SetPropertyValue(nameof(CuentaContable), ref _cuentaContable, value);
     }
 
-    [Association("Tercero-DocumentosVenta")]
-    [XafDisplayName("Documentos de Venta")]
-    [VisibleInDetailView(false)]
-    public XPCollection<DocumentoVenta> DocumentosVenta => GetCollection<DocumentoVenta>();
+
 
     [Association("Tercero-DocumentosCompra")]
     [XafDisplayName("Documentos de Compra")]
