@@ -24,27 +24,24 @@ public class ReportCompanyInfoController : ViewController
 
     private void PrintReportAction_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
-        var empresaProvider = Application.ServiceProvider.GetRequiredService<IInformacionEmpresaProvider>();
-        
-        // Obtenemos el reporte (ejemplo por nombre)
+        // Obtenemos el reporte por su nombre (ejemplo: "Factura", como se ve en los logs)
         var os = Application.CreateObjectSpace(typeof(ReportDataV2));
-        var reportData = os.FindObject<ReportDataV2>(new DevExpress.Data.Filtering.BinaryOperator("DisplayName", "Mi Reporte"));
+        var reportData = os.FindObject<ReportDataV2>(new DevExpress.Data.Filtering.BinaryOperator("DisplayName", "Factura"));
         
         if (reportData != null)
         {
-            // Obtenemos el DTO de la empresa
-            var companyDto = empresaProvider.GetInformacionEmpresaDto(os);
-            
-            // En XAF, para pasar parámetros antes de mostrar el reporte, se recomienda usar el evento SetupBeforePrint del ReportsDataSourceHelper
-            // o suscribirse a eventos del ReportServiceController.
-            // Para la Web API, ya lo hemos automatizado en el ReportController.
             var controller = Frame.GetController<ReportServiceController>();
             if (controller != null)
             {
-                // Ejemplo conceptual: en XAF se suele delegar la carga al sistema, 
-                // pero podemos intervenir en la creación del reporte si es necesario.
+                // Al llamar a ShowPreview, el sistema XAF cargará el reporte.
+                // La inyección de datos de la empresa ahora es AUTOMÁTICA y GLOBAL
+                // gracias a la suscripción en erpModule.cs.
                 controller.ShowPreview(reportData.Oid.ToString());
             }
+        }
+        else
+        {
+            throw new UserFriendlyException("No se encontró el reporte 'Factura' en la base de datos.");
         }
     }
 }

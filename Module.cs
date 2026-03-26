@@ -22,6 +22,10 @@ using Microsoft.Extensions.DependencyInjection;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Ventas;
 using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.Services.Configuraciones;
+using erp.Module.Models.Configuraciones;
+using DevExpress.XtraReports.UI;
+using DevExpress.DataAccess.ObjectBinding;
 using Updater = erp.Module.DatabaseUpdate.Updater;
 
 namespace erp.Module;
@@ -86,7 +90,64 @@ public sealed class erpModule : ModuleBase
     public override void Setup(XafApplication application)
     {
         base.Setup(application);
-        // Manage various aspects of the application UI and behavior at the module level.
+        application.SetupComplete += Application_SetupComplete;
+    }
+
+    private void Application_SetupComplete(object? sender, EventArgs e)
+    {
+        var application = (XafApplication)sender!;
+        var reportsModule = application.Modules.FindModule<ReportsModuleV2>();
+        if (reportsModule != null)
+        {
+            reportsModule.ReportsDataSourceHelper.BeforeShowPreview += ReportsDataSourceHelper_BeforeShowPreview;
+        }
+    }
+
+    private void ReportsDataSourceHelper_BeforeShowPreview(object? sender, BeforeShowPreviewEventArgs e)
+    {
+        // En XAF, el ObjectSpace suele estar disponible a través del DataSource del reporte o el sender
+        IObjectSpace? objectSpace = null;
+        
+        // Intentamos obtenerlo del sender (ReportsDataSourceHelper)
+        var prop = sender?.GetType().GetProperty("ObjectSpace");
+        if (prop != null)
+        {
+            objectSpace = prop.GetValue(sender) as IObjectSpace;
+        }
+
+        if (objectSpace != null)
+        {
+            InjectCompanyInfo(e.Report, objectSpace);
+        }
+    }
+
+    private void InjectCompanyInfo(XtraReport report, IObjectSpace objectSpace)
+    {
+        var empresaProvider = objectSpace.ServiceProvider?.GetService<IInformacionEmpresaProvider>();
+        if (empresaProvider == null) return;
+
+        var companyDto = empresaProvider.GetInformacionEmpresaDto(objectSpace);
+
+        // Opción 1: Parámetros con prefijo Empresa_
+        var properties = typeof(InformacionEmpresaDto).GetProperties();
+        foreach (var prop in properties)
+        {
+            var paramName = $"Empresa_{prop.Name}";
+            var parameter = report.Parameters[paramName];
+            if (parameter != null)
+            {
+                parameter.Value = prop.GetValue(companyDto);
+            }
+        }
+
+        // Opción 2: ObjectDataSource configurado con InformacionEmpresaDto
+        foreach (var dataSource in report.ComponentStorage.OfType<ObjectDataSource>())
+        {
+            if (dataSource.DataSourceType == typeof(InformacionEmpresaDto))
+            {
+                dataSource.DataSource = companyDto;
+            }
+        }
     }
 
     public override void CustomizeTypesInfo(ITypesInfo typesInfo)
