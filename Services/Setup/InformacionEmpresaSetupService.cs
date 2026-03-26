@@ -73,22 +73,8 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
         informacionEmpresa.PosicionFiscalPorDefecto ??= OS.FirstOrDefault<PosicionFiscal>(p => p.Nombre == "Régimen Nacional");
         informacionEmpresa.ZonaHorariaPorDefecto ??= OS.FirstOrDefault<ZonaHoraria>(z => z.IdZonaHoraria == "Europe/Madrid");
 
-        informacionEmpresa.MedioPagoPorDefecto ??= OS.FirstOrDefault<MedioPago>(m => m.Nombre == "Efectivo") ?? OS.CreateObject<MedioPago>();
-        if (informacionEmpresa.MedioPagoPorDefecto.Session.IsNewObject(informacionEmpresa.MedioPagoPorDefecto))
-        {
-            informacionEmpresa.MedioPagoPorDefecto.Nombre = "Efectivo";
-            informacionEmpresa.MedioPagoPorDefecto.EsEfectivo = true;
-        }
-
-        informacionEmpresa.CondicionPagoPorDefecto ??= OS.FirstOrDefault<CondicionPago>(c => c.Nombre == "Efectivo a la vista") ?? OS.CreateObject<CondicionPago>();
-        if (informacionEmpresa.CondicionPagoPorDefecto.Session.IsNewObject(informacionEmpresa.CondicionPagoPorDefecto))
-        {
-            informacionEmpresa.CondicionPagoPorDefecto.Nombre = "Efectivo a la vista";
-            informacionEmpresa.CondicionPagoPorDefecto.NumeroPlazos = 1;
-            informacionEmpresa.CondicionPagoPorDefecto.PlazoPrimerPago = 0;
-            informacionEmpresa.CondicionPagoPorDefecto.DiasEntrePlazos = 0;
-            informacionEmpresa.CondicionPagoPorDefecto.MedioPago = informacionEmpresa.MedioPagoPorDefecto;
-        }
+        informacionEmpresa.MedioPagoPorDefecto ??= OS.FirstOrDefault<MedioPago>(m => m.Nombre == "Efectivo");
+        informacionEmpresa.CondicionPagoPorDefecto ??= OS.FirstOrDefault<CondicionPago>(c => c.Nombre == "Contado");
 
         // --- IMPUESTOS POR DEFECTO ---
         if (informacionEmpresa.ImpuestosVentas.Count == 0)

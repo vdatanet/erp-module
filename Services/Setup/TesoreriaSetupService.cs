@@ -1,0 +1,68 @@
+using DevExpress.ExpressApp;
+using erp.Module.BusinessObjects.Tesoreria;
+
+namespace erp.Module.Services.Setup;
+
+public class TesoreriaSetupService(IObjectSpace objectSpace)
+{
+    private IObjectSpace? _os;
+    private IObjectSpace OS => _os ??= GetWorkingObjectSpace();
+
+    private IObjectSpace GetWorkingObjectSpace()
+    {
+        if (objectSpace is CompositeObjectSpace compositeOS)
+        {
+            var result = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(MedioPago)));
+            if (result != null) return result;
+
+            var fallback = compositeOS.AdditionalObjectSpaces.FirstOrDefault();
+            if (fallback != null) return fallback;
+        }
+
+        return objectSpace;
+    }
+
+    public void CreateInitialData()
+    {
+        // 1. Crear Medios de Pago
+        var efectivo = CreateMedioPago("Efectivo", true);
+        var tarjeta = CreateMedioPago("Tarjeta de Crédito/Débito", false);
+        var transferencia = CreateMedioPago("Transferencia Bancaria", false);
+        var domiciliacion = CreateMedioPago("Domiciliación Bancaria (SEPA)", false);
+
+        // 2. Crear Condiciones de Pago
+        CreateCondicionPago("Contado", efectivo, 0, 0, 1);
+        CreateCondicionPago("Contado Tarjeta", tarjeta, 0, 0, 1);
+        CreateCondicionPago("30 días", transferencia, 30, 0, 1);
+        CreateCondicionPago("60 días", transferencia, 60, 0, 1);
+        CreateCondicionPago("30/60 días", transferencia, 30, 30, 2);
+        CreateCondicionPago("30/60/90 días", transferencia, 30, 30, 3);
+        CreateCondicionPago("Recibo 30 días", domiciliacion, 30, 0, 1);
+    }
+
+    private MedioPago CreateMedioPago(string nombre, bool esEfectivo)
+    {
+        var medioPago = OS.FirstOrDefault<MedioPago>(m => m.Nombre == nombre);
+        if (medioPago == null)
+        {
+            medioPago = OS.CreateObject<MedioPago>();
+            medioPago.Nombre = nombre;
+            medioPago.EsEfectivo = esEfectivo;
+        }
+        return medioPago;
+    }
+
+    private void CreateCondicionPago(string nombre, MedioPago medioPago, int plazoPrimerPago, int diasEntrePlazos, int numeroPlazos)
+    {
+        var condicionPago = OS.FirstOrDefault<CondicionPago>(c => c.Nombre == nombre);
+        if (condicionPago == null)
+        {
+            condicionPago = OS.CreateObject<CondicionPago>();
+            condicionPago.Nombre = nombre;
+            condicionPago.MedioPago = medioPago;
+            condicionPago.PlazoPrimerPago = plazoPrimerPago;
+            condicionPago.DiasEntrePlazos = diasEntrePlazos;
+            condicionPago.NumeroPlazos = numeroPlazos;
+        }
+    }
+}
