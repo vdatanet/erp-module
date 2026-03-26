@@ -47,7 +47,7 @@ public static class ContabilidadService
             Ejercicio = ejercicio,
             Diario = diario,
             Serie = companyInfo.PrefijoAsientosPorDefecto ?? "GEN",
-            Concepto = $"Factura {factura.Secuencia} - {factura.Cliente?.Nombre ?? factura.NombreCliente}",
+            Concepto = $"N/Factura nº {factura.Secuencia} a {factura.Cliente?.Nombre ?? factura.NombreCliente}",
             Estado = EstadoAsiento.Borrador
         };
 

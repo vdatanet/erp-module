@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
@@ -6,7 +8,7 @@ using erp.Module.BusinessObjects.Alquileres;
 using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Base.Ventas;
-
+using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.Helpers.Contactos;
 using erp.Module.Services.Contabilidad;
 using erp.Module.Services.Tesoreria;
@@ -32,6 +34,9 @@ public class FacturaVenta(Session session) : FacturaBase(session)
     [Association("FacturaVenta-EfectosCobro")]
     [DevExpress.Xpo.Aggregated]
     public XPCollection<EfectoCobro> EfectosCobro => GetCollection<EfectoCobro>();
+
+    [XafDisplayName("Apuntes Contables")]
+    public IEnumerable<Apunte> ApuntesContables => AsientoContable?.Apuntes ?? Enumerable.Empty<Apunte>();
 
     protected override void OnChanged(string propertyName, object oldValue, object newValue)
     {
