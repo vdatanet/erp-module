@@ -9,6 +9,7 @@ using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Productos;
 using erp.Module.Helpers.Comun;
 using erp.Module.Helpers.Contactos;
+using erp.Module.Services.Productos;
 
 namespace erp.Module.BusinessObjects.Base.Compras;
 
@@ -233,7 +234,8 @@ public class DocumentoCompraLinea(Session session) : EntidadBase(session)
 
         if (DocumentoCompra?.Proveedor != null)
         {
-            var precioEspecial = Producto.PreciosEspeciales.FirstOrDefault(p => p.Tercero?.Oid == DocumentoCompra.Proveedor.Oid);
+            var localTime = InformacionEmpresaHelper.GetLocalTime(Session);
+            var precioEspecial = PrecioEspecialService.GetPrecioEspecialActivo(Producto, DocumentoCompra.Proveedor, ContextoPrecio.Compra, localTime);
             if (precioEspecial != null)
             {
                 Precio = precioEspecial.Precio;

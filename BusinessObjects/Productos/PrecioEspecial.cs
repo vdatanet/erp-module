@@ -20,9 +20,35 @@ public class PrecioEspecial(Session session) : EntidadBase(session)
     private decimal _descuento2;
     private decimal _descuento3;
     private string? _notas;
+    private ContextoPrecio _contexto;
+    private DateTime? _vigenteDesde;
+    private DateTime? _vigenteHasta;
+
+    [XafDisplayName("Contexto")]
+    public ContextoPrecio Contexto
+    {
+        get => _contexto;
+        set => SetPropertyValue(nameof(Contexto), ref _contexto, value);
+    }
+
+    [XafDisplayName("Vigente Desde")]
+    public DateTime? VigenteDesde
+    {
+        get => _vigenteDesde;
+        set => SetPropertyValue(nameof(VigenteDesde), ref _vigenteDesde, value);
+    }
+
+    [XafDisplayName("Vigente Hasta")]
+    public DateTime? VigenteHasta
+    {
+        get => _vigenteHasta;
+        set => SetPropertyValue(nameof(VigenteHasta), ref _vigenteHasta, value);
+    }
 
     [Association("Producto-PreciosEspeciales")]
     [XafDisplayName("Producto")]
+    [LookupEditorMode(LookupEditorMode.Search)]
+    [ImmediatePostData]
     public Producto? Producto
     {
         get => _producto;
@@ -31,6 +57,8 @@ public class PrecioEspecial(Session session) : EntidadBase(session)
 
     [Association("Tercero-PreciosEspeciales")]
     [XafDisplayName("Cliente / Proveedor")]
+    [LookupEditorMode(LookupEditorMode.Search)]
+    [ImmediatePostData]
     public Tercero? Tercero
     {
         get => _tercero;
@@ -99,5 +127,10 @@ public class PrecioEspecial(Session session) : EntidadBase(session)
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
+    }
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        Contexto = ContextoPrecio.Ambos;
     }
 }

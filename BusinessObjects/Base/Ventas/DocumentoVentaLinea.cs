@@ -12,6 +12,7 @@ using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.BusinessObjects.Productos;
 using erp.Module.Helpers.Comun;
 using erp.Module.Helpers.Contactos;
+using erp.Module.Services.Productos;
 
 namespace erp.Module.BusinessObjects.Base.Ventas;
 
@@ -115,7 +116,8 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
 
         if (DocumentoVenta?.Cliente != null)
         {
-            var precioEspecial = value.PreciosEspeciales.FirstOrDefault(p => p.Tercero?.Oid == DocumentoVenta.Cliente.Oid);
+            var localTime = InformacionEmpresaHelper.GetLocalTime(Session);
+            var precioEspecial = PrecioEspecialService.GetPrecioEspecialActivo(value, DocumentoVenta.Cliente, ContextoPrecio.Venta, localTime);
             if (precioEspecial != null)
             {
                 PrecioUnitario = precioEspecial.Precio;
