@@ -325,6 +325,11 @@ public class Producto(Session session) : EntidadBase(session)
     [XafDisplayName("Precios por Cantidad")]
     public XPCollection<PrecioPorCantidad> PreciosPorCantidad => GetCollection<PrecioPorCantidad>();
 
+    [DevExpress.Xpo.Aggregated]
+    [Association("Producto-PreciosEspeciales")]
+    [XafDisplayName("Precios Especiales (Clientes/Proveedores)")]
+    public XPCollection<PrecioEspecial> PreciosEspeciales => GetCollection<PrecioEspecial>();
+
     [Association("Producto-StockActual")]
     [XafDisplayName("Stock Actual")]
     public XPCollection<StockActual> StockActual => GetCollection<StockActual>();
