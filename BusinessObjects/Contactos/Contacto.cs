@@ -10,6 +10,7 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects;
 using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.BusinessObjects.Documentos;
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Crm;

@@ -12,6 +12,7 @@ using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Productos;
+using erp.Module.BusinessObjects.Documentos;
 using erp.Module.Helpers.Contactos;
 using Microsoft.Extensions.DependencyInjection;
 

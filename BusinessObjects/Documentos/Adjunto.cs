@@ -9,11 +9,12 @@ using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Productos;
+using erp.Module.BusinessObjects.Auxiliares;
 
-namespace erp.Module.BusinessObjects.Auxiliares;
+namespace erp.Module.BusinessObjects.Documentos;
 
 [DefaultClassOptions]
-[NavigationItem("Auxiliares")]
+[NavigationItem("Documentos")]
 [ImageName("BO_FileAttachment")]
 [XafDisplayName("Adjunto")]
 [DefaultProperty(nameof(Nombre))]
