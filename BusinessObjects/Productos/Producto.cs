@@ -46,6 +46,7 @@ public class Producto(Session session) : EntidadBase(session)
     private string? _nombre;
     private string? _notas;
     private decimal _precioVenta;
+    private PlantillaAtributo? _plantillaAtributos;
 
     [RuleUniqueValue]
     [XafDisplayName("Código")]
@@ -230,6 +231,14 @@ public class Producto(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(UnidadFacturacion), ref _unidadFacturacion, value);
     }
 
+    [XafDisplayName("Plantilla de Atributos")]
+    [DataSourceCriteria("EstaActivo = True")]
+    public PlantillaAtributo? PlantillaAtributos
+    {
+        get => _plantillaAtributos;
+        set => SetPropertyValue(nameof(PlantillaAtributos), ref _plantillaAtributos, value);
+    }
+
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Notas")]
     public string? Notas
@@ -343,6 +352,11 @@ public class Producto(Session session) : EntidadBase(session)
     [XafDisplayName("Donde es Componente")]
     public XPCollection<ProductoCompuestoItem> DondeEsComponente => GetCollection<ProductoCompuestoItem>();
 
+    [DevExpress.Xpo.Aggregated]
+    [Association("Producto-Atributos")]
+    [XafDisplayName("Atributos")]
+    public XPCollection<ProductoAtributoValor> Atributos => GetCollection<ProductoAtributoValor>();
+
     [Action(Caption = "Recalcular Precios desde Componentes",
         ConfirmationMessage = "¿Desea recalcular el coste y precio de venta a partir de sus componentes?",
         ToolTip = "Suma el coste y precio de venta de todos los componentes multiplicados por su cantidad.",
@@ -417,6 +431,40 @@ public class Producto(Session session) : EntidadBase(session)
                 {
                     item.ProductoPadre?.RecalcularPreciosDesdeComponentes();
                 }
+            }
+        }
+
+        if (propertyName == nameof(PlantillaAtributos) && !IsLoading && !IsSaving)
+        {
+            GenerarAtributosDesdePlantilla();
+        }
+    }
+
+    private void GenerarAtributosDesdePlantilla()
+    {
+        if (PlantillaAtributos == null) return;
+
+        var atributosExistentes = Atributos.ToList();
+        var orden = 0;
+
+        foreach (var linea in PlantillaAtributos.Lineas.OrderBy(l => l.Orden))
+        {
+            orden++;
+            var valorExistente = atributosExistentes.FirstOrDefault(a => a.Atributo == linea.Atributo);
+
+            if (valorExistente == null)
+            {
+                valorExistente = new ProductoAtributoValor(Session)
+                {
+                    Producto = this,
+                    Atributo = linea.Atributo,
+                    Valor = linea.ValorPorDefecto,
+                    Orden = linea.Orden != 0 ? linea.Orden : orden
+                };
+            }
+            else
+            {
+                valorExistente.Orden = linea.Orden != 0 ? linea.Orden : orden;
             }
         }
     }

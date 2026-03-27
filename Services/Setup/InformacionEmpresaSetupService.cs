@@ -2,6 +2,7 @@ using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Xpo;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Base.Compras;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Compras;

@@ -384,8 +384,6 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             SecurityPermissionState.Allow);
         auxiliaresRole.AddTypePermissionsRecursively<Parentesco>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
-        auxiliaresRole.AddTypePermissionsRecursively<UnidadFacturacion>(SecurityOperations.FullAccess,
-            SecurityPermissionState.Allow);
 
         auxiliaresRole.AddNavigationPermission(@"Application/NavigationItems/Items/Auxiliares",
             SecurityPermissionState.Allow);
@@ -496,6 +494,12 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         productosRole.AddTypePermissionsRecursively<PrecioPorCantidad>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
         productosRole.AddTypePermissionsRecursively<Producto>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        productosRole.AddTypePermissionsRecursively<UnidadFacturacion>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        productosRole.AddTypePermissionsRecursively<Atributo>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        productosRole.AddTypePermissionsRecursively<PlantillaAtributo>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
 
         productosRole.AddNavigationPermission(@"Application/NavigationItems/Items/Productos",

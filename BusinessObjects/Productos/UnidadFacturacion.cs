@@ -5,10 +5,10 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 
-namespace erp.Module.BusinessObjects.Auxiliares;
+namespace erp.Module.BusinessObjects.Productos;
 
 [DefaultClassOptions]
-[NavigationItem("Auxiliares")]
+[NavigationItem("Productos")]
 [XafDisplayName("Unidad de Facturación")]
 [ImageName("BO_List")]
 [DefaultProperty(nameof(Nombre))]

@@ -7,6 +7,7 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using DevExpress.Persistent.BaseImpl;
 using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Base.Comun;
