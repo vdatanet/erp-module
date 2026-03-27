@@ -73,6 +73,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private bool _esPedido;
     private bool _esPresupuesto;
     private EstadoDocumentoVenta _estado;
+    private EstadoCobroFactura _estadoCobro;
     private bool _esTicket;
     private DateTime _fecha;
     private DateTime? _fechaAnulacion;
@@ -347,6 +348,14 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     {
         get => _estado;
         set => SetPropertyValue(nameof(Estado), ref _estado, value);
+    }
+
+    [XafDisplayName("Estado Cobro")]
+    [ModelDefault("AllowEdit", "False")]
+    public EstadoCobroFactura EstadoCobro
+    {
+        get => _estadoCobro;
+        set => SetPropertyValue(nameof(EstadoCobro), ref _estadoCobro, value);
     }
 
     [XafDisplayName("TPV")]

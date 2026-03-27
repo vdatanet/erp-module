@@ -29,6 +29,13 @@ public enum EstadoDocumentoVenta
     [XafDisplayName("Sincronizado")] Sincronizado
 }
 
+public enum EstadoCobroFactura
+{
+    [XafDisplayName("Pendiente")] Pendiente,
+    [XafDisplayName("Pago Parcial")] PagoParcial,
+    [XafDisplayName("Pagada")] Pagada
+}
+
 public enum OrigenDocumentoVenta
 {
     [XafDisplayName("Manual")] Manual,

@@ -54,6 +54,26 @@ public class FacturaVenta(Session session) : FacturaBase(session)
     [DevExpress.Xpo.Aggregated]
     public XPCollection<EfectoCobro> EfectosCobro => GetCollection<EfectoCobro>();
 
+    public void ActualizarEstadoCobro()
+    {
+        if (IsLoading || IsSaving) return;
+
+        decimal cobrado = EfectosCobro.Where(e => e.Estado == EstadoEfecto.Cobrado).Sum(e => e.Importe);
+        
+        if (cobrado >= ImporteTotal && ImporteTotal > 0)
+        {
+            EstadoCobro = EstadoCobroFactura.Pagada;
+        }
+        else if (cobrado > 0)
+        {
+            EstadoCobro = EstadoCobroFactura.PagoParcial;
+        }
+        else
+        {
+            EstadoCobro = EstadoCobroFactura.Pendiente;
+        }
+    }
+
     [XafDisplayName("Apuntes Contables")]
     public IEnumerable<Apunte> ApuntesContables => AsientoContable?.Apuntes ?? Enumerable.Empty<Apunte>();
 
@@ -64,6 +84,7 @@ public class FacturaVenta(Session session) : FacturaBase(session)
         if (propertyName is nameof(CondicionPago) or nameof(ImporteTotal))
         {
             TesoreriaService.GenerarEfectosVenta(this);
+            ActualizarEstadoCobro();
         }
     }
 
@@ -75,6 +96,7 @@ public class FacturaVenta(Session session) : FacturaBase(session)
         Serie ??= companyInfo.PrefijoFacturasVentaPorDefecto;
         EsFactura = true;
         TipoDocumento = TipoDocumentoVenta.Factura;
+        EstadoCobro = EstadoCobroFactura.Pendiente;
     }
 
     public override bool EsValida()
