@@ -32,7 +32,7 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
         return objectSpace;
     }
 
-    public void CreateInitialInformacionEmpresa()
+    public void CreateInitialInformacionEmpresa(string? tenantName = null)
     {
         if (!OS.IsKnownType(typeof(InformacionEmpresa))) return;
 
@@ -46,10 +46,35 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
 
         // Siempre establecemos estos valores o nos aseguramos de que existan
         
-        if (string.IsNullOrEmpty(informacionEmpresa.Nombre)) informacionEmpresa.Nombre = "Empresa por Defecto";
-        if (string.IsNullOrEmpty(informacionEmpresa.Nif)) informacionEmpresa.Nif = "B00000000";
+        if (string.IsNullOrEmpty(informacionEmpresa.Nombre)) informacionEmpresa.Nombre = "Joan Pallàs Ribes";
+        if (string.IsNullOrEmpty(informacionEmpresa.Nif)) informacionEmpresa.Nif = "43725645T";
+        if (string.IsNullOrEmpty(informacionEmpresa.NombreComercial)) informacionEmpresa.NombreComercial = "vdata.net";
+        if (string.IsNullOrEmpty(informacionEmpresa.Direccion)) informacionEmpresa.Direccion = "C/. Vilamar, 2A";
+        if (string.IsNullOrEmpty(informacionEmpresa.CodigoPostal)) informacionEmpresa.CodigoPostal = "43820";
+        
+        informacionEmpresa.Pais ??= OS.FirstOrDefault<Pais>(p => p.Nombre == "España");
+        informacionEmpresa.Provincia ??= OS.FirstOrDefault<Provincia>(p => p.Nombre == "Tarragona");
+        informacionEmpresa.Poblacion ??= OS.FirstOrDefault<Poblacion>(p => p.Nombre == "Calafell");
+
+        if (string.IsNullOrEmpty(informacionEmpresa.Telefono)) informacionEmpresa.Telefono = "977 69 21 16";
+        if (string.IsNullOrEmpty(informacionEmpresa.CorreoElectronico)) informacionEmpresa.CorreoElectronico = "info@vdata.net";
+        if (string.IsNullOrEmpty(informacionEmpresa.SitioWeb)) informacionEmpresa.SitioWeb = "https://www.vdata.net";
         
         if (string.IsNullOrEmpty(informacionEmpresa.NombreReporteTicket)) informacionEmpresa.NombreReporteTicket = "Ticket Factura Simplificada";
+        
+        if (string.IsNullOrEmpty(informacionEmpresa.NombreArchivoConfigVeriFactu) && !string.IsNullOrEmpty(tenantName))
+        {
+            informacionEmpresa.NombreArchivoConfigVeriFactu = tenantName.Replace(".", "_") + ".cfg";
+        }
+
+        if (string.IsNullOrEmpty(informacionEmpresa.SerieCertificadoVeriFactu)) informacionEmpresa.SerieCertificadoVeriFactu = "CERT_DE_PRUEBAS";
+        if (string.IsNullOrEmpty(informacionEmpresa.NombreSistemaVeriFactu)) informacionEmpresa.NombreSistemaVeriFactu = "VDATA ERP";
+        if (string.IsNullOrEmpty(informacionEmpresa.VersionSistemaVeriFactu)) informacionEmpresa.VersionSistemaVeriFactu = "1.0.0";
+        if (string.IsNullOrEmpty(informacionEmpresa.NombreAdministradorSistemaVeriFactu)) informacionEmpresa.NombreAdministradorSistemaVeriFactu = "Joan Pallàs Ribes";
+        if (string.IsNullOrEmpty(informacionEmpresa.NifAdministradorSistemaVeriFactu)) informacionEmpresa.NifAdministradorSistemaVeriFactu = "43725645T";
+        //if (string.IsNullOrEmpty(informacionEmpresa.PrefijoUrlVeriFactu)) informacionEmpresa.PrefijoUrlVeriFactu = "https://www1.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/VeriFactuFE.wsdl";
+        //if (string.IsNullOrEmpty(informacionEmpresa.PrefijoUrlValidacionVeriFactu)) informacionEmpresa.PrefijoUrlValidacionVeriFactu = "https://www1.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/VeriFactuFE_Validacion.wsdl";
+        if (string.IsNullOrEmpty(informacionEmpresa.TextoDefectoVeriFactu)) informacionEmpresa.TextoDefectoVeriFactu = "Servicios de consultoría y asesoramiento técnico correspondientes al periodo....";
         
         if (string.IsNullOrEmpty(informacionEmpresa.PrefijoAsientosPorDefecto)) informacionEmpresa.PrefijoAsientosPorDefecto = "AS";
         if (string.IsNullOrEmpty(informacionEmpresa.PrefijoOfertasCompraPorDefecto)) informacionEmpresa.PrefijoOfertasCompraPorDefecto = "CO";

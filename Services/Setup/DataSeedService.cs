@@ -99,7 +99,7 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
         new ZonaHorariaSetupService(objectSpace).CreateInitialData();
         objectSpace.CommitChanges();
 
-        new InformacionEmpresaSetupService(objectSpace).CreateInitialInformacionEmpresa();
+        new InformacionEmpresaSetupService(objectSpace).CreateInitialInformacionEmpresa(tenantName);
         objectSpace.CommitChanges();
 
         // En la siembra inicial del tenant, es posible que el tenantId aun no esté disponible en el provider, 
@@ -115,7 +115,7 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
 
         // Llamamos de nuevo a InformacionEmpresaSetupService para que asigne las cuentas contables 
         // una vez ya han sido creadas por ContabilidadSetupService
-        new InformacionEmpresaSetupService(objectSpace).CreateInitialInformacionEmpresa();
+        new InformacionEmpresaSetupService(objectSpace).CreateInitialInformacionEmpresa(tenantName);
         objectSpace.CommitChanges();
 #endif
     }
