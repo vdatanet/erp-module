@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.IO;
 using VeriFactu.Business;
 using VeriFactu.Config;
@@ -9,14 +10,17 @@ namespace erp.Module.Services.Facturacion;
 
 public class VeriFactuAdapter : IVeriFactuAdapter
 {
-    private static readonly object Lock = new();
+    private static readonly ConcurrentDictionary<string, object> TenantLocks = new();
 
     public VeriFactuResponse SendInvoice(Invoice veriFactuInvoice, InformacionEmpresa companyInfo)
     {
         ArgumentNullException.ThrowIfNull(veriFactuInvoice);
         ArgumentNullException.ThrowIfNull(companyInfo);
 
-        lock (Lock)
+        string tenantNif = companyInfo.Nif ?? "Global";
+        object tenantLock = TenantLocks.GetOrAdd(tenantNif, _ => new object());
+
+        lock (tenantLock)
         {
             ConfigureVeriFactu(companyInfo);
 

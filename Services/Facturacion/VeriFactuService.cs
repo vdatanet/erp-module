@@ -70,10 +70,16 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
     private SendResult ValidateFiscalData(FacturaBase invoice, InformacionEmpresa companyInfo)
     {
         if (!invoice.EsValida())
-            return new SendResult(false, "La factura no es válida. Revise que tenga Cliente, Texto e Impuestos.");
+            return new SendResult(false, "La factura no es válida. Revise que tenga Cliente (si aplica), Texto e Impuestos.");
 
         if (string.IsNullOrEmpty(companyInfo.Nombre) || string.IsNullOrEmpty(companyInfo.Nif))
             return new SendResult(false, "La información de la empresa (Nombre/NIF) es incompleta.");
+
+        if (invoice.ImporteTotal == 0)
+            return new SendResult(false, "No se puede enviar una factura con importe total cero.");
+
+        if (invoice.Fecha > InformacionEmpresaHelper.GetLocalTime(invoice.Session))
+             return new SendResult(false, "La fecha de la factura no puede ser posterior a la fecha actual.");
 
         foreach (var tax in invoice.Impuestos)
         {
