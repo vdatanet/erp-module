@@ -5,6 +5,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Ventas;
+using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.Helpers.Contactos;
 using VeriFactu.Xml.Factu.Alta;
@@ -25,6 +26,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     private bool _esSubsanacion;
     private string? _estadoEntradaFactura;
     private EstadoVeriFactu _estadoVeriFactu;
+    private Domicilio? _domicilioDIR;
     private Asiento? _asientoContable;
     private MediaDataObject? _qr;
     private string? _respuestaAgenciaTributaria;
@@ -33,6 +35,19 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     private TipoRectificativa _tipoRectificativa;
     private string? _urlValidacion;
     private string? _xmlAgenciaTributaria;
+
+    [XafDisplayName("Domicilio DIR (e-Factura)")]
+    [DataSourceProperty("Cliente.DireccionesDIR")]
+    [ImmediatePostData]
+    public Domicilio? DomicilioDIR
+    {
+        get => _domicilioDIR;
+        set
+        {
+            var modified = SetPropertyValue(nameof(DomicilioDIR), ref _domicilioDIR, value);
+            if (modified && !IsLoading && !IsSaving) AsignarDomicilio(value);
+        }
+    }
 
     [XafDisplayName("Asiento Contable")]
     [ModelDefault("AllowEdit", "False")]

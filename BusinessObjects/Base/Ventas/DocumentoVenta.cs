@@ -59,6 +59,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private DocumentoVenta? _documentoOrigen;
     private DocumentoVenta? _documentoRectificado;
     private DocumentoVenta? _documentoRelacionado;
+    private Domicilio? _domicilio;
 
     private IDocumentoVentaService? _documentoVentaService;
     private Ejercicio? _ejercicio;
@@ -172,9 +173,27 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set
         {
             var modified = SetPropertyValue(nameof(Cliente), ref _cliente, value);
-            if (modified && !IsLoading && !IsSaving) AsignarCliente(value);
+            if (modified && !IsLoading && !IsSaving)
+            {
+                Domicilio = null;
+                AsignarCliente(value);
+            }
         }
     }
+
+    [XafDisplayName("Domicilio de Envío")]
+    [DataSourceProperty("Cliente.DireccionesEnvio")]
+    [ImmediatePostData]
+    public Domicilio? Domicilio
+    {
+        get => _domicilio;
+        set
+        {
+            var modified = SetPropertyValue(nameof(Domicilio), ref _domicilio, value);
+            if (modified && !IsLoading && !IsSaving) AsignarDomicilio(value);
+        }
+    }
+
 
     [Size(100)]
     [XafDisplayName("Nombre Cliente")]
@@ -1091,6 +1110,31 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         ProvinciaCliente = value.Provincia?.Nombre;
         CodigoPostalCliente = value.CodigoPostal;
         PaisCliente = value.Pais;
+    }
+
+    public virtual void AsignarDomicilio(Domicilio? value)
+    {
+        if (value == null)
+        {
+            if (Cliente != null)
+            {
+                DireccionCliente = Cliente.Direccion;
+                PoblacionCliente = Cliente.Poblacion?.Nombre;
+                ProvinciaCliente = Cliente.Provincia?.Nombre;
+                CodigoPostalCliente = Cliente.CodigoPostal;
+                PaisCliente = Cliente.Pais;
+            }
+            return;
+        }
+
+        DireccionCliente = value.Direccion;
+        PoblacionCliente = value.Poblacion?.Nombre;
+        ProvinciaCliente = value.Provincia?.Nombre;
+        CodigoPostalCliente = value.CodigoPostal;
+        PaisCliente = value.Pais;
+
+        if (!string.IsNullOrEmpty(value.Telefono)) TelefonoCliente = value.Telefono;
+        if (!string.IsNullOrEmpty(value.CorreoElectronico)) EmailCliente = value.CorreoElectronico;
     }
 
     public void InvalidadCacheTotales()

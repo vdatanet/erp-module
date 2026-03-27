@@ -74,9 +74,15 @@ public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVent
     [XafDisplayName("Viajeros")]
     public XPCollection<Viajero> Viajeros => new(Session, CriteriaOperator.Parse("Cliente = ?", this));
 
-    [Association("Cliente-Domicilios")]
-    [XafDisplayName("Domicilios")]
-    public XPCollection<Domicilio> Domicilios => GetCollection<Domicilio>();
+    [Association("Cliente-DireccionesEnvio")]
+    [XafDisplayName("Direcciones de Envío")]
+    [DevExpress.Xpo.Aggregated]
+    public XPCollection<Domicilio> DireccionesEnvio => GetCollection<Domicilio>();
+
+    [Association("Cliente-DireccionesDIR")]
+    [XafDisplayName("Direcciones DIR (e-Factura)")]
+    [DevExpress.Xpo.Aggregated]
+    public XPCollection<Domicilio> DireccionesDIR => GetCollection<Domicilio>();
 
     [Association("Cliente-Oportunidades")]
     [XafDisplayName("Oportunidades")]
