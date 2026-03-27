@@ -22,8 +22,10 @@ public class ProductoSetupService(IObjectSpace objectSpace)
         var atGarantia = GetOrCreateAtributo("Garantía Extendida", TipoDatoAtributo.Booleano);
         var atFechaFabricacion = GetOrCreateAtributo("Fecha de Fabricación", TipoDatoAtributo.Fecha);
         var atConsumo = GetOrCreateAtributo("Consumo Energético", TipoDatoAtributo.ListaSeleccion);
+        var atDescripcionTecnica = GetOrCreateAtributo("Descripción Técnica", TipoDatoAtributo.TextoLargo);
+        var atNumPuertas = GetOrCreateAtributo("Número de Puertas", TipoDatoAtributo.Entero);
 
-        if (atConsumo.Oid == Guid.Empty || atConsumo.Opciones.Count == 0)
+        if (atConsumo.Opciones.Count == 0)
         {
             CreateOpcionAtributo(atConsumo, "A+++", 1);
             CreateOpcionAtributo(atConsumo, "A++", 2);
@@ -45,6 +47,7 @@ public class ProductoSetupService(IObjectSpace objectSpace)
             CreateLineaPlantilla(plantillaElectro, atConsumo, 30, "A++");
             CreateLineaPlantilla(plantillaElectro, atPeso, 40);
             CreateLineaPlantilla(plantillaElectro, atGarantia, 50, "False");
+            CreateLineaPlantilla(plantillaElectro, atDescripcionTecnica, 60);
         }
 
         // 3. Crear Plantilla: Muebles
@@ -58,6 +61,7 @@ public class ProductoSetupService(IObjectSpace objectSpace)
             CreateLineaPlantilla(plantillaMuebles, atColor, 20, "Blanco");
             CreateLineaPlantilla(plantillaMuebles, atDimensiones, 30);
             CreateLineaPlantilla(plantillaMuebles, atPeso, 40);
+            CreateLineaPlantilla(plantillaMuebles, atNumPuertas, 50, "2");
         }
     }
 

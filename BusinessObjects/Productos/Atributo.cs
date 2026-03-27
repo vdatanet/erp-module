@@ -45,6 +45,7 @@ public class Atributo(Session session) : EntidadBase(session)
 
     [RuleRequiredField]
     [XafDisplayName("Tipo de dato")]
+    [ImmediatePostData]
     public TipoDatoAtributo? TipoDato
     {
         get => _tipoDato;
