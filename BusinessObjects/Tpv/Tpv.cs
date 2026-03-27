@@ -28,7 +28,6 @@ public class Tpv(Session session) : EntidadBase(session)
     private ZonaHoraria? _zonaHoraria;
     private DateTime? _ultimaConexion;
     private string? _nombreReporteTicket;
-    private bool? _impresionDirectaTicket;
     private bool _activarVeriFactu;
 
     [Size(100)]
@@ -92,13 +91,6 @@ public class Tpv(Session session) : EntidadBase(session)
     {
         get => _nombreReporteTicket;
         set => SetPropertyValue(nameof(NombreReporteTicket), ref _nombreReporteTicket, value);
-    }
-
-    [XafDisplayName("Impresión Directa Ticket")]
-    public bool? ImpresionDirectaTicket
-    {
-        get => _impresionDirectaTicket;
-        set => SetPropertyValue(nameof(ImpresionDirectaTicket), ref _impresionDirectaTicket, value);
     }
 
     [XafDisplayName("Activar VeriFactu")]

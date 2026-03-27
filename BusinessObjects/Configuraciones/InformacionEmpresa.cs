@@ -90,7 +90,6 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private bool _activarFacturae;
     private string? _serieCertificadoFacturae;
     private string? _nombreReporteTicket;
-    private bool _impresionDirectaTicket;
     private string? _unidadOrganicaOficinaContable;
     private string? _unidadOrganicaOrganoGestor;
     private string? _unidadOrganicaUnidadTramitadora;
@@ -661,13 +660,6 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     {
         get => _nombreReporteTicket;
         set => SetPropertyValue(nameof(NombreReporteTicket), ref _nombreReporteTicket, value);
-    }
-
-    [XafDisplayName("Impresión Directa Ticket")]
-    public bool ImpresionDirectaTicket
-    {
-        get => _impresionDirectaTicket;
-        set => SetPropertyValue(nameof(ImpresionDirectaTicket), ref _impresionDirectaTicket, value);
     }
 
     [XafDisplayName("Tipo Numeración Documento")]
