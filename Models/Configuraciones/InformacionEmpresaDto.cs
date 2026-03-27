@@ -15,4 +15,9 @@ public class InformacionEmpresaDto
     public string? CorreoElectronico { get; set; }
     public string? SitioWeb { get; set; }
     public byte[]? Logo { get; set; }
+    public string? OneSignalAppId { get; set; }
+    public string? OneSignalRestApiKey { get; set; }
+    public string? OneSignalUserAuthKey { get; set; }
+    public string? OneSignalDefaultEmailFrom { get; set; }
+    public string? OneSignalDefaultEmailName { get; set; }
 }

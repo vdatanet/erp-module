@@ -87,6 +87,11 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private string? _serieCertificadoVeriFactu;
     private string? _textoDefectoVeriFactu;
     private string? _versionSistemaVeriFactu;
+    private string? _oneSignalAppId;
+    private string? _oneSignalRestApiKey;
+    private string? _oneSignalUserAuthKey;
+    private string? _oneSignalDefaultEmailFrom;
+    private string? _oneSignalDefaultEmailName;
     private MediaDataObject? _logo;
     private bool _activarVeriFactu;
     private bool _activarFacturae;
@@ -670,6 +675,51 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     {
         get => _tipoNumeracionDocumento;
         set => SetPropertyValue(nameof(TipoNumeracionDocumento), ref _tipoNumeracionDocumento, value);
+    }
+
+    [Size(255)]
+    [XafDisplayName("OneSignal App ID")]
+    [Category("OneSignal")]
+    public string? OneSignalAppId
+    {
+        get => _oneSignalAppId;
+        set => SetPropertyValue(nameof(OneSignalAppId), ref _oneSignalAppId, value);
+    }
+
+    [Size(255)]
+    [XafDisplayName("OneSignal REST API Key")]
+    [Category("OneSignal")]
+    public string? OneSignalRestApiKey
+    {
+        get => _oneSignalRestApiKey;
+        set => SetPropertyValue(nameof(OneSignalRestApiKey), ref _oneSignalRestApiKey, value);
+    }
+
+    [Size(255)]
+    [XafDisplayName("OneSignal User Auth Key")]
+    [Category("OneSignal")]
+    public string? OneSignalUserAuthKey
+    {
+        get => _oneSignalUserAuthKey;
+        set => SetPropertyValue(nameof(OneSignalUserAuthKey), ref _oneSignalUserAuthKey, value);
+    }
+
+    [Size(255)]
+    [XafDisplayName("OneSignal Default Email From")]
+    [Category("OneSignal")]
+    public string? OneSignalDefaultEmailFrom
+    {
+        get => _oneSignalDefaultEmailFrom ?? CorreoElectronico;
+        set => SetPropertyValue(nameof(OneSignalDefaultEmailFrom), ref _oneSignalDefaultEmailFrom, value);
+    }
+
+    [Size(255)]
+    [XafDisplayName("OneSignal Default Email Name")]
+    [Category("OneSignal")]
+    public string? OneSignalDefaultEmailName
+    {
+        get => _oneSignalDefaultEmailName ?? Nombre;
+        set => SetPropertyValue(nameof(OneSignalDefaultEmailName), ref _oneSignalDefaultEmailName, value);
     }
 
     public override void AfterConstruction()
