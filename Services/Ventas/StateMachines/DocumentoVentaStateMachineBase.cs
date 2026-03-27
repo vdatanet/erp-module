@@ -50,6 +50,9 @@ public abstract class DocumentoVentaStateMachineBase(DocumentoVenta documento) :
             case EstadoDocumentoVenta.Anulado:
                 Documento.FechaAnulacion = localTime;
                 break;
+            case EstadoDocumentoVenta.Contabilizada:
+                // Podríamos asignar alguna fecha específica si existiera
+                break;
         }
     }
 

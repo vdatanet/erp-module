@@ -18,6 +18,9 @@ public enum EstadoDocumentoVenta
 {
     [XafDisplayName("Borrador")] Borrador,
     [XafDisplayName("Confirmado")] Confirmado,
+    [XafDisplayName("Validada")] Validada,
+    [XafDisplayName("Enviada a VeriFactu")] EnviadaVerifactu,
+    [XafDisplayName("Contabilizada")] Contabilizada,
     [XafDisplayName("Emitido")] Emitido,
     [XafDisplayName("Impreso")] Impreso,
     [XafDisplayName("Cobrado")] Cobrado,
