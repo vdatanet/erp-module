@@ -168,7 +168,16 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
         foreach (var (type, prefix) in contactTypes)
         {
             if (string.IsNullOrEmpty(prefix)) continue;
-            SequenceFactory.EnsureSequenceExists(session, type.FullName!, prefix, padding);
+
+            var sequenceName = companyInfo.TipoNumeracionDocumento switch
+            {
+                TipoNumeracionDocumento.PrefijoNumero => $"{type.FullName}",
+                TipoNumeracionDocumento.PrefijoEjercicioNumero => $"{type.FullName}.{anio}",
+                TipoNumeracionDocumento.PrefijoEjercicioMesNumero => $"{type.FullName}.{anio}.{mes}",
+                _ => $"{type.FullName}.{anio}"
+            };
+
+            SequenceFactory.EnsureSequenceExists(session, sequenceName, prefix, padding);
         }
 
         // TPV (Requieren código de TPV, inicializamos para un TPV '01' por defecto si existe o genérico)

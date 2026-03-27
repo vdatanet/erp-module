@@ -58,6 +58,14 @@ public class SequenceService(Session session)
                 formattedSequence = companyInfo != null
                     ? BuildSequenceString(generator, companyInfo, fecha)
                     : BuildSequenceString(generator);
+                
+                // Actualizar Relleno si es necesario tras el commit (por si cambió en la BD)
+                if (generator.Relleno != padding)
+                {
+                    generator.Relleno = padding;
+                    uow.CommitChanges();
+                }
+
                 return generator.ValorActual;
             }
             catch (LockingException)
