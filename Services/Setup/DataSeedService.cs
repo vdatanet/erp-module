@@ -113,6 +113,12 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
         new TesoreriaSetupService(objectSpace).CreateInitialData();
         objectSpace.CommitChanges();
 
+        new TipoDocumentoSetupService(objectSpace).CreateInitialData();
+        objectSpace.CommitChanges();
+
+        new EtiquetaDocumentoSetupService(objectSpace).CreateInitialData();
+        objectSpace.CommitChanges();
+
         new ProductoSetupService(objectSpace).CreateInitialData();
         objectSpace.CommitChanges();
 

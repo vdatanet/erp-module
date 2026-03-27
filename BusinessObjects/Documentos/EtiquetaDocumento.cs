@@ -8,12 +8,12 @@ namespace erp.Module.BusinessObjects.Documentos;
 
 [DefaultClassOptions]
 [NavigationItem("Documentos")]
-[ImageName("BO_Folder")]
-[XafDisplayName("Archivador")]
-public class Archivador(Session session) : EntidadBase(session)
+[ImageName("BO_Label")]
+[XafDisplayName("Etiqueta de Documento")]
+public class EtiquetaDocumento(Session session) : EntidadBase(session)
 {
     private string? _nombre;
-    private string? _descripcion;
+    private string? _color;
 
     [Size(100)]
     [XafDisplayName("Nombre")]
@@ -23,14 +23,15 @@ public class Archivador(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
     }
 
-    [Size(SizeAttribute.Unlimited)]
-    [XafDisplayName("Descripción")]
-    public string? Descripcion
+    [Size(50)]
+    [XafDisplayName("Color")]
+    public string? Color
     {
-        get => _descripcion;
-        set => SetPropertyValue(nameof(Descripcion), ref _descripcion, value);
+        get => _color;
+        set => SetPropertyValue(nameof(Color), ref _color, value);
     }
 
-    [Association("Archivador-Documentos")]
+    [Association("Documento-Etiquetas")]
+    [XafDisplayName("Documentos")]
     public XPCollection<Adjunto> Documentos => GetCollection<Adjunto>(nameof(Documentos));
 }

@@ -57,6 +57,7 @@ public class Tarea(Session session) : EntidadBase(session)
     private Contacto? _contacto;
     private DocumentoCompra? _documentoCompra;
     private DocumentoVenta? _documentoVenta;
+    private Adjunto? _documento;
     private EstadoTarea _estado;
     private DateTime _fechaFin;
     private DateTime _fechaInicio;
@@ -217,6 +218,14 @@ public class Tarea(Session session) : EntidadBase(session)
     {
         get => _oportunidad;
         set => SetPropertyValue(nameof(Oportunidad), ref _oportunidad, value);
+    }
+
+    [Association("Documento-Tareas")]
+    [XafDisplayName("Documento")]
+    public Adjunto? Documento
+    {
+        get => _documento;
+        set => SetPropertyValue(nameof(Documento), ref _documento, value);
     }
 
     [Size(SizeAttribute.Unlimited)]

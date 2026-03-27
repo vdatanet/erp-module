@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using DevExpress.ExpressApp.DC;
+using DevExpress.ExpressApp.Editors;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
@@ -40,17 +41,26 @@ public class Adjunto(Session session) : EntidadBase(session)
     private DocumentoVenta? _salesDocument;
     private Tarea? _task;
     private TipoDocumento? _tipoDocumento;
-    private Archivador? _archivador;
     private DateTime? _fechaDocumento;
     private EstadoDocumento _estado;
     private string? _tags;
+    private XPCollection<EtiquetaDocumento>? _etiquetas;
 
     [Association("Contacto-Adjuntos")]
     [XafDisplayName("Contacto")]
     public Contacto? Contacto
     {
         get => _contact;
-        set => SetPropertyValue(nameof(Contacto), ref _contact, value);
+        set
+        {
+            if (SetPropertyValue(nameof(Contacto), ref _contact, value))
+            {
+                if (!IsLoading && !IsSaving && value != null)
+                {
+                    ActualizarTipoDocumento(nameof(Contacto));
+                }
+            }
+        }
     }
 
     [Association("Producto-Adjuntos")]
@@ -58,7 +68,16 @@ public class Adjunto(Session session) : EntidadBase(session)
     public Producto? Producto
     {
         get => _product;
-        set => SetPropertyValue(nameof(Producto), ref _product, value);
+        set
+        {
+            if (SetPropertyValue(nameof(Producto), ref _product, value))
+            {
+                if (!IsLoading && !IsSaving && value != null)
+                {
+                    ActualizarTipoDocumento(nameof(Producto));
+                }
+            }
+        }
     }
 
     [Association("DocumentoVenta-Adjuntos")]
@@ -66,7 +85,16 @@ public class Adjunto(Session session) : EntidadBase(session)
     public DocumentoVenta? DocumentoVenta
     {
         get => _salesDocument;
-        set => SetPropertyValue(nameof(DocumentoVenta), ref _salesDocument, value);
+        set
+        {
+            if (SetPropertyValue(nameof(DocumentoVenta), ref _salesDocument, value))
+            {
+                if (!IsLoading && !IsSaving && value != null)
+                {
+                    ActualizarTipoDocumento(nameof(DocumentoVenta));
+                }
+            }
+        }
     }
 
     [Association("DocumentoCompra-Adjuntos")]
@@ -74,7 +102,16 @@ public class Adjunto(Session session) : EntidadBase(session)
     public DocumentoCompra? DocumentoCompra
     {
         get => _purchaseDocument;
-        set => SetPropertyValue(nameof(DocumentoCompra), ref _purchaseDocument, value);
+        set
+        {
+            if (SetPropertyValue(nameof(DocumentoCompra), ref _purchaseDocument, value))
+            {
+                if (!IsLoading && !IsSaving && value != null)
+                {
+                    ActualizarTipoDocumento(nameof(DocumentoCompra));
+                }
+            }
+        }
     }
 
     [Association("Tarea-Adjuntos")]
@@ -82,7 +119,16 @@ public class Adjunto(Session session) : EntidadBase(session)
     public Tarea? Tarea
     {
         get => _task;
-        set => SetPropertyValue(nameof(Tarea), ref _task, value);
+        set
+        {
+            if (SetPropertyValue(nameof(Tarea), ref _task, value))
+            {
+                if (!IsLoading && !IsSaving && value != null)
+                {
+                    ActualizarTipoDocumento(nameof(Tarea));
+                }
+            }
+        }
     }
 
     [Association("Oportunidad-Adjuntos")]
@@ -90,7 +136,16 @@ public class Adjunto(Session session) : EntidadBase(session)
     public Oportunidad? Oportunidad
     {
         get => _opportunity;
-        set => SetPropertyValue(nameof(Oportunidad), ref _opportunity, value);
+        set
+        {
+            if (SetPropertyValue(nameof(Oportunidad), ref _opportunity, value))
+            {
+                if (!IsLoading && !IsSaving && value != null)
+                {
+                    ActualizarTipoDocumento(nameof(Oportunidad));
+                }
+            }
+        }
     }
 
     [XafDisplayName("Archivo")]
@@ -124,14 +179,6 @@ public class Adjunto(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(TipoDocumento), ref _tipoDocumento, value);
     }
 
-    [Association("Archivador-Documentos")]
-    [XafDisplayName("Archivador")]
-    public Archivador? Archivador
-    {
-        get => _archivador;
-        set => SetPropertyValue(nameof(Archivador), ref _archivador, value);
-    }
-
     [XafDisplayName("Fecha del Documento")]
     public DateTime? FechaDocumento
     {
@@ -152,6 +199,37 @@ public class Adjunto(Session session) : EntidadBase(session)
     {
         get => _tags;
         set => SetPropertyValue(nameof(Tags), ref _tags, value);
+    }
+
+    [DevExpress.Xpo.Aggregated]
+    [Association("Documento-Tareas")]
+    [XafDisplayName("Tareas")]
+    public XPCollection<Tarea> Tareas => GetCollection<Tarea>();
+
+    [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
+    [Association("Documento-Etiquetas")]
+    [XafDisplayName("Etiquetas")]
+    public XPCollection<EtiquetaDocumento> Etiquetas => GetCollection<EtiquetaDocumento>();
+
+    private void ActualizarTipoDocumento(string propertyName)
+    {
+        if (TipoDocumento != null && TipoDocumento.Nombre != "General") return;
+
+        string tipoNombre = propertyName switch
+        {
+            nameof(DocumentoVenta) => "Factura de Venta",
+            nameof(DocumentoCompra) => "Factura de Compra",
+            nameof(Producto) => "Producto",
+            nameof(Contacto) => "Contacto",
+            nameof(Oportunidad) => "Oportunidad",
+            nameof(Tarea) => "Tarea",
+            _ => "General"
+        };
+
+        if (tipoNombre != "General")
+        {
+            TipoDocumento = Session.FindObject<TipoDocumento>(new DevExpress.Data.Filtering.BinaryOperator(nameof(BusinessObjects.Documentos.TipoDocumento.Nombre), tipoNombre));
+        }
     }
 
     public override void AfterConstruction()
