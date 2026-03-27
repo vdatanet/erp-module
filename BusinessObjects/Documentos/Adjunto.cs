@@ -10,13 +10,22 @@ using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Documentos;
+
+public enum EstadoDocumento
+{
+    [XafDisplayName("Borrador")] Borrador,
+    [XafDisplayName("Validado")] Validado,
+    [XafDisplayName("Archivado")] Archivado,
+    [XafDisplayName("Anulado")] Anulado
+}
 
 [DefaultClassOptions]
 [NavigationItem("Documentos")]
 [ImageName("BO_FileAttachment")]
-[XafDisplayName("Adjunto")]
+[XafDisplayName("Documento")]
 [DefaultProperty(nameof(Nombre))]
 [FileAttachment(nameof(FileData))]
 public class Adjunto(Session session) : EntidadBase(session)
@@ -30,6 +39,11 @@ public class Adjunto(Session session) : EntidadBase(session)
     private DocumentoCompra? _purchaseDocument;
     private DocumentoVenta? _salesDocument;
     private Tarea? _task;
+    private TipoDocumento? _tipoDocumento;
+    private Archivador? _archivador;
+    private DateTime? _fechaDocumento;
+    private EstadoDocumento _estado;
+    private string? _tags;
 
     [Association("Contacto-Adjuntos")]
     [XafDisplayName("Contacto")]
@@ -100,5 +114,50 @@ public class Adjunto(Session session) : EntidadBase(session)
     {
         get => _notas;
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
+    }
+
+    [Association("TipoDocumento-Documentos")]
+    [XafDisplayName("Tipo de Documento")]
+    public TipoDocumento? TipoDocumento
+    {
+        get => _tipoDocumento;
+        set => SetPropertyValue(nameof(TipoDocumento), ref _tipoDocumento, value);
+    }
+
+    [Association("Archivador-Documentos")]
+    [XafDisplayName("Archivador")]
+    public Archivador? Archivador
+    {
+        get => _archivador;
+        set => SetPropertyValue(nameof(Archivador), ref _archivador, value);
+    }
+
+    [XafDisplayName("Fecha del Documento")]
+    public DateTime? FechaDocumento
+    {
+        get => _fechaDocumento;
+        set => SetPropertyValue(nameof(FechaDocumento), ref _fechaDocumento, value);
+    }
+
+    [XafDisplayName("Estado")]
+    public EstadoDocumento Estado
+    {
+        get => _estado;
+        set => SetPropertyValue(nameof(Estado), ref _estado, value);
+    }
+
+    [Size(SizeAttribute.Unlimited)]
+    [XafDisplayName("Etiquetas (Tags)")]
+    public string? Tags
+    {
+        get => _tags;
+        set => SetPropertyValue(nameof(Tags), ref _tags, value);
+    }
+
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        Estado = EstadoDocumento.Borrador;
+        FechaDocumento = InformacionEmpresaHelper.GetLocalTime(Session).Date;
     }
 }
