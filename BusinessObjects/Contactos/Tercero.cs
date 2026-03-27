@@ -52,13 +52,18 @@ public class Tercero(Session session) : Contacto(session)
 
     protected virtual void InitValues()
     {
-        AsignarCuentaContable();
+        // Ya no asignamos cuenta contable aquí para evitar el consumo prematuro de secuencias de código.
+        // La asignación se realizará en OnSaving.
     }
 
     protected override void OnSaving()
     {
-        base.OnSaving();
+        if (Session.IsNewObject(this) && string.IsNullOrEmpty(Codigo))
+        {
+            AsignarCodigo();
+        }
         AsignarCuentaContable();
+        base.OnSaving();
     }
 
     protected override void OnChanged(string propertyName, object oldValue, object newValue)
@@ -77,8 +82,10 @@ public class Tercero(Session session) : Contacto(session)
     {
         if (IsLoading) return;
 
-        // Solo se debe intentar crear/asignar cuenta contable en Cliente, Proveedor o Acreedor
-        if (!(this is Cliente || this is Proveedor || this is Acreedor)) return;
+        if (!(this is Cliente || this is Proveedor || this is Acreedor))
+        {
+            return;
+        }
 
         if (CuentaContable != null)
         {
@@ -92,78 +99,74 @@ public class Tercero(Session session) : Contacto(session)
         }
 
         var config = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        if (config == null) return;
+        if (config == null)
+        {
+            return;
+        }
 
-        CuentaContable? cuentaDefecto = null;
         CuentaContable? cuentaPadre = null;
 
         if (this is Cliente)
         {
-            cuentaDefecto = config.CuentaClientesPorDefecto;
             cuentaPadre = config.CuentaPadreClientes;
         }
         else if (this is Proveedor)
         {
-            cuentaDefecto = config.CuentaProveedoresPorDefecto;
             cuentaPadre = config.CuentaPadreProveedores;
         }
         else if (this is Acreedor)
         {
-            cuentaDefecto = config.CuentaAcreedoresPorDefecto;
             cuentaPadre = config.CuentaPadreAcreedores;
         }
 
-        if (cuentaDefecto != null && cuentaDefecto.EstaActiva && cuentaDefecto.EsAsentable)
+        if (cuentaPadre == null)
         {
-            CuentaContable = cuentaDefecto;
             return;
         }
 
-        if (cuentaPadre == null) return;
-
+        // Aseguramos que tenemos código y número antes de proceder
         if (string.IsNullOrEmpty(Codigo))
         {
             AsignarCodigo();
         }
-
-        if (string.IsNullOrEmpty(Codigo))
+        
+        // Si tras forzarlo sigue vacío, o si el número es 0, algo va muy mal
+        if (string.IsNullOrEmpty(Codigo) || Numero == 0)
         {
-            // En AfterConstruction el código suele estar vacío.
-            // Si estamos en OnSaving y sigue vacío, algo va mal.
             return;
         }
 
-        // Extraer solo la parte numérica del código del tercero (ej. C/0001 -> 0001)
-        var suffix = new string((Codigo ?? "").Where(char.IsDigit).ToArray());
+        // Extraer solo la parte numérica del código del tercero (ej. C/2026/0001 -> 0001)
+        // Usamos Numero directamente si está disponible para evitar problemas con el formato del código
+        var suffix = Numero > 0 ? Numero.ToString() : string.Empty;
+        
         if (string.IsNullOrEmpty(suffix))
         {
-            // Si no hay dígitos, usamos el número de registro como respaldo
-            suffix = Numero.ToString();
+            var codigoLimpio = (Codigo ?? "").Split('/').Last();
+            suffix = new string(codigoLimpio.Where(char.IsDigit).ToArray());
+            // Limpiar ceros iniciales
+            suffix = suffix.TrimStart('0');
+            if (string.IsNullOrEmpty(suffix) && !string.IsNullOrEmpty(Codigo)) suffix = "0";
+        }
+
+        // Si aún no tenemos sufijo, no podemos generar la cuenta
+        if (string.IsNullOrEmpty(suffix))
+        {
+            return;
         }
 
         var prefix = cuentaPadre.Codigo ?? "";
-        string cuentaCodigo;
-
+        
+        // Si usamos el setter de CuentaContable.Codigo con un punto, él mismo aplicará el padding
+        // Ejemplo: "430.1" -> "4300000001" (si padding es 10)
+        string cuentaCodigoParaBusqueda = $"{prefix}.{suffix}";
+        // Como FindObject compara con el valor en BD (que ya tiene padding), necesitamos saber el código final
         int totalPadding = config.PaddingCuentaContable;
-        int cerosNecesarios = totalPadding - prefix.Length;
-
-        if (cerosNecesarios > 0)
-        {
-            cuentaCodigo = prefix + suffix.PadLeft(cerosNecesarios, '0');
-        }
-        else
-        {
-            cuentaCodigo = prefix + suffix;
-        }
-
-        // Asegurar longitud de totalPadding si el prefijo + sufijo exceden
-        if (cuentaCodigo.Length > totalPadding)
-        {
-            cuentaCodigo = cuentaCodigo.Substring(0, totalPadding);
-        }
+        int ceros = totalPadding - prefix.Length - suffix.Length;
+        string cuentaCodigoFinal = ceros > 0 ? prefix + new string('0', ceros) + suffix : prefix + suffix;
 
         var cuentaExistente =
-            Session.FindObject<CuentaContable>(new BinaryOperator(nameof(CuentaContable.Codigo), cuentaCodigo));
+            Session.FindObject<CuentaContable>(new BinaryOperator(nameof(CuentaContable.Codigo), cuentaCodigoFinal));
         if (cuentaExistente != null)
         {
             CuentaContable = cuentaExistente;
@@ -176,7 +179,7 @@ public class Tercero(Session session) : Contacto(session)
         {
             var nuevaCuenta = new CuentaContable(Session)
             {
-                Codigo = cuentaCodigo,
+                Codigo = cuentaCodigoParaBusqueda,
                 Nombre = Nombre,
                 CuentaPadre = cuentaPadre,
                 EsAsentable = true,

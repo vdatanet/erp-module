@@ -9,6 +9,7 @@ using DevExpress.Xpo;
 using DevExpress.Xpo.Metadata;
 using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
@@ -1227,11 +1228,19 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
             var padding = companyInfo.PaddingNumero;
 
-            var sequenceName = $"{GetType().FullName}.{Ejercicio.Anio}.{Serie}";
-            var prefix = $"{Serie}/{Ejercicio.Anio}";
+            var sequenceName = companyInfo.TipoNumeracionDocumento switch
+            {
+                TipoNumeracionDocumento.PrefijoNumero => $"{GetType().FullName}.{Serie}",
+                TipoNumeracionDocumento.PrefijoEjercicioNumero => $"{GetType().FullName}.{Ejercicio.Anio}.{Serie}",
+                TipoNumeracionDocumento.PrefijoEjercicioMesNumero =>
+                    $"{GetType().FullName}.{Ejercicio.Anio}.{Fecha.Month:D2}.{Serie}",
+                _ => $"{GetType().FullName}.{Ejercicio.Anio}.{Serie}"
+            };
+
+            var prefix = Serie;
 
             Numero = SequenceFactory.GetNextSequence(Session, sequenceName, out var formattedSequence,
-                prefix, padding);
+                prefix, padding, companyInfo, Fecha);
             Secuencia = formattedSequence;
         }
     }

@@ -1,7 +1,16 @@
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Xpo;
+using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Base.Compras;
+using erp.Module.BusinessObjects.Base.Ventas;
+using erp.Module.BusinessObjects.Compras;
+using erp.Module.BusinessObjects.Ventas;
+using erp.Module.BusinessObjects.Tpv;
+using erp.Module.BusinessObjects.Servicios.PartesTrabajo;
 using erp.Module.BusinessObjects.Configuraciones;
+using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Contabilidad;
+using erp.Module.Factories;
 using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Impuestos;
 
@@ -61,13 +70,21 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
         if (informacionEmpresa.PaddingNumero == 0) informacionEmpresa.PaddingNumero = 5;
         if (informacionEmpresa.PaddingCuentaContable == 0) informacionEmpresa.PaddingCuentaContable = 10;
 
-        informacionEmpresa.CuentaPadreClientes ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "43000");
-        informacionEmpresa.CuentaPadreProveedores ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "40000");
-        informacionEmpresa.CuentaPadreAcreedores ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "41000");
-        informacionEmpresa.CuentaComprasPorDefecto ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "6000000000");
-        informacionEmpresa.CuentaVentasPorDefecto ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "7000000000");
-        informacionEmpresa.CuentaCobrosPorDefecto ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "5720000000");
-        informacionEmpresa.CuentaPagosPorDefecto ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "5720000000");
+        int paddingCC = informacionEmpresa.PaddingCuentaContable;
+
+        informacionEmpresa.CuentaPadreClientes ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "430".PadRight(paddingCC, '0').Substring(0, 5) || c.Codigo == "430" || c.Codigo == "43000");
+        informacionEmpresa.CuentaPadreProveedores ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "400".PadRight(paddingCC, '0').Substring(0, 5) || c.Codigo == "400" || c.Codigo == "40000");
+        informacionEmpresa.CuentaPadreAcreedores ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "410".PadRight(paddingCC, '0').Substring(0, 5) || c.Codigo == "410" || c.Codigo == "41000");
+        
+        informacionEmpresa.CuentaComprasPorDefecto ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "600".PadRight(paddingCC, '0'));
+        informacionEmpresa.CuentaVentasPorDefecto ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "700".PadRight(paddingCC, '0'));
+        informacionEmpresa.CuentaCobrosPorDefecto ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "572".PadRight(paddingCC, '0'));
+        informacionEmpresa.CuentaPagosPorDefecto ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "572".PadRight(paddingCC, '0'));
+        
+        informacionEmpresa.DiarioVentasPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Ventas");
+        informacionEmpresa.DiarioComprasPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Compras");
+        informacionEmpresa.DiarioTesoreriaPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Tesorería");
+        informacionEmpresa.DiarioOperacionesVariasPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Operaciones Varias");
         informacionEmpresa.PosicionFiscalPorDefecto ??= OS.FirstOrDefault<PosicionFiscal>(p => p.Nombre == "Régimen Nacional");
         informacionEmpresa.ZonaHorariaPorDefecto ??= OS.FirstOrDefault<ZonaHoraria>(z => z.IdZonaHoraria == "Europe/Madrid");
 
@@ -94,5 +111,87 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
         }
 
         OS.CommitChanges(); // Nos aseguramos de guardar la empresa inicial para evitar nulos en otras partes si es necesario
+        
+        InitializeAllSequences(informacionEmpresa);
+    }
+
+    private void InitializeAllSequences(InformacionEmpresa companyInfo)
+    {
+        if (OS is not XPObjectSpace xpOs) return;
+        var session = xpOs.Session;
+        var padding = companyInfo.PaddingNumero;
+        var anio = companyInfo.GetLocalTime().Year;
+        var mes = companyInfo.GetLocalTime().Month.ToString("D2");
+
+        // Tipos de documentos y sus prefijos
+        var docTypes = new (Type Type, string Prefix)[]
+        {
+            (typeof(OfertaVenta), companyInfo.PrefijoOfertasVentaPorDefecto ?? ""),
+            (typeof(PedidoVenta), companyInfo.PrefijoPedidosPorDefecto ?? ""),
+            (typeof(AlbaranVenta), companyInfo.PrefijoAlbaranesVentaPorDefecto ?? ""),
+            (typeof(FacturaVenta), companyInfo.PrefijoFacturasVentaPorDefecto ?? ""),
+            (typeof(FacturaSimplificada), companyInfo.PrefijoFacturasSimplificadasPorDefecto ?? ""),
+            (typeof(OfertaCompra), companyInfo.PrefijoOfertasCompraPorDefecto ?? ""),
+            (typeof(PedidoCompra), companyInfo.PrefijoPedidosCompraPorDefecto ?? ""),
+            (typeof(AlbaranCompra), companyInfo.PrefijoAlbaranesCompraPorDefecto ?? ""),
+            (typeof(FacturaCompra), companyInfo.PrefijoFacturasCompraPorDefecto ?? ""),
+            (typeof(ParteTrabajo), companyInfo.PrefijoParteTrabajoPorDefecto ?? ""),
+        };
+
+        foreach (var (type, prefix) in docTypes)
+        {
+            if (string.IsNullOrEmpty(prefix)) continue;
+
+            var sequenceName = companyInfo.TipoNumeracionDocumento switch
+            {
+                TipoNumeracionDocumento.PrefijoNumero => $"{type.FullName}",
+                TipoNumeracionDocumento.PrefijoEjercicioNumero => $"{type.FullName}.{anio}",
+                TipoNumeracionDocumento.PrefijoEjercicioMesNumero => $"{type.FullName}.{anio}.{mes}",
+                _ => $"{type.FullName}.{anio}"
+            };
+
+            SequenceFactory.EnsureSequenceExists(session, sequenceName, prefix, padding);
+        }
+
+        // Contactos (estos suelen ser Prefijo/Número siempre según Contacto.cs)
+        var contactTypes = new (Type Type, string Prefix)[]
+        {
+            (typeof(Cliente), companyInfo.PrefijoClientes ?? ""),
+            (typeof(Proveedor), companyInfo.PrefijoProveedores ?? ""),
+            (typeof(Acreedor), companyInfo.PrefijoAcreedores ?? ""),
+            (typeof(Empleado), companyInfo.PrefijoEmpleados ?? ""),
+        };
+
+        foreach (var (type, prefix) in contactTypes)
+        {
+            if (string.IsNullOrEmpty(prefix)) continue;
+            SequenceFactory.EnsureSequenceExists(session, type.FullName!, prefix, padding);
+        }
+
+        // TPV (Requieren código de TPV, inicializamos para un TPV '01' por defecto si existe o genérico)
+        var tpv = OS.FirstOrDefault<BusinessObjects.Tpv.Tpv>(t => true);
+        var tpvCodigo = tpv?.Codigo ?? "01";
+        
+        var tpvTypes = new (Type Type, string Prefix)[]
+        {
+            (typeof(SesionTpv), companyInfo.PrefijoSesionTpvPorDefecto ?? ""),
+            (typeof(VentaTpv), companyInfo.PrefijoVentaTpvPorDefecto ?? ""),
+        };
+
+        foreach (var (type, prefix) in tpvTypes)
+        {
+            if (string.IsNullOrEmpty(prefix)) continue;
+            
+            var sequenceName = companyInfo.TipoNumeracionDocumento switch
+            {
+                TipoNumeracionDocumento.PrefijoNumero => $"{type.FullName}.{tpvCodigo}",
+                TipoNumeracionDocumento.PrefijoEjercicioNumero => $"{type.FullName}.{anio}.{tpvCodigo}",
+                TipoNumeracionDocumento.PrefijoEjercicioMesNumero => $"{type.FullName}.{anio}.{mes}.{tpvCodigo}",
+                _ => $"{type.FullName}.{anio}.{tpvCodigo}"
+            };
+            
+            var fullPrefix = $"{prefix}/{tpvCodigo}";
+            SequenceFactory.EnsureSequenceExists(session, sequenceName, fullPrefix, padding);
+        }
     }
 }

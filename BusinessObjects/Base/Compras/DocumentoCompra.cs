@@ -8,6 +8,7 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Tesoreria;
@@ -47,7 +48,11 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
             var modified = SetPropertyValue(nameof(Proveedor), ref _proveedor, value);
             if (modified && !IsLoading && !IsSaving)
             {
-                if (value is Proveedor prov)
+                if (value is Cliente cli)
+                {
+                    CondicionPago = cli.CondicionPago;
+                }
+                else if (value is Proveedor prov)
                 {
                     CondicionPago = prov.CondicionPago;
                 }
@@ -266,11 +271,19 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
             var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session) ?? throw new UserFriendlyException("No se ha podido obtener la configuración de la empresa.");
             int padding = companyInfo.PaddingNumero;
 
-            string sequenceName = $"{GetType().FullName}.{Ejercicio.Anio}.{Serie}";
-            string prefix = $"{Serie}/{Ejercicio.Anio}";
+            var sequenceName = companyInfo.TipoNumeracionDocumento switch
+            {
+                TipoNumeracionDocumento.PrefijoNumero => $"{GetType().FullName}.{Serie}",
+                TipoNumeracionDocumento.PrefijoEjercicioNumero => $"{GetType().FullName}.{Ejercicio.Anio}.{Serie}",
+                TipoNumeracionDocumento.PrefijoEjercicioMesNumero =>
+                    $"{GetType().FullName}.{Ejercicio.Anio}.{Fecha.Month:D2}.{Serie}",
+                _ => $"{GetType().FullName}.{Ejercicio.Anio}.{Serie}"
+            };
+
+            var prefix = Serie;
 
             Numero = SequenceFactory.GetNextSequence(Session, sequenceName, out var formattedSequence,
-                prefix, padding);
+                prefix, padding, companyInfo, Fecha);
             Secuencia = formattedSequence;
         }
     }

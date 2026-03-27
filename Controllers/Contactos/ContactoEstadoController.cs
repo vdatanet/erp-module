@@ -19,25 +19,17 @@ public class ContactoEstadoController : ViewController
     {
         base.OnActivated();
         
-        // El controlador de XAF que maneja las acciones por atributo se llama ObjectMethodActionsViewController
         var controller = Frame.GetController<ObjectMethodActionsViewController>();
-        if (controller != null)
+        if (controller != null && controller.Actions != null)
         {
-            if (controller.Actions == null)
+            foreach (var action in controller.Actions)
             {
-                System.Console.WriteLine("[DEBUG_LOG] ObjectMethodActionsViewController.Actions is NULL");
-            }
-            else
-            {
-                foreach (var action in controller.Actions)
+                if (action.Id == "Contacto.ToggleEstado" || action.Id == "ToggleEstado")
                 {
-                    if (action.Id == "Contacto.ToggleEstado" || action.Id == "ToggleEstado")
-                    {
-                        _toggleAction = action;
-                        // En ListView lo desactivamos (ocultamos)
-                        action.Active["VisibleInListView"] = View is DetailView;
-                        break;
-                    }
+                    _toggleAction = action;
+                    // En ListView lo desactivamos (ocultamos)
+                    action.Active["VisibleInListView"] = View is DetailView;
+                    break;
                 }
             }
         }

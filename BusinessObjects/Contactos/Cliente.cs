@@ -184,9 +184,9 @@ public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVent
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null) return;
 
-        _cuentaCobro = companyInfo.CuentaCobrosPorDefecto ?? CuentaContable;
-        _diarioVentas = companyInfo.DiarioVentasPorDefecto;
-        _posicionFiscal = companyInfo.PosicionFiscalPorDefecto;
-        _condicionPago = companyInfo.CondicionPagoPorDefecto;
+        _cuentaCobro ??= companyInfo.CuentaCobrosPorDefecto ?? CuentaContable;
+        _diarioVentas ??= companyInfo.DiarioVentasPorDefecto;
+        _posicionFiscal ??= companyInfo.PosicionFiscalPorDefecto;
+        _condicionPago ??= companyInfo.CondicionPagoPorDefecto;
     }
 }

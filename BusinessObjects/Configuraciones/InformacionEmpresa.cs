@@ -93,6 +93,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private string? _unidadOrganicaUnidadTramitadora;
     private int _paddingNumero;
     private int _paddingCuentaContable;
+    private TipoNumeracionDocumento _tipoNumeracionDocumento;
 
     [Size(255)]
     [XafDisplayName("Nombre")]
@@ -601,15 +602,15 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     [XafDisplayName("Padding Número")]
     public int PaddingNumero
     {
-        get => _paddingNumero;
+        get => _paddingNumero == 0 ? 5 : _paddingNumero;
         set => SetPropertyValue(nameof(PaddingNumero), ref _paddingNumero, value);
     }
 
     [RuleRange("InformacionEmpresa_PaddingCuentaContable_Range", DefaultContexts.Save, 1, 15)]
-    [XafDisplayName("Padding Cuenta Contable Contable")]
+    [XafDisplayName("Padding Cuenta Contable")]
     public int PaddingCuentaContable
     {
-        get => _paddingCuentaContable;
+        get => _paddingCuentaContable == 0 ? 10 : _paddingCuentaContable;
         set => SetPropertyValue(nameof(PaddingCuentaContable), ref _paddingCuentaContable, value);
     }
 
@@ -634,9 +635,31 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(ImpresionDirectaTicket), ref _impresionDirectaTicket, value);
     }
 
+    [XafDisplayName("Tipo Numeración Documento")]
+    public TipoNumeracionDocumento TipoNumeracionDocumento
+    {
+        get => _tipoNumeracionDocumento;
+        set => SetPropertyValue(nameof(TipoNumeracionDocumento), ref _tipoNumeracionDocumento, value);
+    }
+
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        TipoNumeracionDocumento = TipoNumeracionDocumento.PrefijoEjercicioNumero;
+        PaddingNumero = 5;
+        PaddingCuentaContable = 10;
+    }
+
     public DateTime GetLocalTime()
     {
         var tz = ZonaHorariaPorDefecto?.GetTimeZoneInfo();
         return tz != null ? TimeZoneInfo.ConvertTime(DateTime.UtcNow, tz) : DateTime.Now;
     }
+}
+
+public enum TipoNumeracionDocumento
+{
+    [XafDisplayName("Prefijo/Número")] PrefijoNumero,
+    [XafDisplayName("Prefijo/Ejercicio/Número")] PrefijoEjercicioNumero,
+    [XafDisplayName("Prefijo/Ejercicio/Mes/Número")] PrefijoEjercicioMesNumero
 }

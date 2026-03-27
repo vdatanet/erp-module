@@ -59,10 +59,7 @@ public class CuentaContable(Session session) : EntidadBase(session)
                     string prefijo = partes[0];
                     string sufijo = partes[1];
                     var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-                    if (companyInfo == null)
-                        throw new UserFriendlyException("La configuración de la empresa no ha sido inicializada.");
-
-                    int totalPadding = companyInfo.PaddingCuentaContable;
+                    int totalPadding = companyInfo?.PaddingCuentaContable ?? 10;
                     int cerosNecesarios = totalPadding - prefijo.Length - sufijo.Length;
                     if (cerosNecesarios > 0)
                     {
@@ -112,10 +109,7 @@ public class CuentaContable(Session session) : EntidadBase(session)
             }
 
             var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-            if (companyInfo == null)
-                throw new UserFriendlyException("La configuración de la empresa no ha sido inicializada.");
-
-            int totalPadding = companyInfo.PaddingCuentaContable;
+            int totalPadding = companyInfo?.PaddingCuentaContable ?? 10;
             if (longitud == totalPadding)
             {
                 EsAsentable = true;
