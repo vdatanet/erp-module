@@ -85,6 +85,9 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
         informacionEmpresa.DiarioComprasPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Compras");
         informacionEmpresa.DiarioTesoreriaPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Tesorería");
         informacionEmpresa.DiarioOperacionesVariasPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Operaciones Varias");
+        informacionEmpresa.DiarioAperturaPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Apertura");
+        informacionEmpresa.DiarioCierrePorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Cierre");
+        informacionEmpresa.DiarioRegularizacionPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Regularización");
         informacionEmpresa.PosicionFiscalPorDefecto ??= OS.FirstOrDefault<PosicionFiscal>(p => p.Nombre == "Régimen Nacional");
         informacionEmpresa.ZonaHorariaPorDefecto ??= OS.FirstOrDefault<ZonaHoraria>(z => z.IdZonaHoraria == "Europe/Madrid");
 

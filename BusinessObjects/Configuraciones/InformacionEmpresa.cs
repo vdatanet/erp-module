@@ -54,6 +54,9 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private Diario? _diarioVentasPorDefecto;
     private Diario? _diarioTesoreriaPorDefecto;
     private Diario? _diarioOperacionesVariasPorDefecto;
+    private Diario? _diarioAperturaPorDefecto;
+    private Diario? _diarioCierrePorDefecto;
+    private Diario? _diarioRegularizacionPorDefecto;
     private string? _nifAdministradorSistemaVeriFactu;
     private string? _nombreAdministradorSistemaVeriFactu;
     private string? _nombreArchivoConfigVeriFactu;
@@ -224,6 +227,30 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     {
         get => _diarioOperacionesVariasPorDefecto;
         set => SetPropertyValue(nameof(DiarioOperacionesVariasPorDefecto), ref _diarioOperacionesVariasPorDefecto, value);
+    }
+
+    [DataSourceCriteria("EstaActivo = True")]
+    [XafDisplayName("Diario Apertura por Defecto")]
+    public Diario? DiarioAperturaPorDefecto
+    {
+        get => _diarioAperturaPorDefecto;
+        set => SetPropertyValue(nameof(DiarioAperturaPorDefecto), ref _diarioAperturaPorDefecto, value);
+    }
+
+    [DataSourceCriteria("EstaActivo = True")]
+    [XafDisplayName("Diario Cierre por Defecto")]
+    public Diario? DiarioCierrePorDefecto
+    {
+        get => _diarioCierrePorDefecto;
+        set => SetPropertyValue(nameof(DiarioCierrePorDefecto), ref _diarioCierrePorDefecto, value);
+    }
+
+    [DataSourceCriteria("EstaActivo = True")]
+    [XafDisplayName("Diario Regularización por Defecto")]
+    public Diario? DiarioRegularizacionPorDefecto
+    {
+        get => _diarioRegularizacionPorDefecto;
+        set => SetPropertyValue(nameof(DiarioRegularizacionPorDefecto), ref _diarioRegularizacionPorDefecto, value);
     }
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
