@@ -20,19 +20,6 @@
     <SchemaModule Name="SystemModule" Version="25.2.5.0" IsNewNode="True" />
   </SchemaModules>
   <Views>
-    <DetailView Id="Adjunto_DetailView" FreezeLayout="True">
-      <Layout IsNewNode="True" Removed="True">
-        <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
-          <LayoutGroup Id="SimpleEditors" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
-            <LayoutGroup Id="Adjunto" Index="0" ShowCaption="False" RelativeSize="100" Caption="Archivo" IsNewNode="True">
-              <LayoutItem Id="Nombre" ViewItem="Nombre" Index="0" RelativeSize="3.8415366146458583" IsNewNode="True" />
-              <LayoutItem Id="FileData" ViewItem="FileData" ShowCaption="" Index="1" RelativeSize="2.881152460984394" IsNewNode="True" />
-              <LayoutItem Id="Notas" ViewItem="Notas" Index="2" RelativeSize="93.27731092436974" IsNewNode="True" />
-            </LayoutGroup>
-          </LayoutGroup>
-        </LayoutGroup>
-      </Layout>
-    </DetailView>
     <ListView Id="Adjunto_ListView" Caption="Adjuntos" FreezeColumnIndices="True">
       <Columns>
         <ColumnInfo Id="Contacto" Index="-1" />
