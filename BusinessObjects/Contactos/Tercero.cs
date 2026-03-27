@@ -34,7 +34,6 @@ public class Tercero(Session session) : Contacto(session)
     [VisibleInDetailView(false)]
     public XPCollection<DocumentoCompra> DocumentosCompra => GetCollection<DocumentoCompra>();
 
-    [DevExpress.Xpo.Aggregated]
     [Association("Tercero-PreciosEspeciales")]
     [XafDisplayName("Precios Especiales de Productos")]
     public XPCollection<erp.Module.BusinessObjects.Productos.PrecioEspecial> PreciosEspeciales => GetCollection<erp.Module.BusinessObjects.Productos.PrecioEspecial>();

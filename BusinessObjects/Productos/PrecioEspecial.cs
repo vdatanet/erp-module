@@ -49,6 +49,7 @@ public class PrecioEspecial(Session session) : EntidadBase(session)
     [XafDisplayName("Producto")]
     [LookupEditorMode(LookupEditorMode.Search)]
     [ImmediatePostData]
+    [DataSourceCriteria("EstaActivo = True")]
     public Producto? Producto
     {
         get => _producto;
@@ -56,9 +57,10 @@ public class PrecioEspecial(Session session) : EntidadBase(session)
     }
 
     [Association("Tercero-PreciosEspeciales")]
-    [XafDisplayName("Cliente / Proveedor")]
+    [XafDisplayName("Cliente / Proveedor / Acreedor")]
     [LookupEditorMode(LookupEditorMode.Search)]
     [ImmediatePostData]
+    [DataSourceCriteria("Activo = True")]
     public Tercero? Tercero
     {
         get => _tercero;

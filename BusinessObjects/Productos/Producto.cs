@@ -20,7 +20,7 @@ namespace erp.Module.BusinessObjects.Productos;
 [NavigationItem("Productos")]
 [XafDisplayName("Producto")]
 [ImageName("BO_Product")]
-[DefaultProperty(nameof(Codigo))]
+[DefaultProperty(nameof(Nombre))]
 public class Producto(Session session) : EntidadBase(session)
 {
     private Categoria? _categoria;
