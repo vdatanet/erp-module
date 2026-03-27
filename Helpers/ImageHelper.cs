@@ -15,7 +15,6 @@ public static class ImageHelper
         // Usamos ImageSharp para redimensionar a 100x100
         try
         {
-            System.Diagnostics.Debug.WriteLine($"[DEBUG_LOG] Procesando miniatura. Source data length: {sourceData.Length}");
             using (var image = Image.Load(sourceData))
             {
                 image.Mutate(x => x.Resize(new ResizeOptions
@@ -28,7 +27,6 @@ public static class ImageHelper
                 {
                     image.Save(ms, image.Metadata.DecodedImageFormat ?? SixLabors.ImageSharp.Formats.Png.PngFormat.Instance);
                     var resultData = ms.ToArray();
-                    System.Diagnostics.Debug.WriteLine($"[DEBUG_LOG] Miniatura generada con éxito. Result length: {resultData.Length}");
                     return resultData;
                 }
             }

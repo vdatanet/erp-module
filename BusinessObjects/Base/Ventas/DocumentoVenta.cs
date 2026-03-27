@@ -8,7 +8,9 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using DevExpress.Xpo.Metadata;
 using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.BusinessObjects.Documentos;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
@@ -42,6 +44,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private string? _codigoPostalCliente;
     private Contacto? _comercial;
     private CondicionPago? _condicionPago;
+    private MedioPago? _medioPago;
     private CuentaContable? _cuentaBanco;
     private CuentaContable? _cuentaCaja;
 
@@ -56,6 +59,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private DocumentoVenta? _documentoOrigen;
     private DocumentoVenta? _documentoRectificado;
     private DocumentoVenta? _documentoRelacionado;
+    private Domicilio? _domicilio;
 
     private IDocumentoVentaService? _documentoVentaService;
     private Ejercicio? _ejercicio;
@@ -72,6 +76,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private bool _esPedido;
     private bool _esPresupuesto;
     private EstadoDocumentoVenta _estado;
+    private EstadoCobroFactura _estadoCobro;
     private bool _esTicket;
     private DateTime _fecha;
     private DateTime? _fechaAnulacion;
@@ -168,9 +173,27 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set
         {
             var modified = SetPropertyValue(nameof(Cliente), ref _cliente, value);
-            if (modified && !IsLoading && !IsSaving) AsignarCliente(value);
+            if (modified && !IsLoading && !IsSaving)
+            {
+                Domicilio = null;
+                AsignarCliente(value);
+            }
         }
     }
+
+    [XafDisplayName("Domicilio de Envío")]
+    [DataSourceProperty("Cliente.DireccionesEnvio")]
+    [ImmediatePostData]
+    public Domicilio? Domicilio
+    {
+        get => _domicilio;
+        set
+        {
+            var modified = SetPropertyValue(nameof(Domicilio), ref _domicilio, value);
+            if (modified && !IsLoading && !IsSaving) AsignarDomicilio(value);
+        }
+    }
+
 
     [Size(100)]
     [XafDisplayName("Nombre Cliente")]
@@ -346,6 +369,14 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     {
         get => _estado;
         set => SetPropertyValue(nameof(Estado), ref _estado, value);
+    }
+
+    [XafDisplayName("Estado Cobro")]
+    [ModelDefault("AllowEdit", "False")]
+    public EstadoCobroFactura EstadoCobro
+    {
+        get => _estadoCobro;
+        set => SetPropertyValue(nameof(EstadoCobro), ref _estadoCobro, value);
     }
 
     [XafDisplayName("TPV")]
@@ -997,6 +1028,13 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(CondicionPago), ref _condicionPago, value);
     }
 
+    [XafDisplayName("Medio de Pago")]
+    public MedioPago? MedioPago
+    {
+        get => _medioPago;
+        set => SetPropertyValue(nameof(MedioPago), ref _medioPago, value);
+    }
+
     [DevExpress.Xpo.Aggregated]
     [Association("DocumentoVenta-Grupos")]
     [XafDisplayName("Grupos")]
@@ -1023,9 +1061,9 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     public XPCollection<Imagen> Imagenes => GetCollection<Imagen>();
 
     [DevExpress.Xpo.Aggregated]
-    [Association("DocumentoVenta-Adjuntos")]
-    [XafDisplayName("Adjuntos")]
-    public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
+    [Association("DocumentoVenta-Documentos")]
+    [XafDisplayName("Documentos")]
+    public XPCollection<Documento> Documentos => GetCollection<Documento>();
 
     [XafDisplayName("Movimientos de Caja")]
     public XPCollection<MovimientoCajaTpv> MovimientosCaja => GetCollection<MovimientoCajaTpv>();
@@ -1047,6 +1085,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         if (value == null)
         {
             CondicionPago = null;
+            MedioPago = null;
             NombreCliente = null;
             DocumentoIdentificacionCliente = null;
             EmailCliente = null;
@@ -1060,6 +1099,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         }
 
         CondicionPago = value.CondicionPago;
+        MedioPago = value.MedioPago;
 
         NombreCliente = value.Nombre;
         DocumentoIdentificacionCliente = value.Nif;
@@ -1070,6 +1110,31 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         ProvinciaCliente = value.Provincia?.Nombre;
         CodigoPostalCliente = value.CodigoPostal;
         PaisCliente = value.Pais;
+    }
+
+    public virtual void AsignarDomicilio(Domicilio? value)
+    {
+        if (value == null)
+        {
+            if (Cliente != null)
+            {
+                DireccionCliente = Cliente.Direccion;
+                PoblacionCliente = Cliente.Poblacion?.Nombre;
+                ProvinciaCliente = Cliente.Provincia?.Nombre;
+                CodigoPostalCliente = Cliente.CodigoPostal;
+                PaisCliente = Cliente.Pais;
+            }
+            return;
+        }
+
+        DireccionCliente = value.Direccion;
+        PoblacionCliente = value.Poblacion?.Nombre;
+        ProvinciaCliente = value.Provincia?.Nombre;
+        CodigoPostalCliente = value.CodigoPostal;
+        PaisCliente = value.Pais;
+
+        if (!string.IsNullOrEmpty(value.Telefono)) TelefonoCliente = value.Telefono;
+        if (!string.IsNullOrEmpty(value.CorreoElectronico)) EmailCliente = value.CorreoElectronico;
     }
 
     public void InvalidadCacheTotales()
@@ -1227,11 +1292,19 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
             var padding = companyInfo.PaddingNumero;
 
-            var sequenceName = $"{GetType().FullName}.{Ejercicio.Anio}.{Serie}";
-            var prefix = $"{Serie}/{Ejercicio.Anio}";
+            var sequenceName = companyInfo.TipoNumeracionDocumento switch
+            {
+                TipoNumeracionDocumento.PrefijoNumero => $"{GetType().FullName}.{Serie}",
+                TipoNumeracionDocumento.PrefijoEjercicioNumero => $"{GetType().FullName}.{Ejercicio.Anio}.{Serie}",
+                TipoNumeracionDocumento.PrefijoEjercicioMesNumero =>
+                    $"{GetType().FullName}.{Ejercicio.Anio}.{Fecha.Month:D2}.{Serie}",
+                _ => $"{GetType().FullName}.{Ejercicio.Anio}.{Serie}"
+            };
+
+            var prefix = Serie;
 
             Numero = SequenceFactory.GetNextSequence(Session, sequenceName, out var formattedSequence,
-                prefix, padding);
+                prefix, padding, companyInfo, Fecha);
             Secuencia = formattedSequence;
         }
     }

@@ -18,12 +18,22 @@ public enum EstadoDocumentoVenta
 {
     [XafDisplayName("Borrador")] Borrador,
     [XafDisplayName("Confirmado")] Confirmado,
+    [XafDisplayName("Validada")] Validada,
+    [XafDisplayName("Enviada a VeriFactu")] EnviadaVerifactu,
+    [XafDisplayName("Contabilizada")] Contabilizada,
     [XafDisplayName("Emitido")] Emitido,
     [XafDisplayName("Impreso")] Impreso,
     [XafDisplayName("Cobrado")] Cobrado,
     [XafDisplayName("Anulado")] Anulado,
     [XafDisplayName("Bloqueado")] Bloqueado,
     [XafDisplayName("Sincronizado")] Sincronizado
+}
+
+public enum EstadoCobroFactura
+{
+    [XafDisplayName("Pendiente")] Pendiente,
+    [XafDisplayName("Pago Parcial")] PagoParcial,
+    [XafDisplayName("Pagada")] Pagada
 }
 
 public enum OrigenDocumentoVenta

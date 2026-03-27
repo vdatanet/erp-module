@@ -1,4 +1,5 @@
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.Services.Secuencias;
 
 namespace erp.Module.Factories;
@@ -13,9 +14,14 @@ public static class SequenceFactory
     }
 
     public static int GetNextSequence(Session session, string sequenceName, out string formattedSequence,
-        string prefix, int padding)
+        string prefix, int padding, InformacionEmpresa? companyInfo = null, DateTime? fecha = null)
     {
         var service = new SequenceService(session);
-        return service.GetNextSequence(sequenceName, prefix, padding, out formattedSequence);
+        return service.GetNextSequence(sequenceName, prefix, padding, out formattedSequence, companyInfo, fecha);
+    }
+    public static void EnsureSequenceExists(Session session, string sequenceName, string prefix, int padding)
+    {
+        var service = new SequenceService(session);
+        service.EnsureSequenceExists(sequenceName, prefix, padding);
     }
 }

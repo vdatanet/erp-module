@@ -12,6 +12,7 @@ using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Productos;
+using erp.Module.BusinessObjects.Documentos;
 using erp.Module.Helpers.Contactos;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -56,6 +57,7 @@ public class Tarea(Session session) : EntidadBase(session)
     private Contacto? _contacto;
     private DocumentoCompra? _documentoCompra;
     private DocumentoVenta? _documentoVenta;
+    private Documento? _documento;
     private EstadoTarea _estado;
     private DateTime _fechaFin;
     private DateTime _fechaInicio;
@@ -218,6 +220,14 @@ public class Tarea(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Oportunidad), ref _oportunidad, value);
     }
 
+    [Association("Documento-Tareas")]
+    [XafDisplayName("Documento")]
+    public Documento? Documento
+    {
+        get => _documento;
+        set => SetPropertyValue(nameof(Documento), ref _documento, value);
+    }
+
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Notas")]
     public string? Notas
@@ -237,9 +247,9 @@ public class Tarea(Session session) : EntidadBase(session)
     public XPCollection<Imagen> Imagenes => GetCollection<Imagen>();
 
     [DevExpress.Xpo.Aggregated]
-    [Association("Tarea-Adjuntos")]
-    [XafDisplayName("Adjuntos")]
-    public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
+    [Association("Tarea-Documentos")]
+    [XafDisplayName("Documentos")]
+    public XPCollection<Documento> Documentos => GetCollection<Documento>();
 
     public override void AfterConstruction()
     {

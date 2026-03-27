@@ -10,6 +10,7 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects;
 using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.BusinessObjects.Documentos;
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Crm;
@@ -410,9 +411,9 @@ public class Contacto(Session session) : EntidadBase(session)
     public XPCollection<Imagen> Imagenes => GetCollection<Imagen>();
 
     [DevExpress.Xpo.Aggregated]
-    [Association("Contacto-Adjuntos")]
-    [XafDisplayName("Adjuntos")]
-    public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
+    [Association("Contacto-Documentos")]
+    [XafDisplayName("Documentos")]
+    public XPCollection<Documento> Documentos => GetCollection<Documento>();
 
     [Action(Caption = "Restablecer NFC UID", 
         ConfirmationMessage = "¿Desea restablecer el NFC UID al valor original?", 
@@ -439,7 +440,19 @@ public class Contacto(Session session) : EntidadBase(session)
 
     protected override void OnSaving()
     {
+        if (Session.IsNewObject(this) && string.IsNullOrEmpty(Codigo))
+        {
+            AsignarCodigo();
+        }
         base.OnSaving();
+    }
+
+    private void ProcesarNumeracion()
+    {
+        if (GetAsignarCodigoAlGuardar() && string.IsNullOrEmpty(Codigo))
+        {
+            AsignarCodigo();
+        }
     }
 
     protected override void OnLoaded()
@@ -468,12 +481,19 @@ public class Contacto(Session session) : EntidadBase(session)
 
     public virtual void AsignarCodigo()
     {
-        var prefijo = GetPrefijoCodigo();
-        if (string.IsNullOrEmpty(prefijo)) return;
-        var nombreSecuencia = GetType().FullName ?? GetType().Name;
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session) ?? throw new UserFriendlyException("No se ha podido obtener la configuración de la empresa.");
+        var prefijo = GetPrefijoCodigo();
+        // Si el prefijo es nulo o vacío, usamos un valor por defecto para asegurar la generación del código
+        if (string.IsNullOrEmpty(prefijo)) 
+        {
+            prefijo = "TEMP"; 
+        }
+        var nombreSecuencia = GetType().FullName ?? GetType().Name;
         int padding = companyInfo.PaddingNumero;
-        Numero = SequenceFactory.GetNextSequence(Session, nombreSecuencia, out var formattedSequence, prefijo, padding);
+        var nextNum = SequenceFactory.GetNextSequence(Session, nombreSecuencia, out var formattedSequence, prefijo, padding, companyInfo);
+        
+        // Asignar a propiedades del objeto
+        Numero = nextNum;
         Codigo = formattedSequence;
     }
 

@@ -7,7 +7,9 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.BusinessObjects.Documentos;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Tesoreria;
@@ -29,6 +31,7 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
     private string? _secuencia;
     private string? _serie;
     private CondicionPago? _condicionPago;
+    private MedioPago? _medioPago;
     private Ejercicio? _ejercicio;
 
     [RuleRequiredField("erp.Module.BusinessObjects.Compras.FacturaCompra.Proveedor_Required", DefaultContexts.Save,
@@ -47,14 +50,7 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
             var modified = SetPropertyValue(nameof(Proveedor), ref _proveedor, value);
             if (modified && !IsLoading && !IsSaving)
             {
-                if (value is Proveedor prov)
-                {
-                    CondicionPago = prov.CondicionPago;
-                }
-                else if (value is Acreedor acree)
-                {
-                    CondicionPago = acree.CondicionPago;
-                }
+                AsignarProveedor(value);
             }
         }
     }
@@ -74,6 +70,13 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
     {
         get => _condicionPago;
         set => SetPropertyValue(nameof(CondicionPago), ref _condicionPago, value);
+    }
+
+    [XafDisplayName("Medio de Pago")]
+    public MedioPago? MedioPago
+    {
+        get => _medioPago;
+        set => SetPropertyValue(nameof(MedioPago), ref _medioPago, value);
     }
 
     [NonCloneable]
@@ -189,9 +192,9 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
     public XPCollection<Imagen> Imagenes => GetCollection<Imagen>();
 
     [DevExpress.Xpo.Aggregated]
-    [Association("DocumentoCompra-Adjuntos")]
-    [XafDisplayName("Adjuntos")]
-    public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
+    [Association("DocumentoCompra-Documentos")]
+    [XafDisplayName("Documentos")]
+    public XPCollection<Documento> Documentos => GetCollection<Documento>();
 
     private void Lineas_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
     {
@@ -239,6 +242,22 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
         ImporteTotal = BaseImponible + ImporteImpuestos;
     }
 
+    /// <summary>
+    ///     Regla de negocio: Al asignar un proveedor se copian sus datos de referencia al documento.
+    /// </summary>
+    public virtual void AsignarProveedor(Tercero? value)
+    {
+        if (value == null)
+        {
+            CondicionPago = null;
+            MedioPago = null;
+            return;
+        }
+
+        CondicionPago = value.CondicionPago;
+        MedioPago = value.MedioPago;
+    }
+
     public override void AfterConstruction()
     {
         base.AfterConstruction();
@@ -266,11 +285,19 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
             var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session) ?? throw new UserFriendlyException("No se ha podido obtener la configuración de la empresa.");
             int padding = companyInfo.PaddingNumero;
 
-            string sequenceName = $"{GetType().FullName}.{Ejercicio.Anio}.{Serie}";
-            string prefix = $"{Serie}/{Ejercicio.Anio}";
+            var sequenceName = companyInfo.TipoNumeracionDocumento switch
+            {
+                TipoNumeracionDocumento.PrefijoNumero => $"{GetType().FullName}.{Serie}",
+                TipoNumeracionDocumento.PrefijoEjercicioNumero => $"{GetType().FullName}.{Ejercicio.Anio}.{Serie}",
+                TipoNumeracionDocumento.PrefijoEjercicioMesNumero =>
+                    $"{GetType().FullName}.{Ejercicio.Anio}.{Fecha.Month:D2}.{Serie}",
+                _ => $"{GetType().FullName}.{Ejercicio.Anio}.{Serie}"
+            };
+
+            var prefix = Serie;
 
             Numero = SequenceFactory.GetNextSequence(Session, sequenceName, out var formattedSequence,
-                prefix, padding);
+                prefix, padding, companyInfo, Fecha);
             Secuencia = formattedSequence;
         }
     }

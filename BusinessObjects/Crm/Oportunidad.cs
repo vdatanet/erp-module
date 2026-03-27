@@ -3,6 +3,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.BusinessObjects.Documentos;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Ventas;
@@ -184,9 +185,9 @@ public class Oportunidad(Session session) : EntidadBase(session)
     public XPCollection<Imagen> Imagenes => GetCollection<Imagen>();
 
     [DevExpress.Xpo.Aggregated]
-    [Association("Oportunidad-Adjuntos")]
-    [XafDisplayName("Adjuntos")]
-    public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
+    [Association("Oportunidad-Documentos")]
+    [XafDisplayName("Documentos")]
+    public XPCollection<Documento> Documentos => GetCollection<Documento>();
 
     public override void AfterConstruction()
     {

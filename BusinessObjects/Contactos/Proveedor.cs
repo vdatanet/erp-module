@@ -6,6 +6,7 @@ using erp.Module.BusinessObjects.Base.Compras;
 using erp.Module.BusinessObjects.Compras;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Tesoreria;
+using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Contactos;
@@ -16,14 +17,34 @@ namespace erp.Module.BusinessObjects.Contactos;
 [ImageName("BO_Vendor")]
 public class Proveedor(Session session) : Tercero(session), IPuedeParticiparEnCompras
 {
-    private CondicionPago? _condicionPago;
+    private CuentaContable? _cuentaPago;
+    private Diario? _diarioCompras;
+    private PosicionFiscal? _posicionFiscal;
 
-    [XafDisplayName("Condiciones de Pago")]
-    public CondicionPago? CondicionPago
+    [XafDisplayName("Cuenta Contable de Pago")]
+    [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
+    public CuentaContable? CuentaPago
     {
-        get => _condicionPago;
-        set => SetPropertyValue(nameof(CondicionPago), ref _condicionPago, value);
+        get => _cuentaPago;
+        set => SetPropertyValue(nameof(CuentaPago), ref _cuentaPago, value);
     }
+
+    [XafDisplayName("Diario de Compras")]
+    [DataSourceCriteria("EstaActivo = True")]
+    public Diario? DiarioCompras
+    {
+        get => _diarioCompras;
+        set => SetPropertyValue(nameof(DiarioCompras), ref _diarioCompras, value);
+    }
+
+
+    [XafDisplayName("Posición Fiscal")]
+    public PosicionFiscal? PosicionFiscal
+    {
+        get => _posicionFiscal;
+        set => SetPropertyValue(nameof(PosicionFiscal), ref _posicionFiscal, value);
+    }
+
     [XafDisplayName("Ofertas")]
     public XPCollection<OfertaCompra> Ofertas => new(Session, CriteriaOperator.Parse("Proveedor.Oid = ?", Oid));
 
@@ -53,6 +74,9 @@ public class Proveedor(Session session) : Tercero(session), IPuedeParticiparEnCo
         base.InitValues();
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null) return;
-        _condicionPago = companyInfo.CondicionPagoPorDefecto;
+
+        _cuentaPago ??= companyInfo.CuentaPagosPorDefecto ?? CuentaContable;
+        _diarioCompras ??= companyInfo.DiarioComprasPorDefecto;
+        _posicionFiscal ??= companyInfo.PosicionFiscalPorDefecto;
     }
 }

@@ -5,6 +5,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Ventas;
+using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.Helpers.Contactos;
 using VeriFactu.Xml.Factu.Alta;
@@ -19,17 +20,13 @@ namespace erp.Module.BusinessObjects.Base.Facturacion;
     Criteria = "EstadoVeriFactu = 'Enviado'", Context = "Any", Enabled = false)]
 public abstract class FacturaBase(Session session) : DocumentoVenta(session)
 {
-    public enum ValoresEstadoVeriFactu
-    {
-        Borrador,
-        Enviado
-    }
 
     private string? _codigoErrorEntradaFactura;
     private string? _csv;
     private bool _esSubsanacion;
     private string? _estadoEntradaFactura;
-    private ValoresEstadoVeriFactu _estadoVeriFactu;
+    private EstadoVeriFactu _estadoVeriFactu;
+    private Domicilio? _domicilioDIR;
     private Asiento? _asientoContable;
     private MediaDataObject? _qr;
     private string? _respuestaAgenciaTributaria;
@@ -38,6 +35,19 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     private TipoRectificativa _tipoRectificativa;
     private string? _urlValidacion;
     private string? _xmlAgenciaTributaria;
+
+    [XafDisplayName("Domicilio DIR (e-Factura)")]
+    [DataSourceProperty("Cliente.DireccionesDIR")]
+    [ImmediatePostData]
+    public Domicilio? DomicilioDIR
+    {
+        get => _domicilioDIR;
+        set
+        {
+            var modified = SetPropertyValue(nameof(DomicilioDIR), ref _domicilioDIR, value);
+            if (modified && !IsLoading && !IsSaving) AsignarDomicilio(value);
+        }
+    }
 
     [XafDisplayName("Asiento Contable")]
     [ModelDefault("AllowEdit", "False")]
@@ -50,7 +60,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
     [XafDisplayName("Estado VeriFactu")]
-    public ValoresEstadoVeriFactu EstadoVeriFactu
+    public EstadoVeriFactu EstadoVeriFactu
     {
         get => _estadoVeriFactu;
         set => SetPropertyValue(nameof(EstadoVeriFactu), ref _estadoVeriFactu, value);
@@ -167,7 +177,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
 
     private void InitValues()
     {
-        EstadoVeriFactu = ValoresEstadoVeriFactu.Borrador;
+        EstadoVeriFactu = EstadoVeriFactu.Borrador;
         TipoFactura = (TipoFactura)1; // F1
         TipoRectificativa = (TipoRectificativa)1; // I
         EsSubsanacion = false;

@@ -91,6 +91,24 @@ public class ContabilidadSetupService(IObjectSpace objectSpace)
             informacionEmpresa.DiarioOperacionesVariasPorDefecto.Nombre = "Operaciones Varias";
         }
 
+        informacionEmpresa.DiarioAperturaPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Apertura") ?? OS.CreateObject<Diario>();
+        if (OS.IsNewObject(informacionEmpresa.DiarioAperturaPorDefecto))
+        {
+            informacionEmpresa.DiarioAperturaPorDefecto.Nombre = "Apertura";
+        }
+
+        informacionEmpresa.DiarioCierrePorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Cierre") ?? OS.CreateObject<Diario>();
+        if (OS.IsNewObject(informacionEmpresa.DiarioCierrePorDefecto))
+        {
+            informacionEmpresa.DiarioCierrePorDefecto.Nombre = "Cierre";
+        }
+
+        informacionEmpresa.DiarioRegularizacionPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Regularización") ?? OS.CreateObject<Diario>();
+        if (OS.IsNewObject(informacionEmpresa.DiarioRegularizacionPorDefecto))
+        {
+            informacionEmpresa.DiarioRegularizacionPorDefecto.Nombre = "Regularización";
+        }
+
         OS.CommitChanges();
     }
 
@@ -106,6 +124,8 @@ public class ContabilidadSetupService(IObjectSpace objectSpace)
         CreateCuenta("120", "Remanente", CuentaContable.TipoCuenta.PatrimonioNeto, CuentaContable.NaturalezaCuenta.Acreedora);
         CreateCuenta("121", "Resultados negativos de ejercicios anteriores", CuentaContable.TipoCuenta.PatrimonioNeto, CuentaContable.NaturalezaCuenta.Deudora);
         CreateCuenta("129", "Resultado del ejercicio", CuentaContable.TipoCuenta.Resultados, CuentaContable.NaturalezaCuenta.Acreedora);
+        CreateCuenta("12900", "Resultado del ejercicio", CuentaContable.TipoCuenta.Resultados, CuentaContable.NaturalezaCuenta.Acreedora);
+        CreateCuenta("1290000000", "Resultado del ejercicio", CuentaContable.TipoCuenta.Resultados, CuentaContable.NaturalezaCuenta.Acreedora, true);
         CreateCuenta("17", "Deudas a largo plazo por préstamos recibidos, empréstitos y otros conceptos", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora);
         CreateCuenta("170", "Deudas a largo plazo con entidades de crédito", CuentaContable.TipoCuenta.Pasivo, CuentaContable.NaturalezaCuenta.Acreedora);
 

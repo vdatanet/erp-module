@@ -7,6 +7,7 @@ using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.BusinessObjects.Documentos;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Impuestos;
@@ -20,7 +21,7 @@ namespace erp.Module.BusinessObjects.Productos;
 [NavigationItem("Productos")]
 [XafDisplayName("Producto")]
 [ImageName("BO_Product")]
-[DefaultProperty(nameof(Codigo))]
+[DefaultProperty(nameof(Nombre))]
 public class Producto(Session session) : EntidadBase(session)
 {
     private Categoria? _categoria;
@@ -39,12 +40,14 @@ public class Producto(Session session) : EntidadBase(session)
     private bool _esServicio;
     private bool _esConsumible;
     private bool _esCompuesto;
+    private UnidadFacturacion? _unidadFacturacion;
     private bool _estaActivo;
     private MediaDataObject? _foto;
     private MediaDataObject? _miniatura;
     private string? _nombre;
     private string? _notas;
     private decimal _precioVenta;
+    private PlantillaAtributo? _plantillaAtributos;
 
     [RuleUniqueValue]
     [XafDisplayName("Código")]
@@ -222,6 +225,21 @@ public class Producto(Session session) : EntidadBase(session)
         }
     }
 
+    [XafDisplayName("Unidad de Facturación")]
+    public UnidadFacturacion? UnidadFacturacion
+    {
+        get => _unidadFacturacion;
+        set => SetPropertyValue(nameof(UnidadFacturacion), ref _unidadFacturacion, value);
+    }
+
+    [XafDisplayName("Plantilla de Atributos")]
+    [DataSourceCriteria("EstaActivo = True")]
+    public PlantillaAtributo? PlantillaAtributos
+    {
+        get => _plantillaAtributos;
+        set => SetPropertyValue(nameof(PlantillaAtributos), ref _plantillaAtributos, value);
+    }
+
     [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Notas")]
     public string? Notas
@@ -308,14 +326,19 @@ public class Producto(Session session) : EntidadBase(session)
     public XPCollection<Imagen> Imagenes => GetCollection<Imagen>();
 
     [DevExpress.Xpo.Aggregated]
-    [Association("Producto-Adjuntos")]
-    [XafDisplayName("Adjuntos")]
-    public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
+    [Association("Producto-Documentos")]
+    [XafDisplayName("Documentos")]
+    public XPCollection<Documento> Documentos => GetCollection<Documento>();
 
     [DevExpress.Xpo.Aggregated]
     [Association("Producto-PreciosPorCantidad")]
     [XafDisplayName("Precios por Cantidad")]
     public XPCollection<PrecioPorCantidad> PreciosPorCantidad => GetCollection<PrecioPorCantidad>();
+
+    [DevExpress.Xpo.Aggregated]
+    [Association("Producto-PreciosEspeciales")]
+    [XafDisplayName("Precios Especiales (Clientes/Proveedores)")]
+    public XPCollection<PrecioEspecial> PreciosEspeciales => GetCollection<PrecioEspecial>();
 
     [Association("Producto-StockActual")]
     [XafDisplayName("Stock Actual")]
@@ -329,6 +352,11 @@ public class Producto(Session session) : EntidadBase(session)
     [Association("Componente-ProductosPadres")]
     [XafDisplayName("Donde es Componente")]
     public XPCollection<ProductoCompuestoItem> DondeEsComponente => GetCollection<ProductoCompuestoItem>();
+
+    [DevExpress.Xpo.Aggregated]
+    [Association("Producto-Atributos")]
+    [XafDisplayName("Atributos")]
+    public XPCollection<ProductoAtributoValor> Atributos => GetCollection<ProductoAtributoValor>();
 
     [Action(Caption = "Recalcular Precios desde Componentes",
         ConfirmationMessage = "¿Desea recalcular el coste y precio de venta a partir de sus componentes?",
@@ -406,6 +434,40 @@ public class Producto(Session session) : EntidadBase(session)
                 }
             }
         }
+
+        if (propertyName == nameof(PlantillaAtributos) && !IsLoading && !IsSaving)
+        {
+            GenerarAtributosDesdePlantilla();
+        }
+    }
+
+    private void GenerarAtributosDesdePlantilla()
+    {
+        if (PlantillaAtributos == null) return;
+
+        var atributosExistentes = Atributos.ToList();
+        var orden = 0;
+
+        foreach (var linea in PlantillaAtributos.Lineas.OrderBy(l => l.Orden))
+        {
+            orden++;
+            var valorExistente = atributosExistentes.FirstOrDefault(a => a.Atributo == linea.Atributo);
+
+            if (valorExistente == null)
+            {
+                valorExistente = new ProductoAtributoValor(Session)
+                {
+                    Producto = this,
+                    Atributo = linea.Atributo,
+                    Valor = linea.ValorPorDefecto,
+                    Orden = linea.Orden != 0 ? linea.Orden : orden
+                };
+            }
+            else
+            {
+                valorExistente.Orden = linea.Orden != 0 ? linea.Orden : orden;
+            }
+        }
     }
 
     public override void AfterConstruction()
@@ -435,6 +497,7 @@ public class Producto(Session session) : EntidadBase(session)
 
         CuentaVentas ??= companyInfo.CuentaVentasPorDefecto;
         CuentaCompras ??= companyInfo.CuentaComprasPorDefecto;
+        UnidadFacturacion ??= companyInfo.UnidadFacturacionPredeterminada;
 
         foreach (var tax in companyInfo.ImpuestosVentas)
         {

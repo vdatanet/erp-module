@@ -1,7 +1,18 @@
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Xpo;
+using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.BusinessObjects.Productos;
+using erp.Module.BusinessObjects.Base.Compras;
+using erp.Module.BusinessObjects.Base.Ventas;
+using erp.Module.BusinessObjects.Compras;
+using erp.Module.BusinessObjects.Ventas;
+using erp.Module.BusinessObjects.Tpv;
+using erp.Module.BusinessObjects.Servicios.PartesTrabajo;
 using erp.Module.BusinessObjects.Configuraciones;
+using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Contabilidad;
+using erp.Module.Factories;
 using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Impuestos;
 
@@ -22,9 +33,11 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
         return objectSpace;
     }
 
-    public void CreateInitialInformacionEmpresa()
+    public void CreateInitialInformacionEmpresa(string? tenantName = null)
     {
         if (!OS.IsKnownType(typeof(InformacionEmpresa))) return;
+
+        CreateInitialUnidadesFacturacion();
 
         var informacionEmpresa = OS.FirstOrDefault<InformacionEmpresa>(i => true);
         if (informacionEmpresa == null)
@@ -34,10 +47,35 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
 
         // Siempre establecemos estos valores o nos aseguramos de que existan
         
-        if (string.IsNullOrEmpty(informacionEmpresa.Nombre)) informacionEmpresa.Nombre = "Empresa por Defecto";
-        if (string.IsNullOrEmpty(informacionEmpresa.Nif)) informacionEmpresa.Nif = "B00000000";
+        if (string.IsNullOrEmpty(informacionEmpresa.Nombre)) informacionEmpresa.Nombre = "Joan Pallàs Ribes";
+        if (string.IsNullOrEmpty(informacionEmpresa.Nif)) informacionEmpresa.Nif = "43725645T";
+        if (string.IsNullOrEmpty(informacionEmpresa.NombreComercial)) informacionEmpresa.NombreComercial = "vdata.net";
+        if (string.IsNullOrEmpty(informacionEmpresa.Direccion)) informacionEmpresa.Direccion = "C/. Vilamar, 2A";
+        if (string.IsNullOrEmpty(informacionEmpresa.CodigoPostal)) informacionEmpresa.CodigoPostal = "43820";
+        
+        informacionEmpresa.Pais ??= OS.FirstOrDefault<Pais>(p => p.Nombre == "España");
+        informacionEmpresa.Provincia ??= OS.FirstOrDefault<Provincia>(p => p.Nombre == "Tarragona");
+        informacionEmpresa.Poblacion ??= OS.FirstOrDefault<Poblacion>(p => p.Nombre == "Calafell");
+
+        if (string.IsNullOrEmpty(informacionEmpresa.Telefono)) informacionEmpresa.Telefono = "977 69 21 16";
+        if (string.IsNullOrEmpty(informacionEmpresa.CorreoElectronico)) informacionEmpresa.CorreoElectronico = "info@vdata.net";
+        if (string.IsNullOrEmpty(informacionEmpresa.SitioWeb)) informacionEmpresa.SitioWeb = "https://www.vdata.net";
         
         if (string.IsNullOrEmpty(informacionEmpresa.NombreReporteTicket)) informacionEmpresa.NombreReporteTicket = "Ticket Factura Simplificada";
+        
+        if (string.IsNullOrEmpty(informacionEmpresa.NombreArchivoConfigVeriFactu) && !string.IsNullOrEmpty(tenantName))
+        {
+            informacionEmpresa.NombreArchivoConfigVeriFactu = tenantName.Replace(".", "_") + ".cfg";
+        }
+
+        if (string.IsNullOrEmpty(informacionEmpresa.SerieCertificadoVeriFactu)) informacionEmpresa.SerieCertificadoVeriFactu = "CERT_DE_PRUEBAS";
+        if (string.IsNullOrEmpty(informacionEmpresa.NombreSistemaVeriFactu)) informacionEmpresa.NombreSistemaVeriFactu = "VDATA ERP";
+        if (string.IsNullOrEmpty(informacionEmpresa.VersionSistemaVeriFactu)) informacionEmpresa.VersionSistemaVeriFactu = "1.0.0";
+        if (string.IsNullOrEmpty(informacionEmpresa.NombreAdministradorSistemaVeriFactu)) informacionEmpresa.NombreAdministradorSistemaVeriFactu = "Joan Pallàs Ribes";
+        if (string.IsNullOrEmpty(informacionEmpresa.NifAdministradorSistemaVeriFactu)) informacionEmpresa.NifAdministradorSistemaVeriFactu = "43725645T";
+        //if (string.IsNullOrEmpty(informacionEmpresa.PrefijoUrlVeriFactu)) informacionEmpresa.PrefijoUrlVeriFactu = "https://www1.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/VeriFactuFE.wsdl";
+        //if (string.IsNullOrEmpty(informacionEmpresa.PrefijoUrlValidacionVeriFactu)) informacionEmpresa.PrefijoUrlValidacionVeriFactu = "https://www1.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/VeriFactuFE_Validacion.wsdl";
+        if (string.IsNullOrEmpty(informacionEmpresa.TextoDefectoVeriFactu)) informacionEmpresa.TextoDefectoVeriFactu = "Servicios de consultoría y asesoramiento técnico correspondientes al periodo....";
         
         if (string.IsNullOrEmpty(informacionEmpresa.PrefijoAsientosPorDefecto)) informacionEmpresa.PrefijoAsientosPorDefecto = "AS";
         if (string.IsNullOrEmpty(informacionEmpresa.PrefijoOfertasCompraPorDefecto)) informacionEmpresa.PrefijoOfertasCompraPorDefecto = "CO";
@@ -61,13 +99,24 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
         if (informacionEmpresa.PaddingNumero == 0) informacionEmpresa.PaddingNumero = 5;
         if (informacionEmpresa.PaddingCuentaContable == 0) informacionEmpresa.PaddingCuentaContable = 10;
 
-        informacionEmpresa.CuentaPadreClientes ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "43000");
-        informacionEmpresa.CuentaPadreProveedores ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "40000");
-        informacionEmpresa.CuentaPadreAcreedores ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "41000");
-        informacionEmpresa.CuentaComprasPorDefecto ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "6000000000");
-        informacionEmpresa.CuentaVentasPorDefecto ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "7000000000");
-        informacionEmpresa.CuentaCobrosPorDefecto ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "5720000000");
-        informacionEmpresa.CuentaPagosPorDefecto ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "5720000000");
+        int paddingCC = informacionEmpresa.PaddingCuentaContable;
+
+        informacionEmpresa.CuentaPadreClientes ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "430".PadRight(paddingCC, '0').Substring(0, 5) || c.Codigo == "430" || c.Codigo == "43000");
+        informacionEmpresa.CuentaPadreProveedores ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "400".PadRight(paddingCC, '0').Substring(0, 5) || c.Codigo == "400" || c.Codigo == "40000");
+        informacionEmpresa.CuentaPadreAcreedores ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "410".PadRight(paddingCC, '0').Substring(0, 5) || c.Codigo == "410" || c.Codigo == "41000");
+        
+        informacionEmpresa.CuentaComprasPorDefecto ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "600".PadRight(paddingCC, '0'));
+        informacionEmpresa.CuentaVentasPorDefecto ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "700".PadRight(paddingCC, '0'));
+        informacionEmpresa.CuentaCobrosPorDefecto ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "572".PadRight(paddingCC, '0'));
+        informacionEmpresa.CuentaPagosPorDefecto ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "572".PadRight(paddingCC, '0'));
+        
+        informacionEmpresa.DiarioVentasPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Ventas");
+        informacionEmpresa.DiarioComprasPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Compras");
+        informacionEmpresa.DiarioTesoreriaPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Tesorería");
+        informacionEmpresa.DiarioOperacionesVariasPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Operaciones Varias");
+        informacionEmpresa.DiarioAperturaPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Apertura");
+        informacionEmpresa.DiarioCierrePorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Cierre");
+        informacionEmpresa.DiarioRegularizacionPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Regularización");
         informacionEmpresa.PosicionFiscalPorDefecto ??= OS.FirstOrDefault<PosicionFiscal>(p => p.Nombre == "Régimen Nacional");
         informacionEmpresa.ZonaHorariaPorDefecto ??= OS.FirstOrDefault<ZonaHoraria>(z => z.IdZonaHoraria == "Europe/Madrid");
 
@@ -93,6 +142,127 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
             }
         }
 
+        informacionEmpresa.UnidadFacturacionPredeterminada ??= OS.FirstOrDefault<UnidadFacturacion>(u => u.Nombre == "Unidad");
+
         OS.CommitChanges(); // Nos aseguramos de guardar la empresa inicial para evitar nulos en otras partes si es necesario
+        
+        InitializeAllSequences(informacionEmpresa);
+    }
+
+    private void CreateInitialUnidadesFacturacion()
+    {
+        var unidades = new[]
+        {
+            (Nombre: "Unidad", Abreviatura: "ud"),
+            (Nombre: "Hora", Abreviatura: "h"),
+            (Nombre: "Quilo", Abreviatura: "kg"),
+            (Nombre: "Metro", Abreviatura: "m"),
+            (Nombre: "Litro", Abreviatura: "l"),
+            (Nombre: "Paquete", Abreviatura: "paq"),
+            (Nombre: "Caja", Abreviatura: "caja"),
+            (Nombre: "Mes", Abreviatura: "mes"),
+            (Nombre: "Día", Abreviatura: "día")
+        };
+
+        foreach (var u in unidades)
+        {
+            var unit = OS.FirstOrDefault<UnidadFacturacion>(x => x.Nombre == u.Nombre);
+            if (unit == null)
+            {
+                unit = OS.CreateObject<UnidadFacturacion>();
+                unit.Nombre = u.Nombre;
+                unit.Abreviatura = u.Abreviatura;
+            }
+        }
+        OS.CommitChanges();
+    }
+
+    private void InitializeAllSequences(InformacionEmpresa companyInfo)
+    {
+        if (OS is not XPObjectSpace xpOs) return;
+        var session = xpOs.Session;
+        var padding = companyInfo.PaddingNumero;
+        var anio = companyInfo.GetLocalTime().Year;
+        var mes = companyInfo.GetLocalTime().Month.ToString("D2");
+
+        // Tipos de documentos y sus prefijos
+        var docTypes = new (Type Type, string Prefix)[]
+        {
+            (typeof(OfertaVenta), companyInfo.PrefijoOfertasVentaPorDefecto ?? ""),
+            (typeof(PedidoVenta), companyInfo.PrefijoPedidosPorDefecto ?? ""),
+            (typeof(AlbaranVenta), companyInfo.PrefijoAlbaranesVentaPorDefecto ?? ""),
+            (typeof(FacturaVenta), companyInfo.PrefijoFacturasVentaPorDefecto ?? ""),
+            (typeof(FacturaSimplificada), companyInfo.PrefijoFacturasSimplificadasPorDefecto ?? ""),
+            (typeof(OfertaCompra), companyInfo.PrefijoOfertasCompraPorDefecto ?? ""),
+            (typeof(PedidoCompra), companyInfo.PrefijoPedidosCompraPorDefecto ?? ""),
+            (typeof(AlbaranCompra), companyInfo.PrefijoAlbaranesCompraPorDefecto ?? ""),
+            (typeof(FacturaCompra), companyInfo.PrefijoFacturasCompraPorDefecto ?? ""),
+            (typeof(ParteTrabajo), companyInfo.PrefijoParteTrabajoPorDefecto ?? ""),
+        };
+
+        foreach (var (type, prefix) in docTypes)
+        {
+            if (string.IsNullOrEmpty(prefix)) continue;
+
+            var sequenceName = companyInfo.TipoNumeracionDocumento switch
+            {
+                TipoNumeracionDocumento.PrefijoNumero => $"{type.FullName}",
+                TipoNumeracionDocumento.PrefijoEjercicioNumero => $"{type.FullName}.{anio}",
+                TipoNumeracionDocumento.PrefijoEjercicioMesNumero => $"{type.FullName}.{anio}.{mes}",
+                _ => $"{type.FullName}.{anio}"
+            };
+
+            SequenceFactory.EnsureSequenceExists(session, sequenceName, prefix, padding);
+        }
+
+        // Contactos (estos suelen ser Prefijo/Número siempre según Contacto.cs)
+        var contactTypes = new (Type Type, string Prefix)[]
+        {
+            (typeof(Cliente), companyInfo.PrefijoClientes ?? ""),
+            (typeof(Proveedor), companyInfo.PrefijoProveedores ?? ""),
+            (typeof(Acreedor), companyInfo.PrefijoAcreedores ?? ""),
+            (typeof(Empleado), companyInfo.PrefijoEmpleados ?? ""),
+        };
+
+        foreach (var (type, prefix) in contactTypes)
+        {
+            if (string.IsNullOrEmpty(prefix)) continue;
+
+            var sequenceName = companyInfo.TipoNumeracionDocumento switch
+            {
+                TipoNumeracionDocumento.PrefijoNumero => $"{type.FullName}",
+                TipoNumeracionDocumento.PrefijoEjercicioNumero => $"{type.FullName}.{anio}",
+                TipoNumeracionDocumento.PrefijoEjercicioMesNumero => $"{type.FullName}.{anio}.{mes}",
+                _ => $"{type.FullName}.{anio}"
+            };
+
+            SequenceFactory.EnsureSequenceExists(session, sequenceName, prefix, padding);
+        }
+
+        // TPV (Requieren código de TPV, inicializamos para un TPV '01' por defecto si existe o genérico)
+        var tpv = OS.FirstOrDefault<BusinessObjects.Tpv.Tpv>(t => true);
+        var tpvCodigo = tpv?.Codigo ?? "01";
+        
+        var tpvTypes = new (Type Type, string Prefix)[]
+        {
+            (typeof(SesionTpv), companyInfo.PrefijoSesionTpvPorDefecto ?? ""),
+            (typeof(VentaTpv), companyInfo.PrefijoVentaTpvPorDefecto ?? ""),
+        };
+
+        foreach (var (type, prefix) in tpvTypes)
+        {
+            if (string.IsNullOrEmpty(prefix)) continue;
+            
+            var sequenceName = companyInfo.TipoNumeracionDocumento switch
+            {
+                TipoNumeracionDocumento.PrefijoNumero => $"{type.FullName}.{tpvCodigo}",
+                TipoNumeracionDocumento.PrefijoEjercicioNumero => $"{type.FullName}.{anio}.{tpvCodigo}",
+                TipoNumeracionDocumento.PrefijoEjercicioMesNumero => $"{type.FullName}.{anio}.{mes}.{tpvCodigo}",
+                _ => $"{type.FullName}.{anio}.{tpvCodigo}"
+            };
+            
+            var fullPrefix = $"{prefix}/{tpvCodigo}";
+            SequenceFactory.EnsureSequenceExists(session, sequenceName, fullPrefix, padding);
+        }
     }
 }

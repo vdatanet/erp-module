@@ -1,15 +1,18 @@
+using System.ComponentModel;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Editors;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using DevExpress.Xpo.Metadata;
+using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Impuestos;
-using erp.Module.BusinessObjects.Productos;
 using erp.Module.Helpers.Comun;
 using erp.Module.Helpers.Contactos;
+using erp.Module.Services.Productos;
 
 namespace erp.Module.BusinessObjects.Base.Ventas;
 
@@ -23,13 +26,16 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
     private decimal _importeTotal;
     private string? _nombreProducto;
     private string? _notas;
-    private decimal _porcentajeDescuento;
+    private decimal _descuento1;
+    private decimal _descuento2;
+    private decimal _descuento3;
     private decimal _precioUnitario;
     private Producto? _producto;
     private CuentaContable? _cuentaContable;
     private decimal _porcentajeComision;
     private decimal _importeComisionFijo;
     private DocumentoVentaGrupo? _grupo;
+    private UnidadFacturacion? _unidadFacturacion;
 
     [Association("DocumentoVenta-Lineas")]
     [XafDisplayName("Documento Venta")]
@@ -53,6 +59,13 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
     {
         get => _cuentaContable;
         set => SetPropertyValue(nameof(CuentaContable), ref _cuentaContable, value);
+    }
+
+    [XafDisplayName("Unidad de Facturación")]
+    public UnidadFacturacion? UnidadFacturacion
+    {
+        get => _unidadFacturacion;
+        set => SetPropertyValue(nameof(UnidadFacturacion), ref _unidadFacturacion, value);
     }
 
     [ImmediatePostData]
@@ -81,6 +94,7 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
         if (companyInfo != null)
         {
             CuentaContable = companyInfo.CuentaVentasPorDefecto;
+            UnidadFacturacion = companyInfo.UnidadFacturacionPredeterminada;
             foreach (var tax in companyInfo.ImpuestosVentas.OrderBy(t => t.Secuencia))
                 TiposImpuestoVenta.Add(tax);
         }
@@ -99,7 +113,22 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
         NombreProducto = value.Nombre;
         Notas = value.Notas;
         PrecioUnitario = value.PrecioVenta;
+
+        if (DocumentoVenta?.Cliente != null)
+        {
+            var localTime = InformacionEmpresaHelper.GetLocalTime(Session);
+            var precioEspecial = PrecioEspecialService.GetPrecioEspecialActivo(value, DocumentoVenta.Cliente, ContextoPrecio.Venta, localTime);
+            if (precioEspecial != null)
+            {
+                PrecioUnitario = precioEspecial.Precio;
+                Descuento1 = precioEspecial.Descuento1;
+                Descuento2 = precioEspecial.Descuento2;
+                Descuento3 = precioEspecial.Descuento3;
+            }
+        }
+
         CuentaContable = value.CuentaVentas ?? CuentaContable;
+        UnidadFacturacion = value.UnidadFacturacion ?? UnidadFacturacion;
 
         if (value.ImpuestosVentas.Count > 0)
         {
@@ -173,16 +202,73 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
     [ImmediatePostData]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
-    [XafDisplayName("% Descuento")]
-    public decimal PorcentajeDescuento
+    [XafDisplayName("% Descuento 1")]
+    public decimal Descuento1
     {
-        get => _porcentajeDescuento;
+        get => _descuento1;
         set
         {
-            var modified = SetPropertyValue(nameof(PorcentajeDescuento), ref _porcentajeDescuento, value);
+            var modified = SetPropertyValue(nameof(Descuento1), ref _descuento1, value);
             if (!modified || IsLoading || IsSaving || IsDeleted) return;
             RecalcularYNotificar();
+            OnChanged(nameof(TextoDescuento));
         }
+    }
+
+    [ImmediatePostData]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    [XafDisplayName("% Descuento 2")]
+    public decimal Descuento2
+    {
+        get => _descuento2;
+        set
+        {
+            var modified = SetPropertyValue(nameof(Descuento2), ref _descuento2, value);
+            if (!modified || IsLoading || IsSaving || IsDeleted) return;
+            RecalcularYNotificar();
+            OnChanged(nameof(TextoDescuento));
+        }
+    }
+
+    [ImmediatePostData]
+    [ModelDefault("DisplayFormat", "{0:n2}")]
+    [ModelDefault("EditMask", "n2")]
+    [XafDisplayName("% Descuento 3")]
+    public decimal Descuento3
+    {
+        get => _descuento3;
+        set
+        {
+            var modified = SetPropertyValue(nameof(Descuento3), ref _descuento3, value);
+            if (!modified || IsLoading || IsSaving || IsDeleted) return;
+            RecalcularYNotificar();
+            OnChanged(nameof(TextoDescuento));
+        }
+    }
+
+    [XafDisplayName("Descuento")]
+    [ToolTip("Ejemplo: 10+5+2")]
+    [NonPersistent]
+    public string? TextoDescuento
+    {
+        get => DiscountParser.Format(Descuento1, Descuento2, Descuento3);
+        set
+        {
+            var (d1, d2, d3) = DiscountParser.Parse(value);
+            Descuento1 = d1;
+            Descuento2 = d2;
+            Descuento3 = d3;
+            OnChanged(nameof(TextoDescuento));
+        }
+    }
+
+    [Obsolete("Use Descuento1")]
+    [Browsable(false)]
+    public decimal PorcentajeDescuento
+    {
+        get => Descuento1;
+        set => Descuento1 = value;
     }
 
     [XafDisplayName("% Comisión")]
@@ -296,7 +382,7 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
 
     private void EstablecerBaseImponible()
     {
-        BaseImponible = AmountCalculator.GetTaxableAmount(Cantidad, PrecioUnitario, PorcentajeDescuento);
+        BaseImponible = AmountCalculator.GetTaxableAmountCascading(Cantidad, PrecioUnitario, Descuento1, Descuento2, Descuento3);
     }
 
     private void ReconstruirImpuestos()

@@ -1,11 +1,13 @@
 using System.ComponentModel;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Editors;
+using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using DevExpress.Persistent.BaseImpl;
 using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Base.Comun;
@@ -54,6 +56,9 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private Diario? _diarioVentasPorDefecto;
     private Diario? _diarioTesoreriaPorDefecto;
     private Diario? _diarioOperacionesVariasPorDefecto;
+    private Diario? _diarioAperturaPorDefecto;
+    private Diario? _diarioCierrePorDefecto;
+    private Diario? _diarioRegularizacionPorDefecto;
     private string? _nifAdministradorSistemaVeriFactu;
     private string? _nombreAdministradorSistemaVeriFactu;
     private string? _nombreArchivoConfigVeriFactu;
@@ -82,17 +87,23 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private string? _serieCertificadoVeriFactu;
     private string? _textoDefectoVeriFactu;
     private string? _versionSistemaVeriFactu;
+    private string? _oneSignalAppId;
+    private string? _oneSignalRestApiKey;
+    private string? _oneSignalUserAuthKey;
+    private string? _oneSignalDefaultEmailFrom;
+    private string? _oneSignalDefaultEmailName;
     private MediaDataObject? _logo;
     private bool _activarVeriFactu;
     private bool _activarFacturae;
     private string? _serieCertificadoFacturae;
     private string? _nombreReporteTicket;
-    private bool _impresionDirectaTicket;
     private string? _unidadOrganicaOficinaContable;
     private string? _unidadOrganicaOrganoGestor;
     private string? _unidadOrganicaUnidadTramitadora;
     private int _paddingNumero;
     private int _paddingCuentaContable;
+    private TipoNumeracionDocumento _tipoNumeracionDocumento;
+    private UnidadFacturacion? _unidadFacturacionPredeterminada;
 
     [Size(255)]
     [XafDisplayName("Nombre")]
@@ -201,6 +212,13 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(DiarioVentasPorDefecto), ref _diarioVentasPorDefecto, value);
     }
 
+    [XafDisplayName("Unidad de Facturación Predeterminada")]
+    public UnidadFacturacion? UnidadFacturacionPredeterminada
+    {
+        get => _unidadFacturacionPredeterminada;
+        set => SetPropertyValue(nameof(UnidadFacturacionPredeterminada), ref _unidadFacturacionPredeterminada, value);
+    }
+
     [DataSourceCriteria("EstaActivo = True")]
     [XafDisplayName("Diario Compras por Defecto")]
     public Diario? DiarioComprasPorDefecto
@@ -223,6 +241,30 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     {
         get => _diarioOperacionesVariasPorDefecto;
         set => SetPropertyValue(nameof(DiarioOperacionesVariasPorDefecto), ref _diarioOperacionesVariasPorDefecto, value);
+    }
+
+    [DataSourceCriteria("EstaActivo = True")]
+    [XafDisplayName("Diario Apertura por Defecto")]
+    public Diario? DiarioAperturaPorDefecto
+    {
+        get => _diarioAperturaPorDefecto;
+        set => SetPropertyValue(nameof(DiarioAperturaPorDefecto), ref _diarioAperturaPorDefecto, value);
+    }
+
+    [DataSourceCriteria("EstaActivo = True")]
+    [XafDisplayName("Diario Cierre por Defecto")]
+    public Diario? DiarioCierrePorDefecto
+    {
+        get => _diarioCierrePorDefecto;
+        set => SetPropertyValue(nameof(DiarioCierrePorDefecto), ref _diarioCierrePorDefecto, value);
+    }
+
+    [DataSourceCriteria("EstaActivo = True")]
+    [XafDisplayName("Diario Regularización por Defecto")]
+    public Diario? DiarioRegularizacionPorDefecto
+    {
+        get => _diarioRegularizacionPorDefecto;
+        set => SetPropertyValue(nameof(DiarioRegularizacionPorDefecto), ref _diarioRegularizacionPorDefecto, value);
     }
 
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
@@ -492,6 +534,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(TextoDefectoVeriFactu), ref _textoDefectoVeriFactu, value);
     }
 
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Archivo Config VeriFactu")]
     public string? NombreArchivoConfigVeriFactu
     {
@@ -601,15 +644,15 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     [XafDisplayName("Padding Número")]
     public int PaddingNumero
     {
-        get => _paddingNumero;
+        get => _paddingNumero == 0 ? 5 : _paddingNumero;
         set => SetPropertyValue(nameof(PaddingNumero), ref _paddingNumero, value);
     }
 
     [RuleRange("InformacionEmpresa_PaddingCuentaContable_Range", DefaultContexts.Save, 1, 15)]
-    [XafDisplayName("Padding Cuenta Contable Contable")]
+    [XafDisplayName("Padding Cuenta Contable")]
     public int PaddingCuentaContable
     {
-        get => _paddingCuentaContable;
+        get => _paddingCuentaContable == 0 ? 10 : _paddingCuentaContable;
         set => SetPropertyValue(nameof(PaddingCuentaContable), ref _paddingCuentaContable, value);
     }
 
@@ -627,11 +670,64 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(NombreReporteTicket), ref _nombreReporteTicket, value);
     }
 
-    [XafDisplayName("Impresión Directa Ticket")]
-    public bool ImpresionDirectaTicket
+    [XafDisplayName("Tipo Numeración Documento")]
+    public TipoNumeracionDocumento TipoNumeracionDocumento
     {
-        get => _impresionDirectaTicket;
-        set => SetPropertyValue(nameof(ImpresionDirectaTicket), ref _impresionDirectaTicket, value);
+        get => _tipoNumeracionDocumento;
+        set => SetPropertyValue(nameof(TipoNumeracionDocumento), ref _tipoNumeracionDocumento, value);
+    }
+
+    [Size(255)]
+    [XafDisplayName("OneSignal App ID")]
+    [Category("OneSignal")]
+    public string? OneSignalAppId
+    {
+        get => _oneSignalAppId;
+        set => SetPropertyValue(nameof(OneSignalAppId), ref _oneSignalAppId, value);
+    }
+
+    [Size(255)]
+    [XafDisplayName("OneSignal REST API Key")]
+    [Category("OneSignal")]
+    public string? OneSignalRestApiKey
+    {
+        get => _oneSignalRestApiKey;
+        set => SetPropertyValue(nameof(OneSignalRestApiKey), ref _oneSignalRestApiKey, value);
+    }
+
+    [Size(255)]
+    [XafDisplayName("OneSignal User Auth Key")]
+    [Category("OneSignal")]
+    public string? OneSignalUserAuthKey
+    {
+        get => _oneSignalUserAuthKey;
+        set => SetPropertyValue(nameof(OneSignalUserAuthKey), ref _oneSignalUserAuthKey, value);
+    }
+
+    [Size(255)]
+    [XafDisplayName("OneSignal Default Email From")]
+    [Category("OneSignal")]
+    public string? OneSignalDefaultEmailFrom
+    {
+        get => _oneSignalDefaultEmailFrom ?? CorreoElectronico;
+        set => SetPropertyValue(nameof(OneSignalDefaultEmailFrom), ref _oneSignalDefaultEmailFrom, value);
+    }
+
+    [Size(255)]
+    [XafDisplayName("OneSignal Default Email Name")]
+    [Category("OneSignal")]
+    public string? OneSignalDefaultEmailName
+    {
+        get => _oneSignalDefaultEmailName ?? Nombre;
+        set => SetPropertyValue(nameof(OneSignalDefaultEmailName), ref _oneSignalDefaultEmailName, value);
+    }
+
+    public override void AfterConstruction()
+    {
+        base.AfterConstruction();
+        TipoNumeracionDocumento = TipoNumeracionDocumento.PrefijoEjercicioNumero;
+        PaddingNumero = 5;
+        PaddingCuentaContable = 10;
     }
 
     public DateTime GetLocalTime()
@@ -639,4 +735,11 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         var tz = ZonaHorariaPorDefecto?.GetTimeZoneInfo();
         return tz != null ? TimeZoneInfo.ConvertTime(DateTime.UtcNow, tz) : DateTime.Now;
     }
+}
+
+public enum TipoNumeracionDocumento
+{
+    [XafDisplayName("Prefijo/Número")] PrefijoNumero,
+    [XafDisplayName("Prefijo/Ejercicio/Número")] PrefijoEjercicioNumero,
+    [XafDisplayName("Prefijo/Ejercicio/Mes/Número")] PrefijoEjercicioMesNumero
 }

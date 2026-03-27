@@ -50,7 +50,7 @@ public class FacturaSimplificada(Session session) : FacturaBase(session)
 
     public override bool EsValida()
     {
-        return EstadoVeriFactu != ValoresEstadoVeriFactu.Enviado
+        return EstadoVeriFactu != EstadoVeriFactu.Enviado
                && !string.IsNullOrEmpty(Texto)
                && Impuestos.Count > 0;
     }
@@ -90,7 +90,7 @@ public class FacturaSimplificada(Session session) : FacturaBase(session)
                 NombreProducto = lineaOriginal.NombreProducto,
                 Cantidad = -lineaOriginal.Cantidad,
                 PrecioUnitario = lineaOriginal.PrecioUnitario,
-                PorcentajeDescuento = lineaOriginal.PorcentajeDescuento
+                Descuento1 = lineaOriginal.Descuento1
             };
             foreach (var impOriginal in lineaOriginal.Impuestos)
             {
@@ -129,7 +129,7 @@ public class FacturaSimplificada(Session session) : FacturaBase(session)
                 NombreProducto = lineaOriginal.NombreProducto,
                 Cantidad = lineaOriginal.Cantidad,
                 PrecioUnitario = lineaOriginal.PrecioUnitario,
-                PorcentajeDescuento = lineaOriginal.PorcentajeDescuento
+                Descuento1 = lineaOriginal.Descuento1
             };
             foreach (var impOriginal in lineaOriginal.Impuestos)
             {

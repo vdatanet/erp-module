@@ -8,6 +8,7 @@ using DevExpress.Persistent.BaseImpl.PermissionPolicy;
 using erp.Module.BusinessObjects;
 using erp.Module.BusinessObjects.Alquileres;
 using erp.Module.BusinessObjects.Auxiliares;
+using erp.Module.BusinessObjects.Documentos;
 using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Compras;
 using erp.Module.BusinessObjects.Configuraciones;
@@ -366,7 +367,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             auxiliaresRole.Name = "Auxiliares";
         }
 
-        auxiliaresRole.AddTypePermissionsRecursively<Adjunto>(SecurityOperations.FullAccess,
+        auxiliaresRole.AddTypePermissionsRecursively<Documento>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
         auxiliaresRole.AddTypePermissionsRecursively<Imagen>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
@@ -494,6 +495,12 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         productosRole.AddTypePermissionsRecursively<PrecioPorCantidad>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
         productosRole.AddTypePermissionsRecursively<Producto>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        productosRole.AddTypePermissionsRecursively<UnidadFacturacion>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        productosRole.AddTypePermissionsRecursively<Atributo>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
+        productosRole.AddTypePermissionsRecursively<PlantillaAtributo>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
 
         productosRole.AddNavigationPermission(@"Application/NavigationItems/Items/Productos",

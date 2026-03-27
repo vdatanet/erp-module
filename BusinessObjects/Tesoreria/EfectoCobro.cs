@@ -41,9 +41,16 @@ public class EfectoCobro(Session session) : EfectoBase(session)
     protected override void OnChanged(string propertyName, object oldValue, object newValue)
     {
         base.OnChanged(propertyName, oldValue, newValue);
-        if (!IsLoading && !IsSaving && propertyName == nameof(Importe) && Reserva != null)
+        if (IsLoading || IsSaving) return;
+
+        if (propertyName == nameof(Importe) && Reserva != null)
         {
             Reserva.SumarPagos(true);
+        }
+
+        if (propertyName is nameof(Estado) or nameof(Importe))
+        {
+            Factura?.ActualizarEstadoCobro();
         }
     }
 }

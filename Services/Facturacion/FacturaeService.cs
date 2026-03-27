@@ -157,12 +157,12 @@ public class FacturaeService : IFacturaeService
             l.TotalCost = (decimal)line.BaseImponible;
             l.GrossAmount = (decimal)(line.Cantidad * line.PrecioUnitario);
 
-            if (line.PorcentajeDescuento > 0)
+            if (line.Descuento1 > 0)
             {
                 var disc = new Discount();
                 disc.DiscountReason = "Descuento comercial";
-                disc.DiscountRate = (decimal)line.PorcentajeDescuento;
-                disc.DiscountAmount = (decimal)(line.Cantidad * line.PrecioUnitario * (line.PorcentajeDescuento / 100.0m));
+                disc.DiscountRate = (decimal)line.Descuento1;
+                disc.DiscountAmount = (decimal)(line.Cantidad * line.PrecioUnitario * (line.Descuento1 / 100.0m));
                 l.DiscountsAndRebates = new[] { disc };
             }
 

@@ -22,7 +22,6 @@ namespace erp.Module.BusinessObjects.Contactos;
 public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVentas
 {
     private Banco? _bancoPredeterminado;
-    private CondicionPago? _condicionPago;
     private CuentaContable? _cuentaCobro;
     private Diario? _diarioVentas;
     private PosicionFiscal? _posicionFiscal;
@@ -45,12 +44,6 @@ public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVent
         set => SetPropertyValue(nameof(DiarioVentas), ref _diarioVentas, value);
     }
 
-    [XafDisplayName("Condiciones de Pago")]
-    public CondicionPago? CondicionPago
-    {
-        get => _condicionPago;
-        set => SetPropertyValue(nameof(CondicionPago), ref _condicionPago, value);
-    }
 
     [XafDisplayName("Posición Fiscal")]
     public PosicionFiscal? PosicionFiscal
@@ -81,9 +74,15 @@ public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVent
     [XafDisplayName("Viajeros")]
     public XPCollection<Viajero> Viajeros => new(Session, CriteriaOperator.Parse("Cliente = ?", this));
 
-    [Association("Cliente-Domicilios")]
-    [XafDisplayName("Domicilios")]
-    public XPCollection<Domicilio> Domicilios => GetCollection<Domicilio>();
+    [Association("Cliente-DireccionesEnvio")]
+    [XafDisplayName("Direcciones de Envío")]
+    [DevExpress.Xpo.Aggregated]
+    public XPCollection<Domicilio> DireccionesEnvio => GetCollection<Domicilio>();
+
+    [Association("Cliente-DireccionesDIR")]
+    [XafDisplayName("Direcciones DIR (e-Factura)")]
+    [DevExpress.Xpo.Aggregated]
+    public XPCollection<Domicilio> DireccionesDIR => GetCollection<Domicilio>();
 
     [Association("Cliente-Oportunidades")]
     [XafDisplayName("Oportunidades")]
@@ -184,9 +183,8 @@ public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVent
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null) return;
 
-        _cuentaCobro = companyInfo.CuentaCobrosPorDefecto ?? CuentaContable;
-        _diarioVentas = companyInfo.DiarioVentasPorDefecto;
-        _posicionFiscal = companyInfo.PosicionFiscalPorDefecto;
-        _condicionPago = companyInfo.CondicionPagoPorDefecto;
+        _cuentaCobro ??= companyInfo.CuentaCobrosPorDefecto ?? CuentaContable;
+        _diarioVentas ??= companyInfo.DiarioVentasPorDefecto;
+        _posicionFiscal ??= companyInfo.PosicionFiscalPorDefecto;
     }
 }

@@ -6,74 +6,101 @@ using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.Helpers.Comun;
 using erp.Module.Helpers.Contactos;
+using Microsoft.Extensions.Logging;
 using VeriFactu.Business;
 using VeriFactu.Config;
 
 namespace erp.Module.Services.Facturacion;
 
-public class VeriFactuService
+public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapter veriFactuAdapter)
 {
-    public void SendFactura(IObjectSpace objectSpace, FacturaBase invoice)
+    public record SendResult(bool Success, string Message, string? ErrorCode = null);
+
+    public SendResult SendFactura(IObjectSpace objectSpace, FacturaBase invoice)
     {
         ArgumentNullException.ThrowIfNull(objectSpace);
         ArgumentNullException.ThrowIfNull(invoice);
 
-        ConfigureVeriFactu(objectSpace);
+        try
+        {
+            var companyInfo = objectSpace.FindObject<InformacionEmpresa>(null);
+            if (companyInfo == null)
+                return new SendResult(false, "No se encontró la configuración de la empresa.");
 
-        if (!invoice.EsValida())
-            throw new UserFriendlyException(
-                "La factura no es válida para el envío a VeriFactu. Revise que tenga Cliente, Texto e Impuestos.");
+            var validationResult = ValidateFiscalData(invoice, companyInfo);
+            if (!validationResult.Success)
+                return validationResult;
 
-        var companyInfo = objectSpace.FindObject<InformacionEmpresa>(null);
+            PrepareInvoice(objectSpace, invoice);
 
-        if (invoice.Fecha == DateTime.MinValue) invoice.Fecha = InformacionEmpresaHelper.GetLocalTime(objectSpace).Date;
-        if (string.IsNullOrEmpty(invoice.Secuencia)) invoice.AsignarNumero();
+            logger.LogInformation("Iniciando envío de factura {Secuencia} a VeriFactu. Tenant: {Tenant}",
+                invoice.Secuencia, companyInfo.NombreArchivoConfigVeriFactu);
 
-        if (companyInfo == null || string.IsNullOrEmpty(companyInfo.Nombre) || string.IsNullOrEmpty(companyInfo.Nif))
-            throw new UserFriendlyException("La información de la empresa (Nombre/NIF) es incompleta.");
+            var veriFactuInvoice = MapToVeriFactuInvoice(invoice, companyInfo);
+            
+            var startTime = DateTime.Now;
+            var response = veriFactuAdapter.SendInvoice(veriFactuInvoice, companyInfo);
+            var duration = DateTime.Now - startTime;
 
-        var veriFactuInvoice = MapToVeriFactuInvoice(invoice, companyInfo);
-        var invoiceEntry = new InvoiceEntry(veriFactuInvoice);
-        invoiceEntry.Save();
+            logger.LogInformation("Respuesta recibida en {Duration}ms. Status: {Status}", 
+                duration.TotalMilliseconds, response.Status);
 
-        UpdateInvoiceFromEntry(objectSpace, invoice, invoiceEntry, veriFactuInvoice);
+            UpdateInvoiceFromResponse(objectSpace, invoice, response, veriFactuInvoice);
+            objectSpace.CommitChanges();
 
-        objectSpace.CommitChanges();
+            if (response.Status == VeriFactuConstants.Correcto)
+            {
+                return new SendResult(true, "Factura enviada correctamente.");
+            }
 
-        if (invoiceEntry.Status != "Correcto")
-            throw new UserFriendlyException(
-                $"Error al enviar a VeriFactu: {invoiceEntry.Status} - {invoiceEntry.ErrorCode}");
+            return new SendResult(false, 
+                $"Error al enviar a VeriFactu: {response.Status} - {response.ErrorCode}", 
+                response.ErrorCode);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error técnico al enviar factura {Secuencia}", invoice.Secuencia);
+            invoice.EstadoVeriFactu = EstadoVeriFactu.ErrorTecnico;
+            invoice.RespuestaAgenciaTributaria = $"Error técnico: {ex.Message}";
+            objectSpace.CommitChanges();
+            return new SendResult(false, $"Error técnico: {ex.Message}");
+        }
     }
 
-    private void ConfigureVeriFactu(IObjectSpace objectSpace)
+    private SendResult ValidateFiscalData(FacturaBase invoice, InformacionEmpresa companyInfo)
     {
-        var companyInfo = objectSpace.FindObject<InformacionEmpresa>(null);
+        if (!invoice.EsValida())
+            return new SendResult(false, "La factura no es válida. Revise que tenga Cliente (si aplica), Texto e Impuestos.");
 
-        if (companyInfo == null || string.IsNullOrEmpty(companyInfo.NombreArchivoConfigVeriFactu)) return;
+        if (string.IsNullOrEmpty(companyInfo.Nombre) || string.IsNullOrEmpty(companyInfo.Nif))
+            return new SendResult(false, "La información de la empresa (Nombre/NIF) es incompleta.");
 
-        Settings.SetConfigFileName(companyInfo.NombreArchivoConfigVeriFactu);
+        if (invoice.ImporteTotal == 0)
+            return new SendResult(false, "No se puede enviar una factura con importe total cero.");
 
-        if (!string.IsNullOrEmpty(companyInfo.SerieCertificadoVeriFactu))
-            Settings.Current.CertificateSerial = companyInfo.SerieCertificadoVeriFactu;
+        if (invoice.Fecha > InformacionEmpresaHelper.GetLocalTime(invoice.Session))
+             return new SendResult(false, "La fecha de la factura no puede ser posterior a la fecha actual.");
 
-        if (!string.IsNullOrEmpty(companyInfo.PrefijoUrlVeriFactu))
-            Settings.Current.VeriFactuEndPointPrefix = companyInfo.PrefijoUrlVeriFactu;
+        foreach (var tax in invoice.Impuestos)
+        {
+            if (tax.TipoImpuesto == null)
+                return new SendResult(false, "Hay impuestos en las líneas sin configuración técnica.");
+            
+            if (tax.TipoImpuesto.Impuesto == null)
+                return new SendResult(false, $"El impuesto '{tax.TipoImpuesto.Nombre}' no tiene asignado el tipo VeriFactu.");
+        }
 
-        if (!string.IsNullOrEmpty(companyInfo.NombreSistemaVeriFactu))
-            Settings.Current.SistemaInformatico.NombreSistemaInformatico = companyInfo.NombreSistemaVeriFactu;
+        return new SendResult(true, string.Empty);
+    }
 
-        if (!string.IsNullOrEmpty(companyInfo.VersionSistemaVeriFactu))
-            Settings.Current.SistemaInformatico.Version = companyInfo.VersionSistemaVeriFactu;
+    private void PrepareInvoice(IObjectSpace objectSpace, FacturaBase invoice)
+    {
+        invoice.Fecha = invoice.Fecha == DateTime.MinValue
+            ? InformacionEmpresaHelper.GetLocalTime(objectSpace).Date
+            : invoice.Fecha;
 
-        if (!string.IsNullOrEmpty(companyInfo.NombreAdministradorSistemaVeriFactu))
-            Settings.Current.SistemaInformatico.NombreRazon = companyInfo.NombreAdministradorSistemaVeriFactu;
-
-        if (!string.IsNullOrEmpty(companyInfo.NifAdministradorSistemaVeriFactu))
-            Settings.Current.SistemaInformatico.NIF = companyInfo.NifAdministradorSistemaVeriFactu;
-
-        Settings.Current.SistemaInformatico.NumeroInstalacion = MachineIdentifier.GetMachineId();
-
-        Settings.Save();
+        if (string.IsNullOrEmpty(invoice.Secuencia))
+            invoice.AsignarNumero();
     }
 
     private Invoice MapToVeriFactuInvoice(FacturaBase invoice, InformacionEmpresa companyInfo)
@@ -97,10 +124,10 @@ public class VeriFactuService
                 TaxRate = tax.Tipo,
                 TaxBase = tax.BaseImponible,
                 TaxAmount = tax.ImporteImpuestos,
-                Tax = tax.Impuesto ?? default,
-                TaxType = tax.TipoOperacion ?? default,
-                TaxScheme = tax.RegimenFiscal ?? default,
-                TaxException = tax.CausaExencion ?? default
+                Tax = tax.TipoImpuesto.Impuesto ?? default,
+                TaxType = tax.TipoImpuesto.TipoOperacion ?? default,
+                TaxScheme = tax.TipoImpuesto.RegimenFiscal ?? default,
+                TaxException = tax.TipoImpuesto.CausaExencion ?? default
             };
 
             veriFactuFactura.TaxItems.Add(taxItem);
@@ -109,43 +136,56 @@ public class VeriFactuService
         return veriFactuFactura;
     }
 
-    private void UpdateInvoiceFromEntry(IObjectSpace objectSpace, FacturaBase invoice, InvoiceEntry invoiceEntry,
+    private void UpdateInvoiceFromResponse(IObjectSpace objectSpace, FacturaBase invoice, VeriFactuResponse veriFactuResponse,
         Invoice veriFactuFactura)
     {
-        invoice.EstadoEntradaFactura = invoiceEntry.Status;
-        invoice.RespuestaAgenciaTributaria = invoiceEntry.Response;
-        invoice.CodigoErrorEntradaFactura = invoiceEntry.ErrorCode;
+        invoice.EstadoEntradaFactura = veriFactuResponse.Status;
+        invoice.CodigoErrorEntradaFactura = veriFactuResponse.ErrorCode;
+        
+        // Conservar respuesta técnica completa
+        invoice.RespuestaAgenciaTributaria = veriFactuResponse.Response;
 
-        if (invoiceEntry.Status != "Correcto") return;
+        if (veriFactuResponse.Status == VeriFactuConstants.Correcto)
+        {
+            invoice.EstadoVeriFactu = EstadoVeriFactu.Enviado;
+            
+            invoice.UrlValidacion = veriFactuResponse.ValidationUrl;
+            invoice.Csv = veriFactuResponse.CSV;
 
-        var newRecord = veriFactuFactura.GetRegistroAlta();
-        invoice.UrlValidacion = newRecord.GetUrlValidate();
-        invoice.Csv = invoiceEntry.CSV;
-
-        var qr = newRecord.GetValidateQr();
-        var qrMedia = objectSpace.CreateObject<MediaDataObject>();
-        qrMedia.MediaData = qr;
-        invoice.Qr = qrMedia;
-
-        invoice.EstadoVeriFactu = FacturaBase.ValoresEstadoVeriFactu.Enviado;
+            if (veriFactuResponse.QrData != null)
+            {
+                var qrMedia = objectSpace.CreateObject<MediaDataObject>();
+                qrMedia.MediaData = veriFactuResponse.QrData;
+                invoice.Qr = qrMedia;
+            }
+        }
+        else if (veriFactuResponse.Status == VeriFactuConstants.Parcial)
+        {
+            invoice.EstadoVeriFactu = EstadoVeriFactu.EnviadoConErrores;
+        }
+        else
+        {
+            invoice.EstadoVeriFactu = EstadoVeriFactu.Rechazado;
+        }
 
         try
         {
-            if (!string.IsNullOrEmpty(invoiceEntry.Response))
+            if (!string.IsNullOrEmpty(veriFactuResponse.Response))
             {
-                var response = XDocument.Parse(invoiceEntry.Response);
+                var response = XDocument.Parse(veriFactuResponse.Response);
                 invoice.RespuestaAgenciaTributaria = response.ToString();
             }
 
-            if (invoiceEntry.Xml is { Length: > 0 })
+            if (veriFactuResponse.Xml is { Length: > 0 })
             {
-                var xmlString = Encoding.UTF8.GetString(invoiceEntry.Xml);
+                var xmlString = Encoding.UTF8.GetString(veriFactuResponse.Xml);
                 var xml = XDocument.Parse(xmlString);
                 invoice.XmlAgenciaTributaria = xml.ToString();
             }
         }
         catch (Exception ex)
         {
+            logger.LogWarning(ex, "Error procesando el detalle XML de la respuesta para factura {Secuencia}", invoice.Secuencia);
             invoice.RespuestaAgenciaTributaria += $"\nError processing XML detail: {ex.Message}";
         }
     }

@@ -408,11 +408,19 @@ public class SesionTpv(Session session) : EntidadBase(session)
             string serie = companyInfo.PrefijoSesionTpvPorDefecto ?? "TS";
             int anio = Apertura != DateTime.MinValue ? Apertura.Year : InformacionEmpresaHelper.GetLocalTime(Session).Year;
 
-            string sequenceName = $"{GetType().FullName}.{anio}.{Tpv.Codigo}";
-            string prefix = $"{serie}/{anio}/{Tpv.Codigo}";
+            var sequenceName = companyInfo.TipoNumeracionDocumento switch
+            {
+                TipoNumeracionDocumento.PrefijoNumero => $"{GetType().FullName}.{Tpv.Codigo}",
+                TipoNumeracionDocumento.PrefijoEjercicioNumero => $"{GetType().FullName}.{anio}.{Tpv.Codigo}",
+                TipoNumeracionDocumento.PrefijoEjercicioMesNumero =>
+                    $"{GetType().FullName}.{anio}.{Apertura.Month:D2}.{Tpv.Codigo}",
+                _ => $"{GetType().FullName}.{anio}.{Tpv.Codigo}"
+            };
+
+            var prefix = $"{serie}/{Tpv.Codigo}";
 
             Numero = SequenceFactory.GetNextSequence(Session, sequenceName, out var formattedSequence,
-                prefix, padding);
+                prefix, padding, companyInfo, Apertura);
             Secuencia = formattedSequence;
         }
     }
