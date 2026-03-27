@@ -22,7 +22,6 @@ namespace erp.Module.BusinessObjects.Contactos;
 public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVentas
 {
     private Banco? _bancoPredeterminado;
-    private CondicionPago? _condicionPago;
     private CuentaContable? _cuentaCobro;
     private Diario? _diarioVentas;
     private PosicionFiscal? _posicionFiscal;
@@ -45,12 +44,6 @@ public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVent
         set => SetPropertyValue(nameof(DiarioVentas), ref _diarioVentas, value);
     }
 
-    [XafDisplayName("Condiciones de Pago")]
-    public CondicionPago? CondicionPago
-    {
-        get => _condicionPago;
-        set => SetPropertyValue(nameof(CondicionPago), ref _condicionPago, value);
-    }
 
     [XafDisplayName("Posición Fiscal")]
     public PosicionFiscal? PosicionFiscal
@@ -187,6 +180,5 @@ public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVent
         _cuentaCobro ??= companyInfo.CuentaCobrosPorDefecto ?? CuentaContable;
         _diarioVentas ??= companyInfo.DiarioVentasPorDefecto;
         _posicionFiscal ??= companyInfo.PosicionFiscalPorDefecto;
-        _condicionPago ??= companyInfo.CondicionPagoPorDefecto;
     }
 }

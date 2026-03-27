@@ -43,6 +43,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private string? _codigoPostalCliente;
     private Contacto? _comercial;
     private CondicionPago? _condicionPago;
+    private MedioPago? _medioPago;
     private CuentaContable? _cuentaBanco;
     private CuentaContable? _cuentaCaja;
 
@@ -1007,6 +1008,13 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(CondicionPago), ref _condicionPago, value);
     }
 
+    [XafDisplayName("Medio de Pago")]
+    public MedioPago? MedioPago
+    {
+        get => _medioPago;
+        set => SetPropertyValue(nameof(MedioPago), ref _medioPago, value);
+    }
+
     [DevExpress.Xpo.Aggregated]
     [Association("DocumentoVenta-Grupos")]
     [XafDisplayName("Grupos")]
@@ -1057,6 +1065,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         if (value == null)
         {
             CondicionPago = null;
+            MedioPago = null;
             NombreCliente = null;
             DocumentoIdentificacionCliente = null;
             EmailCliente = null;
@@ -1070,6 +1079,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         }
 
         CondicionPago = value.CondicionPago;
+        MedioPago = value.MedioPago;
 
         NombreCliente = value.Nombre;
         DocumentoIdentificacionCliente = value.Nif;

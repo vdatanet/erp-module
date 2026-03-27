@@ -30,6 +30,7 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
     private string? _secuencia;
     private string? _serie;
     private CondicionPago? _condicionPago;
+    private MedioPago? _medioPago;
     private Ejercicio? _ejercicio;
 
     [RuleRequiredField("erp.Module.BusinessObjects.Compras.FacturaCompra.Proveedor_Required", DefaultContexts.Save,
@@ -46,20 +47,10 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
         set
         {
             var modified = SetPropertyValue(nameof(Proveedor), ref _proveedor, value);
-            if (modified && !IsLoading && !IsSaving)
+            if (modified && !IsLoading && !IsSaving && value != null)
             {
-                if (value is Cliente cli)
-                {
-                    CondicionPago = cli.CondicionPago;
-                }
-                else if (value is Proveedor prov)
-                {
-                    CondicionPago = prov.CondicionPago;
-                }
-                else if (value is Acreedor acree)
-                {
-                    CondicionPago = acree.CondicionPago;
-                }
+                CondicionPago = value.CondicionPago;
+                MedioPago = value.MedioPago;
             }
         }
     }
@@ -79,6 +70,13 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
     {
         get => _condicionPago;
         set => SetPropertyValue(nameof(CondicionPago), ref _condicionPago, value);
+    }
+
+    [XafDisplayName("Medio de Pago")]
+    public MedioPago? MedioPago
+    {
+        get => _medioPago;
+        set => SetPropertyValue(nameof(MedioPago), ref _medioPago, value);
     }
 
     [NonCloneable]

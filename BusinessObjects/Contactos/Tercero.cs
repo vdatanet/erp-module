@@ -7,6 +7,7 @@ using erp.Module.BusinessObjects.Base.Compras;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Contabilidad;
+using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Contactos;
@@ -18,6 +19,22 @@ namespace erp.Module.BusinessObjects.Contactos;
 public class Tercero(Session session) : Contacto(session)
 {
     private CuentaContable? _cuentaContable;
+    private CondicionPago? _condicionPago;
+    private MedioPago? _medioPago;
+
+    [XafDisplayName("Condiciones de Pago")]
+    public CondicionPago? CondicionPago
+    {
+        get => _condicionPago;
+        set => SetPropertyValue(nameof(CondicionPago), ref _condicionPago, value);
+    }
+
+    [XafDisplayName("Medio de Pago")]
+    public MedioPago? MedioPago
+    {
+        get => _medioPago;
+        set => SetPropertyValue(nameof(MedioPago), ref _medioPago, value);
+    }
 
     [XafDisplayName("Cuenta Contable Contable")]
     [DataSourceCriteria("EstaActiva = True and EsAsentable = True")]
@@ -56,8 +73,11 @@ public class Tercero(Session session) : Contacto(session)
 
     protected virtual void InitValues()
     {
-        // Ya no asignamos cuenta contable aquí para evitar el consumo prematuro de secuencias de código.
-        // La asignación se realizará en OnSaving.
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        if (companyInfo == null) return;
+
+        _condicionPago ??= companyInfo.CondicionPagoPorDefecto;
+        _medioPago ??= companyInfo.MedioPagoPorDefecto;
     }
 
     protected override void OnSaving()

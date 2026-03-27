@@ -16,7 +16,6 @@ namespace erp.Module.BusinessObjects.Contactos;
 [ImageName("BO_Vendor")]
 public class Acreedor(Session session) : Tercero(session), IPuedeParticiparEnCompras
 {
-    private CondicionPago? _condicionPago;
     private CuentaContable? _cuentaPago;
     private Diario? _diarioCompras;
     private PosicionFiscal? _posicionFiscal;
@@ -37,12 +36,6 @@ public class Acreedor(Session session) : Tercero(session), IPuedeParticiparEnCom
         set => SetPropertyValue(nameof(DiarioCompras), ref _diarioCompras, value);
     }
 
-    [XafDisplayName("Condiciones de Pago")]
-    public CondicionPago? CondicionPago
-    {
-        get => _condicionPago;
-        set => SetPropertyValue(nameof(CondicionPago), ref _condicionPago, value);
-    }
 
     [XafDisplayName("Posición Fiscal")]
     public PosicionFiscal? PosicionFiscal
@@ -76,6 +69,5 @@ public class Acreedor(Session session) : Tercero(session), IPuedeParticiparEnCom
         _cuentaPago ??= companyInfo.CuentaPagosPorDefecto ?? CuentaContable;
         _diarioCompras ??= companyInfo.DiarioComprasPorDefecto;
         _posicionFiscal ??= companyInfo.PosicionFiscalPorDefecto;
-        _condicionPago ??= companyInfo.CondicionPagoPorDefecto;
     }
 }
