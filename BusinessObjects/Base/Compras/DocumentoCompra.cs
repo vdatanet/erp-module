@@ -48,10 +48,9 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
         set
         {
             var modified = SetPropertyValue(nameof(Proveedor), ref _proveedor, value);
-            if (modified && !IsLoading && !IsSaving && value != null)
+            if (modified && !IsLoading && !IsSaving)
             {
-                CondicionPago = value.CondicionPago;
-                MedioPago = value.MedioPago;
+                AsignarProveedor(value);
             }
         }
     }
@@ -241,6 +240,22 @@ public abstract class DocumentoCompra(Session session) : EntidadBase(session)
         BaseImponible = MoneyMath.RoundMoney(Lineas.Sum(t => t.BaseImponible));
         ImporteImpuestos = MoneyMath.RoundMoney(Impuestos.Sum(t => t.ImporteImpuestos));
         ImporteTotal = BaseImponible + ImporteImpuestos;
+    }
+
+    /// <summary>
+    ///     Regla de negocio: Al asignar un proveedor se copian sus datos de referencia al documento.
+    /// </summary>
+    public virtual void AsignarProveedor(Tercero? value)
+    {
+        if (value == null)
+        {
+            CondicionPago = null;
+            MedioPago = null;
+            return;
+        }
+
+        CondicionPago = value.CondicionPago;
+        MedioPago = value.MedioPago;
     }
 
     public override void AfterConstruction()
