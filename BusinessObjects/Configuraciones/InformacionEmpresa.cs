@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Editors;
+using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
@@ -527,6 +528,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(TextoDefectoVeriFactu), ref _textoDefectoVeriFactu, value);
     }
 
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Archivo Config VeriFactu")]
     public string? NombreArchivoConfigVeriFactu
     {
