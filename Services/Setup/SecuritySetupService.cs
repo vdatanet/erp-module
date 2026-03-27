@@ -384,6 +384,8 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             SecurityPermissionState.Allow);
         auxiliaresRole.AddTypePermissionsRecursively<Parentesco>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
+        auxiliaresRole.AddTypePermissionsRecursively<UnidadFacturacion>(SecurityOperations.FullAccess,
+            SecurityPermissionState.Allow);
 
         auxiliaresRole.AddNavigationPermission(@"Application/NavigationItems/Items/Auxiliares",
             SecurityPermissionState.Allow);

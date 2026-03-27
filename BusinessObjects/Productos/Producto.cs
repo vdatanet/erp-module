@@ -39,6 +39,7 @@ public class Producto(Session session) : EntidadBase(session)
     private bool _esServicio;
     private bool _esConsumible;
     private bool _esCompuesto;
+    private UnidadFacturacion? _unidadFacturacion;
     private bool _estaActivo;
     private MediaDataObject? _foto;
     private MediaDataObject? _miniatura;
@@ -220,6 +221,13 @@ public class Producto(Session session) : EntidadBase(session)
                 }
             }
         }
+    }
+
+    [XafDisplayName("Unidad de Facturación")]
+    public UnidadFacturacion? UnidadFacturacion
+    {
+        get => _unidadFacturacion;
+        set => SetPropertyValue(nameof(UnidadFacturacion), ref _unidadFacturacion, value);
     }
 
     [Size(SizeAttribute.Unlimited)]
@@ -435,6 +443,7 @@ public class Producto(Session session) : EntidadBase(session)
 
         CuentaVentas ??= companyInfo.CuentaVentasPorDefecto;
         CuentaCompras ??= companyInfo.CuentaComprasPorDefecto;
+        UnidadFacturacion ??= companyInfo.UnidadFacturacionPredeterminada;
 
         foreach (var tax in companyInfo.ImpuestosVentas)
         {

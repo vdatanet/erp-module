@@ -1,6 +1,7 @@
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Xpo;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Base.Compras;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Compras;
@@ -34,6 +35,8 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
     public void CreateInitialInformacionEmpresa()
     {
         if (!OS.IsKnownType(typeof(InformacionEmpresa))) return;
+
+        CreateInitialUnidadesFacturacion();
 
         var informacionEmpresa = OS.FirstOrDefault<InformacionEmpresa>(i => true);
         if (informacionEmpresa == null)
@@ -113,9 +116,39 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
             }
         }
 
+        informacionEmpresa.UnidadFacturacionPredeterminada ??= OS.FirstOrDefault<UnidadFacturacion>(u => u.Nombre == "Unidad");
+
         OS.CommitChanges(); // Nos aseguramos de guardar la empresa inicial para evitar nulos en otras partes si es necesario
         
         InitializeAllSequences(informacionEmpresa);
+    }
+
+    private void CreateInitialUnidadesFacturacion()
+    {
+        var unidades = new[]
+        {
+            (Nombre: "Unidad", Abreviatura: "ud"),
+            (Nombre: "Hora", Abreviatura: "h"),
+            (Nombre: "Quilo", Abreviatura: "kg"),
+            (Nombre: "Metro", Abreviatura: "m"),
+            (Nombre: "Litro", Abreviatura: "l"),
+            (Nombre: "Paquete", Abreviatura: "paq"),
+            (Nombre: "Caja", Abreviatura: "caja"),
+            (Nombre: "Mes", Abreviatura: "mes"),
+            (Nombre: "Día", Abreviatura: "día")
+        };
+
+        foreach (var u in unidades)
+        {
+            var unit = OS.FirstOrDefault<UnidadFacturacion>(x => x.Nombre == u.Nombre);
+            if (unit == null)
+            {
+                unit = OS.CreateObject<UnidadFacturacion>();
+                unit.Nombre = u.Nombre;
+                unit.Abreviatura = u.Abreviatura;
+            }
+        }
+        OS.CommitChanges();
     }
 
     private void InitializeAllSequences(InformacionEmpresa companyInfo)

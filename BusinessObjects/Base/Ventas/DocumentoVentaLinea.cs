@@ -4,6 +4,7 @@ using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using DevExpress.Xpo.Metadata;
+using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Impuestos;
@@ -30,6 +31,7 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
     private decimal _porcentajeComision;
     private decimal _importeComisionFijo;
     private DocumentoVentaGrupo? _grupo;
+    private UnidadFacturacion? _unidadFacturacion;
 
     [Association("DocumentoVenta-Lineas")]
     [XafDisplayName("Documento Venta")]
@@ -53,6 +55,13 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
     {
         get => _cuentaContable;
         set => SetPropertyValue(nameof(CuentaContable), ref _cuentaContable, value);
+    }
+
+    [XafDisplayName("Unidad de Facturación")]
+    public UnidadFacturacion? UnidadFacturacion
+    {
+        get => _unidadFacturacion;
+        set => SetPropertyValue(nameof(UnidadFacturacion), ref _unidadFacturacion, value);
     }
 
     [ImmediatePostData]
@@ -81,6 +90,7 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
         if (companyInfo != null)
         {
             CuentaContable = companyInfo.CuentaVentasPorDefecto;
+            UnidadFacturacion = companyInfo.UnidadFacturacionPredeterminada;
             foreach (var tax in companyInfo.ImpuestosVentas.OrderBy(t => t.Secuencia))
                 TiposImpuestoVenta.Add(tax);
         }
@@ -100,6 +110,7 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
         Notas = value.Notas;
         PrecioUnitario = value.PrecioVenta;
         CuentaContable = value.CuentaVentas ?? CuentaContable;
+        UnidadFacturacion = value.UnidadFacturacion ?? UnidadFacturacion;
 
         if (value.ImpuestosVentas.Count > 0)
         {

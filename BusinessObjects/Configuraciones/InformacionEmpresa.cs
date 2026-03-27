@@ -97,6 +97,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private int _paddingNumero;
     private int _paddingCuentaContable;
     private TipoNumeracionDocumento _tipoNumeracionDocumento;
+    private UnidadFacturacion? _unidadFacturacionPredeterminada;
 
     [Size(255)]
     [XafDisplayName("Nombre")]
@@ -203,6 +204,13 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     {
         get => _diarioVentasPorDefecto;
         set => SetPropertyValue(nameof(DiarioVentasPorDefecto), ref _diarioVentasPorDefecto, value);
+    }
+
+    [XafDisplayName("Unidad de Facturación Predeterminada")]
+    public UnidadFacturacion? UnidadFacturacionPredeterminada
+    {
+        get => _unidadFacturacionPredeterminada;
+        set => SetPropertyValue(nameof(UnidadFacturacionPredeterminada), ref _unidadFacturacionPredeterminada, value);
     }
 
     [DataSourceCriteria("EstaActivo = True")]

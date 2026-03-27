@@ -2,6 +2,7 @@ using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
+using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Productos;
@@ -23,6 +24,7 @@ public class DocumentoCompraLinea(Session session) : EntidadBase(session)
     private Producto? _producto;
     private CuentaContable? _cuentaContable;
     private int _secuencia;
+    private UnidadFacturacion? _unidadFacturacion;
 
     [Association("DocumentoCompra-DocumentoCompraLineas")]
     [XafDisplayName("Documento Compra")]
@@ -50,6 +52,13 @@ public class DocumentoCompraLinea(Session session) : EntidadBase(session)
     {
         get => _cuentaContable;
         set => SetPropertyValue(nameof(CuentaContable), ref _cuentaContable, value);
+    }
+
+    [XafDisplayName("Unidad de Facturación")]
+    public UnidadFacturacion? UnidadFacturacion
+    {
+        get => _unidadFacturacion;
+        set => SetPropertyValue(nameof(UnidadFacturacion), ref _unidadFacturacion, value);
     }
 
     [ImmediatePostData]
@@ -160,9 +169,11 @@ public class DocumentoCompraLinea(Session session) : EntidadBase(session)
         if (Producto == null) return;
         Descripcion = Producto.Nombre;
         Precio = Producto.CosteEstandar;
+        UnidadFacturacion = Producto.UnidadFacturacion;
 
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         CuentaContable = Producto.CuentaCompras ?? companyInfo?.CuentaComprasPorDefecto;
+        UnidadFacturacion ??= companyInfo?.UnidadFacturacionPredeterminada;
 
         BorrarImpuestosProducto();
         foreach (var t in Producto.ImpuestosCompras)
