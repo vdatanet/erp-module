@@ -43,7 +43,6 @@ public class Documento(Session session) : EntidadBase(session)
     private TipoDocumento? _tipoDocumento;
     private DateTime? _fechaDocumento;
     private EstadoDocumento _estado;
-    private string? _tags;
 
     [Association("Contacto-Documentos")]
     [XafDisplayName("Contacto")]
@@ -52,12 +51,10 @@ public class Documento(Session session) : EntidadBase(session)
         get => _contact;
         set
         {
-            if (SetPropertyValue(nameof(Contacto), ref _contact, value))
+            if (!SetPropertyValue(nameof(Contacto), ref _contact, value)) return;
+            if (!IsLoading && !IsSaving && value != null)
             {
-                if (!IsLoading && !IsSaving && value != null)
-                {
-                    ActualizarTipoDocumento(nameof(Contacto));
-                }
+                ActualizarTipoDocumento(nameof(Contacto));
             }
         }
     }
@@ -69,12 +66,10 @@ public class Documento(Session session) : EntidadBase(session)
         get => _product;
         set
         {
-            if (SetPropertyValue(nameof(Producto), ref _product, value))
+            if (!SetPropertyValue(nameof(Producto), ref _product, value)) return;
+            if (!IsLoading && !IsSaving && value != null)
             {
-                if (!IsLoading && !IsSaving && value != null)
-                {
-                    ActualizarTipoDocumento(nameof(Producto));
-                }
+                ActualizarTipoDocumento(nameof(Producto));
             }
         }
     }
@@ -86,12 +81,10 @@ public class Documento(Session session) : EntidadBase(session)
         get => _salesDocument;
         set
         {
-            if (SetPropertyValue(nameof(DocumentoVenta), ref _salesDocument, value))
+            if (!SetPropertyValue(nameof(DocumentoVenta), ref _salesDocument, value)) return;
+            if (!IsLoading && !IsSaving && value != null)
             {
-                if (!IsLoading && !IsSaving && value != null)
-                {
-                    ActualizarTipoDocumento(nameof(DocumentoVenta));
-                }
+                ActualizarTipoDocumento(nameof(DocumentoVenta));
             }
         }
     }
@@ -103,12 +96,10 @@ public class Documento(Session session) : EntidadBase(session)
         get => _purchaseDocument;
         set
         {
-            if (SetPropertyValue(nameof(DocumentoCompra), ref _purchaseDocument, value))
+            if (!SetPropertyValue(nameof(DocumentoCompra), ref _purchaseDocument, value)) return;
+            if (!IsLoading && !IsSaving && value != null)
             {
-                if (!IsLoading && !IsSaving && value != null)
-                {
-                    ActualizarTipoDocumento(nameof(DocumentoCompra));
-                }
+                ActualizarTipoDocumento(nameof(DocumentoCompra));
             }
         }
     }
@@ -120,12 +111,10 @@ public class Documento(Session session) : EntidadBase(session)
         get => _task;
         set
         {
-            if (SetPropertyValue(nameof(Tarea), ref _task, value))
+            if (!SetPropertyValue(nameof(Tarea), ref _task, value)) return;
+            if (!IsLoading && !IsSaving && value != null)
             {
-                if (!IsLoading && !IsSaving && value != null)
-                {
-                    ActualizarTipoDocumento(nameof(Tarea));
-                }
+                ActualizarTipoDocumento(nameof(Tarea));
             }
         }
     }
@@ -137,12 +126,10 @@ public class Documento(Session session) : EntidadBase(session)
         get => _opportunity;
         set
         {
-            if (SetPropertyValue(nameof(Oportunidad), ref _opportunity, value))
+            if (!SetPropertyValue(nameof(Oportunidad), ref _opportunity, value)) return;
+            if (!IsLoading && !IsSaving && value != null)
             {
-                if (!IsLoading && !IsSaving && value != null)
-                {
-                    ActualizarTipoDocumento(nameof(Oportunidad));
-                }
+                ActualizarTipoDocumento(nameof(Oportunidad));
             }
         }
     }
@@ -191,21 +178,13 @@ public class Documento(Session session) : EntidadBase(session)
         get => _estado;
         set => SetPropertyValue(nameof(Estado), ref _estado, value);
     }
-
-    [Size(SizeAttribute.Unlimited)]
-    [XafDisplayName("Etiquetas (Tags)")]
-    public string? Tags
-    {
-        get => _tags;
-        set => SetPropertyValue(nameof(Tags), ref _tags, value);
-    }
-
+    
     [DevExpress.Xpo.Aggregated]
     [Association("Documento-Tareas")]
     [XafDisplayName("Tareas")]
     public XPCollection<Tarea> Tareas => GetCollection<Tarea>();
 
-    [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
+    //[EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
     [Association("Documento-Etiquetas")]
     [XafDisplayName("Etiquetas")]
     public XPCollection<EtiquetaDocumento> Etiquetas => GetCollection<EtiquetaDocumento>();
