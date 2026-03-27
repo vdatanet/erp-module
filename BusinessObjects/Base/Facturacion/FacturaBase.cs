@@ -19,17 +19,12 @@ namespace erp.Module.BusinessObjects.Base.Facturacion;
     Criteria = "EstadoVeriFactu = 'Enviado'", Context = "Any", Enabled = false)]
 public abstract class FacturaBase(Session session) : DocumentoVenta(session)
 {
-    public enum ValoresEstadoVeriFactu
-    {
-        Borrador,
-        Enviado
-    }
 
     private string? _codigoErrorEntradaFactura;
     private string? _csv;
     private bool _esSubsanacion;
     private string? _estadoEntradaFactura;
-    private ValoresEstadoVeriFactu _estadoVeriFactu;
+    private EstadoVeriFactu _estadoVeriFactu;
     private Asiento? _asientoContable;
     private MediaDataObject? _qr;
     private string? _respuestaAgenciaTributaria;
@@ -50,7 +45,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
     [XafDisplayName("Estado VeriFactu")]
-    public ValoresEstadoVeriFactu EstadoVeriFactu
+    public EstadoVeriFactu EstadoVeriFactu
     {
         get => _estadoVeriFactu;
         set => SetPropertyValue(nameof(EstadoVeriFactu), ref _estadoVeriFactu, value);
@@ -167,7 +162,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
 
     private void InitValues()
     {
-        EstadoVeriFactu = ValoresEstadoVeriFactu.Borrador;
+        EstadoVeriFactu = EstadoVeriFactu.Borrador;
         TipoFactura = (TipoFactura)1; // F1
         TipoRectificativa = (TipoRectificativa)1; // I
         EsSubsanacion = false;

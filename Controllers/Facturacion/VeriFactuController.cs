@@ -36,16 +36,19 @@ public class VeriFactuController : ViewController
     {
         if (View.CurrentObject is not FacturaBase invoice || _veriFactuService == null) return;
 
-        _veriFactuService.SendFactura(ObjectSpace, invoice);
+        var result = _veriFactuService.SendFactura(ObjectSpace, invoice);
 
         var options = new MessageOptions
         {
-            Duration = 2000,
-            Message = "Factura enviada correctamente a VeriFactu",
-            Type = InformationType.Success,
+            Duration = 5000,
+            Message = result.Message,
+            Type = result.Success ? InformationType.Success : InformationType.Error,
             Web = { Position = InformationPosition.Right }
         };
         Application.ShowViewStrategy.ShowMessage(options);
+        
+        if (View is DetailView)
+            View.Refresh();
     }
 
     protected override void OnDeactivated()

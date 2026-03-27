@@ -50,7 +50,7 @@ public class FacturaSimplificada(Session session) : FacturaBase(session)
 
     public override bool EsValida()
     {
-        return EstadoVeriFactu != ValoresEstadoVeriFactu.Enviado
+        return EstadoVeriFactu != EstadoVeriFactu.Enviado
                && !string.IsNullOrEmpty(Texto)
                && Impuestos.Count > 0;
     }
