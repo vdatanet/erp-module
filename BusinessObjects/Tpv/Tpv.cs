@@ -123,14 +123,27 @@ public class Tpv(Session session) : EntidadBase(session)
     public XPCollection<SesionTpv> Sesiones => GetCollection<SesionTpv>();
 
     [XafDisplayName("Roles autorizados")]
-    public XPCollection<ApplicationRole> RolesAutorizados => GetCollection<ApplicationRole>(nameof(RolesAutorizados));
+    [Association("Tpv-Roles")]
+    public XPCollection<TpvRol> RolesAutorizados => GetCollection<TpvRol>(nameof(RolesAutorizados));
 
     public void AbrirSesionAction(decimal importeApertura = 0)
     {
+        var usuarioActual = Session.GetObjectByKey<ApplicationUser>(SecuritySystem.CurrentUserId);
+        if (usuarioActual == null) return;
+
+        // Validar si el usuario tiene permiso a través de sus ApplicationRole (mediante OID en TpvRol)
+        usuarioActual.Roles.Load();
+        var userRolesOids = usuarioActual.Roles.Select(r => r.Oid).ToList();
+
+        if (!RolesAutorizados.Any(ra => userRolesOids.Contains(ra.RolOid)))
+        {
+            throw new UserFriendlyException("No tienes autorización para abrir sesión en este TPV.");
+        }
+
         var service = Session.ServiceProvider?.GetService<ISesionTpvService>();
         if (service != null)
         {
-            service.AbrirSesion(this, Session.GetObjectByKey<ApplicationUser>(SecuritySystem.CurrentUserId), importeApertura);
+            service.AbrirSesion(this, usuarioActual, importeApertura);
         }
         else
         {
@@ -139,9 +152,6 @@ public class Tpv(Session session) : EntidadBase(session)
 
             if (!Activo)
                 throw new UserFriendlyException("No se puede abrir una sesión en un TPV inactivo.");
-
-            var usuarioActual = Session.GetObjectByKey<ApplicationUser>(SecuritySystem.CurrentUserId);
-            if (usuarioActual == null) return;
 
             var nuevaSesion = new SesionTpv(Session);
             nuevaSesion.AbrirSesion(this, usuarioActual, importeApertura);
