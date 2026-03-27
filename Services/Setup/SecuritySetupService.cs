@@ -367,7 +367,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             auxiliaresRole.Name = "Auxiliares";
         }
 
-        auxiliaresRole.AddTypePermissionsRecursively<Adjunto>(SecurityOperations.FullAccess,
+        auxiliaresRole.AddTypePermissionsRecursively<Documento>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
         auxiliaresRole.AddTypePermissionsRecursively<Imagen>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);

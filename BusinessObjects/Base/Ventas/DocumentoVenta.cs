@@ -1042,9 +1042,9 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     public XPCollection<Imagen> Imagenes => GetCollection<Imagen>();
 
     [DevExpress.Xpo.Aggregated]
-    [Association("DocumentoVenta-Adjuntos")]
-    [XafDisplayName("Adjuntos")]
-    public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
+    [Association("DocumentoVenta-Documentos")]
+    [XafDisplayName("Documentos")]
+    public XPCollection<Documento> Documentos => GetCollection<Documento>();
 
     [XafDisplayName("Movimientos de Caja")]
     public XPCollection<MovimientoCajaTpv> MovimientosCaja => GetCollection<MovimientoCajaTpv>();

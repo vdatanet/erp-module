@@ -33,5 +33,5 @@ public class EtiquetaDocumento(Session session) : EntidadBase(session)
 
     [Association("Documento-Etiquetas")]
     [XafDisplayName("Documentos")]
-    public XPCollection<Adjunto> Documentos => GetCollection<Adjunto>(nameof(Documentos));
+    public XPCollection<Documento> Documentos => GetCollection<Documento>(nameof(Documentos));
 }

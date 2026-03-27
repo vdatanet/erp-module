@@ -57,7 +57,7 @@ public class Tarea(Session session) : EntidadBase(session)
     private Contacto? _contacto;
     private DocumentoCompra? _documentoCompra;
     private DocumentoVenta? _documentoVenta;
-    private Adjunto? _documento;
+    private Documento? _documento;
     private EstadoTarea _estado;
     private DateTime _fechaFin;
     private DateTime _fechaInicio;
@@ -222,7 +222,7 @@ public class Tarea(Session session) : EntidadBase(session)
 
     [Association("Documento-Tareas")]
     [XafDisplayName("Documento")]
-    public Adjunto? Documento
+    public Documento? Documento
     {
         get => _documento;
         set => SetPropertyValue(nameof(Documento), ref _documento, value);
@@ -247,9 +247,9 @@ public class Tarea(Session session) : EntidadBase(session)
     public XPCollection<Imagen> Imagenes => GetCollection<Imagen>();
 
     [DevExpress.Xpo.Aggregated]
-    [Association("Tarea-Adjuntos")]
-    [XafDisplayName("Adjuntos")]
-    public XPCollection<Adjunto> Adjuntos => GetCollection<Adjunto>();
+    [Association("Tarea-Documentos")]
+    [XafDisplayName("Documentos")]
+    public XPCollection<Documento> Documentos => GetCollection<Documento>();
 
     public override void AfterConstruction()
     {

@@ -29,7 +29,7 @@ public enum EstadoDocumento
 [XafDisplayName("Documento")]
 [DefaultProperty(nameof(Nombre))]
 [FileAttachment(nameof(FileData))]
-public class Adjunto(Session session) : EntidadBase(session)
+public class Documento(Session session) : EntidadBase(session)
 {
     private Contacto? _contact;
     private FileData? _fileData;
@@ -44,9 +44,8 @@ public class Adjunto(Session session) : EntidadBase(session)
     private DateTime? _fechaDocumento;
     private EstadoDocumento _estado;
     private string? _tags;
-    private XPCollection<EtiquetaDocumento>? _etiquetas;
 
-    [Association("Contacto-Adjuntos")]
+    [Association("Contacto-Documentos")]
     [XafDisplayName("Contacto")]
     public Contacto? Contacto
     {
@@ -63,7 +62,7 @@ public class Adjunto(Session session) : EntidadBase(session)
         }
     }
 
-    [Association("Producto-Adjuntos")]
+    [Association("Producto-Documentos")]
     [XafDisplayName("Producto")]
     public Producto? Producto
     {
@@ -80,7 +79,7 @@ public class Adjunto(Session session) : EntidadBase(session)
         }
     }
 
-    [Association("DocumentoVenta-Adjuntos")]
+    [Association("DocumentoVenta-Documentos")]
     [XafDisplayName("Documento Venta")]
     public DocumentoVenta? DocumentoVenta
     {
@@ -97,7 +96,7 @@ public class Adjunto(Session session) : EntidadBase(session)
         }
     }
 
-    [Association("DocumentoCompra-Adjuntos")]
+    [Association("DocumentoCompra-Documentos")]
     [XafDisplayName("Documento Compra")]
     public DocumentoCompra? DocumentoCompra
     {
@@ -114,7 +113,7 @@ public class Adjunto(Session session) : EntidadBase(session)
         }
     }
 
-    [Association("Tarea-Adjuntos")]
+    [Association("Tarea-Documentos")]
     [XafDisplayName("Tarea")]
     public Tarea? Tarea
     {
@@ -131,7 +130,7 @@ public class Adjunto(Session session) : EntidadBase(session)
         }
     }
 
-    [Association("Oportunidad-Adjuntos")]
+    [Association("Oportunidad-Documentos")]
     [XafDisplayName("Oportunidad")]
     public Oportunidad? Oportunidad
     {

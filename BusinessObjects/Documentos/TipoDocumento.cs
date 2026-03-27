@@ -32,5 +32,5 @@ public class TipoDocumento(Session session) : EntidadBase(session)
     }
 
     [Association("TipoDocumento-Documentos")]
-    public XPCollection<Adjunto> Documentos => GetCollection<Adjunto>(nameof(Documentos));
+    public XPCollection<Documento> Documentos => GetCollection<Documento>(nameof(Documentos));
 }

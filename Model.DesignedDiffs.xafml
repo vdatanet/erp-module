@@ -20,7 +20,7 @@
     <SchemaModule Name="SystemModule" Version="25.2.5.0" IsNewNode="True" />
   </SchemaModules>
   <Views>
-    <ListView Id="Adjunto_ListView" Caption="Adjuntos" FreezeColumnIndices="True">
+    <ListView Id="Documento_ListView" Caption="Documentos" FreezeColumnIndices="True">
       <Columns>
         <ColumnInfo Id="Contacto" Index="-1" />
         <ColumnInfo Id="DocumentoVenta" Index="-1" />
@@ -33,7 +33,7 @@
         <ColumnInfo Id="FileData" Index="6" />
       </Columns>
     </ListView>
-    <ListView Id="Adjunto_LookupListView" FreezeColumnIndices="True" Caption="s">
+    <ListView Id="Documento_LookupListView" FreezeColumnIndices="True" Caption="s">
       <Columns>
         <ColumnInfo Id="Nombre" Index="0" />
       </Columns>
@@ -118,8 +118,8 @@
             <LayoutGroup Id="Imagenes" Index="9" ShowCaption="True" RelativeSize="100" IsNewNode="True">
               <LayoutItem Id="Imagenes" ViewItem="Imagenes" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
             </LayoutGroup>
-            <LayoutGroup Id="Adjuntos" Index="10" ShowCaption="True" RelativeSize="100" IsNewNode="True">
-              <LayoutItem Id="Adjuntos" ViewItem="Adjuntos" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
+            <LayoutGroup Id="Documentos" Index="10" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+              <LayoutItem Id="Documentos" ViewItem="Documentos" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
             </LayoutGroup>
           </TabbedGroup>
         </LayoutGroup>
@@ -195,8 +195,8 @@
             <LayoutGroup Id="Imagenes" Index="1" ShowCaption="True" RelativeSize="100" IsNewNode="True">
               <LayoutItem Id="Imagenes" ViewItem="Imagenes" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
             </LayoutGroup>
-            <LayoutGroup Id="Adjuntos" Index="2" ShowCaption="True" RelativeSize="100" IsNewNode="True">
-              <LayoutItem Id="Adjuntos" ViewItem="Adjuntos" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
+            <LayoutGroup Id="Documentos" Index="2" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+              <LayoutItem Id="Documentos" ViewItem="Documentos" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
             </LayoutGroup>
           </TabbedGroup>
         </LayoutGroup>
@@ -737,8 +737,8 @@
             <LayoutGroup Id="Imagenes" Index="1" ShowCaption="True" RelativeSize="100" IsNewNode="True">
               <LayoutItem Id="Imagenes" ViewItem="Imagenes" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
             </LayoutGroup>
-            <LayoutGroup Id="Adjuntos" Index="2" ShowCaption="True" RelativeSize="100" IsNewNode="True">
-              <LayoutItem Id="Adjuntos" ViewItem="Adjuntos" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
+            <LayoutGroup Id="Documentos" Index="2" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+              <LayoutItem Id="Documentos" ViewItem="Documentos" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
             </LayoutGroup>
           </TabbedGroup>
         </LayoutGroup>
