@@ -337,7 +337,7 @@ public class VentaTpv(Session session) : EntidadBase(session)
                 Producto = lineaTpv.Producto,
                 Cantidad = lineaTpv.Cantidad,
                 PrecioUnitario = lineaTpv.PrecioUnitario,
-                PorcentajeDescuento = lineaTpv.DescuentoPorcentaje
+                Descuento1 = lineaTpv.DescuentoPorcentaje
             };
 
             // Aseguramos que el nombre del producto sea el de la línea del TPV (por si se cambió manualmente)
