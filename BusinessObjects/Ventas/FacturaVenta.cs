@@ -19,7 +19,6 @@ namespace erp.Module.BusinessObjects.Ventas;
 [XafDisplayName("Factura de Venta")]
 [NavigationItem("Ventas")]
 [ImageName("BO_Invoice")]
-[DefaultProperty(nameof(Secuencia))]
 public class FacturaVenta(Session session) : FacturaBase(session)
 {
     [XafDisplayName("Efectos de Cobro")]

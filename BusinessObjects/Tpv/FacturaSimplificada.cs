@@ -21,7 +21,6 @@ namespace erp.Module.BusinessObjects.Tpv;
 [NavigationItem("Tpv")]
 [XafDisplayName("Factura Simplificada")]
 [ImageName("BO_Invoice")] // Podría cambiarse a algo más específico si existe
-[DefaultProperty(nameof(Secuencia))]
 public class FacturaSimplificada(Session session) : FacturaBase(session)
 {
     private VentaTpv? _ventaTpv;

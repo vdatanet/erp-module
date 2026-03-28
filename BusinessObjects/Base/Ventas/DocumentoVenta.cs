@@ -28,6 +28,7 @@ using VeriFactu.Xml.Factu.Alta;
 
 namespace erp.Module.BusinessObjects.Base.Ventas;
 
+[DefaultProperty(nameof(Secuencia))]
 public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 {
     private bool _aCuenta;
