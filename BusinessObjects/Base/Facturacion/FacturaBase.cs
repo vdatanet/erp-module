@@ -30,7 +30,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     private string? _csv;
     private bool _esSubsanacion;
     private string? _estadoEntradaFactura;
-    // private EstadoVeriFactu _estadoVeriFactu;
+    private EstadoVeriFactu _estadoVeriFactu;
     private Domicilio? _domicilioDIR;
     private Asiento? _asientoContable;
     private MediaDataObject? _qr;
@@ -63,14 +63,14 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
         set => SetPropertyValue(nameof(AsientoContable), ref _asientoContable, value);
     }
 
-    // [ModelDefault("AllowEdit", "False")]
-    // [NonCloneable]
-    // [XafDisplayName("Estado VeriFactu")]
-    // public EstadoVeriFactu EstadoVeriFactu
-    // {
-    //     get => _estadoVeriFactu;
-    //     set => SetPropertyValue(nameof(EstadoVeriFactu), ref _estadoVeriFactu, value);
-    // }
+    [ModelDefault("AllowEdit", "False")]
+    [NonCloneable]
+    [XafDisplayName("Estado VeriFactu")]
+    public EstadoVeriFactu EstadoVeriFactu
+    {
+        get => _estadoVeriFactu;
+        set => SetPropertyValue(nameof(EstadoVeriFactu), ref _estadoVeriFactu, value);
+    }
 
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
