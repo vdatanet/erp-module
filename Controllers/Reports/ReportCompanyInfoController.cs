@@ -23,7 +23,7 @@ public class ReportCompanyInfoController : ViewController
             Caption = "Imprimir Empresa",
             ImageName = "Action_Printing_Print",
             ItemType = SingleChoiceActionItemType.ItemIsOperation,
-            SelectionDependencyType = SelectionDependencyType.RequireSingleObject
+            SelectionDependencyType = SelectionDependencyType.RequireMultipleObjects
         };
         printReportAction.Execute += PrintReportAction_Execute;
     }
@@ -66,8 +66,7 @@ public class ReportCompanyInfoController : ViewController
             return;
         }
 
-        // Suscribirse a cambios en los controladores del frame para asegurar que 
-        // desactivamos los que se añaden dinámicamente o vuelven a activarse.
+        // Volvemos a desactivar los controladores nativos para que nuestra acción sea la única
         foreach (var controller in Frame.Controllers)
         {
             DisableNativeReportController(controller);
@@ -84,6 +83,7 @@ public class ReportCompanyInfoController : ViewController
     private void View_SelectionChanged(object sender, EventArgs e)
     {
         UpdateActionState();
+        
         foreach (var controller in Frame.Controllers)
         {
             DisableNativeReportController(controller);
@@ -197,34 +197,22 @@ public class ReportCompanyInfoController : ViewController
         var reportStorage = ReportDataProvider.GetReportStorage(Application.ServiceProvider);
         string handle = reportStorage.GetReportContainerHandle(reportData);
 
-        // Si queremos que el reporte se filtre por el objeto seleccionado (comportamiento Inplace estándar)
+        // Si queremos que el reporte se filtre por los objetos seleccionados (comportamiento Inplace estándar)
         // pasamos los criterios de selección.
-        var criteria = DevExpress.Data.Filtering.CriteriaOperator.Parse("Oid = ?", ObjectSpace.GetKeyValue(View.CurrentObject));
+        var selectedOids = new List<object>();
+        foreach (var obj in e.SelectedObjects)
+        {
+            selectedOids.Add(ObjectSpace.GetKeyValue(obj));
+        }
 
-        // Obtenemos el reporte para inyectar parámetros de empresa antes de mostrarlo
-        var report = ReportDataProvider.GetReportStorage(Application.ServiceProvider).LoadReport(reportData);
-        ApplyCompanyInfo(report);
+        // Usamos el nombre del miembro clave del tipo de objeto de la vista
+        var keyName = View.ObjectTypeInfo.KeyMember.Name;
+        var criteria = new DevExpress.Data.Filtering.InOperator(keyName, selectedOids);
 
+        // Llamamos a ShowPreview con el handle y el criterio. 
+        // La inyección de parámetros de empresa se realiza automáticamente en erpModule 
+        // a través de ReportsDataSourceHelper.BeforeShowPreview.
         controller.ShowPreview(handle, criteria);
     }
 
-    private void ApplyCompanyInfo(DevExpress.XtraReports.UI.XtraReport report)
-    {
-        var empresaProvider = Application.ServiceProvider.GetService<IInformacionEmpresaProvider>();
-        if (empresaProvider == null) return;
-
-        var companyDto = empresaProvider.GetInformacionEmpresaDto(ObjectSpace);
-        if (companyDto == null) return;
-
-        // Pasar por parámetros si existen (Prefijo Empresa_)
-        var properties = companyDto.GetType().GetProperties();
-        foreach (var prop in properties)
-        {
-            var paramName = $"Empresa_{prop.Name}";
-            if (report.Parameters[paramName] != null)
-            {
-                report.Parameters[paramName].Value = prop.GetValue(companyDto);
-            }
-        }
-    }
 }
