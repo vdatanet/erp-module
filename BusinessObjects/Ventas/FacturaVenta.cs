@@ -1,18 +1,14 @@
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
-using erp.Module.BusinessObjects.Alquileres;
-using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contabilidad;
+using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.Helpers.Contactos;
-using erp.Module.Services.Contabilidad;
 using erp.Module.Services.Tesoreria;
 using erp.Module.Services.Ventas;
 using erp.Module.Services.Ventas.StateMachines;
@@ -25,14 +21,19 @@ namespace erp.Module.BusinessObjects.Ventas;
 [ImageName("BO_Invoice")]
 [DefaultProperty(nameof(Secuencia))]
 [Appearance("BlockEditingFacturaNoBorrador", AppearanceItemType = "ViewItem", TargetItems = "*",
-    Criteria = "EstadoFactura = 'Validada' OR EstadoFactura = 1 OR EstadoFactura = 'EnviadaVerifactu' OR EstadoFactura = 2 OR EstadoFactura = 'Contabilizada' OR EstadoFactura = 3", Context = "Any", Enabled = false)]
+    Criteria =
+        "EstadoFactura = 'Validada' OR EstadoFactura = 1 OR EstadoFactura = 'EnviadaVerifactu' OR EstadoFactura = 2 OR EstadoFactura = 'Contabilizada' OR EstadoFactura = 3",
+    Context = "Any", Enabled = false)]
 [Appearance("BlockDeletionFacturaNoBorrador", AppearanceItemType = "Action", TargetItems = "Delete",
     Criteria = "EstadoFactura != 'Borrador' AND EstadoFactura != 0", Context = "Any", Enabled = false)]
-[RuleCriteria("Factura_SoloBorradorModificable", DefaultContexts.Save, "EstadoFactura = 'Borrador' OR EstadoFactura = 0 OR EstadoFactura = 'Validada' OR EstadoFactura = 1 OR EstadoFactura = 'EnviadaVerifactu' OR EstadoFactura = 2 OR EstadoFactura = 'Contabilizada' OR EstadoFactura = 3", 
+[RuleCriteria("Factura_SoloBorradorModificable", DefaultContexts.Save,
+    "EstadoFactura = 'Borrador' OR EstadoFactura = 0 OR EstadoFactura = 'Validada' OR EstadoFactura = 1 OR EstadoFactura = 'EnviadaVerifactu' OR EstadoFactura = 2 OR EstadoFactura = 'Contabilizada' OR EstadoFactura = 3",
     "Una factura solo se puede modificar si está en borrador.", SkipNullOrEmptyValues = false)]
-[RuleCriteria("Factura_SoloBorradorEliminable", DefaultContexts.Delete, "EstadoFactura = 'Borrador' OR EstadoFactura = 0", 
+[RuleCriteria("Factura_SoloBorradorEliminable", DefaultContexts.Delete,
+    "EstadoFactura = 'Borrador' OR EstadoFactura = 0",
     "Una factura solo se puede eliminar si está en borrador.")]
-[RuleCriteria("Factura_SumaEfectosCoherente", DefaultContexts.Save, "EfectosCobro.Sum(Importe) = ImporteTotal", "La suma de los importes de los efectos debe coincidir con el total de la factura.")]
+[RuleCriteria("Factura_SumaEfectosCoherente", DefaultContexts.Save, "EfectosCobro.Sum(Importe) = ImporteTotal",
+    "La suma de los importes de los efectos debe coincidir con el total de la factura.")]
 public class FacturaVenta(Session session) : FacturaBase(session)
 {
     [XafDisplayName("Efectos de Cobro")]
@@ -45,7 +46,7 @@ public class FacturaVenta(Session session) : FacturaBase(session)
         if (IsLoading || IsSaving) return;
 
         decimal cobrado = EfectosCobro.Where(e => e.Estado == EstadoEfecto.Cobrado).Sum(e => e.Importe);
-        
+
         if (cobrado >= ImporteTotal && ImporteTotal > 0)
         {
             EstadoCobro = EstadoCobroFactura.Pagada;
@@ -99,6 +100,7 @@ public class FacturaVenta(Session session) : FacturaBase(session)
             if (string.IsNullOrEmpty(DocumentoIdentificacionCliente))
                 result.AddError("El cliente debe tener un NIF válido.");
         }
+
         return result;
     }
 
