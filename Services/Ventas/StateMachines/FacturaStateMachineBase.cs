@@ -10,52 +10,66 @@ public abstract class FacturaStateMachineBase(FacturaBase documento) : IFacturaS
 {
     protected readonly FacturaBase Factura = documento ?? throw new ArgumentNullException(nameof(documento));
 
-    public Enum EstadoActual
+    private static readonly Dictionary<EstadoFactura, List<EstadoFactura>> TransicionesPermitidas = new()
+    {
+        { EstadoFactura.Borrador, [EstadoFactura.Validada] },
+        { EstadoFactura.Validada, [EstadoFactura.Emitida, EstadoFactura.Borrador] },
+        { EstadoFactura.Emitida, [EstadoFactura.Enviada, EstadoFactura.Contabilizada] },
+        { EstadoFactura.Enviada, [EstadoFactura.Contabilizada] },
+        { EstadoFactura.Contabilizada, [] }
+    };
+
+    private static readonly Dictionary<EstadoFactura, string> DisplayNamesCache = new();
+
+    public EstadoFactura EstadoActual
     {
         get => Factura.EstadoFactura;
-        protected set => Factura.EstadoFactura = (EstadoFactura)value;
+        protected set => Factura.EstadoFactura = value;
     }
 
-    public virtual bool PuedeCambiarA(Enum nuevoEstado)
+    public virtual bool PuedeCambiarA(EstadoFactura nuevoEstado)
     {
         if (Equals(EstadoActual, nuevoEstado)) return false;
-        
+
         return GetEstadosAlcanzables().Contains(nuevoEstado);
     }
 
-    public virtual void CambiarA(Enum nuevoEstado)
+    public virtual void CambiarA(EstadoFactura nuevoEstado)
     {
+        if (!Enum.IsDefined(typeof(EstadoFactura), nuevoEstado))
+            throw new ArgumentException("El nuevo estado no es un valor válido de EstadoFactura.", nameof(nuevoEstado));
+
         if (!PuedeCambiarA(nuevoEstado))
-            throw new InvalidOperationException($"No se puede cambiar el estado de {EstadoActual} a {nuevoEstado} para esta factura.");
+        {
+            var facturaInfo = !string.IsNullOrEmpty(Factura.NumeroFiscal) ? Factura.NumeroFiscal : Factura.Oid.ToString();
+            throw new InvalidOperationException($"No se puede cambiar el estado de {EstadoActual} a {nuevoEstado} para la factura {facturaInfo}.");
+        }
 
         var oldEstado = EstadoActual;
-        
+
         EstadoActual = nuevoEstado;
-        
+
         OnEstadoCambiado(oldEstado, nuevoEstado);
     }
 
-    public virtual IEnumerable<Enum> GetEstadosAlcanzables()
+    public virtual IEnumerable<EstadoFactura> GetEstadosAlcanzables()
     {
-        return ((EstadoFactura)EstadoActual) switch
-        {
-            EstadoFactura.Borrador => [EstadoFactura.Validada],
-            EstadoFactura.Validada => [EstadoFactura.Emitida, EstadoFactura.Borrador],
-            EstadoFactura.Emitida => [EstadoFactura.Enviada, EstadoFactura.Contabilizada],
-            EstadoFactura.Enviada => [EstadoFactura.Contabilizada],
-            EstadoFactura.Contabilizada => [],
-            _ => []
-        };
+        return TransicionesPermitidas.TryGetValue(EstadoActual, out var estados) ? estados : [];
     }
 
-    protected virtual void OnEstadoCambiado(Enum oldEstado, Enum nuevoEstado)
+    protected virtual void OnEstadoCambiado(EstadoFactura oldEstado, EstadoFactura nuevoEstado)
     {
         // Hook para lógica adicional en subclases
     }
 
     public override string ToString()
     {
-        var type = EstadoActual.GetType();
+        if (DisplayNamesCache.TryGetValue(EstadoActual, out var displayName))
+        {
+            return displayName;
+        }
+
+        var type = typeof(EstadoFactura);
         var name = Enum.GetName(type, EstadoActual);
         if (name != null)
         {
@@ -65,10 +79,14 @@ public abstract class FacturaStateMachineBase(FacturaBase documento) : IFacturaS
                 var attr = field.GetCustomAttribute<XafDisplayNameAttribute>();
                 if (attr != null)
                 {
+                    DisplayNamesCache[EstadoActual] = attr.DisplayName;
                     return attr.DisplayName;
                 }
             }
         }
-        return EstadoActual.ToString();
+
+        var fallbackName = EstadoActual.ToString();
+        DisplayNamesCache[EstadoActual] = fallbackName;
+        return fallbackName;
     }
 }
