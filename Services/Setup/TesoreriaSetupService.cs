@@ -64,12 +64,13 @@ public class TesoreriaSetupService(IObjectSpace objectSpace)
                 }
                 medioPago.CuentaContableCobros = cuentaEfectivo;
                 medioPago.CuentaContablePagos = cuentaEfectivo;
+                return medioPago;
             }
-            else if (companyInfo != null)
-            {
-                medioPago.CuentaContableCobros = companyInfo.CuentaCobrosPorDefecto;
-                medioPago.CuentaContablePagos = companyInfo.CuentaPagosPorDefecto;
-            }
+
+            if (companyInfo == null) return medioPago;
+            
+            medioPago.CuentaContableCobros ??= companyInfo.CuentaCobrosPorDefecto;
+            medioPago.CuentaContablePagos ??= companyInfo.CuentaPagosPorDefecto;
         }
         return medioPago;
     }
