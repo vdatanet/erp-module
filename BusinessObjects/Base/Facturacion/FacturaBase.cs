@@ -211,6 +211,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
         InitValues();
     }
 
+    [XafDisplayName("Estado del Documento")]
     public IFacturaStateMachine StateMachine => GetStateMachine();
 
     protected abstract IFacturaStateMachine GetStateMachine();

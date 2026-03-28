@@ -1,3 +1,5 @@
+using System.Reflection;
+using DevExpress.ExpressApp.DC;
 using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.Helpers.Contactos;
@@ -48,5 +50,24 @@ public abstract class FacturaStateMachineBase(FacturaBase documento) : IFacturaS
     protected virtual void OnEstadoCambiado(Enum oldEstado, Enum nuevoEstado)
     {
         // Hook para lógica adicional en subclases
+    }
+
+    public override string ToString()
+    {
+        var type = EstadoActual.GetType();
+        var name = Enum.GetName(type, EstadoActual);
+        if (name != null)
+        {
+            var field = type.GetField(name);
+            if (field != null)
+            {
+                var attr = field.GetCustomAttribute<XafDisplayNameAttribute>();
+                if (attr != null)
+                {
+                    return attr.DisplayName;
+                }
+            }
+        }
+        return EstadoActual.ToString();
     }
 }
