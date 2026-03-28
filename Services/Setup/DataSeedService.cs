@@ -122,6 +122,9 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
         new ProductoSetupService(objectSpace).CreateInitialData();
         objectSpace.CommitChanges();
 
+        new ReportsSetupService(objectSpace).CreateInitialData();
+        objectSpace.CommitChanges();
+
         // Llamamos de nuevo a InformacionEmpresaSetupService para que asigne las cuentas contables 
         // una vez ya han sido creadas por ContabilidadSetupService
         new InformacionEmpresaSetupService(objectSpace).CreateInitialInformacionEmpresa(tenantName);
