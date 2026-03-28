@@ -10,6 +10,7 @@ using erp.Module.Services.Tpv;
 using Microsoft.Extensions.DependencyInjection;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Configuraciones;
+using erp.Module.BusinessObjects.Inventario;
 using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Tpv;
@@ -29,6 +30,7 @@ public class Tpv(Session session) : EntidadBase(session)
     private DateTime? _ultimaConexion;
     private string? _nombreReporteTicket;
     private bool _activarVeriFactu;
+    private Almacen? _almacen;
 
     [Size(100)]
     [RuleRequiredField("RuleRequiredField_Tpv_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre del TPV es obligatorio")]
@@ -98,6 +100,13 @@ public class Tpv(Session session) : EntidadBase(session)
     {
         get => _activarVeriFactu;
         set => SetPropertyValue(nameof(ActivarVeriFactu), ref _activarVeriFactu, value);
+    }
+
+    [XafDisplayName("Almacén")]
+    public Almacen? Almacen
+    {
+        get => _almacen;
+        set => SetPropertyValue(nameof(Almacen), ref _almacen, value);
     }
 
     public DateTime GetLocalTime()
@@ -225,5 +234,6 @@ public class Tpv(Session session) : EntidadBase(session)
         ZonaHoraria ??= companyInfo.ZonaHorariaPorDefecto;
         SeriePorDefecto ??= companyInfo.PrefijoFacturasSimplificadasPorDefecto;
         NombreReporteTicket ??= companyInfo.NombreReporteTicket;
+        Almacen ??= companyInfo.AlmacenPorDefecto;
     }
 }
