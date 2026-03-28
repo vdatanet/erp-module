@@ -147,7 +147,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
 
         if (veriFactuResponse.Status == VeriFactuConstants.Correcto)
         {
-            invoice.EstadoVeriFactu = EstadoVeriFactu.Enviado;
+            invoice.EstadoVeriFactu = EstadoVeriFactu.AceptadaVeriFactu;
             
             invoice.UrlValidacion = veriFactuResponse.ValidationUrl;
             invoice.Csv = veriFactuResponse.CSV;
@@ -161,11 +161,11 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         }
         else if (veriFactuResponse.Status == VeriFactuConstants.Parcial)
         {
-            invoice.EstadoVeriFactu = EstadoVeriFactu.EnviadoConErrores;
+            invoice.EstadoVeriFactu = EstadoVeriFactu.EnviadaVeriFactu;
         }
         else
         {
-            invoice.EstadoVeriFactu = EstadoVeriFactu.Rechazado;
+            invoice.EstadoVeriFactu = EstadoVeriFactu.RechazadaVeriFactu;
         }
 
         try

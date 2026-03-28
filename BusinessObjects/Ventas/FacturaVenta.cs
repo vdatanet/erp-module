@@ -101,7 +101,8 @@ public class FacturaVenta(Session session) : FacturaBase(session)
 
     public override bool EsValida()
     {
-        return EstadoVeriFactu != EstadoVeriFactu.Enviado
+        return EstadoVeriFactu != EstadoVeriFactu.EnviadaVeriFactu 
+               && EstadoVeriFactu != EstadoVeriFactu.AceptadaVeriFactu
                && Cliente != null
                && !string.IsNullOrEmpty(Cliente.Nombre)
                && !string.IsNullOrEmpty(Cliente.Nif)

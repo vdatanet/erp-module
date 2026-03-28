@@ -25,7 +25,7 @@ public class FacturaVentaOrchestrator
         
         // Aquí iría la lógica de envío a Verifactu. 
         // Por ahora simulamos que el envío es correcto asignando el estado de Verifactu.
-        factura.EstadoVeriFactu = erp.Module.BusinessObjects.Base.Facturacion.EstadoVeriFactu.Enviado;
+        factura.EstadoVeriFactu = erp.Module.BusinessObjects.Base.Facturacion.EstadoVeriFactu.AceptadaVeriFactu;
         
         factura.StateMachine.CambiarA(EstadoDocumentoVenta.EnviadaVerifactu);
     }

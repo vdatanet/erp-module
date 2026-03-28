@@ -25,7 +25,7 @@ public abstract class FacturaStateMachineBase(FacturaBase documento) : Documento
     public override bool PuedeCambiarA(EstadoDocumentoVenta nuevoEstado)
     {
         // Regla base de facturas: si está enviada a VeriFactu, no se puede volver a borrador ni anular directamente
-        if (Factura.EstadoVeriFactu == EstadoVeriFactu.Enviado)
+        if (Factura.EstadoVeriFactu is EstadoVeriFactu.EnviadaVeriFactu or EstadoVeriFactu.AceptadaVeriFactu)
         {
             if (nuevoEstado is EstadoDocumentoVenta.Borrador or EstadoDocumentoVenta.Anulado)
                 return false;

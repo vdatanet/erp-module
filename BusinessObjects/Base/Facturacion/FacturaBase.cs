@@ -13,11 +13,11 @@ using VeriFactu.Xml.Factu.Alta;
 namespace erp.Module.BusinessObjects.Base.Facturacion;
 
 [Appearance("BlockEditingWhenSent", AppearanceItemType = "ViewItem", TargetItems = "*",
-    Criteria = "EstadoVeriFactu = 'Enviado'", Context = "Any", Enabled = false)]
+    Criteria = "EstadoVeriFactu = 'EnviadaVeriFactu' OR EstadoVeriFactu = 'AceptadaVeriFactu'", Context = "Any", Enabled = false)]
 [Appearance("BlockDeletionWhenSent", AppearanceItemType = "Action", TargetItems = "Delete",
-    Criteria = "EstadoVeriFactu = 'Enviado'", Context = "Any", Enabled = false)]
+    Criteria = "EstadoVeriFactu = 'EnviadaVeriFactu' OR EstadoVeriFactu = 'AceptadaVeriFactu'", Context = "Any", Enabled = false)]
 [Appearance("BlockSendActionWhenSent", AppearanceItemType = "Action", TargetItems = "ValidateFactura",
-    Criteria = "EstadoVeriFactu = 'Enviado'", Context = "Any", Enabled = false)]
+    Criteria = "EstadoVeriFactu = 'EnviadaVeriFactu' OR EstadoVeriFactu = 'AceptadaVeriFactu'", Context = "Any", Enabled = false)]
 public abstract class FacturaBase(Session session) : DocumentoVenta(session)
 {
 

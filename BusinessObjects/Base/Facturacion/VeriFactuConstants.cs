@@ -3,10 +3,13 @@ namespace erp.Module.BusinessObjects.Base.Facturacion;
 public enum EstadoVeriFactu
 {
     Borrador,
-    Enviado,
-    EnviadoConErrores,
-    ErrorTecnico,
-    Rechazado
+    Validado,
+    PendienteVeriFactu,
+    EnviadaVeriFactu,
+    AceptadaVeriFactu,
+    RechazadaVeriFactu,
+    Impresa,
+    ErrorTecnico
 }
 
 public static class VeriFactuConstants
