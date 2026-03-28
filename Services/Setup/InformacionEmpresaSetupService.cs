@@ -77,7 +77,6 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
             informacionEmpresa.NombreArchivoConfigVeriFactu = tenantName.Replace(".", "_") + ".cfg";
         }
 
-        if (string.IsNullOrEmpty(informacionEmpresa.SerieCertificadoVeriFactu)) informacionEmpresa.SerieCertificadoVeriFactu = "CERT_DE_PRUEBAS";
         if (string.IsNullOrEmpty(informacionEmpresa.NombreSistemaVeriFactu)) informacionEmpresa.NombreSistemaVeriFactu = "VDATA ERP";
         if (string.IsNullOrEmpty(informacionEmpresa.VersionSistemaVeriFactu)) informacionEmpresa.VersionSistemaVeriFactu = "1.0.0";
         if (string.IsNullOrEmpty(informacionEmpresa.NombreAdministradorSistemaVeriFactu)) informacionEmpresa.NombreAdministradorSistemaVeriFactu = "Joan Pallàs Ribes";

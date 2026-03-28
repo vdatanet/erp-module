@@ -1,10 +1,13 @@
+using System.Threading.Tasks;
 using DevExpress.ExpressApp;
 using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Tpv;
 using erp.Module.BusinessObjects.Ventas;
+using erp.Module.Helpers.Contactos;
 using erp.Module.Services.Contabilidad;
 using erp.Module.Services.Facturacion;
+using erp.Module.Services.Tesoreria;
 
 namespace erp.Module.Services.Ventas;
 
@@ -23,10 +26,51 @@ public class FacturaOrchestrator
         factura.StateMachine.CambiarA(EstadoFactura.Validada);
     }
 
-    public VeriFactuService.SendResult EnviarAVerifactu(IObjectSpace objectSpace, FacturaBase factura, VeriFactuService veriFactuService)
+    public void Emitir(FacturaBase factura)
+    {
+        if (factura == null) return;
+
+        if (factura.EstadoFactura == EstadoFactura.Borrador)
+        {
+            throw new UserFriendlyException("La factura debe estar validada antes de emitirse.");
+        }
+
+        var validationResult = factura.ValidarParaEmision();
+        if (!validationResult.IsValid)
+        {
+            throw new UserFriendlyException($"No se puede emitir la factura:\n{validationResult.ErrorMessage}");
+        }
+
+        // Asignar número definitivo si no tiene uno
+        if (string.IsNullOrEmpty(factura.Secuencia))
+        {
+            factura.AsignarNumero();
+        }
+
+        // Asignar fecha de emisión si no tiene
+        var localTime = InformacionEmpresaHelper.GetLocalTime(factura.Session);
+        factura.Fecha = localTime.Date;
+        factura.Hora = localTime.TimeOfDay;
+        
+        // Generar efectos si es una factura de venta
+        if (factura is FacturaVenta facturaVenta)
+        {
+            TesoreriaService.GenerarEfectosVenta(facturaVenta);
+            facturaVenta.ActualizarEstadoCobro();
+        }
+
+        factura.StateMachine.CambiarA(EstadoFactura.Emitida);
+    }
+
+    public async Task<VeriFactuService.SendResult> EnviarAVerifactuAsync(IObjectSpace objectSpace, FacturaBase factura, VeriFactuService veriFactuService)
     {
         if (factura == null) return new VeriFactuService.SendResult(false, "La factura es nula.");
         if (veriFactuService == null) return new VeriFactuService.SendResult(false, "El servicio VeriFactu no está disponible.");
+
+        if (factura.EstadoFactura == EstadoFactura.Borrador)
+        {
+            throw new UserFriendlyException("La factura debe estar validada antes de enviarse a VeriFactu.");
+        }
 
         var validationResult = factura.ValidarParaEmision();
         if (!validationResult.IsValid)
@@ -34,12 +78,7 @@ public class FacturaOrchestrator
             throw new UserFriendlyException($"No se puede enviar a VeriFactu:\n{validationResult.ErrorMessage}");
         }
 
-        var result = veriFactuService.SendFactura(objectSpace, factura);
-
-        if (result.Success)
-        {
-            factura.StateMachine.CambiarA(EstadoFactura.EnviadaVerifactu);
-        }
+        var result = await veriFactuService.SendFacturaAsync(objectSpace, factura);
 
         return result;
     }

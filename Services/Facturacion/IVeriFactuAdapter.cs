@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using VeriFactu.Business;
 using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Configuraciones;
@@ -6,7 +7,7 @@ namespace erp.Module.Services.Facturacion;
 
 public interface IVeriFactuAdapter
 {
-    VeriFactuResponse SendInvoice(Invoice veriFactuInvoice, InformacionEmpresa companyInfo);
+    Task<VeriFactuResponse> SendInvoiceAsync(Invoice veriFactuInvoice, InformacionEmpresa companyInfo);
 }
 
 public record VeriFactuResponse(

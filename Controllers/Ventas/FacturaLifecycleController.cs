@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
 using DevExpress.Persistent.Base;
@@ -12,6 +13,7 @@ namespace erp.Module.Controllers.Ventas;
 public class FacturaLifecycleController : ViewController
 {
     private readonly SimpleAction _validarAction;
+    private readonly SimpleAction _emitirAction;
     private readonly SimpleAction _revertirABorradorAction;
     private readonly SimpleAction _enviarVerifactuAction;
     private readonly SimpleAction _contabilizarAction;
@@ -27,7 +29,7 @@ public class FacturaLifecycleController : ViewController
             Caption = "Validar",
             ConfirmationMessage = "¿Desea validar esta factura?",
             ImageName = "Action_Validate",
-            TargetObjectsCriteria = "EstadoFactura = 'Borrador' OR EstadoFactura = 0",
+            TargetObjectsCriteria = "EstadoFactura = 'Borrador'",
             SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
         _validarAction.Execute += ValidarAction_Execute;
@@ -37,17 +39,27 @@ public class FacturaLifecycleController : ViewController
             Caption = "Revertir a Borrador",
             ConfirmationMessage = "¿Desea revertir esta factura a borrador?",
             ImageName = "Action_Undo",
-            TargetObjectsCriteria = "EstadoFactura = 'Validada' OR EstadoFactura = 1",
+            TargetObjectsCriteria = "EstadoFactura = 'Validada'",
             SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
         _revertirABorradorAction.Execute += RevertirABorradorAction_Execute;
+
+        _emitirAction = new SimpleAction(this, "Factura_Emitir", PredefinedCategory.Edit)
+        {
+            Caption = "Emitir",
+            ConfirmationMessage = "¿Desea emitir esta factura? (Se asignará número definitivo y fecha de emisión)",
+            ImageName = "Action_LinkUnlink_Link",
+            TargetObjectsCriteria = "EstadoFactura = 'Validada'",
+            SelectionDependencyType = SelectionDependencyType.RequireSingleObject
+        };
+        _emitirAction.Execute += EmitirAction_Execute;
 
         _enviarVerifactuAction = new SimpleAction(this, "Factura_EnviarVerifactu", PredefinedCategory.Edit)
         {
             Caption = "Enviar a VeriFactu",
             ConfirmationMessage = "¿Desea enviar esta factura a VeriFactu?",
             ImageName = "Action_Send",
-            TargetObjectsCriteria = "EstadoFactura = 'Validada' OR EstadoFactura = 1",
+            TargetObjectsCriteria = "EstadoFactura = 'Emitida'",
             SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
         _enviarVerifactuAction.Execute += EnviarVerifactuAction_Execute;
@@ -57,7 +69,7 @@ public class FacturaLifecycleController : ViewController
             Caption = "Contabilizar",
             ConfirmationMessage = "¿Desea generar el asiento contable para esta factura?",
             ImageName = "Action_LinkUnlink_Link",
-            TargetObjectsCriteria = "EstadoFactura = 'EnviadaVerifactu' OR EstadoFactura = 2 OR EstadoFactura = 'Validada' OR EstadoFactura = 1",
+            TargetObjectsCriteria = "EstadoFactura = 'Emitida'",
             SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
         _contabilizarAction.Execute += ContabilizarAction_Execute;
@@ -112,6 +124,16 @@ public class FacturaLifecycleController : ViewController
         View.Refresh();
     }
 
+    private void EmitirAction_Execute(object sender, SimpleActionExecuteEventArgs e)
+    {
+        if (e.CurrentObject is not FacturaBase factura) return;
+
+        factura.Emitir();
+        ObjectSpace.CommitChanges();
+
+        View.Refresh();
+    }
+
     private void RevertirABorradorAction_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
         if (e.CurrentObject is not FacturaBase factura) return;
@@ -122,11 +144,11 @@ public class FacturaLifecycleController : ViewController
         View.Refresh();
     }
 
-    private void EnviarVerifactuAction_Execute(object sender, SimpleActionExecuteEventArgs e)
+    private async void EnviarVerifactuAction_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
         if (e.CurrentObject is not FacturaBase factura || _veriFactuService == null) return;
 
-        var result = factura.EnviarVerifactu(ObjectSpace, _veriFactuService);
+        var result = await factura.EnviarVerifactuAsync(ObjectSpace, _veriFactuService);
 
         var options = new MessageOptions
         {

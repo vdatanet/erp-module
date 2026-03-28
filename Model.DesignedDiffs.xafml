@@ -324,15 +324,16 @@
             <LayoutGroup Id="VeriFactu" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="4" Caption="VeriFactu" RelativeSize="100" ImageName="Actions_Send" IsNewNode="True">
               <LayoutGroup Id="col1" Index="0" ShowCaption="False" RelativeSize="49.751737835153925" IsNewNode="True">
                 <LayoutItem Id="NombreArchivoConfigVeriFactu" ViewItem="NombreArchivoConfigVeriFactu" Index="0" RelativeSize="3.5834266517357225" IsNewNode="True" />
-                <LayoutItem Id="SerieCertificadoVeriFactu" ViewItem="SerieCertificadoVeriFactu" Index="1" RelativeSize="2.687569988801792" IsNewNode="True" />
-                <LayoutItem Id="NombreSistemaVeriFactu" ViewItem="NombreSistemaVeriFactu" Index="2" RelativeSize="2.687569988801792" IsNewNode="True" />
-                <LayoutItem Id="NombreAdministradorSistemaVeriFactu" ViewItem="NombreAdministradorSistemaVeriFactu" Index="3" RelativeSize="2.687569988801792" IsNewNode="True" />
-                <LayoutItem Id="NifAdministradorSistemaVeriFactu" ViewItem="NifAdministradorSistemaVeriFactu" Index="4" RelativeSize="2.687569988801792" IsNewNode="True" />
-                <LayoutItem Id="VersionSistemaVeriFactu" ViewItem="VersionSistemaVeriFactu" Index="5" RelativeSize="2.687569988801792" IsNewNode="True" />
-                <LayoutItem Id="PrefijoUrlVeriFactu" ViewItem="PrefijoUrlVeriFactu" Index="6" RelativeSize="2.687569988801792" IsNewNode="True" />
-                <LayoutItem Id="PrefijoUrlValidacionVeriFactu" ViewItem="PrefijoUrlValidacionVeriFactu" Index="7" RelativeSize="2.687569988801792" IsNewNode="True" />
-                <LayoutItem Id="TextoDefectoVeriFactu" ViewItem="TextoDefectoVeriFactu" Index="8" RelativeSize="6.942889137737962" IsNewNode="True" />
-                <LayoutItem Id="Item5" Index="9" RelativeSize="70.66069428891377" IsNewNode="True" />
+                <LayoutItem Id="CertificadoVeriFactu" ViewItem="CertificadoVeriFactu" Index="1" RelativeSize="2.687569988801792" IsNewNode="True" />
+                <LayoutItem Id="PasswordCertificadoVeriFactu" ViewItem="PasswordCertificadoVeriFactu" Index="2" RelativeSize="2.687569988801792" IsNewNode="True" />
+                <LayoutItem Id="NombreSistemaVeriFactu" ViewItem="NombreSistemaVeriFactu" Index="3" RelativeSize="2.687569988801792" IsNewNode="True" />
+                <LayoutItem Id="NombreAdministradorSistemaVeriFactu" ViewItem="NombreAdministradorSistemaVeriFactu" Index="4" RelativeSize="2.687569988801792" IsNewNode="True" />
+                <LayoutItem Id="NifAdministradorSistemaVeriFactu" ViewItem="NifAdministradorSistemaVeriFactu" Index="5" RelativeSize="2.687569988801792" IsNewNode="True" />
+                <LayoutItem Id="VersionSistemaVeriFactu" ViewItem="VersionSistemaVeriFactu" Index="6" RelativeSize="2.687569988801792" IsNewNode="True" />
+                <LayoutItem Id="PrefijoUrlVeriFactu" ViewItem="PrefijoUrlVeriFactu" Index="7" RelativeSize="2.687569988801792" IsNewNode="True" />
+                <LayoutItem Id="PrefijoUrlValidacionVeriFactu" ViewItem="PrefijoUrlValidacionVeriFactu" Index="8" RelativeSize="2.687569988801792" IsNewNode="True" />
+                <LayoutItem Id="TextoDefectoVeriFactu" ViewItem="TextoDefectoVeriFactu" Index="9" RelativeSize="6.942889137737962" IsNewNode="True" />
+                <LayoutItem Id="Item5" Index="10" RelativeSize="65.2855543113102" IsNewNode="True" />
               </LayoutGroup>
               <LayoutGroup Id="col2" Index="1" ShowCaption="False" RelativeSize="50.248262164846075" IsNewNode="True" />
             </LayoutGroup>
@@ -376,7 +377,6 @@
         <ColumnInfo Id="PrefijoUrlValidacionVeriFactu" Index="-1" />
         <ColumnInfo Id="PrefijoUrlVeriFactu" Index="-1" />
         <ColumnInfo Id="Provincia" Index="-1" />
-        <ColumnInfo Id="SerieCertificadoVeriFactu" Index="-1" />
         <ColumnInfo Id="SitioWeb" Index="-1" />
         <ColumnInfo Id="TextoDefectoVeriFactu" Index="-1" />
         <ColumnInfo Id="VersionSistemaVeriFactu" Index="-1" />

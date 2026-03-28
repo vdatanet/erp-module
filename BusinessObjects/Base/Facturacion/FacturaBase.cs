@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Threading.Tasks;
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.DC;
@@ -6,6 +7,8 @@ using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Xpo;
+using DevExpress.Persistent.Validation;
+using erp.Module.BusinessObjects.Ventas;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Contabilidad;
@@ -18,11 +21,11 @@ using VeriFactu.Xml.Factu.Alta;
 namespace erp.Module.BusinessObjects.Base.Facturacion;
 
 [Appearance("BlockEditingWhenSent", AppearanceItemType = "ViewItem", TargetItems = "*",
-    Criteria = "EstadoFactura = 'EnviadaVerifactu' OR EstadoFactura = 2", Context = "Any", Enabled = false)]
+    Criteria = "EstadoFactura != 'Borrador' AND EstadoFactura != 'Validada'", Context = "DetailView", Enabled = false)]
 [Appearance("BlockDeletionWhenSent", AppearanceItemType = "Action", TargetItems = "Delete",
-    Criteria = "EstadoFactura = 'EnviadaVerifactu' OR EstadoFactura = 2", Context = "Any", Enabled = false)]
-[Appearance("BlockSendActionWhenSent", AppearanceItemType = "Action", TargetItems = "Factura_EnviarVerifactu",
-    Criteria = "EstadoFactura = 'EnviadaVerifactu' OR EstadoFactura = 2", Context = "Any", Enabled = false)]
+    Criteria = "EstadoFactura != 'Borrador' AND EstadoFactura != 'Validada'", Context = "Any", Enabled = false)]
+[Appearance("BlockSendActionOnlyWhenEmitida", AppearanceItemType = "Action", TargetItems = "Factura_EnviarVerifactu",
+    Criteria = "EstadoFactura != 'Emitida'", Context = "Any", Enabled = false)]
 public abstract class FacturaBase(Session session) : DocumentoVenta(session)
 {
 
@@ -239,7 +242,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     public bool Confirmado => EstadoFactura >= EstadoFactura.Validada;
 
     [XafDisplayName("Emitido")]
-    public bool Emitido => EstadoFactura >= EstadoFactura.Validada;
+    public bool Emitido => EstadoFactura >= EstadoFactura.Emitida;
 
     [XafDisplayName("Impreso")]
     public bool Impreso => false;
@@ -251,7 +254,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     public bool Bloqueado => EstadoFactura == EstadoFactura.Contabilizada;
 
     [XafDisplayName("Sincronizado")]
-    public bool Sincronizado => EstadoFactura == EstadoFactura.EnviadaVerifactu;
+    public bool Sincronizado => EstadoVeriFactu == EstadoVeriFactu.AceptadaVeriFactu;
 
     public override void AfterConstruction()
     {
@@ -279,7 +282,8 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     protected abstract IFacturaStateMachine GetStateMachine();
 
     public bool Contabilizada => EstadoFactura == EstadoFactura.Contabilizada;
-    public bool EnviadaVeriFactu => EstadoFactura == EstadoFactura.EnviadaVerifactu;
+    public bool EnviadaVeriFactu => EstadoVeriFactu == EstadoVeriFactu.AceptadaVeriFactu || EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu;
+    public bool Emitida => EstadoFactura >= EstadoFactura.Emitida;
     public bool Cobrada => EstadoCobro == EstadoCobroFactura.Pagada;
 
     private void InitValues()
@@ -296,8 +300,8 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     public virtual ValidationResult ValidarParaEmision()
     {
         var result = ValidationResult.Success();
-        if (EstadoFactura != EstadoFactura.Borrador && (int)EstadoFactura != 0)
-            result.AddError("La factura debe estar en estado borrador para ser validada.");
+        if (EstadoFactura == EstadoFactura.Contabilizada)
+            result.AddError("La factura ya ha sido contabilizada y no puede modificarse ni re-enviarse.");
         if (string.IsNullOrEmpty(Texto))
             result.AddError("El texto de la factura es obligatorio para VeriFactu.");
         if (Impuestos.Count == 0)
@@ -311,10 +315,16 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
         orchestrator.Validar(this);
     }
 
-    public VeriFactuService.SendResult EnviarVerifactu(IObjectSpace objectSpace, VeriFactuService veriFactuService)
+    public void Emitir()
     {
         var orchestrator = new FacturaOrchestrator();
-        return orchestrator.EnviarAVerifactu(objectSpace, this, veriFactuService);
+        orchestrator.Emitir(this);
+    }
+
+    public async Task<VeriFactuService.SendResult> EnviarVerifactuAsync(IObjectSpace objectSpace, VeriFactuService veriFactuService)
+    {
+        var orchestrator = new FacturaOrchestrator();
+        return await orchestrator.EnviarAVerifactuAsync(objectSpace, this, veriFactuService);
     }
 
     public void Contabilizar()

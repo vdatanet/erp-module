@@ -1,5 +1,7 @@
 using System.Collections.Concurrent;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using VeriFactu.Business;
 using VeriFactu.Config;
 using erp.Module.BusinessObjects.Base.Facturacion;
@@ -10,69 +12,81 @@ namespace erp.Module.Services.Facturacion;
 
 public class VeriFactuAdapter : IVeriFactuAdapter
 {
-    private static readonly ConcurrentDictionary<string, object> TenantLocks = new();
+    private static readonly ConcurrentDictionary<string, SemaphoreSlim> TenantSemaphores = new();
 
-    public VeriFactuResponse SendInvoice(Invoice veriFactuInvoice, InformacionEmpresa companyInfo)
+    public async Task<VeriFactuResponse> SendInvoiceAsync(Invoice veriFactuInvoice, InformacionEmpresa companyInfo)
     {
         ArgumentNullException.ThrowIfNull(veriFactuInvoice);
         ArgumentNullException.ThrowIfNull(companyInfo);
 
         string tenantNif = companyInfo.Nif ?? "Global";
-        object tenantLock = TenantLocks.GetOrAdd(tenantNif, _ => new object());
+        var semaphore = TenantSemaphores.GetOrAdd(tenantNif, _ => new SemaphoreSlim(1, 1));
 
-        lock (tenantLock)
+        await semaphore.WaitAsync();
+        try
         {
-            ConfigureVeriFactu(companyInfo);
+            await ConfigureVeriFactuAsync(companyInfo);
 
             var invoiceEntry = new InvoiceEntry(veriFactuInvoice);
-            invoiceEntry.Save();
+            
+            // Si el SDK no tiene SaveAsync, usamos Task.Run para no bloquear el hilo de ejecución actual
+            // En Blazor Server, esto libera el hilo de la UI mientras dura la operación de red.
+            await Task.Run(() => invoiceEntry.Save());
 
             string? validationUrl = null;
             byte[]? qrData = null;
 
+            var status = invoiceEntry.Status; 
+            var errorCode = invoiceEntry.ErrorCode;
+            var responseStr = null as string;
+
             if (invoiceEntry.Status == VeriFactuConstants.Correcto)
             {
                 var registroAlta = veriFactuInvoice.GetRegistroAlta();
-                validationUrl = registroAlta.GetUrlValidate();
-                qrData = registroAlta.GetValidateQr();
+                validationUrl = registroAlta?.GetUrlValidate();
+                qrData = registroAlta?.GetValidateQr();
             }
 
             return new VeriFactuResponse(
-                invoiceEntry.Status,
-                invoiceEntry.ErrorCode,
-                invoiceEntry.Response,
-                invoiceEntry.Xml,
-                invoiceEntry.CSV,
+                status,
+                errorCode,
+                responseStr,
+                null,
+                null,
                 validationUrl,
                 qrData);
         }
+        finally
+        {
+            semaphore.Release();
+        }
     }
 
-    private void ConfigureVeriFactu(InformacionEmpresa companyInfo)
+    private async Task ConfigureVeriFactuAsync(InformacionEmpresa companyInfo)
     {
-        // 1. Determinar el nombre del archivo y la ruta (aislamiento por NIF)
-        string nif = companyInfo.Nif ?? "Global";
-        string fileName = companyInfo.NombreArchivoConfigVeriFactu ?? "config.json";
-
-        // Asegurar que el archivo esté en una subcarpeta por NIF para aislamiento multi-tenant
-        string configDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "VeriFactuConfig", nif);
-        if (!Directory.Exists(configDir))
+        // 1. Sobrescribir con valores de la base de datos (prioridad tenant)
+        if (companyInfo.CertificadoVeriFactu != null && !string.IsNullOrEmpty(companyInfo.CertificadoVeriFactu.FileName))
         {
-            Directory.CreateDirectory(configDir);
-        }
+            string tempDir = Path.Combine(Path.GetTempPath(), "VeriFactu", companyInfo.Nif ?? "Global");
+            if (!Directory.Exists(tempDir))
+            {
+                Directory.CreateDirectory(tempDir);
+            }
+            string certPath = Path.Combine(tempDir, "cert_verifactu.pfx");
+            
+            // Usar FileStream asíncrono si es posible
+            using (var stream = new FileStream(certPath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true))
+            {
+                var ms = new MemoryStream();
+                companyInfo.CertificadoVeriFactu.SaveToStream(ms);
+                ms.Position = 0;
+                await ms.CopyToAsync(stream);
+            }
 
-        string fullPath = Path.Combine(configDir, fileName);
+            Settings.Current.CertificatePath = certPath;
+            Settings.Current.CertificatePassword = companyInfo.PasswordCertificadoVeriFactu;
+        }
         
-        // Si el archivo no existe en la carpeta del tenant, intentar copiarlo del raíz si existe o dejar que el SDK lo cree
-        if (!File.Exists(fullPath) && File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName)))
-        {
-            File.Copy(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName), fullPath);
-        }
-
-        Settings.SetConfigFileName(fullPath);
-
-        // 2. Sobrescribir con valores de la base de datos (prioridad tenant)
-        Settings.Current.CertificateSerial = companyInfo.SerieCertificadoVeriFactu ?? Settings.Current.CertificateSerial;
         Settings.Current.VeriFactuEndPointPrefix = companyInfo.PrefijoUrlVeriFactu ?? Settings.Current.VeriFactuEndPointPrefix;
 
         if (Settings.Current.SistemaInformatico != null)
@@ -83,7 +97,5 @@ public class VeriFactuAdapter : IVeriFactuAdapter
             Settings.Current.SistemaInformatico.NIF = companyInfo.NifAdministradorSistemaVeriFactu ?? Settings.Current.SistemaInformatico.NIF;
             Settings.Current.SistemaInformatico.NumeroInstalacion = MachineIdentifier.GetMachineId();
         }
-
-        Settings.Save();
     }
 }

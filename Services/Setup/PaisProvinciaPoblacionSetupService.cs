@@ -54,7 +54,11 @@ public class PaisProvinciaPoblacionSetupService(IObjectSpace objectSpace)
             {
                 pais = os.CreateObject<Pais>();
                 pais.Nombre = data.Pais;
+                if (data.Pais == "España") pais.CodigoIso = "ES";
             }
+
+            // Sembrar otros países de Europa
+            SeedEuropeanCountries(os);
 
             foreach (var provinciaData in data.Provincias)
             {
@@ -84,6 +88,75 @@ public class PaisProvinciaPoblacionSetupService(IObjectSpace objectSpace)
         {
             // Log or handle the error gracefully to prevent application startup failure
             // In a real scenario, we might want to log this to a file or database
+        }
+    }
+
+    private void SeedEuropeanCountries(IObjectSpace os)
+    {
+        var europeanCountries = new Dictionary<string, string>
+        {
+            { "Alemania", "DE" },
+            { "Albania", "AL" },
+            { "Andorra", "AD" },
+            { "Austria", "AT" },
+            { "Bélgica", "BE" },
+            { "Bielorrusia", "BY" },
+            { "Bosnia y Herzegovina", "BA" },
+            { "Bulgaria", "BG" },
+            { "Ciudad del Vaticano", "VA" },
+            { "Croacia", "HR" },
+            { "Chipre", "CY" },
+            { "República Checa", "CZ" },
+            { "Dinamarca", "DK" },
+            { "Estonia", "EE" },
+            { "Finlandia", "FI" },
+            { "Francia", "FR" },
+            { "Georgia", "GE" },
+            { "Grecia", "GR" },
+            { "Hungría", "HU" },
+            { "Islandia", "IS" },
+            { "Irlanda", "IE" },
+            { "Italia", "IT" },
+            { "Kazajistán", "KZ" },
+            { "Letonia", "LV" },
+            { "Liechtenstein", "LI" },
+            { "Lituania", "LT" },
+            { "Luxemburgo", "LU" },
+            { "Malta", "MT" },
+            { "Moldavia", "MD" },
+            { "Mónaco", "MC" },
+            { "Montenegro", "ME" },
+            { "Países Bajos", "NL" },
+            { "Macedonia del Norte", "MK" },
+            { "Noruega", "NO" },
+            { "Polonia", "PL" },
+            { "Portugal", "PT" },
+            { "Rumanía", "RO" },
+            { "Rusia", "RU" },
+            { "San Marino", "SM" },
+            { "Serbia", "RS" },
+            { "Eslovaquia", "SK" },
+            { "Eslovenia", "SI" },
+            { "Suecia", "SE" },
+            { "Suiza", "CH" },
+            { "Turquía", "TR" },
+            { "Ucrania", "UA" },
+            { "Reino Unido", "GB" }
+        };
+
+        foreach (var entry in europeanCountries)
+        {
+            var p = os.FindObject<Pais>(CriteriaOperator.Parse("Nombre = ?", entry.Key));
+            if (p == null)
+            {
+                p = os.CreateObject<Pais>();
+                p.Nombre = entry.Key;
+                p.CodigoIso = entry.Value;
+            }
+            else if (string.IsNullOrEmpty(p.CodigoIso))
+            {
+                p.CodigoIso = entry.Value;
+            }
         }
     }
 

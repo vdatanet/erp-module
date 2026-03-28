@@ -65,6 +65,8 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private string? _nombreAdministradorSistemaVeriFactu;
     private string? _nombreArchivoConfigVeriFactu;
     private string? _nombreSistemaVeriFactu;
+    private FileData? _certificadoVeriFactu;
+    private string? _passwordCertificadoVeriFactu;
     private PosicionFiscal? _posicionFiscalPorDefecto;
     private string? _prefijoAsientosPorDefecto;
     private string? _prefijoAlbaranesCompraPorDefecto;
@@ -86,7 +88,6 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private string? _prefijoReservas;
     private string? _prefijoSesionTpvPorDefecto;
     private string? _prefijoVentaTpvPorDefecto;
-    private string? _serieCertificadoVeriFactu;
     private string? _textoDefectoVeriFactu;
     private string? _versionSistemaVeriFactu;
     private MediaDataObject? _logo;
@@ -555,11 +556,21 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(NombreArchivoConfigVeriFactu), ref _nombreArchivoConfigVeriFactu, value);
     }
 
-    [XafDisplayName("Serie Certificado VeriFactu")]
-    public string? SerieCertificadoVeriFactu
+    [XafDisplayName("Certificado VeriFactu")]
+    [FileTypeFilter("Certificados (*.pfx;*.p12)", "*.pfx;*.p12")]
+    [ExpandObjectMembers(ExpandObjectMembers.Never)]
+    public FileData? CertificadoVeriFactu
     {
-        get => _serieCertificadoVeriFactu;
-        set => SetPropertyValue(nameof(SerieCertificadoVeriFactu), ref _serieCertificadoVeriFactu, value);
+        get => _certificadoVeriFactu;
+        set => SetPropertyValue(nameof(CertificadoVeriFactu), ref _certificadoVeriFactu, value);
+    }
+
+    [XafDisplayName("Contraseña Certificado VeriFactu")]
+    [PasswordPropertyText(true)]
+    public string? PasswordCertificadoVeriFactu
+    {
+        get => _passwordCertificadoVeriFactu;
+        set => SetPropertyValue(nameof(PasswordCertificadoVeriFactu), ref _passwordCertificadoVeriFactu, value);
     }
 
     [XafDisplayName("URL VeriFactu")]

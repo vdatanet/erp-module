@@ -22,14 +22,6 @@ namespace erp.Module.BusinessObjects.Tpv;
 [XafDisplayName("Factura Simplificada")]
 [ImageName("BO_Invoice")] // Podría cambiarse a algo más específico si existe
 [DefaultProperty(nameof(Secuencia))]
-[Appearance("BlockEditingFacturaSimplificadaNoBorrador", AppearanceItemType = "ViewItem", TargetItems = "*",
-    Criteria = "EstadoFactura = 'Validada' OR EstadoFactura = 1 OR EstadoFactura = 'EnviadaVerifactu' OR EstadoFactura = 2 OR EstadoFactura = 'Contabilizada' OR EstadoFactura = 3", Context = "Any", Enabled = false)]
-[Appearance("BlockDeletionFacturaSimplificadaNoBorrador", AppearanceItemType = "Action", TargetItems = "Delete",
-    Criteria = "EstadoFactura != 'Borrador' AND EstadoFactura != 0", Context = "Any", Enabled = false)]
-[RuleCriteria("FacturaSimplificada_SoloBorradorModificable", DefaultContexts.Save, "EstadoFactura = 'Borrador' OR EstadoFactura = 0 OR EstadoFactura = 'Validada' OR EstadoFactura = 1 OR EstadoFactura = 'EnviadaVerifactu' OR EstadoFactura = 2 OR EstadoFactura = 'Contabilizada' OR EstadoFactura = 3", 
-    "Una factura simplificada solo se puede modificar si está en borrador.", SkipNullOrEmptyValues = false)]
-[RuleCriteria("FacturaSimplificada_SoloBorradorEliminable", DefaultContexts.Delete, "EstadoFactura = 'Borrador' OR EstadoFactura = 0", 
-    "Una factura simplificada solo se puede eliminar si está en borrador.")]
 public class FacturaSimplificada(Session session) : FacturaBase(session)
 {
     private VentaTpv? _ventaTpv;

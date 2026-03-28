@@ -16,7 +16,6 @@ namespace erp.Module.BusinessObjects.Compras;
 [NavigationItem("Compras")]
 [ImageName("BO_Invoice")]
 [DefaultProperty(nameof(Secuencia))]
-[RuleCriteria("FacturaCompra_SumaEfectosCoherente", DefaultContexts.Save, "EfectosPago.Sum(Importe) = ImporteTotal", "La suma de los importes de los efectos debe coincidir con el total de la factura.")]
 public class FacturaCompra(Session session) : DocumentoCompra(session)
 {
     [XafDisplayName("Efectos de Pago")]

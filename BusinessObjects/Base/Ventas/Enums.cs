@@ -49,7 +49,7 @@ public enum EstadoFactura
 {
     [XafDisplayName("Borrador")] Borrador,
     [XafDisplayName("Validada")] Validada,
-    [XafDisplayName("Enviada a VeriFactu")] EnviadaVerifactu,
+    [XafDisplayName("Emitida")] Emitida,
     [XafDisplayName("Contabilizada")] Contabilizada
 }
 

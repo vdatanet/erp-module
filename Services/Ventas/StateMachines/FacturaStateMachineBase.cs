@@ -40,8 +40,8 @@ public abstract class FacturaStateMachineBase(FacturaBase documento) : IFacturaS
         return ((EstadoFactura)EstadoActual) switch
         {
             EstadoFactura.Borrador => [EstadoFactura.Validada],
-            EstadoFactura.Validada => [EstadoFactura.EnviadaVerifactu, EstadoFactura.Contabilizada, EstadoFactura.Borrador],
-            EstadoFactura.EnviadaVerifactu => [EstadoFactura.Contabilizada],
+            EstadoFactura.Validada => [EstadoFactura.Emitida, EstadoFactura.Borrador],
+            EstadoFactura.Emitida => [EstadoFactura.Contabilizada],
             EstadoFactura.Contabilizada => [],
             _ => []
         };

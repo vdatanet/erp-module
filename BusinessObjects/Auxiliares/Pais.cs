@@ -15,6 +15,7 @@ namespace erp.Module.BusinessObjects.Auxiliares;
 public class Pais(Session session) : EntidadBase(session)
 {
     private string? _nombre;
+    private string? _codigoIso;
 
     [RuleRequiredField("RuleRequiredField_Pais_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre del País es obligatorio")]
     [RuleUniqueValue]
@@ -23,6 +24,14 @@ public class Pais(Session session) : EntidadBase(session)
     {
         get => _nombre;
         set => SetPropertyValue(nameof(Nombre), ref _nombre, value);
+    }
+
+    [Size(2)]
+    [XafDisplayName("Código ISO (VeriFactu)")]
+    public string? CodigoIso
+    {
+        get => _codigoIso;
+        set => SetPropertyValue(nameof(CodigoIso), ref _codigoIso, value);
     }
 
     public static Pais? FindByName(Session session, string name)

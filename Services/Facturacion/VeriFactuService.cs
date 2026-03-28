@@ -1,4 +1,6 @@
 using System.Text;
+using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 using DevExpress.ExpressApp;
 using DevExpress.Persistent.BaseImpl;
@@ -9,6 +11,8 @@ using erp.Module.Helpers.Contactos;
 using Microsoft.Extensions.Logging;
 using VeriFactu.Business;
 using VeriFactu.Config;
+using VeriFactu.Xml.Factu;
+using VeriFactu.Xml.Factu.Alta;
 
 namespace erp.Module.Services.Facturacion;
 
@@ -16,7 +20,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
 {
     public record SendResult(bool Success, string Message, string? ErrorCode = null);
 
-    public SendResult SendFactura(IObjectSpace objectSpace, FacturaBase invoice)
+    public async Task<SendResult> SendFacturaAsync(IObjectSpace objectSpace, FacturaBase invoice)
     {
         ArgumentNullException.ThrowIfNull(objectSpace);
         ArgumentNullException.ThrowIfNull(invoice);
@@ -33,13 +37,27 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
 
             PrepareInvoice(objectSpace, invoice);
 
-            logger.LogInformation("Iniciando envío de factura {Secuencia} a VeriFactu. Tenant: {Tenant}",
-                invoice.Secuencia, companyInfo.NombreArchivoConfigVeriFactu);
+            logger.LogInformation("Iniciando envío de factura {Secuencia} a VeriFactu.",
+                invoice.Secuencia);
 
             var veriFactuInvoice = MapToVeriFactuInvoice(invoice, companyInfo);
             
+            // Log detallado de los datos del comprador para revisión
+            logger.LogInformation("DATOS ENVIADOS A VERIFACTU para {Secuencia}:\n" +
+                                 "  TipoFactura: {Tipo}\n" +
+                                 "  BuyerID: {BuyerID}\n" +
+                                 "  BuyerName: {BuyerName}\n" +
+                                 "  BuyerCountryID: {Country}\n" +
+                                 "  IDType: {IDType}",
+                invoice.Secuencia, 
+                veriFactuInvoice.InvoiceType,
+                veriFactuInvoice.BuyerID,
+                veriFactuInvoice.BuyerName,
+                veriFactuInvoice.BuyerIDType,
+                invoice.TipoIdentificacionCliente);
+
             var startTime = InformacionEmpresaHelper.GetLocalTime(invoice.Session);
-            var response = veriFactuAdapter.SendInvoice(veriFactuInvoice, companyInfo);
+            var response = await veriFactuAdapter.SendInvoiceAsync(veriFactuInvoice, companyInfo);
             var duration = InformacionEmpresaHelper.GetLocalTime(invoice.Session) - startTime;
 
             logger.LogInformation("Respuesta recibida en {Duration}ms. Status: {Status}", 
@@ -81,6 +99,11 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         if (invoice.Fecha > InformacionEmpresaHelper.GetLocalTime(invoice.Session))
              return new SendResult(false, "La fecha de la factura no puede ser posterior a la fecha actual.");
 
+        if (companyInfo.CertificadoVeriFactu == null || string.IsNullOrEmpty(companyInfo.CertificadoVeriFactu.FileName))
+        {
+            return new SendResult(false, "El certificado de VeriFactu (.pfx) no está cargado en la configuración de la empresa.");
+        }
+
         // Para facturas que requieren cliente, validar que tengamos los datos en el snapshot o en el cliente
         var requiereBuyer = invoice.TipoFactura.ToString() == "F1";
         if (requiereBuyer &&
@@ -104,12 +127,16 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
 
     private void PrepareInvoice(IObjectSpace objectSpace, FacturaBase invoice)
     {
-        invoice.Fecha = invoice.Fecha == DateTime.MinValue
-            ? InformacionEmpresaHelper.GetLocalTime(objectSpace).Date
-            : invoice.Fecha;
+        // La factura ya debe tener fecha y número desde el estado Emitida
+        if (invoice.Fecha == DateTime.MinValue)
+        {
+            invoice.Fecha = InformacionEmpresaHelper.GetLocalTime(objectSpace).Date;
+        }
 
         if (string.IsNullOrEmpty(invoice.Secuencia))
+        {
             invoice.AsignarNumero();
+        }
     }
 
     private Invoice MapToVeriFactuInvoice(FacturaBase invoice, InformacionEmpresa companyInfo)
@@ -131,6 +158,24 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             veriFactuFactura.BuyerName = !string.IsNullOrEmpty(invoice.NombreCliente)
                 ? invoice.NombreCliente
                 : invoice.Cliente?.Nombre;
+
+            // veriFactuFactura.IDType = invoice.TipoIdentificacionCliente;
+
+            // Intentamos obtener el código ISO del snapshot de la factura (o del objeto País si no está en el snapshot)
+            var isoCode = !string.IsNullOrEmpty(invoice.CodigoIsoPaisCliente)
+                ? invoice.CodigoIsoPaisCliente
+                : (invoice.PaisCliente?.CodigoIso ?? invoice.Cliente?.Pais?.CodigoIso);
+
+            if (!string.IsNullOrEmpty(isoCode))
+            {
+                veriFactuFactura.BuyerCountryID = isoCode;
+            }
+            else if (invoice.PaisCliente != null || invoice.Cliente?.Pais != null)
+            {
+                // Fallback al nombre si no hay ISO (aunque VeriFactu requiere ISO)
+                var pais = invoice.PaisCliente ?? invoice.Cliente?.Pais;
+                veriFactuFactura.BuyerCountryID = pais?.Nombre;
+            }
         }
 
         foreach (var tax in invoice.Impuestos)
@@ -191,23 +236,60 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
 
         try
         {
-            if (!string.IsNullOrEmpty(veriFactuResponse.Response))
+            if (!string.IsNullOrWhiteSpace(veriFactuResponse.Response))
             {
-                var response = XDocument.Parse(veriFactuResponse.Response);
-                invoice.RespuestaAgenciaTributaria = response.ToString();
+                var trimmedResponse = veriFactuResponse.Response.Trim();
+                if (trimmedResponse.StartsWith('<'))
+                {
+                    try
+                    {
+                        var response = XDocument.Parse(trimmedResponse);
+                        invoice.RespuestaAgenciaTributaria = response.ToString();
+                    }
+                    catch (XmlException)
+                    {
+                        // No es XML válido, mantenemos el texto original
+                        invoice.RespuestaAgenciaTributaria = veriFactuResponse.Response;
+                    }
+                }
+                else
+                {
+                    invoice.RespuestaAgenciaTributaria = veriFactuResponse.Response;
+                }
             }
 
             if (veriFactuResponse.Xml is { Length: > 0 })
             {
                 var xmlString = Encoding.UTF8.GetString(veriFactuResponse.Xml);
-                var xml = XDocument.Parse(xmlString);
-                invoice.XmlAgenciaTributaria = xml.ToString();
+                if (!string.IsNullOrWhiteSpace(xmlString))
+                {
+                    var trimmedXml = xmlString.Trim();
+                    if (trimmedXml.StartsWith('<'))
+                    {
+                        try
+                        {
+                            var xml = XDocument.Parse(trimmedXml);
+                            invoice.XmlAgenciaTributaria = xml.ToString();
+                        }
+                        catch (XmlException)
+                        {
+                            invoice.XmlAgenciaTributaria = xmlString;
+                        }
+                    }
+                    else
+                    {
+                        invoice.XmlAgenciaTributaria = xmlString;
+                    }
+                }
             }
         }
         catch (Exception ex)
         {
             logger.LogWarning(ex, "Error procesando el detalle XML de la respuesta para factura {Secuencia}", invoice.Secuencia);
-            invoice.RespuestaAgenciaTributaria += $"\nError processing XML detail: {ex.Message}";
+            if (!string.IsNullOrEmpty(invoice.RespuestaAgenciaTributaria))
+                invoice.RespuestaAgenciaTributaria += $"\n[Error processing XML detail: {ex.Message}]";
+            else
+                invoice.RespuestaAgenciaTributaria = $"Error processing XML: {ex.Message}";
         }
     }
 }

@@ -23,6 +23,8 @@ using erp.Module.Factories;
 using erp.Module.Helpers.Contactos;
 using erp.Module.Models.Ventas;
 using erp.Module.Services.Ventas;
+using VeriFactu.Xml.Factu;
+using VeriFactu.Xml.Factu.Alta;
 
 namespace erp.Module.BusinessObjects.Base.Ventas;
 
@@ -116,6 +118,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private OrigenDocumentoVenta _origen;
     private decimal _otrosGastos;
     private Pais? _paisCliente;
+    private string? _codigoIsoPaisCliente;
     private string? _poblacionCliente;
 
     // --- IMPUESTOS Y CÁLCULOS ---
@@ -134,6 +137,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private SesionTpv? _sesionTpv;
 
     private string? _telefonoCliente;
+    private IDType _tipoIdentificacionCliente;
     private TipoDocumentoVenta _tipoDocumento;
     private decimal _totalBruto;
 
@@ -220,6 +224,14 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(TelefonoCliente), ref _telefonoCliente, value);
     }
 
+    [XafDisplayName("Tipo Identificación Cliente")]
+    [ModelDefault("AllowEdit", "False")]
+    public IDType TipoIdentificacionCliente
+    {
+        get => _tipoIdentificacionCliente;
+        set => SetPropertyValue(nameof(TipoIdentificacionCliente), ref _tipoIdentificacionCliente, value);
+    }
+
     [Size(255)]
     [XafDisplayName("Dirección Cliente")]
     [ModelDefault("AllowEdit", "False")]
@@ -262,6 +274,15 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     {
         get => _paisCliente;
         set => SetPropertyValue(nameof(PaisCliente), ref _paisCliente, value);
+    }
+
+    [Size(2)]
+    [XafDisplayName("ISO País Cliente")]
+    [ModelDefault("AllowEdit", "False")]
+    public string? CodigoIsoPaisCliente
+    {
+        get => _codigoIsoPaisCliente;
+        set => SetPropertyValue(nameof(CodigoIsoPaisCliente), ref _codigoIsoPaisCliente, value);
     }
 
     [XafDisplayName("Serie")]
@@ -1013,6 +1034,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
             ProvinciaCliente = null;
             CodigoPostalCliente = null;
             PaisCliente = null;
+            CodigoIsoPaisCliente = null;
             return;
         }
 
@@ -1023,11 +1045,13 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         DocumentoIdentificacionCliente = value.Nif;
         EmailCliente = value.CorreoElectronico;
         TelefonoCliente = value.Telefono;
+        TipoIdentificacionCliente = value.TipoIdentificacion;
         DireccionCliente = value.Direccion;
         PoblacionCliente = value.Poblacion?.Nombre;
         ProvinciaCliente = value.Provincia?.Nombre;
         CodigoPostalCliente = value.CodigoPostal;
         PaisCliente = value.Pais;
+        CodigoIsoPaisCliente = value.Pais?.CodigoIso;
     }
 
     public virtual void AsignarDomicilio(Domicilio? value)
@@ -1041,6 +1065,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
                 ProvinciaCliente = Cliente.Provincia?.Nombre;
                 CodigoPostalCliente = Cliente.CodigoPostal;
                 PaisCliente = Cliente.Pais;
+                CodigoIsoPaisCliente = Cliente.Pais?.CodigoIso;
             }
             return;
         }
@@ -1050,6 +1075,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         ProvinciaCliente = value.Provincia?.Nombre;
         CodigoPostalCliente = value.CodigoPostal;
         PaisCliente = value.Pais;
+        CodigoIsoPaisCliente = value.Pais?.CodigoIso;
 
         if (!string.IsNullOrEmpty(value.Telefono)) TelefonoCliente = value.Telefono;
         if (!string.IsNullOrEmpty(value.CorreoElectronico)) EmailCliente = value.CorreoElectronico;

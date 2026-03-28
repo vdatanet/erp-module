@@ -20,20 +20,6 @@ namespace erp.Module.BusinessObjects.Ventas;
 [NavigationItem("Ventas")]
 [ImageName("BO_Invoice")]
 [DefaultProperty(nameof(Secuencia))]
-[Appearance("BlockEditingFacturaNoBorrador", AppearanceItemType = "ViewItem", TargetItems = "*",
-    Criteria =
-        "EstadoFactura = 'Validada' OR EstadoFactura = 1 OR EstadoFactura = 'EnviadaVerifactu' OR EstadoFactura = 2 OR EstadoFactura = 'Contabilizada' OR EstadoFactura = 3",
-    Context = "Any", Enabled = false)]
-[Appearance("BlockDeletionFacturaNoBorrador", AppearanceItemType = "Action", TargetItems = "Delete",
-    Criteria = "EstadoFactura != 'Borrador' AND EstadoFactura != 0", Context = "Any", Enabled = false)]
-[RuleCriteria("Factura_SoloBorradorModificable", DefaultContexts.Save,
-    "EstadoFactura = 'Borrador' OR EstadoFactura = 0 OR EstadoFactura = 'Validada' OR EstadoFactura = 1 OR EstadoFactura = 'EnviadaVerifactu' OR EstadoFactura = 2 OR EstadoFactura = 'Contabilizada' OR EstadoFactura = 3",
-    "Una factura solo se puede modificar si está en borrador.", SkipNullOrEmptyValues = false)]
-[RuleCriteria("Factura_SoloBorradorEliminable", DefaultContexts.Delete,
-    "EstadoFactura = 'Borrador' OR EstadoFactura = 0",
-    "Una factura solo se puede eliminar si está en borrador.")]
-[RuleCriteria("Factura_SumaEfectosCoherente", DefaultContexts.Save, "EfectosCobro.Sum(Importe) = ImporteTotal",
-    "La suma de los importes de los efectos debe coincidir con el total de la factura.")]
 public class FacturaVenta(Session session) : FacturaBase(session)
 {
     [XafDisplayName("Efectos de Cobro")]
@@ -70,7 +56,6 @@ public class FacturaVenta(Session session) : FacturaBase(session)
         if (IsLoading || IsSaving) return;
         if (propertyName is nameof(CondicionPago) or nameof(ImporteTotal))
         {
-            TesoreriaService.GenerarEfectosVenta(this);
             ActualizarEstadoCobro();
         }
     }
