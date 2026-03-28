@@ -41,7 +41,8 @@ public abstract class FacturaStateMachineBase(FacturaBase documento) : IFacturaS
         {
             EstadoFactura.Borrador => [EstadoFactura.Validada],
             EstadoFactura.Validada => [EstadoFactura.Emitida, EstadoFactura.Borrador],
-            EstadoFactura.Emitida => [EstadoFactura.Contabilizada],
+            EstadoFactura.Emitida => [EstadoFactura.Enviada, EstadoFactura.Contabilizada],
+            EstadoFactura.Enviada => [EstadoFactura.Contabilizada],
             EstadoFactura.Contabilizada => [],
             _ => []
         };

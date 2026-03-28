@@ -69,7 +69,7 @@ public class FacturaLifecycleController : ViewController
             Caption = "Contabilizar",
             ConfirmationMessage = "¿Desea generar el asiento contable para esta factura?",
             ImageName = "Action_LinkUnlink_Link",
-            TargetObjectsCriteria = "EstadoFactura = 'Emitida'",
+            TargetObjectsCriteria = "EstadoFactura = 'Enviada' OR (EstadoVeriFactu = 'AceptadaVeriFactu' OR EstadoVeriFactu = 'EnviadaVeriFactu')",
             SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
         _contabilizarAction.Execute += ContabilizarAction_Execute;
@@ -159,16 +159,22 @@ public class FacturaLifecycleController : ViewController
         };
         Application.ShowViewStrategy.ShowMessage(options);
 
-        if (result.Success)
-        {
-            ObjectSpace.CommitChanges();
-            View.Refresh();
-        }
+        // El servicio ya hace su propio CommitChanges() si llega a la fase de envío.
+        // Solo hacemos un commit adicional y Refresh para asegurar que la UI esté sincronizada
+        // con el estado actual de la factura (ej. Rechazada, Aceptada, etc.).
+        ObjectSpace.CommitChanges();
+        View.Refresh();
     }
 
     private void ContabilizarAction_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
         if (e.CurrentObject is not FacturaBase factura) return;
+
+        if (factura.EstadoVeriFactu != EstadoVeriFactu.EnviadaVeriFactu && 
+            factura.EstadoVeriFactu != EstadoVeriFactu.AceptadaVeriFactu)
+        {
+            throw new UserFriendlyException("La factura debe haber sido enviada a VeriFactu antes de contabilizarse.");
+        }
 
         factura.Contabilizar();
         ObjectSpace.CommitChanges();

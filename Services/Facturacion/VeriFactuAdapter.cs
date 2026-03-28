@@ -29,16 +29,19 @@ public class VeriFactuAdapter : IVeriFactuAdapter
 
             var invoiceEntry = new InvoiceEntry(veriFactuInvoice);
             
-            // Si el SDK no tiene SaveAsync, usamos Task.Run para no bloquear el hilo de ejecución actual
-            // En Blazor Server, esto libera el hilo de la UI mientras dura la operación de red.
-            await Task.Run(() => invoiceEntry.Save());
+            // Ejecutamos Save() de forma síncrona dentro del hilo protegido por el semáforo.
+            // Esto asegura que Settings.Current no cambie entre la configuración y el envío.
+            // Aunque sea síncrono, el impacto en la UI es mínimo ya que solo bloquea un hilo por tenant.
+            invoiceEntry.Save();
 
             string? validationUrl = null;
             byte[]? qrData = null;
 
             var status = invoiceEntry.Status; 
             var errorCode = invoiceEntry.ErrorCode;
-            var responseStr = null as string;
+            var responseStr = invoiceEntry.Response;
+            var xml = invoiceEntry.Xml;
+            var csv = invoiceEntry.CSV;
 
             if (invoiceEntry.Status == VeriFactuConstants.Correcto)
             {
@@ -51,8 +54,8 @@ public class VeriFactuAdapter : IVeriFactuAdapter
                 status,
                 errorCode,
                 responseStr,
-                null,
-                null,
+                xml,
+                csv,
                 validationUrl,
                 qrData);
         }
@@ -74,13 +77,13 @@ public class VeriFactuAdapter : IVeriFactuAdapter
             }
             string certPath = Path.Combine(tempDir, "cert_verifactu.pfx");
             
-            // Usar FileStream asíncrono si es posible
-            using (var stream = new FileStream(certPath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true))
+            // Usar FileStream síncrono para asegurar el cierre inmediato del archivo
+            using (var stream = new FileStream(certPath, FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 var ms = new MemoryStream();
                 companyInfo.CertificadoVeriFactu.SaveToStream(ms);
-                ms.Position = 0;
-                await ms.CopyToAsync(stream);
+                ms.WriteTo(stream);
+                stream.Flush(true);
             }
 
             Settings.Current.CertificatePath = certPath;

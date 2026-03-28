@@ -9,6 +9,7 @@ using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.Helpers.Comun;
 using erp.Module.Helpers.Contactos;
 using Microsoft.Extensions.Logging;
+using erp.Module.BusinessObjects.Base.Ventas;
 using VeriFactu.Business;
 using VeriFactu.Config;
 using VeriFactu.Xml.Factu;
@@ -35,33 +36,13 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             if (!validationResult.Success)
                 return validationResult;
 
-            PrepareInvoice(objectSpace, invoice);
-
-            logger.LogInformation("Iniciando envío de factura {Secuencia} a VeriFactu.",
-                invoice.Secuencia);
+            // PrepareInvoice(objectSpace, invoice);
 
             var veriFactuInvoice = MapToVeriFactuInvoice(invoice, companyInfo);
             
-            // Log detallado de los datos del comprador para revisión
-            logger.LogInformation("DATOS ENVIADOS A VERIFACTU para {Secuencia}:\n" +
-                                 "  TipoFactura: {Tipo}\n" +
-                                 "  BuyerID: {BuyerID}\n" +
-                                 "  BuyerName: {BuyerName}\n" +
-                                 "  BuyerCountryID: {Country}\n" +
-                                 "  IDType: {IDType}",
-                invoice.Secuencia, 
-                veriFactuInvoice.InvoiceType,
-                veriFactuInvoice.BuyerID,
-                veriFactuInvoice.BuyerName,
-                veriFactuInvoice.BuyerIDType,
-                invoice.TipoIdentificacionCliente);
-
             var startTime = InformacionEmpresaHelper.GetLocalTime(invoice.Session);
             var response = await veriFactuAdapter.SendInvoiceAsync(veriFactuInvoice, companyInfo);
             var duration = InformacionEmpresaHelper.GetLocalTime(invoice.Session) - startTime;
-
-            logger.LogInformation("Respuesta recibida en {Duration}ms. Status: {Status}", 
-                duration.TotalMilliseconds, response.Status);
 
             UpdateInvoiceFromResponse(objectSpace, invoice, response, veriFactuInvoice);
             objectSpace.CommitChanges();
@@ -78,7 +59,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         catch (Exception ex)
         {
             logger.LogError(ex, "Error técnico al enviar factura {Secuencia}", invoice.Secuencia);
-            // invoice.EstadoVeriFactu = EstadoVeriFactu.ErrorTecnico;
+            invoice.EstadoVeriFactu = EstadoVeriFactu.ErrorTecnico;
             invoice.RespuestaAgenciaTributaria = $"Error técnico: {ex.Message}";
             objectSpace.CommitChanges();
             return new SendResult(false, $"Error técnico: {ex.Message}");
@@ -159,7 +140,25 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
                 ? invoice.NombreCliente
                 : invoice.Cliente?.Nombre;
 
-            // veriFactuFactura.IDType = invoice.TipoIdentificacionCliente;
+            if (invoice.TipoIdentificacionCliente != default)
+            {
+                // El log de envío anterior mostraba veriFactuInvoice.BuyerIDType
+                // Intentamos un mapeo directo por valor numérico o nombre si el enum coincide
+                try 
+                {
+                    // Usamos dynamic o object temporal para evitar errores de compilación directos si el tipo es problemático
+                    // pero el objetivo es asignar el valor del enum del negocio al enum de la librería
+                    var idTypeValue = (int)invoice.TipoIdentificacionCliente;
+                    if (Enum.IsDefined(typeof(VeriFactu.Xml.Factu.IDType), idTypeValue))
+                    {
+                        veriFactuFactura.BuyerIDType = (VeriFactu.Xml.Factu.IDType)idTypeValue;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(ex, "No se pudo mapear IDType para la factura {Secuencia}", invoice.Secuencia);
+                }
+            }
 
             // Intentamos obtener el código ISO del snapshot de la factura (o del objeto País si no está en el snapshot)
             var isoCode = !string.IsNullOrEmpty(invoice.CodigoIsoPaisCliente)
@@ -170,11 +169,11 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             {
                 veriFactuFactura.BuyerCountryID = isoCode;
             }
-            else if (invoice.PaisCliente != null || invoice.Cliente?.Pais != null)
+            else
             {
-                // Fallback al nombre si no hay ISO (aunque VeriFactu requiere ISO)
-                var pais = invoice.PaisCliente ?? invoice.Cliente?.Pais;
-                veriFactuFactura.BuyerCountryID = pais?.Nombre;
+                // Por defecto, si no hay ISO, asumimos ES (España) si el NIF tiene formato español 
+                // o si simplemente no hay datos de país, ya que VeriFactu es para España.
+                veriFactuFactura.BuyerCountryID = "ES";
             }
         }
 
@@ -215,6 +214,11 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
 
         if (veriFactuResponse.Status == VeriFactuConstants.Correcto)
         {
+            invoice.EstadoVeriFactu = EstadoVeriFactu.AceptadaVeriFactu;
+            if (invoice.EstadoFactura == EstadoFactura.Emitida)
+            {
+                invoice.StateMachine.CambiarA(EstadoFactura.Enviada);
+            }
             invoice.UrlValidacion = veriFactuResponse.ValidationUrl;
             invoice.Csv = veriFactuResponse.CSV;
             
@@ -227,11 +231,11 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         }
         else if (veriFactuResponse.Status == VeriFactuConstants.Parcial)
         {
-            // Opcional: Manejar estado parcial
+            invoice.EstadoVeriFactu = EstadoVeriFactu.EnviadaVeriFactu;
         }
         else
         {
-            // Opcional: Manejar estado de rechazo
+            invoice.EstadoVeriFactu = EstadoVeriFactu.RechazadaVeriFactu;
         }
 
         try
