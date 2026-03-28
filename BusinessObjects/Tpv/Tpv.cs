@@ -224,5 +224,6 @@ public class Tpv(Session session) : EntidadBase(session)
         if (companyInfo == null) return;
         ZonaHoraria ??= companyInfo.ZonaHorariaPorDefecto;
         SeriePorDefecto ??= companyInfo.PrefijoFacturasSimplificadasPorDefecto;
+        NombreReporteTicket ??= companyInfo.NombreReporteTicket;
     }
 }

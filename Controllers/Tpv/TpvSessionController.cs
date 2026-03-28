@@ -12,6 +12,7 @@ public class TpvSessionController : ViewController
     public TpvSessionController()
     {
         TargetObjectType = typeof(BusinessObjects.Tpv.Tpv);
+        TargetViewType = ViewType.DetailView;
         
         var abrirSesion = new PopupWindowShowAction(this, "Tpv_AbrirSesion", PredefinedCategory.RecordEdit)
         {

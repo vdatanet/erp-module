@@ -1,5 +1,6 @@
 using DevExpress.ExpressApp;
 using erp.Module.BusinessObjects.Tesoreria;
+using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.Services.Setup;
 
@@ -46,6 +47,15 @@ public class TesoreriaSetupService(IObjectSpace objectSpace)
             medioPago = OS.CreateObject<MedioPago>();
             medioPago.Nombre = nombre;
             medioPago.EsEfectivo = esEfectivo;
+            
+            // Asignar cuentas contables predeterminadas de la empresa
+            var session = ((DevExpress.ExpressApp.Xpo.XPObjectSpace)OS).Session;
+            var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(session);
+            if (companyInfo != null)
+            {
+                medioPago.CuentaContableCobros = companyInfo.CuentaCobrosPorDefecto;
+                medioPago.CuentaContablePagos = companyInfo.CuentaPagosPorDefecto;
+            }
         }
         return medioPago;
     }
