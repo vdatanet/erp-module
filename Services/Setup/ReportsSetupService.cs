@@ -21,8 +21,7 @@ public class ReportsSetupService(IObjectSpace objectSpace)
         {
             reportData = objectSpace.CreateObject<ReportDataV2>();
             reportData.DisplayName = reportName;
-            var prop = typeof(ReportDataV2).GetProperty("DataTypeName");
-            prop?.SetValue(reportData, typeof(FacturaSimplificada).FullName);
+            ((IReportDataV2Writable)reportData).SetDataType(typeof(FacturaSimplificada));
             reportData.IsInplaceReport = true;
             
             // Layout básico de reporte (simplificado para ticket)
