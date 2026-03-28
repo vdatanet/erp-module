@@ -40,10 +40,30 @@ public static class ContabilidadService
             throw new UserFriendlyException($"El ejercicio contable {ejercicio.Anio} no está abierto.");
         }
 
-        var diario = (factura.Cliente as Cliente)?.DiarioVentas ?? companyInfo.DiarioVentasPorDefecto;
+        var diario = (factura.Cliente as Cliente)?.DiarioVentas;
+        if (diario == null && factura.EsFacturaSimplificada)
+        {
+            diario = companyInfo.DiarioVentasSimplificadasPorDefecto;
+        }
+        diario ??= companyInfo.DiarioVentasPorDefecto;
+
         if (diario == null)
         {
             throw new UserFriendlyException("No se ha definido el Diario de Ventas por defecto en la configuración de la empresa ni en el cliente.");
+        }
+
+        var conceptoAsiento = $"N/Factura nº {factura.Secuencia}";
+        if (factura.Cliente != null)
+        {
+            conceptoAsiento += $" a {factura.Cliente.Nombre}";
+        }
+        else if (!string.IsNullOrEmpty(factura.NombreCliente))
+        {
+            conceptoAsiento += $" a {factura.NombreCliente}";
+        }
+        else if (factura.EsFacturaSimplificada && factura.MedioPago != null)
+        {
+            conceptoAsiento += $" ({factura.MedioPago.Nombre})";
         }
 
         var asiento = new Asiento(session)
@@ -52,15 +72,26 @@ public static class ContabilidadService
             Ejercicio = ejercicio,
             Diario = diario,
             Serie = companyInfo.PrefijoAsientosPorDefecto ?? "GEN",
-            Concepto = $"N/Factura nº {factura.Secuencia} a {factura.Cliente?.Nombre ?? factura.NombreCliente}",
+            Concepto = conceptoAsiento,
             Estado = EstadoAsiento.Borrador
         };
 
         // 1. Apunte de Cliente (Debe)
-        var cuentaCliente = (factura.Cliente as Cliente)?.CuentaContable ?? companyInfo.CuentaClientesPorDefecto;
+        var cuentaCliente = (factura.Cliente as Cliente)?.CuentaContable;
+
+        if (cuentaCliente == null && factura.EsFacturaSimplificada)
+        {
+            cuentaCliente = factura.MedioPago?.CuentaContableCobros 
+                            ?? factura.CuentaCaja 
+                            ?? factura.CuentaBanco 
+                            ?? companyInfo.CuentaCobrosPorDefecto;
+        }
+
+        cuentaCliente ??= companyInfo.CuentaClientesPorDefecto;
+
         if (cuentaCliente == null)
         {
-            throw new UserFriendlyException("No se ha definido la cuenta contable del cliente ni una cuenta por defecto para clientes.");
+            throw new UserFriendlyException("No se ha definido la cuenta contable del cliente, la del medio de pago ni una cuenta por defecto (Caja/Banco/Cobros) para clientes.");
         }
 
         var apunteCliente = new Apunte(session)
@@ -72,6 +103,12 @@ public static class ContabilidadService
             Debe = factura.ImporteTotal,
             Haber = 0
         };
+        
+        if (apunteCliente.Tercero == null && factura.EsFacturaSimplificada && factura.MedioPago != null)
+        {
+             apunteCliente.Notas = $"Cobro mediante {factura.MedioPago.Nombre}";
+        }
+        
         asiento.Apuntes.Add(apunteCliente);
 
         // 2. Apuntes de Impuestos que son retenciones (Debe)

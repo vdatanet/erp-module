@@ -47,9 +47,6 @@ public class FacturaVenta(Session session) : FacturaBase(session)
         }
     }
 
-    [XafDisplayName("Apuntes Contables")]
-    public IEnumerable<Apunte> ApuntesContables => AsientoContable?.Apuntes ?? Enumerable.Empty<Apunte>();
-
     protected override void OnChanged(string propertyName, object oldValue, object newValue)
     {
         base.OnChanged(propertyName, oldValue, newValue);

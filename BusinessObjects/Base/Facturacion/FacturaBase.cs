@@ -77,6 +77,9 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
         set => SetPropertyValue(nameof(AsientoContable), ref _asientoContable, value);
     }
 
+    [XafDisplayName("Apuntes Contables")]
+    public IEnumerable<Apunte> ApuntesContables => AsientoContable?.Apuntes ?? Enumerable.Empty<Apunte>();
+
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
     [XafDisplayName("Estado VeriFactu")]
