@@ -80,7 +80,7 @@ public class ReportCompanyInfoController : ViewController
         printReportAction.Active["CustomPrintActionActive"] = true;
     }
 
-    private void View_SelectionChanged(object sender, EventArgs e)
+    private void View_SelectionChanged(object? sender, EventArgs e)
     {
         UpdateActionState();
         
@@ -139,29 +139,35 @@ public class ReportCompanyInfoController : ViewController
             return;
         }
 
-        var typeToSearch = View.ObjectTypeInfo.Type.FullName;
+        var typeFullName = View.ObjectTypeInfo.Type.FullName;
+        var modelFullName = View.ObjectTypeInfo.FullName;
+        var typeToSearch = typeFullName;
+        
         // XAF a veces usa tipos proxy para XPO. Intentamos obtener el tipo base.
         if (View.ObjectTypeInfo.Type.Namespace == "DevExpress.Xpo" && View.ObjectTypeInfo.Type.Name.EndsWith("Proxy"))
         {
             // Si es un proxy, el FullName del ObjectTypeInfo suele ser el correcto del objeto de negocio
-            typeToSearch = View.ObjectTypeInfo.FullName;
+            typeToSearch = modelFullName;
         }
 
-        var typesToSearch = new List<string> { typeToSearch, View.ObjectTypeInfo.Type.FullName, View.ObjectTypeInfo.FullName };
+        var typesToSearch = new List<string>();
+        if (!string.IsNullOrEmpty(typeToSearch)) typesToSearch.Add(typeToSearch);
+        if (!string.IsNullOrEmpty(typeFullName)) typesToSearch.Add(typeFullName);
+        if (!string.IsNullOrEmpty(modelFullName)) typesToSearch.Add(modelFullName);
         
         // Añadimos tipos base para ser más robustos, similar a cómo XAF busca reportes inplace
         var currentType = View.ObjectTypeInfo;
         while (currentType.Base != null && currentType.Base.IsPersistent)
         {
-            if (currentType.Base.Type != null) typesToSearch.Add(currentType.Base.Type.FullName);
-            typesToSearch.Add(currentType.Base.FullName);
+            if (currentType.Base.Type?.FullName != null) typesToSearch.Add(currentType.Base.Type.FullName);
+            if (currentType.Base.FullName != null) typesToSearch.Add(currentType.Base.FullName);
             currentType = currentType.Base;
         }
 
         // También incluimos interfaces si el reporte estuviera definido para una interfaz de negocio
         foreach (var itf in View.ObjectTypeInfo.Type.GetInterfaces())
         {
-            typesToSearch.Add(itf.FullName);
+            if (itf.FullName != null) typesToSearch.Add(itf.FullName);
         }
         
         // Filtrar nulos y duplicados
