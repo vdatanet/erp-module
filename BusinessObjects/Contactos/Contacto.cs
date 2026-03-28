@@ -226,6 +226,7 @@ public class Contacto(Session session) : EntidadBase(session)
 
     [NonCloneable]
     [XafDisplayName("Tipo de Identificación")]
+    [ImmediatePostData]
     public IDType TipoIdentificacion
     {
         get => _tipoIdentificacion;
@@ -234,11 +235,16 @@ public class Contacto(Session session) : EntidadBase(session)
 
     [Size(50)]
     [XafDisplayName("NIF")]
+    [ImmediatePostData]
     public string? Nif
     {
         get => _nif;
         set => SetPropertyValue(nameof(Nif), ref _nif, value);
     }
+
+    [Browsable(false)]
+    [RuleFromBoolProperty("RuleFromBoolProperty_Contacto_NifValido", DefaultContexts.Save, "El NIF/CIF no tiene un formato válido", UsedProperties = nameof(Nif))]
+    public bool IsNifValid => TipoIdentificacion != IDType.NIF_IVA || IdentificacionHelper.ValidarNif(Nif);
 
     [Size(255)]
     [XafDisplayName("Dirección")]

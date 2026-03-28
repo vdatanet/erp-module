@@ -20,6 +20,7 @@ using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Tpv;
 using erp.Module.BusinessObjects.Ventas;
 using erp.Module.Factories;
+using erp.Module.Helpers.Comun;
 using erp.Module.Helpers.Contactos;
 using erp.Module.Models.Ventas;
 using erp.Module.Services.Ventas;
@@ -206,6 +207,10 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         get => _documentoIdentificacionCliente;
         set => SetPropertyValue(nameof(DocumentoIdentificacionCliente), ref _documentoIdentificacionCliente, value);
     }
+
+    [Browsable(false)]
+    [RuleFromBoolProperty("RuleFromBoolProperty_DocumentoVenta_NifValido", DefaultContexts.Save, "El NIF/CIF del cliente no tiene un formato válido", UsedProperties = nameof(DocumentoIdentificacionCliente))]
+    public bool IsNifValid => TipoIdentificacionCliente != IDType.NIF_IVA || IdentificacionHelper.ValidarNif(DocumentoIdentificacionCliente);
 
     [Size(255)]
     [XafDisplayName("Email Cliente")]
