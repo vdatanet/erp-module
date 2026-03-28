@@ -24,6 +24,9 @@ public class ReportsSetupService(IObjectSpace objectSpace)
             ((IReportDataV2Writable)reportData).SetDataType(typeof(FacturaSimplificada));
             reportData.IsInplaceReport = true;
             
+            // Forzamos el guardado para asegurar que los cambios persistan si no se hace externamente
+            objectSpace.CommitChanges();
+            
             // Layout básico de reporte (simplificado para ticket)
             // En un entorno real, esto se cargaría de un archivo .repx
             // Por ahora, proporcionamos un layout mínimo funcional basado en el formato XML de XtraReports
