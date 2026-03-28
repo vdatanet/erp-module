@@ -28,6 +28,8 @@ public class MedioPago(Session session) : EntidadBase(session)
     {
         base.AfterConstruction();
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        EsEfectivo = false;
+        DisponibleEnTpv = false;
         if (companyInfo == null) return;
         CuentaContableCobros ??= companyInfo.CuentaCobrosPorDefecto;
         CuentaContablePagos ??= companyInfo.CuentaPagosPorDefecto;

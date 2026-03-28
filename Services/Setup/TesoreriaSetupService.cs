@@ -24,10 +24,10 @@ public class TesoreriaSetupService(IObjectSpace objectSpace)
         if (!OS.IsKnownType(typeof(MedioPago))) return;
 
         // 1. Crear Medios de Pago
-        var efectivo = CreateMedioPago("Efectivo", true);
-        var tarjeta = CreateMedioPago("Tarjeta de Crédito/Débito", false);
-        var transferencia = CreateMedioPago("Transferencia Bancaria", false);
-        var domiciliacion = CreateMedioPago("Domiciliación Bancaria (SEPA)", false);
+        var efectivo = CreateMedioPago("Efectivo", true, true);
+        var tarjeta = CreateMedioPago("Tarjeta de Crédito/Débito", false, true);
+        var transferencia = CreateMedioPago("Transferencia Bancaria", false, false);
+        var domiciliacion = CreateMedioPago("Domiciliación Bancaria (SEPA)", false, false);
 
         // 2. Crear Condiciones de Pago
         CreateCondicionPago("Contado", efectivo, 0, 0, 1);
@@ -39,7 +39,7 @@ public class TesoreriaSetupService(IObjectSpace objectSpace)
         CreateCondicionPago("Recibo 30 días", domiciliacion, 30, 0, 1);
     }
 
-    private MedioPago CreateMedioPago(string nombre, bool esEfectivo)
+    private MedioPago CreateMedioPago(string nombre, bool esEfectivo, bool disponibleEnTpv)
     {
         var medioPago = OS.FirstOrDefault<MedioPago>(m => m.Nombre == nombre);
         if (medioPago == null)
@@ -47,11 +47,25 @@ public class TesoreriaSetupService(IObjectSpace objectSpace)
             medioPago = OS.CreateObject<MedioPago>();
             medioPago.Nombre = nombre;
             medioPago.EsEfectivo = esEfectivo;
-            
+            medioPago.DisponibleEnTpv = disponibleEnTpv;
+
             // Asignar cuentas contables predeterminadas de la empresa
             var session = ((DevExpress.ExpressApp.Xpo.XPObjectSpace)OS).Session;
             var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(session);
-            if (companyInfo != null)
+
+            if (esEfectivo)
+            {
+                var cuentaEfectivo = OS.FirstOrDefault<erp.Module.BusinessObjects.Contabilidad.CuentaContable>(c => c.Codigo == "5700000000");
+                if (cuentaEfectivo == null)
+                {
+                    cuentaEfectivo = OS.CreateObject<erp.Module.BusinessObjects.Contabilidad.CuentaContable>();
+                    cuentaEfectivo.Codigo = "5700000000";
+                    cuentaEfectivo.Nombre = "Caja";
+                }
+                medioPago.CuentaContableCobros = cuentaEfectivo;
+                medioPago.CuentaContablePagos = cuentaEfectivo;
+            }
+            else if (companyInfo != null)
             {
                 medioPago.CuentaContableCobros = companyInfo.CuentaCobrosPorDefecto;
                 medioPago.CuentaContablePagos = companyInfo.CuentaPagosPorDefecto;
