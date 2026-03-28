@@ -2,6 +2,7 @@ using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Xpo;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Impuestos;
+using erp.Module.BusinessObjects.Base.Facturacion;
 using VeriFactu.Xml.Factu;
 using VeriFactu.Xml.Factu.Alta;
 
@@ -25,17 +26,17 @@ public class ImpuestoSetupService(IObjectSpace objectSpace)
     public void CreateInitialImpuestos()
     {
         if (!OS.IsKnownType(typeof(TipoImpuesto))) return;
-
+        
         // --- IVA REPERCUTIDO (Ventas S1, Régimen 01) ---
-        CreateTipoImpuesto("IVA21_REP", "IVA 21% (Repercutido)", 21, true, false, Impuesto.IVA, (ClaveRegimen)1, CalificacionOperacion.S1, null, false, "4772100000");
-        CreateTipoImpuesto("IVA10_REP", "IVA 10% (Repercutido)", 10, true, false, Impuesto.IVA, (ClaveRegimen)1, CalificacionOperacion.S1, null, false, "4771000000");
-        CreateTipoImpuesto("IVA4_REP", "IVA 4% (Repercutido)", 4, true, false, Impuesto.IVA, (ClaveRegimen)1, CalificacionOperacion.S1, null, false, "4770400000");
-        CreateTipoImpuesto("IVA0_REP", "IVA 0% (Repercutido)", 0, true, false, Impuesto.IVA, (ClaveRegimen)1, CalificacionOperacion.S1, null, false, "4770000000");
+        CreateTipoImpuesto("IVA21_REP", "IVA 21% (Repercutido)", 21, true, false, TipoImpuestoAmigable.IVA, (ClaveRegimen)1, TipoOperacionAmigable.S1, null, false, "4772100000");
+        CreateTipoImpuesto("IVA10_REP", "IVA 10% (Repercutido)", 10, true, false, TipoImpuestoAmigable.IVA, (ClaveRegimen)1, TipoOperacionAmigable.S1, null, false, "4771000000");
+        CreateTipoImpuesto("IVA4_REP", "IVA 4% (Repercutido)", 4, true, false, TipoImpuestoAmigable.IVA, (ClaveRegimen)1, TipoOperacionAmigable.S1, null, false, "4770400000");
+        CreateTipoImpuesto("IVA0_REP", "IVA 0% (Repercutido)", 0, true, false, TipoImpuestoAmigable.IVA, (ClaveRegimen)1, TipoOperacionAmigable.S1, null, false, "4770000000");
 
         // --- RECARGO DE EQUIVALENCIA REPERCUTIDO ---
-        CreateTipoImpuesto("RE52_REP", "RE 5,2% (Repercutido)", 5.2m, true, false, Impuesto.IVA, (ClaveRegimen)1, CalificacionOperacion.S1, null, false, "4775200000");
-        CreateTipoImpuesto("RE14_REP", "RE 1,4% (Repercutido)", 1.4m, true, false, Impuesto.IVA, (ClaveRegimen)1, CalificacionOperacion.S1, null, false, "4771400000");
-        CreateTipoImpuesto("RE05_REP", "RE 0,5% (Repercutido)", 0.5m, true, false, Impuesto.IVA, (ClaveRegimen)1, CalificacionOperacion.S1, null, false, "4770500000");
+        CreateTipoImpuesto("RE52_REP", "RE 5,2% (Repercutido)", 5.2m, true, false, TipoImpuestoAmigable.IVA, (ClaveRegimen)1, TipoOperacionAmigable.S1, null, false, "4775200000");
+        CreateTipoImpuesto("RE14_REP", "RE 1,4% (Repercutido)", 1.4m, true, false, TipoImpuestoAmigable.IVA, (ClaveRegimen)1, TipoOperacionAmigable.S1, null, false, "4771400000");
+        CreateTipoImpuesto("RE05_REP", "RE 0,5% (Repercutido)", 0.5m, true, false, TipoImpuestoAmigable.IVA, (ClaveRegimen)1, TipoOperacionAmigable.S1, null, false, "4770500000");
 
         // --- IVA SOPORTADO (Sin VeriFactu) ---
         CreateTipoImpuesto("IVA21_SOP", "IVA 21% (Soportado)", 21, false, true, null, null, null, null, false, "4722100000");
@@ -60,18 +61,18 @@ public class ImpuestoSetupService(IObjectSpace objectSpace)
 
         // --- EXENTOS REPERCUTIDOS (S2) ---
         // E1: Exenta por el art. 20
-        CreateTipoImpuesto("IVA_EXENTO_E1", "IVA Exento (Art. 20) (Repercutido)", 0, true, false, Impuesto.IVA, (ClaveRegimen)1, CalificacionOperacion.S2, CausaExencion.E1, false, "4770000000");
+        CreateTipoImpuesto("IVA_EXENTO_E1", "IVA Exento (Art. 20) (Repercutido)", 0, true, false, TipoImpuestoAmigable.IVA, (ClaveRegimen)1, TipoOperacionAmigable.S2, CausaExencionAmigable.E1, false, "4770000000");
         // E6: Otros
-        CreateTipoImpuesto("IVA_EXENTO_E6", "IVA Exento (Otros) (Repercutido)", 0, true, false, Impuesto.IVA, (ClaveRegimen)1, CalificacionOperacion.S2, CausaExencion.E6, false, "4770000000");
+        CreateTipoImpuesto("IVA_EXENTO_E6", "IVA Exento (Otros) (Repercutido)", 0, true, false, TipoImpuestoAmigable.IVA, (ClaveRegimen)1, TipoOperacionAmigable.S2, CausaExencionAmigable.E6, false, "4770000000");
 
         // --- INVERSIÓN SUJETO PASIVO REPERCUTIDO (S3) ---
-        CreateTipoImpuesto("IVA_ISP", "IVA Inversión Sujeto Pasivo (Repercutido)", 0, true, false, Impuesto.IVA, (ClaveRegimen)1, CalificacionOperacion.S1, null, false, "4770000000");
+        CreateTipoImpuesto("IVA_ISP", "IVA Inversión Sujeto Pasivo (Repercutido)", 0, true, false, TipoImpuestoAmigable.IVA, (ClaveRegimen)1, TipoOperacionAmigable.S1, null, false, "4770000000");
 
         // --- OTROS REGÍMENES REPERCUTIDOS ---
         // Operaciones Intracomunitarias (Ventas de bienes suelen ser exentas en origen E5)
-        CreateTipoImpuesto("IVA_INTRA", "IVA Intracomunitario (Repercutido)", 0, true, false, Impuesto.IVA, (ClaveRegimen)1, CalificacionOperacion.S2, CausaExencion.E5, false, "4770000000");
+        CreateTipoImpuesto("IVA_INTRA", "IVA Intracomunitario (Repercutido)", 0, true, false, TipoImpuestoAmigable.IVA, (ClaveRegimen)1, TipoOperacionAmigable.S2, CausaExencionAmigable.E5, false, "4770000000");
         // Exportaciones (E2)
-        CreateTipoImpuesto("IVA_EXPORT", "Exportaciones (Repercutido)", 0, true, false, Impuesto.IVA, (ClaveRegimen)1, CalificacionOperacion.S2, CausaExencion.E2, false, "4770000000");
+        CreateTipoImpuesto("IVA_EXPORT", "Exportaciones (Repercutido)", 0, true, false, TipoImpuestoAmigable.IVA, (ClaveRegimen)1, TipoOperacionAmigable.S2, CausaExencionAmigable.E2, false, "4770000000");
 
         CreateInitialPosicionesFiscales();
     }
@@ -179,8 +180,8 @@ public class ImpuestoSetupService(IObjectSpace objectSpace)
     }
 
     private void CreateTipoImpuesto(string codigo, string nombre, decimal tipo, bool enVentas, bool enCompras,
-        Impuesto? impuestoVeriFactu, ClaveRegimen? regimenFiscal = null, CalificacionOperacion? tipoOperacion = null,
-        CausaExencion? causaExencion = null, bool esRetencion = false, string? codigoCuenta = null)
+        TipoImpuestoAmigable? impuestoVeriFactu, ClaveRegimen? regimenFiscal = null, TipoOperacionAmigable? tipoOperacion = null,
+        CausaExencionAmigable? causaExencion = null, bool esRetencion = false, string? codigoCuenta = null)
     {
         var tipoImpuesto = OS.FirstOrDefault<TipoImpuesto>(t => t.Codigo == codigo);
         if (tipoImpuesto == null)

@@ -9,6 +9,7 @@ using DevExpress.Xpo;
 using DevExpress.Xpo.Metadata;
 using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Documentos;
+using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Contabilidad;
@@ -24,8 +25,6 @@ using erp.Module.Helpers.Comun;
 using erp.Module.Helpers.Contactos;
 using erp.Module.Models.Ventas;
 using erp.Module.Services.Ventas;
-using VeriFactu.Xml.Factu;
-using VeriFactu.Xml.Factu.Alta;
 
 namespace erp.Module.BusinessObjects.Base.Ventas;
 
@@ -139,7 +138,8 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private SesionTpv? _sesionTpv;
 
     private string? _telefonoCliente;
-    private IDType _tipoIdentificacionCliente;
+    private TipoIdentificacionAmigable _tipoIdentificacionCliente;
+    private TipoIdentificacionAmigable _tipoIdentificacionAmigable;
     private TipoDocumentoVenta _tipoDocumento;
     private decimal _totalBruto;
 
@@ -210,7 +210,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     [Browsable(false)]
     [RuleFromBoolProperty("RuleFromBoolProperty_DocumentoVenta_NifValido", DefaultContexts.Save, "El NIF/CIF del cliente no tiene un formato válido", UsedProperties = nameof(DocumentoIdentificacionCliente))]
-    public bool IsNifValid => TipoIdentificacionCliente != IDType.NIF_IVA || IdentificacionHelper.ValidarNif(DocumentoIdentificacionCliente);
+    public bool IsNifValid => TipoIdentificacionCliente != TipoIdentificacionAmigable.NIF_IVA || IdentificacionHelper.ValidarNif(DocumentoIdentificacionCliente);
 
     [Size(255)]
     [XafDisplayName("Email Cliente")]
@@ -232,10 +232,26 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     [XafDisplayName("Tipo Identificación Cliente")]
     [ModelDefault("AllowEdit", "False")]
-    public IDType TipoIdentificacionCliente
+    public TipoIdentificacionAmigable TipoIdentificacionCliente
     {
         get => _tipoIdentificacionCliente;
         set => SetPropertyValue(nameof(TipoIdentificacionCliente), ref _tipoIdentificacionCliente, value);
+    }
+
+    [XafDisplayName("Tipo Identificación")]
+    [VisibleInDetailView(true), VisibleInListView(true), VisibleInLookupListView(true)]
+    [ImmediatePostData]
+    public TipoIdentificacionAmigable TipoIdentificacionAmigable
+    {
+        get => _tipoIdentificacionAmigable;
+        set
+        {
+            var modified = SetPropertyValue(nameof(TipoIdentificacionAmigable), ref _tipoIdentificacionAmigable, value);
+            if (modified && !IsLoading && !IsSaving)
+            {
+                TipoIdentificacionCliente = value;
+            }
+        }
     }
 
     [Size(255)]
@@ -1051,7 +1067,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         DocumentoIdentificacionCliente = value.Nif;
         EmailCliente = value.CorreoElectronico;
         TelefonoCliente = value.Telefono;
-        TipoIdentificacionCliente = value.TipoIdentificacion;
+        TipoIdentificacionAmigable = value.TipoIdentificacion;
         DireccionCliente = value.Direccion;
         PoblacionCliente = value.Poblacion?.Nombre;
         ProvinciaCliente = value.Provincia?.Nombre;
@@ -1162,6 +1178,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         base.AfterConstruction();
         InitInformacionTemporal();
         Origen = OrigenDocumentoVenta.Manual;
+        TipoIdentificacionAmigable = TipoIdentificacionAmigable.NIF_IVA;
         InitAuditoria();
     }
 

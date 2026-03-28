@@ -9,6 +9,7 @@ using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Productos;
+using erp.Module.BusinessObjects.Base.Facturacion;
 using VeriFactu.Xml.Factu;
 using VeriFactu.Xml.Factu.Alta;
 
@@ -20,20 +21,20 @@ namespace erp.Module.BusinessObjects.Impuestos;
 [DefaultProperty(nameof(Codigo))]
 public class TipoImpuesto(Session session) : EntidadBase(session)
 {
-    private CausaExencion? _causaExencion;
+    private CausaExencionAmigable? _causaExencion;
     private string? _codigo;
     private CuentaContable? _cuenta;
     private bool _disponibleEnCompras;
     private bool _disponibleEnVentas;
     private bool _esRetencion;
     private bool _estaActivo;
-    private Impuesto? _impuesto;
+    private TipoImpuestoAmigable? _impuesto;
     private string? _nombre;
     private string? _notas;
     private ClaveRegimen? _regimenFiscal;
     private int _secuencia;
     private decimal _tipo;
-    private CalificacionOperacion? _tipoOperacion;
+    private TipoOperacionAmigable? _tipoOperacion;
 
     [RuleRequiredField("RuleRequiredField_TipoImpuesto_Codigo", DefaultContexts.Save, CustomMessageTemplate = "El Código del Tipo de Impuesto es obligatorio")]
     [RuleUniqueValue]
@@ -113,7 +114,7 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Impuesto VeriFactu")]
-    public Impuesto? Impuesto
+    public TipoImpuestoAmigable? Impuesto
     {
         get => _impuesto;
         set => SetPropertyValue(nameof(Impuesto), ref _impuesto, value);
@@ -127,14 +128,14 @@ public class TipoImpuesto(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Tipo Operación")]
-    public CalificacionOperacion? TipoOperacion
+    public TipoOperacionAmigable? TipoOperacion
     {
         get => _tipoOperacion;
         set => SetPropertyValue(nameof(TipoOperacion), ref _tipoOperacion, value);
     }
 
     [XafDisplayName("Causa Exención")]
-    public CausaExencion? CausaExencion
+    public CausaExencionAmigable? CausaExencion
     {
         get => _causaExencion;
         set => SetPropertyValue(nameof(CausaExencion), ref _causaExencion, value);

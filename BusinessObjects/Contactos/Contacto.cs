@@ -13,11 +13,11 @@ using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Documentos;
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Base.Comun;
+using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.Factories;
 using erp.Module.Helpers.Contactos;
 using erp.Module.Helpers.Comun;
-using VeriFactu.Xml.Factu;
 
 using erp.Module.BusinessObjects.Tesoreria;
 
@@ -60,7 +60,7 @@ public class Contacto(Session session) : EntidadBase(session)
     private Provincia? _provincia;
     private string? _sitioWeb;
     private string? _telefono;
-    private IDType _tipoIdentificacion;
+    private TipoIdentificacionAmigable _tipoIdentificacion;
     private string? _nfcUid;
 
     [Size(100)]
@@ -227,7 +227,7 @@ public class Contacto(Session session) : EntidadBase(session)
     [NonCloneable]
     [XafDisplayName("Tipo de Identificación")]
     [ImmediatePostData]
-    public IDType TipoIdentificacion
+    public TipoIdentificacionAmigable TipoIdentificacion
     {
         get => _tipoIdentificacion;
         set => SetPropertyValue(nameof(TipoIdentificacion), ref _tipoIdentificacion, value);
@@ -244,7 +244,7 @@ public class Contacto(Session session) : EntidadBase(session)
 
     [Browsable(false)]
     [RuleFromBoolProperty("RuleFromBoolProperty_Contacto_NifValido", DefaultContexts.Save, "El NIF/CIF no tiene un formato válido", UsedProperties = nameof(Nif))]
-    public bool IsNifValid => TipoIdentificacion != IDType.NIF_IVA || IdentificacionHelper.ValidarNif(Nif);
+    public bool IsNifValid => TipoIdentificacion != TipoIdentificacionAmigable.NIF_IVA || IdentificacionHelper.ValidarNif(Nif);
 
     [Size(255)]
     [XafDisplayName("Dirección")]
@@ -510,7 +510,7 @@ public class Contacto(Session session) : EntidadBase(session)
 
     private void InitValues()
     {
-        TipoIdentificacion = IDType.NIF_IVA;
+        TipoIdentificacion = TipoIdentificacionAmigable.NIF_IVA;
         Activo = true;
         FechaAlta = InformacionEmpresaHelper.GetLocalTime(Session);
         NfcUid = GuidHelper.GetShortHash(Oid);

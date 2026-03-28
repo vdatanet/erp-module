@@ -6,6 +6,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Impuestos;
+using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.Helpers.Comun;
 using VeriFactu.Xml.Factu;
 using VeriFactu.Xml.Factu.Alta;
@@ -17,17 +18,17 @@ namespace erp.Module.BusinessObjects.Base.Ventas;
 public class DocumentoVentaImpuesto(Session session) : EntidadBase(session)
 {
     private decimal _baseImponible;
-    private CausaExencion? _causaExencion;
+    private CausaExencionAmigable? _causaExencion;
     private CuentaContable? _cuenta;
     private DocumentoVenta? _documentoVenta;
     private bool _esRetencion;
     private decimal _importeImpuestos;
-    private Impuesto? _impuesto;
+    private TipoImpuestoAmigable? _impuesto;
     private ClaveRegimen? _regimenFiscal;
     private int _secuencia;
     private decimal _tipo;
     private TipoImpuesto? _tipoImpuesto;
-    private CalificacionOperacion? _tipoOperacion;
+    private TipoOperacionAmigable? _tipoOperacion;
 
     [Association("DocumentoVenta-Impuestos")]
     [XafDisplayName("Documento Venta")]
@@ -93,7 +94,7 @@ public class DocumentoVentaImpuesto(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Impuesto VeriFactu")]
-    public Impuesto? Impuesto
+    public TipoImpuestoAmigable? Impuesto
     {
         get => _impuesto;
         set => SetPropertyValue(nameof(Impuesto), ref _impuesto, value);
@@ -107,14 +108,14 @@ public class DocumentoVentaImpuesto(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Tipo Operación")]
-    public CalificacionOperacion? TipoOperacion
+    public TipoOperacionAmigable? TipoOperacion
     {
         get => _tipoOperacion;
         set => SetPropertyValue(nameof(TipoOperacion), ref _tipoOperacion, value);
     }
 
     [XafDisplayName("Causa Exención")]
-    public CausaExencion? CausaExencion
+    public CausaExencionAmigable? CausaExencion
     {
         get => _causaExencion;
         set => SetPropertyValue(nameof(CausaExencion), ref _causaExencion, value);

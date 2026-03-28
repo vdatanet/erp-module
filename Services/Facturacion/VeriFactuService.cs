@@ -186,10 +186,10 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
                 TaxRate = tax.Tipo,
                 TaxBase = tax.BaseImponible,
                 TaxAmount = tax.ImporteImpuestos,
-                Tax = tax.TipoImpuesto.Impuesto ?? default,
-                TaxType = tax.TipoImpuesto.TipoOperacion ?? default,
+                Tax = tax.TipoImpuesto.Impuesto != null ? (VeriFactu.Xml.Factu.Impuesto)(int)tax.TipoImpuesto.Impuesto : default,
+                TaxType = tax.TipoImpuesto.TipoOperacion != null ? (VeriFactu.Xml.Factu.Alta.CalificacionOperacion)(int)tax.TipoImpuesto.TipoOperacion : default,
                 TaxScheme = tax.TipoImpuesto.RegimenFiscal ?? default,
-                TaxException = tax.TipoImpuesto.CausaExencion ?? default
+                TaxException = tax.TipoImpuesto.CausaExencion != null ? (VeriFactu.Xml.Factu.Alta.CausaExencion)(int)tax.TipoImpuesto.CausaExencion : default
             };
 
             veriFactuFactura.TaxItems.Add(taxItem);

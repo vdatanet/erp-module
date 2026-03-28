@@ -6,6 +6,7 @@ using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Contactos;
+using erp.Module.BusinessObjects.Base.Facturacion;
 using VeriFactu.Xml.Factu;
 
 namespace erp.Module.BusinessObjects.Alquileres;
@@ -47,7 +48,7 @@ public class Viajero(Session session) : Contacto(session)
     {
         base.AfterConstruction();
         Sexo = Sexos.Femenino;
-        TipoIdentificacion = IDType.NIF_IVA;
+        TipoIdentificacion = TipoIdentificacionAmigable.NIF_IVA;
         var nacionalidad = Session.FindObject<Nacionalidad>(CriteriaOperator.Parse("Nombre = 'Española'"));
         if (nacionalidad != null) Nacionalidad = nacionalidad;
     }
