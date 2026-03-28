@@ -18,7 +18,9 @@ public class FacturaLifecycleController : ViewController
     private readonly SimpleAction _revertirABorradorAction;
     private readonly SimpleAction _enviarVerifactuAction;
     private readonly SimpleAction _contabilizarAction;
+    private readonly SimpleAction _procesarFlujoCompletoAction;
     private VeriFactuService? _veriFactuService;
+    private FacturaOrchestrator? _facturaOrchestrator;
 
     public FacturaLifecycleController()
     {
@@ -74,12 +76,23 @@ public class FacturaLifecycleController : ViewController
             SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
         _contabilizarAction.Execute += ContabilizarAction_Execute;
+
+        _procesarFlujoCompletoAction = new SimpleAction(this, "Factura_ProcesarFlujoCompleto", PredefinedCategory.Edit)
+        {
+            Caption = "Procesar y Contabilizar",
+            ConfirmationMessage = "¿Desea procesar la factura hasta su contabilización final? (Validar -> Emitir -> VeriFactu -> Contabilizar)",
+            ImageName = "Action_Workflow",
+            TargetObjectsCriteria = "EstadoFactura != 'Contabilizada'",
+            SelectionDependencyType = SelectionDependencyType.RequireSingleObject
+        };
+        _procesarFlujoCompletoAction.Execute += ProcesarFlujoCompletoAction_Execute;
     }
 
     protected override void OnActivated()
     {
         base.OnActivated();
         _veriFactuService = Application.ServiceProvider.GetRequiredService<VeriFactuService>();
+        _facturaOrchestrator = Application.ServiceProvider.GetRequiredService<FacturaOrchestrator>();
 
         // Ocultar acciones de validación nativas para no confundir al usuario
         // ValidateFactura se usa en FacturaBase.cs en un atributo Appearance
@@ -144,6 +157,7 @@ public class FacturaLifecycleController : ViewController
             _revertirABorradorAction.Active["EstadoValido"] = false;
             _enviarVerifactuAction.Active["EstadoValido"] = false;
             _contabilizarAction.Active["EstadoValido"] = false;
+            _procesarFlujoCompletoAction.Active["EstadoValido"] = false;
             return;
         }
 
@@ -158,6 +172,8 @@ public class FacturaLifecycleController : ViewController
                                                       factura.EstadoVeriFactu == EstadoVeriFactu.AceptadaVeriFactu || 
                                                       factura.EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu) &&
                                                      factura.EstadoFactura != EstadoFactura.Contabilizada;
+
+        _procesarFlujoCompletoAction.Active["EstadoValido"] = factura.EstadoFactura != EstadoFactura.Contabilizada;
     }
 
     private void ValidarAction_Execute(object sender, SimpleActionExecuteEventArgs e)
@@ -226,6 +242,25 @@ public class FacturaLifecycleController : ViewController
         ObjectSpace.CommitChanges();
         
         // Refrescar vistas para mostrar cambios en asiento y apuntes
+        View.Refresh();
+    }
+
+    private async void ProcesarFlujoCompletoAction_Execute(object sender, SimpleActionExecuteEventArgs e)
+    {
+        if (e.CurrentObject is not FacturaBase factura || _veriFactuService == null || _facturaOrchestrator == null) return;
+
+        var result = await _facturaOrchestrator.ProcesarHastaContabilizadaAsync(ObjectSpace, factura, _veriFactuService);
+
+        var options = new MessageOptions
+        {
+            Duration = 5000,
+            Message = result.Message,
+            Type = result.Success ? InformationType.Success : InformationType.Error,
+            Web = { Position = InformationPosition.Right }
+        };
+        Application.ShowViewStrategy.ShowMessage(options);
+
+        ObjectSpace.CommitChanges();
         View.Refresh();
     }
 }

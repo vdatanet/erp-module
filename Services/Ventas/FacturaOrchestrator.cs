@@ -105,4 +105,57 @@ public class FacturaOrchestrator
 
         factura.StateMachine.CambiarA(EstadoFactura.Borrador);
     }
+
+    public async Task<VeriFactuService.SendResult> ProcesarHastaContabilizadaAsync(IObjectSpace objectSpace, FacturaBase factura, VeriFactuService veriFactuService)
+    {
+        if (factura == null) return new VeriFactuService.SendResult(false, "La factura es nula.");
+        if (veriFactuService == null) return new VeriFactuService.SendResult(false, "El servicio VeriFactu no está disponible.");
+
+        try
+        {
+            // 1. Validar si está en Borrador
+            if (factura.EstadoFactura == EstadoFactura.Borrador)
+            {
+                Validar(factura);
+            }
+
+            // 2. Emitir si está Validada
+            if (factura.EstadoFactura == EstadoFactura.Validada)
+            {
+                Emitir(factura);
+            }
+
+            // 3. Enviar a VeriFactu si está Emitida
+            if (factura.EstadoFactura == EstadoFactura.Emitida &&
+                factura.EstadoVeriFactu != EstadoVeriFactu.AceptadaVeriFactu &&
+                factura.EstadoVeriFactu != EstadoVeriFactu.EnviadaVeriFactu)
+            {
+                var sendResult = await EnviarAVerifactuAsync(objectSpace, factura, veriFactuService);
+                if (!sendResult.Success)
+                {
+                    return sendResult;
+                }
+            }
+
+            // 4. Contabilizar si está Enviada/Aceptada
+            if (factura.EstadoFactura != EstadoFactura.Contabilizada &&
+                (factura.EstadoFactura == EstadoFactura.Enviada ||
+                 factura.EstadoVeriFactu == EstadoVeriFactu.AceptadaVeriFactu ||
+                 factura.EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu))
+            {
+                Contabilizar(factura);
+            }
+
+            if (factura.EstadoFactura == EstadoFactura.Contabilizada)
+            {
+                return new VeriFactuService.SendResult(true, "Factura procesada y contabilizada correctamente.");
+            }
+
+            return new VeriFactuService.SendResult(false, $"El proceso se detuvo en el estado {factura.EstadoFactura}.");
+        }
+        catch (Exception ex)
+        {
+            return new VeriFactuService.SendResult(false, $"Error durante el proceso: {ex.Message}");
+        }
+    }
 }
