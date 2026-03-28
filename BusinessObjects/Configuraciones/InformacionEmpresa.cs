@@ -12,6 +12,7 @@ using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Impuestos;
+using erp.Module.BusinessObjects.Inventario;
 
 namespace erp.Module.BusinessObjects.Configuraciones;
 
@@ -99,6 +100,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private int _paddingCuentaContable;
     private TipoNumeracionDocumento _tipoNumeracionDocumento;
     private UnidadFacturacion? _unidadFacturacionPredeterminada;
+    private Almacen? _almacenPorDefecto;
 
     [Size(255)]
     [XafDisplayName("Nombre")]
@@ -212,6 +214,13 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     {
         get => _unidadFacturacionPredeterminada;
         set => SetPropertyValue(nameof(UnidadFacturacionPredeterminada), ref _unidadFacturacionPredeterminada, value);
+    }
+
+    [XafDisplayName("Almacén por Defecto")]
+    public Almacen? AlmacenPorDefecto
+    {
+        get => _almacenPorDefecto;
+        set => SetPropertyValue(nameof(AlmacenPorDefecto), ref _almacenPorDefecto, value);
     }
 
     [DataSourceCriteria("EstaActivo = True")]

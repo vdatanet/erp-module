@@ -20,10 +20,10 @@ public class ReportCompanyInfoController : ViewController
 
         printReportAction = new SingleChoiceAction(this, "PrintInplaceWithCompanyInfo", DevExpress.Persistent.Base.PredefinedCategory.Reports)
         {
-            Caption = "Imprimir",
+            Caption = "Imprimir Empresa",
             ImageName = "Action_Printing_Print",
             ItemType = SingleChoiceActionItemType.ItemIsOperation,
-            SelectionDependencyType = SelectionDependencyType.RequireSingleObject
+            SelectionDependencyType = SelectionDependencyType.RequireMultipleObjects
         };
         printReportAction.Execute += PrintReportAction_Execute;
     }
@@ -32,12 +32,30 @@ public class ReportCompanyInfoController : ViewController
     {
         base.OnActivated();
         
-        // Verificamos si estamos en el Host (donde existe el tipo Tenant)
+        // Verificamos si estamos en el Host (donde existe el tipo Tenant y el TenantId es nulo)
         // Este controlador solo debe estar disponible en los tenants.
         if (ObjectSpace.IsKnownType(typeof(DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant)))
         {
-            Active["AvailableInTenantOnly"] = false;
-            return;
+            var isHost = true;
+            try
+            {
+                var tenantProvider = Application.ServiceProvider.GetService<DevExpress.ExpressApp.MultiTenancy.ITenantProvider>();
+                if (tenantProvider != null && tenantProvider.TenantId != null)
+                {
+                    isHost = false;
+                }
+            }
+            catch
+            {
+                // Si hay error al obtener el provider, por seguridad asumimos que podría ser el host 
+                // si el tipo Tenant es conocido.
+            }
+
+            if (isHost)
+            {
+                Active["AvailableInTenantOnly"] = false;
+                return;
+            }
         }
 
         UpdateActionState();
@@ -48,66 +66,125 @@ public class ReportCompanyInfoController : ViewController
             return;
         }
 
-        // Desactivamos los controladores nativos de reportes de XAF que gestionan la impresión Inplace
+        // Volvemos a desactivar los controladores nativos para que nuestra acción sea la única
         foreach (var controller in Frame.Controllers)
         {
-            var typeName = controller.GetType().Name;
-            if (typeName == "PrintSelectionController" || 
-                typeName == "InplaceReportCacheController" ||
-                typeName == "InplaceReportsController" ||
-                typeName == "InplaceReportController") // Añadimos InplaceReportController (singular) por si acaso
-            {
-                controller.Active["CustomPrintActionActive"] = false;
-            }
+            DisableNativeReportController(controller);
         }
 
-        // Además, desactivamos directamente cualquier acción nativa en la categoría de Reportes
-        // que no sea la nuestra. Esto es una medida de seguridad adicional.
-        // Solo lo hacemos para acciones que parezcan de impresión o ejecución de reportes inplace.
-        var actionsToDisable = new[] { "ShowInReportV2", "EditReportV2", "ExecuteReportV2" }; // Acciones comunes de impresión/visualización
+        // XAF a veces actualiza el estado de las acciones después de OnActivated o cuando cambia el frame.
+        // Forzamos la actualización de nuevo en SelectionChanged y otros eventos si fuera necesario.
+        View.SelectionChanged += View_SelectionChanged;
+        
+        // También nos aseguramos de que nuestra acción esté activa
+        printReportAction.Active["CustomPrintActionActive"] = true;
+    }
+
+    private void View_SelectionChanged(object? sender, EventArgs e)
+    {
+        UpdateActionState();
         
         foreach (var controller in Frame.Controllers)
         {
-            foreach (var action in controller.Actions)
+            DisableNativeReportController(controller);
+        }
+    }
+
+    private void DisableNativeReportController(Controller controller)
+    {
+        var typeName = controller.GetType().Name;
+        // Solo desactivamos controladores que sabemos que gestionan reportes inplace nativos
+        if (typeName == "PrintSelectionController" || 
+            typeName == "InplaceReportCacheController" ||
+            typeName == "InplaceReportsController" ||
+            typeName == "InplaceReportController")
+        {
+            controller.Active["CustomPrintActionActive"] = false;
+        }
+
+        foreach (var action in controller.Actions)
+        {
+            // Desactivamos la acción nativa ShowInReportV2 si no es la nuestra
+            // Asegurándonos de no desactivar nuestra propia acción accidentalmente
+            if (action == printReportAction) continue;
+
+            if (action.Id == "ShowInReportV2" || action.Id == "PrintSelection" || action.Id == "InplaceReportV2")
             {
-                if (action.Category == DevExpress.Persistent.Base.PredefinedCategory.Reports.ToString() && 
-                    action.Id != printReportAction.Id)
-                {
-                    // Si el Id de la acción contiene "Inplace" o es una de las conocidas de visualización, la desactivamos
-                    if (action.Id.Contains("Inplace") || action.Id == "ShowInReportV2")
-                    {
-                        action.Active["CustomPrintActionActive"] = false;
-                    }
-                }
+                action.Active["CustomPrintActionActive"] = false;
             }
         }
+    }
+
+    protected override void OnDeactivated()
+    {
+        View.SelectionChanged -= View_SelectionChanged;
+        base.OnDeactivated();
     }
 
     private void UpdateActionState()
     {
         printReportAction.Items.Clear();
 
-        if (View != null && View.ObjectTypeInfo != null)
+        if (View?.ObjectTypeInfo == null)
         {
-            // Verificamos si el ObjectSpace actual puede manejar el tipo ReportDataV2
-            // Esto evita errores en el Host (donde no existen reportes de negocio)
-            if (!ObjectSpace.IsKnownType(typeof(ReportDataV2)))
-            {
-                printReportAction.Active["HasInplaceReports"] = false;
-                return;
-            }
+            printReportAction.Active["HasInplaceReports"] = false;
+            return;
+        }
 
-            using var os = Application.CreateObjectSpace(typeof(ReportDataV2));
-            var reports = os.GetObjects<ReportDataV2>(DevExpress.Data.Filtering.CriteriaOperator.Parse("IsInplaceReport = true AND DataTypeName = ?", View.ObjectTypeInfo.Type.FullName));
+        // Verificamos si el ObjectSpace actual puede manejar el tipo ReportDataV2
+        // Esto evita errores en el Host (donde no existen reportes de negocio)
+        if (!ObjectSpace.IsKnownType(typeof(ReportDataV2)))
+        {
+            printReportAction.Active["HasInplaceReports"] = false;
+            return;
+        }
 
-            foreach (var report in reports)
+        var typeFullName = View.ObjectTypeInfo.Type.FullName;
+        var modelFullName = View.ObjectTypeInfo.FullName;
+        var typeToSearch = typeFullName;
+        
+        // XAF a veces usa tipos proxy para XPO. Intentamos obtener el tipo base.
+        if (View.ObjectTypeInfo.Type.Namespace == "DevExpress.Xpo" && View.ObjectTypeInfo.Type.Name.EndsWith("Proxy"))
+        {
+            // Si es un proxy, el FullName del ObjectTypeInfo suele ser el correcto del objeto de negocio
+            typeToSearch = modelFullName;
+        }
+
+        var typesToSearch = new List<string>();
+        if (!string.IsNullOrEmpty(typeToSearch)) typesToSearch.Add(typeToSearch);
+        if (!string.IsNullOrEmpty(typeFullName)) typesToSearch.Add(typeFullName);
+        if (!string.IsNullOrEmpty(modelFullName)) typesToSearch.Add(modelFullName);
+        
+        // Añadimos tipos base para ser más robustos, similar a cómo XAF busca reportes inplace
+        var currentType = View.ObjectTypeInfo;
+        while (currentType.Base != null && currentType.Base.IsPersistent)
+        {
+            if (currentType.Base.Type?.FullName != null) typesToSearch.Add(currentType.Base.Type.FullName);
+            if (currentType.Base.FullName != null) typesToSearch.Add(currentType.Base.FullName);
+            currentType = currentType.Base;
+        }
+
+        // También incluimos interfaces si el reporte estuviera definido para una interfaz de negocio
+        foreach (var itf in View.ObjectTypeInfo.Type.GetInterfaces())
+        {
+            if (itf.FullName != null) typesToSearch.Add(itf.FullName);
+        }
+        
+        // Filtrar nulos y duplicados
+        var finalTypes = typesToSearch.Where(t => !string.IsNullOrEmpty(t)).Distinct().ToList();
+
+        using var os = Application.CreateObjectSpace(typeof(ReportDataV2));
+        var criteria = DevExpress.Data.Filtering.CriteriaOperator.Parse("IsInplaceReport = true") & 
+                       new DevExpress.Data.Filtering.InOperator("DataTypeName", finalTypes);
+        var reports = os.GetObjects<ReportDataV2>(criteria);
+
+        foreach (var report in reports)
+        {
+            var item = new ChoiceActionItem(report.DisplayName, report.Oid)
             {
-                var item = new ChoiceActionItem(report.DisplayName, report)
-                {
-                    ImageName = "Action_Printing_Print"
-                };
-                printReportAction.Items.Add(item);
-            }
+                ImageName = "Action_Printing_Print"
+            };
+            printReportAction.Items.Add(item);
         }
 
         printReportAction.Active["HasInplaceReports"] = printReportAction.Items.Count > 0;
@@ -115,19 +192,33 @@ public class ReportCompanyInfoController : ViewController
 
     private void PrintReportAction_Execute(object sender, SingleChoiceActionExecuteEventArgs e)
     {
-        if (e.SelectedChoiceActionItem?.Data is ReportDataV2 reportData)
+        if (e.SelectedChoiceActionItem?.Data is not Guid reportDataOid) return;
+
+        var reportData = ObjectSpace.GetObjectByKey<ReportDataV2>(reportDataOid);
+        if (reportData == null) return;
+
+        var controller = Frame.GetController<ReportServiceController>();
+        if (controller == null) return;
+
+        var reportStorage = ReportDataProvider.GetReportStorage(Application.ServiceProvider);
+        string handle = reportStorage.GetReportContainerHandle(reportData);
+
+        // Si queremos que el reporte se filtre por los objetos seleccionados (comportamiento Inplace estándar)
+        // pasamos los criterios de selección.
+        var selectedOids = new List<object>();
+        foreach (var obj in e.SelectedObjects)
         {
-            var controller = Frame.GetController<ReportServiceController>();
-            if (controller != null)
-            {
-                var reportStorage = ReportDataProvider.GetReportStorage(Application.ServiceProvider);
-                string handle = reportStorage.GetReportContainerHandle(reportData);
-                
-                // Si queremos que el reporte se filtre por el objeto seleccionado (comportamiento Inplace estándar)
-                // pasamos los criterios de selección.
-                var criteria = DevExpress.Data.Filtering.CriteriaOperator.Parse("Oid = ?", ObjectSpace.GetKeyValue(View.CurrentObject));
-                controller.ShowPreview(handle, criteria);
-            }
+            selectedOids.Add(ObjectSpace.GetKeyValue(obj));
         }
+
+        // Usamos el nombre del miembro clave del tipo de objeto de la vista
+        var keyName = View.ObjectTypeInfo.KeyMember.Name;
+        var criteria = new DevExpress.Data.Filtering.InOperator(keyName, selectedOids);
+
+        // Llamamos a ShowPreview con el handle y el criterio. 
+        // La inyección de parámetros de empresa se realiza automáticamente en erpModule 
+        // a través de ReportsDataSourceHelper.BeforeShowPreview.
+        controller.ShowPreview(handle, criteria);
     }
+
 }

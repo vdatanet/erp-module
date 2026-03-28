@@ -15,6 +15,7 @@ using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.Factories;
 using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Impuestos;
+using erp.Module.BusinessObjects.Inventario;
 
 namespace erp.Module.Services.Setup;
 
@@ -56,6 +57,14 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
         informacionEmpresa.Pais ??= OS.FirstOrDefault<Pais>(p => p.Nombre == "España");
         informacionEmpresa.Provincia ??= OS.FirstOrDefault<Provincia>(p => p.Nombre == "Tarragona");
         informacionEmpresa.Poblacion ??= OS.FirstOrDefault<Poblacion>(p => p.Nombre == "Calafell");
+
+        if (informacionEmpresa.AlmacenPorDefecto == null)
+        {
+            var almacen = OS.FirstOrDefault<Almacen>(a => a.Codigo == "GEN") ?? OS.CreateObject<Almacen>();
+            if (string.IsNullOrEmpty(almacen.Codigo)) almacen.Codigo = "GEN";
+            if (string.IsNullOrEmpty(almacen.Nombre)) almacen.Nombre = "Almacén General";
+            informacionEmpresa.AlmacenPorDefecto = almacen;
+        }
 
         if (string.IsNullOrEmpty(informacionEmpresa.Telefono)) informacionEmpresa.Telefono = "977 69 21 16";
         if (string.IsNullOrEmpty(informacionEmpresa.CorreoElectronico)) informacionEmpresa.CorreoElectronico = "info@vdata.net";
