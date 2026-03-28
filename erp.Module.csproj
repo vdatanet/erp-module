@@ -44,6 +44,7 @@
         <PackageReference Include="Azure.Identity" Version="1.19.0" />
         <PackageReference Include="IbanNet" Version="6.1.0" />
         <PackageReference Include="Irene.Solutions.FACe" Version="1.0.5" />
+        <PackageReference Include="MailKit" Version="4.15.1" />
         <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0" />
         <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.17.0" />
@@ -52,5 +53,10 @@
         <PackageReference Include="RestSharp" Version="114.0.0" />
         <PackageReference Include="TimeZoneConverter" Version="7.2.0" />
         <PackageReference Include="VeriFactu" Version="1.0.64" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Update="UnusableNodes.xml">
+        <DependentUpon>Model.DesignedDiffs.xafml</DependentUpon>
+      </None>
     </ItemGroup>
 </Project>

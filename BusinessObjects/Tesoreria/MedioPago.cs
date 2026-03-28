@@ -19,6 +19,7 @@ public class MedioPago(Session session) : EntidadBase(session)
 {
     private string? _nombre;
     private bool _esEfectivo;
+    private bool _disponibleEnTpv;
     private string? _notas;
     private CuentaContable? _cuentaContableCobros;
     private CuentaContable? _cuentaContablePagos;
@@ -46,6 +47,13 @@ public class MedioPago(Session session) : EntidadBase(session)
     {
         get => _esEfectivo;
         set => SetPropertyValue(nameof(EsEfectivo), ref _esEfectivo, value);
+    }
+
+    [XafDisplayName("Disponible en TPV")]
+    public bool DisponibleEnTpv
+    {
+        get => _disponibleEnTpv;
+        set => SetPropertyValue(nameof(DisponibleEnTpv), ref _disponibleEnTpv, value);
     }
 
     [XafDisplayName("Notas")]
