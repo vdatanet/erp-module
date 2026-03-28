@@ -10,7 +10,7 @@ public abstract class FacturaStateMachineBase(FacturaBase documento) : IFacturaS
 {
     protected readonly FacturaBase Factura = documento ?? throw new ArgumentNullException(nameof(documento));
 
-    private static readonly Dictionary<EstadoFactura, List<EstadoFactura>> TransicionesPermitidas = new()
+    protected virtual Dictionary<EstadoFactura, List<EstadoFactura>> Transiciones => new()
     {
         { EstadoFactura.Borrador, [EstadoFactura.Validada] },
         { EstadoFactura.Validada, [EstadoFactura.Emitida, EstadoFactura.Borrador] },
@@ -37,16 +37,24 @@ public abstract class FacturaStateMachineBase(FacturaBase documento) : IFacturaS
     public virtual void CambiarA(EstadoFactura nuevoEstado)
     {
         if (!Enum.IsDefined(typeof(EstadoFactura), nuevoEstado))
-            throw new ArgumentException("El nuevo estado no es un valor válido de EstadoFactura.", nameof(nuevoEstado));
+        {
+            throw new ArgumentException($"El estado '{nuevoEstado}' no es un valor válido de EstadoFactura.", nameof(nuevoEstado));
+        }
 
         if (!PuedeCambiarA(nuevoEstado))
         {
-            var facturaInfo = !string.IsNullOrEmpty(Factura.NumeroFiscal) ? Factura.NumeroFiscal : Factura.Oid.ToString();
-            throw new InvalidOperationException($"No se puede cambiar el estado de {EstadoActual} a {nuevoEstado} para la factura {facturaInfo}.");
+            var facturaInfo = !string.IsNullOrEmpty(Factura.NumeroFiscal) 
+                ? $"Número Fiscal: {Factura.NumeroFiscal}" 
+                : $"Oid: {Factura.Oid}";
+            
+            var estadosAlcanzables = string.Join(", ", GetEstadosAlcanzables());
+            var mensaje = $"No se puede cambiar el estado de '{EstadoActual}' a '{nuevoEstado}' para la factura ({facturaInfo}). " +
+                         $"Estados permitidos desde '{EstadoActual}': [{estadosAlcanzables}]";
+            
+            throw new InvalidOperationException(mensaje);
         }
 
         var oldEstado = EstadoActual;
-
         EstadoActual = nuevoEstado;
 
         OnEstadoCambiado(oldEstado, nuevoEstado);
@@ -54,7 +62,7 @@ public abstract class FacturaStateMachineBase(FacturaBase documento) : IFacturaS
 
     public virtual IEnumerable<EstadoFactura> GetEstadosAlcanzables()
     {
-        return TransicionesPermitidas.TryGetValue(EstadoActual, out var estados) ? estados : [];
+        return Transiciones.TryGetValue(EstadoActual, out var estados) ? estados : [];
     }
 
     protected virtual void OnEstadoCambiado(EstadoFactura oldEstado, EstadoFactura nuevoEstado)
