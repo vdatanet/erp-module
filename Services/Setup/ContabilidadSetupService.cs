@@ -73,6 +73,12 @@ public class ContabilidadSetupService(IObjectSpace objectSpace)
             informacionEmpresa.DiarioVentasPorDefecto.Nombre = "Ventas";
         }
 
+        informacionEmpresa.DiarioVentasSimplificadasPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Ventas Simplificadas") ?? OS.CreateObject<Diario>();
+        if (OS.IsNewObject(informacionEmpresa.DiarioVentasSimplificadasPorDefecto))
+        {
+            informacionEmpresa.DiarioVentasSimplificadasPorDefecto.Nombre = "Ventas Simplificadas";
+        }
+
         informacionEmpresa.DiarioComprasPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Compras") ?? OS.CreateObject<Diario>();
         if (OS.IsNewObject(informacionEmpresa.DiarioComprasPorDefecto))
         {

@@ -81,6 +81,7 @@ public class FacturaVenta(Session session) : FacturaBase(session)
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null) return;
         Serie ??= companyInfo.PrefijoFacturasVentaPorDefecto;
+        DiarioVentas ??= companyInfo.DiarioVentasPorDefecto;
         EsFactura = true;
         TipoDocumento = TipoDocumentoVenta.Factura;
         EstadoCobro = EstadoCobroFactura.Pendiente;

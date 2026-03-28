@@ -30,7 +30,12 @@ public class InformacionEmpresaProvider : IInformacionEmpresaProvider
             Movil = info.Movil,
             CorreoElectronico = info.CorreoElectronico,
             SitioWeb = info.SitioWeb,
-            Logo = info.Logo?.MediaData
+            Logo = info.Logo?.MediaData,
+            ZonaHorariaPorDefecto = info.ZonaHorariaPorDefecto?.IdZonaHoraria,
+            DiarioVentasPorDefecto = info.DiarioVentasPorDefecto?.Nombre,
+            DiarioVentasSimplificadasPorDefecto = info.DiarioVentasSimplificadasPorDefecto?.Nombre,
+            TextoDefectoVeriFactu = info.TextoDefectoVeriFactu,
+            PrefijoFacturasSimplificadasPorDefecto = info.PrefijoFacturasSimplificadasPorDefecto
         };
     }
 }

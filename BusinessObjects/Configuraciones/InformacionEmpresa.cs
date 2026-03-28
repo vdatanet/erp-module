@@ -55,6 +55,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private MedioPago? _medioPagoPorDefecto;
     private Diario? _diarioComprasPorDefecto;
     private Diario? _diarioVentasPorDefecto;
+    private Diario? _diarioVentasSimplificadasPorDefecto;
     private Diario? _diarioTesoreriaPorDefecto;
     private Diario? _diarioOperacionesVariasPorDefecto;
     private Diario? _diarioAperturaPorDefecto;
@@ -207,6 +208,14 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     {
         get => _diarioVentasPorDefecto;
         set => SetPropertyValue(nameof(DiarioVentasPorDefecto), ref _diarioVentasPorDefecto, value);
+    }
+
+    [DataSourceCriteria("EstaActivo = True")]
+    [XafDisplayName("Diario Ventas Simplificadas por Defecto")]
+    public Diario? DiarioVentasSimplificadasPorDefecto
+    {
+        get => _diarioVentasSimplificadasPorDefecto;
+        set => SetPropertyValue(nameof(DiarioVentasSimplificadasPorDefecto), ref _diarioVentasSimplificadasPorDefecto, value);
     }
 
     [XafDisplayName("Unidad de Facturación Predeterminada")]

@@ -26,6 +26,7 @@ namespace erp.Module.BusinessObjects.Base.Facturacion;
 public abstract class FacturaBase(Session session) : DocumentoVenta(session)
 {
 
+    private Diario? _diarioVentas;
     private string? _codigoErrorEntradaFactura;
     private string? _csv;
     private bool _esSubsanacion;
@@ -41,6 +42,14 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     private string? _urlValidacion;
     private string? _xmlAgenciaTributaria;
     private EstadoFactura _estadoFactura;
+
+    [XafDisplayName("Diario Ventas")]
+    [DataSourceCriteria("EstaActivo = True")]
+    public Diario? DiarioVentas
+    {
+        get => _diarioVentas;
+        set => SetPropertyValue(nameof(DiarioVentas), ref _diarioVentas, value);
+    }
 
     [XafDisplayName("Domicilio DIR (e-Factura)")]
     [DataSourceProperty("Cliente.DireccionesDIR")]

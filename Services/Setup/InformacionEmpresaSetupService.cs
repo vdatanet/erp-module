@@ -120,6 +120,7 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
         informacionEmpresa.CuentaPagosPorDefecto ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "572".PadRight(paddingCC, '0'));
         
         informacionEmpresa.DiarioVentasPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Ventas");
+        informacionEmpresa.DiarioVentasSimplificadasPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Ventas Simplificadas");
         informacionEmpresa.DiarioComprasPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Compras");
         informacionEmpresa.DiarioTesoreriaPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Tesorería");
         informacionEmpresa.DiarioOperacionesVariasPorDefecto ??= OS.FirstOrDefault<Diario>(d => d.Nombre == "Operaciones Varias");

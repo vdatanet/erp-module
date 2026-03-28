@@ -15,4 +15,9 @@ public class InformacionEmpresaDto
     public string? CorreoElectronico { get; set; }
     public string? SitioWeb { get; set; }
     public byte[]? Logo { get; set; }
+    public string? ZonaHorariaPorDefecto { get; set; }
+    public string? DiarioVentasPorDefecto { get; set; }
+    public string? DiarioVentasSimplificadasPorDefecto { get; set; }
+    public string? TextoDefectoVeriFactu { get; set; }
+    public string? PrefijoFacturasSimplificadasPorDefecto { get; set; }
 }
