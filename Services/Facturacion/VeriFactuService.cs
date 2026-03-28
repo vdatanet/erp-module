@@ -82,8 +82,9 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
              return new SendResult(false, "La fecha de la factura no puede ser posterior a la fecha actual.");
 
         // Para facturas que requieren cliente, validar que tengamos los datos en el snapshot o en el cliente
-        if (invoice.TipoFactura.ToString() == "F1" && 
-            string.IsNullOrEmpty(invoice.DocumentoIdentificacionCliente) && 
+        var requiereBuyer = invoice.TipoFactura.ToString() == "F1";
+        if (requiereBuyer &&
+            string.IsNullOrEmpty(invoice.DocumentoIdentificacionCliente) &&
             string.IsNullOrEmpty(invoice.Cliente?.Nif))
         {
             return new SendResult(false, "El NIF del cliente es obligatorio para facturas de tipo F1.");
@@ -121,7 +122,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             TaxItems = []
         };
 
-        if (invoice.TipoFactura.ToString() == "F1")
+        if (RequiresBuyerData(invoice))
         {
             veriFactuFactura.BuyerID = !string.IsNullOrEmpty(invoice.DocumentoIdentificacionCliente)
                 ? invoice.DocumentoIdentificacionCliente
@@ -151,6 +152,11 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         }
 
         return veriFactuFactura;
+    }
+
+    private static bool RequiresBuyerData(FacturaBase invoice)
+    {
+        return invoice.TipoFactura.ToString() == "F1";
     }
 
     private void UpdateInvoiceFromResponse(IObjectSpace objectSpace, FacturaBase invoice, VeriFactuResponse veriFactuResponse,

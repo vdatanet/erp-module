@@ -26,6 +26,8 @@ namespace erp.Module.BusinessObjects.Base.Facturacion;
 public abstract class FacturaBase(Session session) : DocumentoVenta(session)
 {
 
+    private TipoFacturaAmigable _tipoFacturaAmigable;
+    private TipoRectificativaAmigable _tipoRectificativaAmigable;
     private Diario? _diarioVentas;
     private string? _codigoErrorEntradaFactura;
     private string? _csv;
@@ -100,19 +102,57 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     }
 
     [NonCloneable]
-    [XafDisplayName("Tipo Factura")]
+    [Browsable(false)]
     public TipoFactura TipoFactura
     {
         get => _tipoFactura;
         set => SetPropertyValue(nameof(TipoFactura), ref _tipoFactura, value);
     }
 
+    [XafDisplayName("Tipo Factura")]
+    [VisibleInDetailView(true), VisibleInListView(true), VisibleInLookupListView(true)]
+    [ImmediatePostData]
+    public TipoFacturaAmigable TipoFacturaAmigable
+    {
+        get => _tipoFacturaAmigable;
+        set
+        {
+            var modified = SetPropertyValue(nameof(TipoFacturaAmigable), ref _tipoFacturaAmigable, value);
+            if (modified && !IsLoading && !IsSaving)
+            {
+                if (Enum.TryParse<TipoFactura>(value.ToString(), out var result))
+                {
+                    TipoFactura = result;
+                }
+            }
+        }
+    }
+
     [NonCloneable]
-    [XafDisplayName("Tipo Rectificativa")]
+    [Browsable(false)]
     public TipoRectificativa TipoRectificativa
     {
         get => _tipoRectificativa;
         set => SetPropertyValue(nameof(TipoRectificativa), ref _tipoRectificativa, value);
+    }
+
+    [XafDisplayName("Tipo Rectificativa")]
+    [VisibleInDetailView(true), VisibleInListView(true), VisibleInLookupListView(true)]
+    [ImmediatePostData]
+    public TipoRectificativaAmigable TipoRectificativaAmigable
+    {
+        get => _tipoRectificativaAmigable;
+        set
+        {
+            var modified = SetPropertyValue(nameof(TipoRectificativaAmigable), ref _tipoRectificativaAmigable, value);
+            if (modified && !IsLoading && !IsSaving)
+            {
+                if (Enum.TryParse<TipoRectificativa>(value.ToString(), out var result))
+                {
+                    TipoRectificativa = result;
+                }
+            }
+        }
     }
 
     [NonCloneable]
@@ -217,6 +257,19 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     {
         base.AfterConstruction();
         EstadoFactura = EstadoFactura.Borrador;
+        TipoFacturaAmigable = TipoFacturaAmigable.F1;
+        TipoRectificativaAmigable = TipoRectificativaAmigable.I;
+        
+        // Asegurar que los campos técnicos también se inicialicen
+        if (Enum.TryParse<TipoFactura>(TipoFacturaAmigable.F1.ToString(), out var tf))
+        {
+            TipoFactura = tf;
+        }
+        if (Enum.TryParse<TipoRectificativa>(TipoRectificativaAmigable.I.ToString(), out var tr))
+        {
+            TipoRectificativa = tr;
+        }
+        
         InitValues();
     }
 
@@ -232,8 +285,6 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     private void InitValues()
     {
         // EstadoVeriFactu = EstadoVeriFactu.Borrador;
-        TipoFactura = (TipoFactura)1; // F1
-        TipoRectificativa = (TipoRectificativa)1; // I
         EsSubsanacion = false;
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null) return;

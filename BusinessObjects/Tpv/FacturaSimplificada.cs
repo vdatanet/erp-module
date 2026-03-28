@@ -48,7 +48,7 @@ public class FacturaSimplificada(Session session) : FacturaBase(session)
         if (companyInfo == null) return;
         Serie ??= companyInfo.PrefijoFacturasSimplificadasPorDefecto;
         DiarioVentas ??= companyInfo.DiarioVentasSimplificadasPorDefecto;
-        TipoFactura = TipoFactura.F2;
+        TipoFacturaAmigable = TipoFacturaAmigable.F2;
         EsFacturaSimplificada = true;
         TipoDocumento = TipoDocumentoVenta.FacturaSimplificada;
     }
@@ -81,8 +81,8 @@ public class FacturaSimplificada(Session session) : FacturaBase(session)
             Cliente = Cliente,
             Notas = $"Anulación de factura {Secuencia} para emisión de factura nominal.",
             Usuario = Usuario,
-            TipoFactura = TipoFactura.R4,
-            TipoRectificativa = TipoRectificativa.S, // Sustitutiva
+            TipoFacturaAmigable = TipoFacturaAmigable.R4,
+            TipoRectificativaAmigable = TipoRectificativaAmigable.S, // Sustitutiva
             EsFacturaSimplificada = true,
             TipoDocumento = TipoDocumentoVenta.FacturaSimplificada,
             EstadoFactura = EstadoFactura.Borrador
@@ -122,7 +122,7 @@ public class FacturaSimplificada(Session session) : FacturaBase(session)
             Cliente = cliente,
             Notas = $"Factura generada a partir de la simplificada {Secuencia}.",
             Usuario = Usuario,
-            TipoFactura = TipoFactura.F1,
+            TipoFacturaAmigable = TipoFacturaAmigable.F1,
             EsFactura = true,
             TipoDocumento = TipoDocumentoVenta.Factura,
             EstadoFactura = EstadoFactura.Borrador
