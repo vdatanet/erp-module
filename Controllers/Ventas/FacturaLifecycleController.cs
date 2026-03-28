@@ -28,7 +28,7 @@ public class FacturaLifecycleController : ViewController
         {
             Caption = "Validar",
             ConfirmationMessage = "¿Desea validar esta factura?",
-            ImageName = "Action_Validate",
+            ImageName = "BO_Validation",
             TargetObjectsCriteria = "EstadoFactura = 'Borrador'",
             SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
@@ -38,7 +38,7 @@ public class FacturaLifecycleController : ViewController
         {
             Caption = "Revertir a Borrador",
             ConfirmationMessage = "¿Desea revertir esta factura a borrador?",
-            ImageName = "Action_Undo",
+            ImageName = "Undo",
             TargetObjectsCriteria = "EstadoFactura = 'Validada'",
             SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
@@ -48,7 +48,7 @@ public class FacturaLifecycleController : ViewController
         {
             Caption = "Emitir",
             ConfirmationMessage = "¿Desea emitir esta factura? (Se asignará número definitivo y fecha de emisión)",
-            ImageName = "Action_LinkUnlink_Link",
+            ImageName = "Redo",
             TargetObjectsCriteria = "EstadoFactura = 'Validada'",
             SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
@@ -58,7 +58,7 @@ public class FacturaLifecycleController : ViewController
         {
             Caption = "Enviar a VeriFactu",
             ConfirmationMessage = "¿Desea enviar esta factura a VeriFactu?",
-            ImageName = "Action_Send",
+            ImageName = "Actions_Send",
             TargetObjectsCriteria = "EstadoFactura = 'Emitida'",
             SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
@@ -68,7 +68,7 @@ public class FacturaLifecycleController : ViewController
         {
             Caption = "Contabilizar",
             ConfirmationMessage = "¿Desea generar el asiento contable para esta factura?",
-            ImageName = "Action_LinkUnlink_Link",
+            ImageName = "Accounting",
             TargetObjectsCriteria = "EstadoFactura = 'Enviada' OR (EstadoVeriFactu = 'AceptadaVeriFactu' OR EstadoVeriFactu = 'EnviadaVeriFactu')",
             SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
