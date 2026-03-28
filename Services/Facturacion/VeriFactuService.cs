@@ -81,6 +81,14 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         if (invoice.Fecha > InformacionEmpresaHelper.GetLocalTime(invoice.Session))
              return new SendResult(false, "La fecha de la factura no puede ser posterior a la fecha actual.");
 
+        // Para facturas que requieren cliente, validar que tengamos los datos en el snapshot o en el cliente
+        if (invoice.TipoFactura.ToString() == "F1" && 
+            string.IsNullOrEmpty(invoice.DocumentoIdentificacionCliente) && 
+            string.IsNullOrEmpty(invoice.Cliente?.Nif))
+        {
+            return new SendResult(false, "El NIF del cliente es obligatorio para facturas de tipo F1.");
+        }
+
         foreach (var tax in invoice.Impuestos)
         {
             if (tax.TipoImpuesto == null)
@@ -109,11 +117,20 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         {
             InvoiceType = invoice.TipoFactura,
             SellerName = companyInfo.Nombre,
-            BuyerID = invoice.Cliente?.Nif,
-            BuyerName = invoice.Cliente?.Nombre,
             Text = invoice.Texto,
             TaxItems = []
         };
+
+        if (invoice.TipoFactura.ToString() == "F1")
+        {
+            veriFactuFactura.BuyerID = !string.IsNullOrEmpty(invoice.DocumentoIdentificacionCliente)
+                ? invoice.DocumentoIdentificacionCliente
+                : invoice.Cliente?.Nif;
+
+            veriFactuFactura.BuyerName = !string.IsNullOrEmpty(invoice.NombreCliente)
+                ? invoice.NombreCliente
+                : invoice.Cliente?.Nombre;
+        }
 
         foreach (var tax in invoice.Impuestos)
         {
