@@ -80,6 +80,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     [ModelDefault("AllowEdit", "False")]
     [NonCloneable]
     [XafDisplayName("Estado VeriFactu")]
+    [ImmediatePostData]
     public EstadoVeriFactu EstadoVeriFactu
     {
         get => _estadoVeriFactu;
@@ -229,6 +230,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
 
     [XafDisplayName("Estado")]
     [ModelDefault("AllowEdit", "False")]
+    [ImmediatePostData]
     public EstadoFactura EstadoFactura
     {
         get => _estadoFactura;

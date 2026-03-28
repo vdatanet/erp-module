@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
 using DevExpress.Persistent.Base;
+using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.Services.Facturacion;
 using erp.Module.Services.Ventas;
@@ -94,10 +95,16 @@ public class FacturaLifecycleController : ViewController
                 action.Active["OcultarValidacionNativa"] = false;
             }
         }
+
+        View.CurrentObjectChanged += View_CurrentObjectChanged;
+        ObjectSpace.ObjectChanged += ObjectSpace_ObjectChanged;
+        ActualizarVisibilidadAcciones();
     }
 
     protected override void OnDeactivated()
     {
+        View.CurrentObjectChanged -= View_CurrentObjectChanged;
+        ObjectSpace.ObjectChanged -= ObjectSpace_ObjectChanged;
         // Reactivar acciones al desactivar el controlador
         var actionIdsToHide = new[] { "ValidateFactura", "Validation" };
         foreach (var actionId in actionIdsToHide)
@@ -112,6 +119,45 @@ public class FacturaLifecycleController : ViewController
             }
         }
         base.OnDeactivated();
+    }
+
+    private void View_CurrentObjectChanged(object? sender, EventArgs e)
+    {
+        ActualizarVisibilidadAcciones();
+    }
+
+    private void ObjectSpace_ObjectChanged(object? sender, ObjectChangedEventArgs e)
+    {
+        if (e.Object == View.CurrentObject && 
+            (e.PropertyName == nameof(FacturaBase.EstadoFactura) || e.PropertyName == nameof(FacturaBase.EstadoVeriFactu)))
+        {
+            ActualizarVisibilidadAcciones();
+        }
+    }
+
+    private void ActualizarVisibilidadAcciones()
+    {
+        if (View.CurrentObject is not FacturaBase factura)
+        {
+            _validarAction.Active["EstadoValido"] = false;
+            _emitirAction.Active["EstadoValido"] = false;
+            _revertirABorradorAction.Active["EstadoValido"] = false;
+            _enviarVerifactuAction.Active["EstadoValido"] = false;
+            _contabilizarAction.Active["EstadoValido"] = false;
+            return;
+        }
+
+        _validarAction.Active["EstadoValido"] = factura.EstadoFactura == EstadoFactura.Borrador;
+        _revertirABorradorAction.Active["EstadoValido"] = factura.EstadoFactura == EstadoFactura.Validada;
+        _emitirAction.Active["EstadoValido"] = factura.EstadoFactura == EstadoFactura.Validada;
+        _enviarVerifactuAction.Active["EstadoValido"] = factura.EstadoFactura == EstadoFactura.Emitida && 
+                                                      factura.EstadoVeriFactu != EstadoVeriFactu.AceptadaVeriFactu && 
+                                                      factura.EstadoVeriFactu != EstadoVeriFactu.EnviadaVeriFactu;
+        
+        _contabilizarAction.Active["EstadoValido"] = (factura.EstadoFactura == EstadoFactura.Enviada || 
+                                                      factura.EstadoVeriFactu == EstadoVeriFactu.AceptadaVeriFactu || 
+                                                      factura.EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu) &&
+                                                     factura.EstadoFactura != EstadoFactura.Contabilizada;
     }
 
     private void ValidarAction_Execute(object sender, SimpleActionExecuteEventArgs e)
