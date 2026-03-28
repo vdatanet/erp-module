@@ -14,19 +14,43 @@ public enum TipoDocumentoVenta
     [XafDisplayName("Devolución")] Devolucion
 }
 
-public enum EstadoDocumentoVenta
+public enum EstadoOferta
+{
+    [XafDisplayName("Borrador")] Borrador,
+    [XafDisplayName("Enviada")] Enviada,
+    [XafDisplayName("Aceptada")] Aceptada,
+    [XafDisplayName("Rechazada")] Rechazada,
+    [XafDisplayName("Anulada")] Anulada,
+    [XafDisplayName("Vencida")] Vencida
+}
+
+public enum EstadoPedido
 {
     [XafDisplayName("Borrador")] Borrador,
     [XafDisplayName("Confirmado")] Confirmado,
+    [XafDisplayName("En Preparación")] EnPreparacion,
+    [XafDisplayName("Preparado")] Preparado,
+    [XafDisplayName("Enviado")] Enviado,
+    [XafDisplayName("Entregado")] Entregado,
+    [XafDisplayName("Anulado")] Anulado
+}
+
+public enum EstadoAlbaran
+{
+    [XafDisplayName("Borrador")] Borrador,
+    [XafDisplayName("Emitido")] Emitido,
+    [XafDisplayName("Enviado")] Enviado,
+    [XafDisplayName("Entregado")] Entregado,
+    [XafDisplayName("Facturado")] Facturado,
+    [XafDisplayName("Anulado")] Anulado
+}
+
+public enum EstadoFactura
+{
+    [XafDisplayName("Borrador")] Borrador,
     [XafDisplayName("Validada")] Validada,
     [XafDisplayName("Enviada a VeriFactu")] EnviadaVerifactu,
-    [XafDisplayName("Contabilizada")] Contabilizada,
-    [XafDisplayName("Emitido")] Emitido,
-    [XafDisplayName("Impreso")] Impreso,
-    [XafDisplayName("Cobrado")] Cobrado,
-    [XafDisplayName("Anulado")] Anulado,
-    [XafDisplayName("Bloqueado")] Bloqueado,
-    [XafDisplayName("Sincronizado")] Sincronizado
+    [XafDisplayName("Contabilizada")] Contabilizada
 }
 
 public enum EstadoCobroFactura

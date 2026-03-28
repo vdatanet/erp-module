@@ -1,7 +1,9 @@
 using System.ComponentModel;
 using DevExpress.ExpressApp;
+using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
+using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Base.Ventas;
@@ -9,6 +11,7 @@ using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Ventas;
 using erp.Module.Helpers.Contactos;
 using erp.Module.Services.Contabilidad;
+using erp.Module.Services.Ventas;
 using erp.Module.Services.Ventas.StateMachines;
 using VeriFactu.Xml.Factu.Alta;
 
@@ -19,15 +22,16 @@ namespace erp.Module.BusinessObjects.Tpv;
 [XafDisplayName("Factura Simplificada")]
 [ImageName("BO_Invoice")] // Podría cambiarse a algo más específico si existe
 [DefaultProperty(nameof(Secuencia))]
+[Appearance("BlockEditingFacturaSimplificadaNoBorrador", AppearanceItemType = "ViewItem", TargetItems = "*",
+    Criteria = "EstadoFactura = 'Validada' OR EstadoFactura = 1 OR EstadoFactura = 'EnviadaVerifactu' OR EstadoFactura = 2 OR EstadoFactura = 'Contabilizada' OR EstadoFactura = 3", Context = "Any", Enabled = false)]
+[Appearance("BlockDeletionFacturaSimplificadaNoBorrador", AppearanceItemType = "Action", TargetItems = "Delete",
+    Criteria = "EstadoFactura != 'Borrador' AND EstadoFactura != 0", Context = "Any", Enabled = false)]
+[RuleCriteria("FacturaSimplificada_SoloBorradorModificable", DefaultContexts.Save, "EstadoFactura = 'Borrador' OR EstadoFactura = 0 OR EstadoFactura = 'Validada' OR EstadoFactura = 1 OR EstadoFactura = 'EnviadaVerifactu' OR EstadoFactura = 2 OR EstadoFactura = 'Contabilizada' OR EstadoFactura = 3", 
+    "Una factura simplificada solo se puede modificar si está en borrador.", SkipNullOrEmptyValues = false)]
+[RuleCriteria("FacturaSimplificada_SoloBorradorEliminable", DefaultContexts.Delete, "EstadoFactura = 'Borrador' OR EstadoFactura = 0", 
+    "Una factura simplificada solo se puede eliminar si está en borrador.")]
 public class FacturaSimplificada(Session session) : FacturaBase(session)
 {
-    [Action(Caption = "Contabilizar", ConfirmationMessage = "¿Desea generar el asiento contable para esta factura simplificada?", ImageName = "Action_LinkUnlink_Link", TargetObjectsCriteria = "AsientoContable is null")]
-    public void Contabilizar()
-    {
-        ContabilidadService.ContabilizarFactura(this);
-        OnChanged(nameof(AsientoContable));
-    }
-
     private VentaTpv? _ventaTpv;
 
     [XafDisplayName("Venta TPV")]
@@ -48,14 +52,17 @@ public class FacturaSimplificada(Session session) : FacturaBase(session)
         TipoDocumento = TipoDocumentoVenta.FacturaSimplificada;
     }
 
-    public override bool EsValida()
+    public override bool EsValida() => ValidarParaEmision().IsValid;
+
+    public override ValidationResult ValidarParaEmision()
     {
-        return EstadoVeriFactu != EstadoVeriFactu.Enviado
-               && !string.IsNullOrEmpty(Texto)
-               && Impuestos.Count > 0;
+        var result = base.ValidarParaEmision();
+        if (ImporteTotal > 3000)
+            result.AddError("Las facturas simplificadas no pueden superar los 3000€.");
+        return result;
     }
 
-    protected override IDocumentoVentaStateMachine CreateStateMachine() => new FacturaSimplificadaStateMachine(this);
+    protected override IFacturaStateMachine GetStateMachine() => new FacturaSimplificadaStateMachine(this);
 
     public (FacturaSimplificada Rectificativa, FacturaVenta Nominal) ConvertirAFacturaNominal(Cliente cliente)
     {
@@ -76,8 +83,10 @@ public class FacturaSimplificada(Session session) : FacturaBase(session)
             TipoFactura = TipoFactura.R4,
             TipoRectificativa = TipoRectificativa.S, // Sustitutiva
             EsFacturaSimplificada = true,
-            TipoDocumento = TipoDocumentoVenta.FacturaSimplificada
+            TipoDocumento = TipoDocumentoVenta.FacturaSimplificada,
+            EstadoFactura = EstadoFactura.Borrador
         };
+        rectificativa.EstadoCobro = EstadoCobroFactura.Pendiente;
         rectificativa.Serie = Serie;
 
         // Copiar líneas en negativo
@@ -114,8 +123,10 @@ public class FacturaSimplificada(Session session) : FacturaBase(session)
             Usuario = Usuario,
             TipoFactura = TipoFactura.F1,
             EsFactura = true,
-            TipoDocumento = TipoDocumentoVenta.Factura
+            TipoDocumento = TipoDocumentoVenta.Factura,
+            EstadoFactura = EstadoFactura.Borrador
         };
+        nominal.EstadoCobro = EstadoCobroFactura.Pendiente;
         
         nominal.Serie = companyInfo?.PrefijoFacturasVentaPorDefecto;
 

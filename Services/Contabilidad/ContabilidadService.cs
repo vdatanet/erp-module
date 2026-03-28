@@ -57,10 +57,10 @@ public static class ContabilidadService
         };
 
         // 1. Apunte de Cliente (Debe)
-        var cuentaCliente = (factura.Cliente as Cliente)?.CuentaContable;
+        var cuentaCliente = (factura.Cliente as Cliente)?.CuentaContable ?? companyInfo.CuentaClientesPorDefecto;
         if (cuentaCliente == null)
         {
-            throw new UserFriendlyException("No se ha definido la cuenta contable del cliente.");
+            throw new UserFriendlyException("No se ha definido la cuenta contable del cliente ni una cuenta por defecto para clientes.");
         }
 
         var apunteCliente = new Apunte(session)

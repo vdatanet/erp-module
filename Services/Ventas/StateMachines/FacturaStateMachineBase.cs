@@ -1,36 +1,52 @@
 using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Base.Ventas;
+using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.Services.Ventas.StateMachines;
 
-public abstract class FacturaStateMachineBase(FacturaBase documento) : DocumentoVentaStateMachineBase(documento)
+public abstract class FacturaStateMachineBase(FacturaBase documento) : IFacturaStateMachine
 {
-    protected readonly FacturaBase Factura = documento;
+    protected readonly FacturaBase Factura = documento ?? throw new ArgumentNullException(nameof(documento));
 
-    public override IEnumerable<EstadoDocumentoVenta> GetEstadosAlcanzables()
+    public Enum EstadoActual
     {
-        // Las facturas tienen un flujo más restringido una vez emitidas/sincronizadas por temas fiscales (VeriFactu)
-        return EstadoActual switch
+        get => Factura.EstadoFactura;
+        protected set => Factura.EstadoFactura = (EstadoFactura)value;
+    }
+
+    public virtual bool PuedeCambiarA(Enum nuevoEstado)
+    {
+        if (Equals(EstadoActual, nuevoEstado)) return false;
+        
+        return GetEstadosAlcanzables().Contains(nuevoEstado);
+    }
+
+    public virtual void CambiarA(Enum nuevoEstado)
+    {
+        if (!PuedeCambiarA(nuevoEstado))
+            throw new InvalidOperationException($"No se puede cambiar el estado de {EstadoActual} a {nuevoEstado} para esta factura.");
+
+        var oldEstado = EstadoActual;
+        
+        EstadoActual = nuevoEstado;
+        
+        OnEstadoCambiado(oldEstado, nuevoEstado);
+    }
+
+    public virtual IEnumerable<Enum> GetEstadosAlcanzables()
+    {
+        return ((EstadoFactura)EstadoActual) switch
         {
-            EstadoDocumentoVenta.Borrador => [EstadoDocumentoVenta.Confirmado, EstadoDocumentoVenta.Anulado],
-            EstadoDocumentoVenta.Confirmado => [EstadoDocumentoVenta.Emitido, EstadoDocumentoVenta.Anulado, EstadoDocumentoVenta.Borrador],
-            EstadoDocumentoVenta.Emitido => [EstadoDocumentoVenta.Impreso, EstadoDocumentoVenta.Sincronizado, EstadoDocumentoVenta.Anulado, EstadoDocumentoVenta.Bloqueado],
-            EstadoDocumentoVenta.Impreso => [EstadoDocumentoVenta.Sincronizado, EstadoDocumentoVenta.Anulado, EstadoDocumentoVenta.Bloqueado],
-            EstadoDocumentoVenta.Sincronizado => [EstadoDocumentoVenta.Impreso, EstadoDocumentoVenta.Bloqueado], // Una vez sincronizada, anular suele requerir factura rectificativa
-            EstadoDocumentoVenta.Bloqueado => [], 
+            EstadoFactura.Borrador => [EstadoFactura.Validada],
+            EstadoFactura.Validada => [EstadoFactura.EnviadaVerifactu, EstadoFactura.Contabilizada, EstadoFactura.Borrador],
+            EstadoFactura.EnviadaVerifactu => [EstadoFactura.Contabilizada],
+            EstadoFactura.Contabilizada => [],
             _ => []
         };
     }
 
-    public override bool PuedeCambiarA(EstadoDocumentoVenta nuevoEstado)
+    protected virtual void OnEstadoCambiado(Enum oldEstado, Enum nuevoEstado)
     {
-        // Regla base de facturas: si está enviada a VeriFactu, no se puede volver a borrador ni anular directamente
-        if (Factura.EstadoVeriFactu == EstadoVeriFactu.Enviado)
-        {
-            if (nuevoEstado is EstadoDocumentoVenta.Borrador or EstadoDocumentoVenta.Anulado)
-                return false;
-        }
-
-        return base.PuedeCambiarA(nuevoEstado);
+        // Hook para lógica adicional en subclases
     }
 }

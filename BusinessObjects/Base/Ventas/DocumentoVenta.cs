@@ -23,7 +23,6 @@ using erp.Module.Factories;
 using erp.Module.Helpers.Contactos;
 using erp.Module.Models.Ventas;
 using erp.Module.Services.Ventas;
-using erp.Module.Services.Ventas.StateMachines;
 
 namespace erp.Module.BusinessObjects.Base.Ventas;
 
@@ -75,20 +74,13 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private bool _esOferta;
     private bool _esPedido;
     private bool _esPresupuesto;
-    private EstadoDocumentoVenta _estado;
     private EstadoCobroFactura _estadoCobro;
     private bool _esTicket;
     private DateTime _fecha;
-    private DateTime? _fechaAnulacion;
-    private DateTime? _fechaCobro;
-
-    // --- ESTADO Y CONTROL ---
-    private DateTime? _fechaConfirmacion;
+    protected DateTime? _fechaCobro;
     private DateTime _fechaCreacion;
-    private DateTime? _fechaEmision;
     private DateTime? _fechaEntregaPrevista;
     private DateTime? _fechaEntregaReal;
-    private DateTime? _fechaImpresion;
     private DateTime _fechaModificacion;
 
     // --- PAGO ---
@@ -141,7 +133,6 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private string? _serieFiscal;
     private SesionTpv? _sesionTpv;
 
-    private IDocumentoVentaStateMachine? _stateMachine;
     private string? _telefonoCliente;
     private TipoDocumentoVenta _tipoDocumento;
     private decimal _totalBruto;
@@ -156,8 +147,6 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private ApplicationUser? _usuarioCreacion;
     private ApplicationUser? _usuarioModificacion;
     private Contacto? _vendedor;
-
-    [Browsable(false)] public IDocumentoVentaStateMachine StateMachine => _stateMachine ??= CreateStateMachine();
 
     [RuleRequiredField("erp.Module.BusinessObjects.Ventas.FacturaVenta.Cliente_Required", DefaultContexts.Save,
         TargetCriteria =
@@ -362,13 +351,6 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     {
         get => _tipoDocumento;
         set => SetPropertyValue(nameof(TipoDocumento), ref _tipoDocumento, value);
-    }
-
-    [XafDisplayName("Estado")]
-    public EstadoDocumentoVenta Estado
-    {
-        get => _estado;
-        set => SetPropertyValue(nameof(Estado), ref _estado, value);
     }
 
     [XafDisplayName("Estado Cobro")]
@@ -686,75 +668,12 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(CuentaCaja), ref _cuentaCaja, value);
     }
 
+    [Size(SizeAttribute.Unlimited)]
     [XafDisplayName("Cuenta Banco")]
     public CuentaContable? CuentaBanco
     {
         get => _cuentaBanco;
         set => SetPropertyValue(nameof(CuentaBanco), ref _cuentaBanco, value);
-    }
-
-    [NonCloneable]
-    [XafDisplayName("Borrador")]
-    public bool Borrador => Estado == EstadoDocumentoVenta.Borrador;
-
-    [NonCloneable]
-    [XafDisplayName("Confirmado")]
-    public bool Confirmado => Estado == EstadoDocumentoVenta.Confirmado;
-
-    [NonCloneable]
-    [XafDisplayName("Emitido")]
-    public bool Emitido => Estado == EstadoDocumentoVenta.Emitido;
-
-    [NonCloneable]
-    [XafDisplayName("Impreso")]
-    public bool Impreso => Estado == EstadoDocumentoVenta.Impreso;
-
-    [NonCloneable]
-    [XafDisplayName("Anulado")]
-    public bool Anulado => Estado == EstadoDocumentoVenta.Anulado;
-
-    [NonCloneable]
-    [XafDisplayName("Bloqueado")]
-    public bool Bloqueado => Estado == EstadoDocumentoVenta.Bloqueado;
-
-    [NonCloneable]
-    [XafDisplayName("Sincronizado")]
-    public bool Sincronizado => Estado == EstadoDocumentoVenta.Sincronizado;
-
-    [NonCloneable]
-    [ModelDefault("AllowEdit", "False")]
-    [XafDisplayName("Fecha Confirmación")]
-    public DateTime? FechaConfirmacion
-    {
-        get => _fechaConfirmacion;
-        set => SetPropertyValue(nameof(FechaConfirmacion), ref _fechaConfirmacion, value);
-    }
-
-    [NonCloneable]
-    [ModelDefault("AllowEdit", "False")]
-    [XafDisplayName("Fecha Emisión")]
-    public DateTime? FechaEmision
-    {
-        get => _fechaEmision;
-        set => SetPropertyValue(nameof(FechaEmision), ref _fechaEmision, value);
-    }
-
-    [NonCloneable]
-    [ModelDefault("AllowEdit", "False")]
-    [XafDisplayName("Fecha Impresión")]
-    public DateTime? FechaImpresion
-    {
-        get => _fechaImpresion;
-        set => SetPropertyValue(nameof(FechaImpresion), ref _fechaImpresion, value);
-    }
-
-    [NonCloneable]
-    [ModelDefault("AllowEdit", "False")]
-    [XafDisplayName("Fecha Anulación")]
-    public DateTime? FechaAnulacion
-    {
-        get => _fechaAnulacion;
-        set => SetPropertyValue(nameof(FechaAnulacion), ref _fechaAnulacion, value);
     }
 
     [Size(SizeAttribute.Unlimited)]
@@ -1075,7 +994,6 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     protected IDocumentoVentaService DocumentoVentaService => _documentoVentaService ??= new DocumentoVentaService();
 
-    protected abstract IDocumentoVentaStateMachine CreateStateMachine();
 
     /// <summary>
     ///     Regla de negocio: Al asignar un cliente se copian sus datos de contacto y facturación al documento.
@@ -1207,17 +1125,11 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
             Impuestos[i].Delete();
     }
 
-    [Obsolete("Use RecalcularTotales() through DocumentoVentaService")]
-    public void ReconstruirResumenImpuestos()
-    {
-        RecalcularTotales();
-    }
-
     public override void AfterConstruction()
     {
         base.AfterConstruction();
         InitInformacionTemporal();
-        InitEstadoYControl();
+        Origen = OrigenDocumentoVenta.Manual;
         InitAuditoria();
     }
 
@@ -1233,11 +1145,6 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         EjercicioContable ??= Ejercicio;
     }
 
-    private void InitEstadoYControl()
-    {
-        Origen = OrigenDocumentoVenta.Manual;
-        Estado = EstadoDocumentoVenta.Borrador;
-    }
 
     private void InitAuditoria()
     {

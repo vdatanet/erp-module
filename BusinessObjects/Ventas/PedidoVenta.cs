@@ -1,10 +1,11 @@
+using System.ComponentModel;
 using DevExpress.ExpressApp.DC;
+using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Base.Ventas;
 using erp.Module.BusinessObjects.Crm;
 using erp.Module.BusinessObjects.Suscripciones;
-using erp.Module.Services.Ventas.StateMachines;
 using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.BusinessObjects.Ventas;
@@ -16,6 +17,7 @@ namespace erp.Module.BusinessObjects.Ventas;
 public class PedidoVenta(Session session) : DocumentoVenta(session)
 {
     private Oportunidad? _oportunidad;
+    private EstadoPedido _estadoPedido;
     private Suscripcion? _suscripcion;
     private EstadoVigenciaPedido _estadoVigencia;
     private DateTime? _fechaInicioVigencia;
@@ -92,12 +94,32 @@ public class PedidoVenta(Session session) : DocumentoVenta(session)
         }
     }
 
-    public override void AfterConstruction()
+    [XafDisplayName("Estado")]
+    [ModelDefault("AllowEdit", "False")]
+    public EstadoPedido EstadoPedido
     {
-        base.AfterConstruction();
-        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        if (companyInfo == null) return;
-        Serie ??= companyInfo.PrefijoPedidosPorDefecto;
+        get => _estadoPedido;
+        set => SetPropertyValue(nameof(EstadoPedido), ref _estadoPedido, value);
     }
-    protected override IDocumentoVentaStateMachine CreateStateMachine() => new PedidoVentaStateMachine(this);
+
+    [XafDisplayName("Borrador")]
+    public bool Borrador => EstadoPedido == EstadoPedido.Borrador;
+
+    [XafDisplayName("Confirmado")]
+    public bool Confirmado => EstadoPedido >= EstadoPedido.Confirmado && EstadoPedido != EstadoPedido.Anulado;
+
+    [XafDisplayName("Emitido")]
+    public bool Emitido => false;
+
+    [XafDisplayName("Impreso")]
+    public bool Impreso => false;
+
+    [XafDisplayName("Anulado")]
+    public bool Anulado => EstadoPedido == EstadoPedido.Anulado;
+
+    [XafDisplayName("Bloqueado")]
+    public bool Bloqueado => false;
+
+    [XafDisplayName("Sincronizado")]
+    public bool Sincronizado => false;
 }

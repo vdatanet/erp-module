@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
+using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 using erp.Module.BusinessObjects.Alquileres;
 using erp.Module.BusinessObjects.Tesoreria;
@@ -14,7 +16,6 @@ using erp.Module.Services.Contabilidad;
 using erp.Module.Services.Tesoreria;
 using erp.Module.Services.Ventas;
 using erp.Module.Services.Ventas.StateMachines;
-using DevExpress.Persistent.Validation;
 
 namespace erp.Module.BusinessObjects.Ventas;
 
@@ -23,32 +24,17 @@ namespace erp.Module.BusinessObjects.Ventas;
 [NavigationItem("Ventas")]
 [ImageName("BO_Invoice")]
 [DefaultProperty(nameof(Secuencia))]
+[Appearance("BlockEditingFacturaNoBorrador", AppearanceItemType = "ViewItem", TargetItems = "*",
+    Criteria = "EstadoFactura = 'Validada' OR EstadoFactura = 1 OR EstadoFactura = 'EnviadaVerifactu' OR EstadoFactura = 2 OR EstadoFactura = 'Contabilizada' OR EstadoFactura = 3", Context = "Any", Enabled = false)]
+[Appearance("BlockDeletionFacturaNoBorrador", AppearanceItemType = "Action", TargetItems = "Delete",
+    Criteria = "EstadoFactura != 'Borrador' AND EstadoFactura != 0", Context = "Any", Enabled = false)]
+[RuleCriteria("Factura_SoloBorradorModificable", DefaultContexts.Save, "EstadoFactura = 'Borrador' OR EstadoFactura = 0 OR EstadoFactura = 'Validada' OR EstadoFactura = 1 OR EstadoFactura = 'EnviadaVerifactu' OR EstadoFactura = 2 OR EstadoFactura = 'Contabilizada' OR EstadoFactura = 3", 
+    "Una factura solo se puede modificar si está en borrador.", SkipNullOrEmptyValues = false)]
+[RuleCriteria("Factura_SoloBorradorEliminable", DefaultContexts.Delete, "EstadoFactura = 'Borrador' OR EstadoFactura = 0", 
+    "Una factura solo se puede eliminar si está en borrador.")]
 [RuleCriteria("Factura_SumaEfectosCoherente", DefaultContexts.Save, "EfectosCobro.Sum(Importe) = ImporteTotal", "La suma de los importes de los efectos debe coincidir con el total de la factura.")]
 public class FacturaVenta(Session session) : FacturaBase(session)
 {
-    [Action(Caption = "Validar", ConfirmationMessage = "¿Desea validar esta factura?", ImageName = "Action_Validate", TargetObjectsCriteria = "Estado = 'Borrador'")]
-    public void ValidarAction()
-    {
-        var orchestrator = new FacturaVentaOrchestrator();
-        orchestrator.Validar(this);
-    }
-
-    [Action(Caption = "Enviar a VeriFactu", ConfirmationMessage = "¿Desea enviar esta factura a VeriFactu?", ImageName = "Action_Send", TargetObjectsCriteria = "Estado = 'Validada'")]
-    public void EnviarVerifactuAction()
-    {
-        var orchestrator = new FacturaVentaOrchestrator();
-        orchestrator.EnviarAVerifactu(this);
-    }
-
-    [Action(Caption = "Contabilizar", ConfirmationMessage = "¿Desea generar el asiento contable para esta factura?", ImageName = "Action_LinkUnlink_Link", TargetObjectsCriteria = "Estado = 'EnviadaVerifactu'")]
-    public void Contabilizar()
-    {
-        var orchestrator = new FacturaVentaOrchestrator();
-        orchestrator.Contabilizar(this);
-        OnChanged(nameof(AsientoContable));
-        OnChanged(nameof(ApuntesContables));
-    }
-
     [XafDisplayName("Efectos de Cobro")]
     [Association("FacturaVenta-EfectosCobro")]
     [DevExpress.Xpo.Aggregated]
@@ -99,15 +85,22 @@ public class FacturaVenta(Session session) : FacturaBase(session)
         EstadoCobro = EstadoCobroFactura.Pendiente;
     }
 
-    public override bool EsValida()
+    public override bool EsValida() => ValidarParaEmision().IsValid;
+
+    public override ValidationResult ValidarParaEmision()
     {
-        return EstadoVeriFactu != EstadoVeriFactu.Enviado
-               && Cliente != null
-               && !string.IsNullOrEmpty(Cliente.Nombre)
-               && !string.IsNullOrEmpty(Cliente.Nif)
-                && !string.IsNullOrEmpty(Texto)
-               && Impuestos.Count > 0;
+        var result = base.ValidarParaEmision();
+        if (Cliente == null)
+            result.AddError("La factura requiere un cliente.");
+        else
+        {
+            if (string.IsNullOrEmpty(NombreCliente))
+                result.AddError("El cliente debe tener un nombre.");
+            if (string.IsNullOrEmpty(DocumentoIdentificacionCliente))
+                result.AddError("El cliente debe tener un NIF válido.");
+        }
+        return result;
     }
 
-    protected override IDocumentoVentaStateMachine CreateStateMachine() => new FacturaVentaStateMachine(this);
+    protected override IFacturaStateMachine GetStateMachine() => new FacturaVentaStateMachine(this);
 }

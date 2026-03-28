@@ -1,11 +1,11 @@
-using erp.Module.BusinessObjects.Base.Ventas;
+using erp.Module.BusinessObjects.Base.Facturacion;
 
 namespace erp.Module.Services.Ventas.StateMachines;
 
-public interface IDocumentoVentaStateMachine
+public interface IFacturaStateMachine
 {
-    EstadoDocumentoVenta EstadoActual { get; }
-    bool PuedeCambiarA(EstadoDocumentoVenta nuevoEstado);
-    void CambiarA(EstadoDocumentoVenta nuevoEstado);
-    IEnumerable<EstadoDocumentoVenta> GetEstadosAlcanzables();
+    Enum EstadoActual { get; }
+    bool PuedeCambiarA(Enum nuevoEstado);
+    void CambiarA(Enum nuevoEstado);
+    IEnumerable<Enum> GetEstadosAlcanzables();
 }

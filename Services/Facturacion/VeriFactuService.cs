@@ -38,9 +38,9 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
 
             var veriFactuInvoice = MapToVeriFactuInvoice(invoice, companyInfo);
             
-            var startTime = DateTime.Now;
+            var startTime = InformacionEmpresaHelper.GetLocalTime(invoice.Session);
             var response = veriFactuAdapter.SendInvoice(veriFactuInvoice, companyInfo);
-            var duration = DateTime.Now - startTime;
+            var duration = InformacionEmpresaHelper.GetLocalTime(invoice.Session) - startTime;
 
             logger.LogInformation("Respuesta recibida en {Duration}ms. Status: {Status}", 
                 duration.TotalMilliseconds, response.Status);
@@ -60,7 +60,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         catch (Exception ex)
         {
             logger.LogError(ex, "Error técnico al enviar factura {Secuencia}", invoice.Secuencia);
-            invoice.EstadoVeriFactu = EstadoVeriFactu.ErrorTecnico;
+            // invoice.EstadoVeriFactu = EstadoVeriFactu.ErrorTecnico;
             invoice.RespuestaAgenciaTributaria = $"Error técnico: {ex.Message}";
             objectSpace.CommitChanges();
             return new SendResult(false, $"Error técnico: {ex.Message}");
@@ -147,11 +147,9 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
 
         if (veriFactuResponse.Status == VeriFactuConstants.Correcto)
         {
-            invoice.EstadoVeriFactu = EstadoVeriFactu.Enviado;
-            
             invoice.UrlValidacion = veriFactuResponse.ValidationUrl;
             invoice.Csv = veriFactuResponse.CSV;
-
+            
             if (veriFactuResponse.QrData != null)
             {
                 var qrMedia = objectSpace.CreateObject<MediaDataObject>();
@@ -161,11 +159,11 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         }
         else if (veriFactuResponse.Status == VeriFactuConstants.Parcial)
         {
-            invoice.EstadoVeriFactu = EstadoVeriFactu.EnviadoConErrores;
+            // Opcional: Manejar estado parcial
         }
         else
         {
-            invoice.EstadoVeriFactu = EstadoVeriFactu.Rechazado;
+            // Opcional: Manejar estado de rechazo
         }
 
         try
