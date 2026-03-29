@@ -162,28 +162,6 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace, IServicePr
         OS.CommitChanges(); // Nos aseguramos de guardar la empresa inicial para evitar nulos en otras partes si es necesario
         
         InitializeAllSequences(informacionEmpresa);
-
-#if DEBUG
-        // TODO: Provisional - Generar archivo de configuración de VeriFactu para valorar su contenido. Eliminar tras validar.
-        _logger.LogInformation("DEBUG: Iniciando generación de archivo de configuración de VeriFactu desde la siembra de datos.");
-        var veriFactuAdapter = serviceProvider.GetService<IVeriFactuAdapter>();
-        if (veriFactuAdapter != null)
-        {
-            try
-            {
-                Task.Run(async () => await veriFactuAdapter.ConfigureAsync(informacionEmpresa)).Wait();
-                _logger.LogInformation("DEBUG: Configuración de VeriFactu completada desde la siembra.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "DEBUG: Error al configurar VeriFactu desde la siembra.");
-            }
-        }
-        else
-        {
-            _logger.LogWarning("DEBUG: No se pudo obtener IVeriFactuAdapter para la configuración.");
-        }
-#endif
     }
 
     private void CreateInitialUnidadesFacturacion()

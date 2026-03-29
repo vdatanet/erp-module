@@ -66,12 +66,6 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger) : IVeriFactuAdap
         }
     }
 
-    public async Task ConfigureAsync(InformacionEmpresa companyInfo)
-    {
-        ArgumentNullException.ThrowIfNull(companyInfo);
-        await ConfigureVeriFactuAsync(companyInfo);
-    }
-
     private async Task ConfigureVeriFactuAsync(InformacionEmpresa companyInfo)
     {
         logger.LogInformation("Iniciando configuración de VeriFactu para la empresa {Empresa} (NIF: {Nif})", companyInfo.Nombre, companyInfo.Nif);
