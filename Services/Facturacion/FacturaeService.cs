@@ -72,39 +72,76 @@ public class FacturaeService : IFacturaeService
         var buyerLegalEntity = new LegalEntity();
         buyerLegalEntity.CorporateName = cliente.Nombre ?? string.Empty;
         var buyerAddress = new Address();
-        buyerAddress.AddressText = cliente.Direccion ?? string.Empty;
-        buyerAddress.PostCode = cliente.CodigoPostal ?? string.Empty;
-        buyerAddress.Town = cliente.Poblacion?.Nombre ?? string.Empty;
-        buyerAddress.Province = cliente.Provincia?.Nombre ?? string.Empty;
+        buyerAddress.AddressText = (invoice.DomicilioDIR?.Direccion ?? cliente.Direccion) ?? string.Empty;
+        buyerAddress.PostCode = (invoice.DomicilioDIR?.CodigoPostal ?? cliente.CodigoPostal) ?? string.Empty;
+        buyerAddress.Town = (invoice.DomicilioDIR?.Poblacion?.Nombre ?? cliente.Poblacion?.Nombre) ?? string.Empty;
+        buyerAddress.Province = (invoice.DomicilioDIR?.Provincia?.Nombre ?? cliente.Provincia?.Nombre) ?? string.Empty;
         buyerAddress.CountryCode = Country.ESP;
         buyerLegalEntity.Address = buyerAddress;
         f.Parties.BuyerParty.Party = buyerLegalEntity;
 
         // Unidades Orgánicas (FACe)
         var centres = new System.Collections.Generic.List<AdministrativeCentre>();
-        if (!string.IsNullOrEmpty(company.UnidadOrganicaOficinaContable))
+        
+        // Unidades del Receptor (si hay DomicilioDIR asignado)
+        if (invoice.DomicilioDIR != null)
         {
-            centres.Add(new AdministrativeCentre
+            if (!string.IsNullOrEmpty(invoice.DomicilioDIR.OficinaContable))
             {
-                CentreCode = company.UnidadOrganicaOficinaContable,
-                RoleTypeCode = RoleTypeCode.Fiscal // Oficina Contable
-            });
+                centres.Add(new AdministrativeCentre
+                {
+                    CentreCode = invoice.DomicilioDIR.OficinaContable,
+                    RoleTypeCode = RoleTypeCode.Fiscal // Oficina Contable
+                });
+            }
+            if (!string.IsNullOrEmpty(invoice.DomicilioDIR.OrganoGestor))
+            {
+                centres.Add(new AdministrativeCentre
+                {
+                    CentreCode = invoice.DomicilioDIR.OrganoGestor,
+                    RoleTypeCode = RoleTypeCode.Receiver // Órgano Gestor
+                });
+            }
+            if (!string.IsNullOrEmpty(invoice.DomicilioDIR.UnidadTramitadora))
+            {
+                centres.Add(new AdministrativeCentre
+                {
+                    CentreCode = invoice.DomicilioDIR.UnidadTramitadora,
+                    RoleTypeCode = RoleTypeCode.Payer // Unidad Tramitadora
+                });
+            }
         }
-        if (!string.IsNullOrEmpty(company.UnidadOrganicaOrganoGestor))
+        
+        // Si no hay centros del receptor, se podrían añadir los del emisor si fuera necesario, 
+        // pero el código original parecía estar mezclando conceptos o añadiendo centros por defecto.
+        // El código original añadía company.UnidadOrganica... a BuyerParty, lo cual es correcto si el emisor sabe las del receptor.
+        
+        if (centres.Count == 0) // Si no hay centros específicos del domicilio, usamos los de la configuración de empresa como fallback
         {
-            centres.Add(new AdministrativeCentre
+            if (!string.IsNullOrEmpty(company.UnidadOrganicaOficinaContable))
             {
-                CentreCode = company.UnidadOrganicaOrganoGestor,
-                RoleTypeCode = RoleTypeCode.Receiver // Órgano Gestor
-            });
-        }
-        if (!string.IsNullOrEmpty(company.UnidadOrganicaUnidadTramitadora))
-        {
-            centres.Add(new AdministrativeCentre
+                centres.Add(new AdministrativeCentre
+                {
+                    CentreCode = company.UnidadOrganicaOficinaContable,
+                    RoleTypeCode = RoleTypeCode.Fiscal // Oficina Contable
+                });
+            }
+            if (!string.IsNullOrEmpty(company.UnidadOrganicaOrganoGestor))
             {
-                CentreCode = company.UnidadOrganicaUnidadTramitadora,
-                RoleTypeCode = RoleTypeCode.Payer // Unidad Tramitadora
-            });
+                centres.Add(new AdministrativeCentre
+                {
+                    CentreCode = company.UnidadOrganicaOrganoGestor,
+                    RoleTypeCode = RoleTypeCode.Receiver // Órgano Gestor
+                });
+            }
+            if (!string.IsNullOrEmpty(company.UnidadOrganicaUnidadTramitadora))
+            {
+                centres.Add(new AdministrativeCentre
+                {
+                    CentreCode = company.UnidadOrganicaUnidadTramitadora,
+                    RoleTypeCode = RoleTypeCode.Payer // Unidad Tramitadora
+                });
+            }
         }
         if (centres.Count > 0)
             f.Parties.BuyerParty.AdministrativeCentres = centres.ToArray();

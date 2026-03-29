@@ -12,7 +12,6 @@ namespace erp.Module.BusinessObjects.Contactos;
 public class Domicilio(Session session) : EntidadBase(session)
 {
     private Cliente? _clienteEnvio;
-    private Cliente? _clienteDIR;
     private string? _direccion;
     private Pais? _pais;
     private Provincia? _provincia;
@@ -28,14 +27,6 @@ public class Domicilio(Session session) : EntidadBase(session)
     {
         get => _clienteEnvio;
         set => SetPropertyValue(nameof(ClienteEnvio), ref _clienteEnvio, value);
-    }
-
-    [XafDisplayName("Cliente (Dirección DIR)")]
-    [Association("Cliente-DireccionesDIR")]
-    public Cliente? ClienteDIR
-    {
-        get => _clienteDIR;
-        set => SetPropertyValue(nameof(ClienteDIR), ref _clienteDIR, value);
     }
 
     [Size(255)]

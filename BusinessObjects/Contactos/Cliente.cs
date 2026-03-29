@@ -79,10 +79,10 @@ public class Cliente(Session session) : Tercero(session), IPuedeParticiparEnVent
     [DevExpress.Xpo.Aggregated]
     public XPCollection<Domicilio> DireccionesEnvio => GetCollection<Domicilio>();
 
-    [Association("Cliente-DireccionesDIR")]
-    [XafDisplayName("Direcciones DIR (e-Factura)")]
+    [Association("Cliente-DireccionesDIR3")]
+    [XafDisplayName("Direcciones DIR3 (e-Factura)")]
     [DevExpress.Xpo.Aggregated]
-    public XPCollection<Domicilio> DireccionesDIR => GetCollection<Domicilio>();
+    public XPCollection<DomicilioDIR3> DireccionesDIR3 => GetCollection<DomicilioDIR3>();
 
     [Association("Cliente-Oportunidades")]
     [XafDisplayName("Oportunidades")]

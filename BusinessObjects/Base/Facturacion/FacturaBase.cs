@@ -37,7 +37,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     private bool _esSubsanacion;
     private string? _estadoEntradaFactura;
     private EstadoVeriFactu _estadoVeriFactu;
-    private Domicilio? _domicilioDIR;
+    private DomicilioDIR3? _domicilioDIR;
     private Asiento? _asientoContable;
     private MediaDataObject? _qr;
     private string? _respuestaAgenciaTributaria;
@@ -56,10 +56,10 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
         set => SetPropertyValue(nameof(DiarioVentas), ref _diarioVentas, value);
     }
 
-    [XafDisplayName("Domicilio DIR (e-Factura)")]
-    [DataSourceProperty("Cliente.DireccionesDIR")]
+    [XafDisplayName("Domicilio DIR3 (e-Factura)")]
+    [DataSourceProperty("Cliente.DireccionesDIR3")]
     [ImmediatePostData]
-    public Domicilio? DomicilioDIR
+    public DomicilioDIR3? DomicilioDIR
     {
         get => _domicilioDIR;
         set
