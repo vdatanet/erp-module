@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using VeriFactu.Business;
 using VeriFactu.Config;
 using erp.Module.BusinessObjects.Base.Facturacion;
@@ -10,7 +11,7 @@ using erp.Module.Helpers.Comun;
 
 namespace erp.Module.Services.Facturacion;
 
-public class VeriFactuAdapter : IVeriFactuAdapter
+public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger) : IVeriFactuAdapter
 {
     private static readonly ConcurrentDictionary<string, SemaphoreSlim> TenantSemaphores = new();
 
@@ -65,10 +66,19 @@ public class VeriFactuAdapter : IVeriFactuAdapter
         }
     }
 
+    public async Task ConfigureAsync(InformacionEmpresa companyInfo)
+    {
+        ArgumentNullException.ThrowIfNull(companyInfo);
+        await ConfigureVeriFactuAsync(companyInfo);
+    }
+
     private async Task ConfigureVeriFactuAsync(InformacionEmpresa companyInfo)
     {
+        logger.LogInformation("Iniciando configuración de VeriFactu para la empresa {Empresa} (NIF: {Nif})", companyInfo.Nombre, companyInfo.Nif);
+
         if (!string.IsNullOrEmpty(companyInfo.NombreArchivoConfigVeriFactu))
         {
+            logger.LogDebug("Estableciendo nombre de archivo de configuración: {Archivo}", companyInfo.NombreArchivoConfigVeriFactu);
             Settings.SetConfigFileName(companyInfo.NombreArchivoConfigVeriFactu);
         }
 
@@ -76,6 +86,7 @@ public class VeriFactuAdapter : IVeriFactuAdapter
         if (companyInfo.CertificadoVeriFactu != null && !string.IsNullOrEmpty(companyInfo.CertificadoVeriFactu.FileName))
         {
             string tempDir = Path.Combine(Path.GetTempPath(), "VeriFactu", companyInfo.Nif ?? "Global");
+            logger.LogDebug("Procesando certificado. Directorio temporal: {TempDir}", tempDir);
             if (!Directory.Exists(tempDir))
             {
                 Directory.CreateDirectory(tempDir);
@@ -91,17 +102,19 @@ public class VeriFactuAdapter : IVeriFactuAdapter
                 stream.Flush(true);
             }
 
+            logger.LogDebug("Certificado guardado en: {CertPath}", certPath);
             Settings.Current.CertificatePath = certPath;
             Settings.Current.CertificatePassword = companyInfo.PasswordCertificadoVeriFactu;
         }
         
-        Settings.Current.VeriFactuEndPointPrefix = companyInfo.PrefijoUrlVeriFactu ?? Settings.Current.VeriFactuEndPointPrefix;
-        Settings.Current.VeriFactuEndPointValidatePrefix = companyInfo.PrefijoUrlValidacionVeriFactu ?? Settings.Current.VeriFactuEndPointValidatePrefix;
-        
-        if (!companyInfo.ActivarVeriFactu)
+        if (companyInfo.ActivarVeriFactu)
         {
-            Settings.Current.VeriFactuEndPointPrefix = VeriFactuEndPointPrefixes.Prod;
-            Settings.Current.VeriFactuEndPointValidatePrefix = VeriFactuEndPointPrefixes.ProdValidate;
+            Settings.Current.VeriFactuEndPointPrefix = companyInfo.PrefijoUrlVeriFactu ?? Settings.Current.VeriFactuEndPointPrefix;
+            Settings.Current.VeriFactuEndPointValidatePrefix = companyInfo.PrefijoUrlValidacionVeriFactu ?? Settings.Current.VeriFactuEndPointValidatePrefix;
+        }
+        else
+        {
+            logger.LogDebug("VeriFactu no está activado, no se definen los endpoints para que la librería asigne los de prueba automáticamente");
         }
 
         if (Settings.Current.SistemaInformatico != null)
@@ -114,6 +127,20 @@ public class VeriFactuAdapter : IVeriFactuAdapter
             string hardwareId = MachineIdentifier.GetMachineId();
             string suffix = companyInfo.ActivarVeriFactu ? "PROD" : "TEST";
             Settings.Current.SistemaInformatico.NumeroInstalacion = $"INST-{hardwareId}-{suffix}";
+            logger.LogDebug("Sistema informático configurado. NumeroInstalacion: {NumeroInstalacion}", Settings.Current.SistemaInformatico.NumeroInstalacion);
+        }
+
+        // Guardo los cambios según la documentación
+        logger.LogInformation("Guardando configuración de VeriFactu llamando a Settings.Save().");
+        try
+        {
+            Settings.Save();
+            logger.LogInformation("Configuración de VeriFactu guardada correctamente.");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error al guardar la configuración de VeriFactu");
+            throw;
         }
     }
 }

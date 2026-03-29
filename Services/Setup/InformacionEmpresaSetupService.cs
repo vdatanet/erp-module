@@ -16,11 +16,15 @@ using erp.Module.Factories;
 using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.BusinessObjects.Inventario;
+using erp.Module.Services.Facturacion;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace erp.Module.Services.Setup;
 
-public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
+public class InformacionEmpresaSetupService(IObjectSpace objectSpace, IServiceProvider serviceProvider)
 {
+    private readonly ILogger<InformacionEmpresaSetupService> _logger = serviceProvider.GetService<ILogger<InformacionEmpresaSetupService>>()!;
     private IObjectSpace? _os;
     private IObjectSpace OS => _os ??= GetWorkingObjectSpace();
 
@@ -44,6 +48,7 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
         if (informacionEmpresa == null)
         {
             informacionEmpresa = OS.CreateObject<InformacionEmpresa>();
+            informacionEmpresa.ActivarVeriFactu = false;
         }
 
         // Siempre establecemos estos valores o nos aseguramos de que existan
@@ -67,9 +72,9 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
             informacionEmpresa.AlmacenPorDefecto = almacen;
         }
 
-        if (string.IsNullOrEmpty(informacionEmpresa.Telefono)) informacionEmpresa.Telefono = "977 69 21 16";
-        if (string.IsNullOrEmpty(informacionEmpresa.CorreoElectronico)) informacionEmpresa.CorreoElectronico = "info@vdata.net";
-        if (string.IsNullOrEmpty(informacionEmpresa.SitioWeb)) informacionEmpresa.SitioWeb = "https://www.vdata.net";
+        //if (string.IsNullOrEmpty(informacionEmpresa.Telefono)) informacionEmpresa.Telefono = "977 69 21 16";
+        //if (string.IsNullOrEmpty(informacionEmpresa.CorreoElectronico)) informacionEmpresa.CorreoElectronico = "info@vdata.net";
+        //if (string.IsNullOrEmpty(informacionEmpresa.SitioWeb)) informacionEmpresa.SitioWeb = "https://www.vdata.net";
         
         if (string.IsNullOrEmpty(informacionEmpresa.NombreReporteTicket)) informacionEmpresa.NombreReporteTicket = "Ticket Factura Simplificada";
         
@@ -85,7 +90,6 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
         if (string.IsNullOrEmpty(informacionEmpresa.PrefijoUrlVeriFactu)) informacionEmpresa.PrefijoUrlVeriFactu = erp.Module.BusinessObjects.Base.Facturacion.VeriFactuEndPointPrefixes.Prod;
         if (string.IsNullOrEmpty(informacionEmpresa.PrefijoUrlValidacionVeriFactu)) informacionEmpresa.PrefijoUrlValidacionVeriFactu = erp.Module.BusinessObjects.Base.Facturacion.VeriFactuEndPointPrefixes.ProdValidate;
         if (string.IsNullOrEmpty(informacionEmpresa.TextoDefectoVeriFactu)) informacionEmpresa.TextoDefectoVeriFactu = "Servicios de consultoría y asesoramiento técnico correspondientes al periodo....";
-        informacionEmpresa.ActivarVeriFactu = false;
         
         if (string.IsNullOrEmpty(informacionEmpresa.PrefijoAsientosPorDefecto)) informacionEmpresa.PrefijoAsientosPorDefecto = "AS";
         if (string.IsNullOrEmpty(informacionEmpresa.PrefijoOfertasCompraPorDefecto)) informacionEmpresa.PrefijoOfertasCompraPorDefecto = "CO";
@@ -158,6 +162,28 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
         OS.CommitChanges(); // Nos aseguramos de guardar la empresa inicial para evitar nulos en otras partes si es necesario
         
         InitializeAllSequences(informacionEmpresa);
+
+#if DEBUG
+        // TODO: Provisional - Generar archivo de configuración de VeriFactu para valorar su contenido. Eliminar tras validar.
+        _logger.LogInformation("DEBUG: Iniciando generación de archivo de configuración de VeriFactu desde la siembra de datos.");
+        var veriFactuAdapter = serviceProvider.GetService<IVeriFactuAdapter>();
+        if (veriFactuAdapter != null)
+        {
+            try
+            {
+                Task.Run(async () => await veriFactuAdapter.ConfigureAsync(informacionEmpresa)).Wait();
+                _logger.LogInformation("DEBUG: Configuración de VeriFactu completada desde la siembra.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "DEBUG: Error al configurar VeriFactu desde la siembra.");
+            }
+        }
+        else
+        {
+            _logger.LogWarning("DEBUG: No se pudo obtener IVeriFactuAdapter para la configuración.");
+        }
+#endif
     }
 
     private void CreateInitialUnidadesFacturacion()
