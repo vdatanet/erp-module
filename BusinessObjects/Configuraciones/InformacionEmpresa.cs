@@ -592,10 +592,11 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     [Size(255)]
     [XafDisplayName("Contraseña Certificado VeriFactu")]
     [PasswordPropertyText(true)]
+    [Persistent(nameof(PasswordCertificadoVeriFactu))]
     public string? PasswordCertificadoVeriFactu
     {
-        get => _passwordCertificadoVeriFactu;
-        set => SetPropertyValue(nameof(PasswordCertificadoVeriFactu), ref _passwordCertificadoVeriFactu, value);
+        get => EncryptionHelper.Decrypt(_passwordCertificadoVeriFactu);
+        set => SetPropertyValue(nameof(PasswordCertificadoVeriFactu), ref _passwordCertificadoVeriFactu, EncryptionHelper.Encrypt(value));
     }
 
     [Size(500)]
@@ -617,6 +618,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     }
 
     [Size(30)]
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Nombre Sistema VeriFactu")]
     public string? NombreSistemaVeriFactu
     {
@@ -625,6 +627,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     }
 
     [Size(50)]
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Versión Sistema VeriFactu")]
     public string? VersionSistemaVeriFactu
     {
@@ -688,6 +691,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     }
 
     [Size(255)]
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Nombre Admin Sistema VeriFactu")]
     public string? NombreAdministradorSistemaVeriFactu
     {
@@ -713,6 +717,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     }
 
     [Size(50)]
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("NIF Admin Sistema VeriFactu")]
     public string? NifAdministradorSistemaVeriFactu
     {
