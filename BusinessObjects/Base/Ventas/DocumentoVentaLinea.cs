@@ -198,6 +198,22 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
             RecalcularYNotificar();
         }
     }
+    
+    [XafDisplayName("Descuento")]
+    [ToolTip("Ejemplo: 10+5+2")]
+    [NonPersistent]
+    public string? TextoDescuento
+    {
+        get => DiscountParser.Format(Descuento1, Descuento2, Descuento3);
+        set
+        {
+            var (d1, d2, d3) = DiscountParser.Parse(value);
+            Descuento1 = d1;
+            Descuento2 = d2;
+            Descuento3 = d3;
+            OnChanged(nameof(TextoDescuento));
+        }
+    }
 
     [ImmediatePostData]
     [ModelDefault("DisplayFormat", "{0:n2}")]
@@ -246,32 +262,7 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
             OnChanged(nameof(TextoDescuento));
         }
     }
-
-    [XafDisplayName("Descuento")]
-    [ToolTip("Ejemplo: 10+5+2")]
-    [NonPersistent]
-    public string? TextoDescuento
-    {
-        get => DiscountParser.Format(Descuento1, Descuento2, Descuento3);
-        set
-        {
-            var (d1, d2, d3) = DiscountParser.Parse(value);
-            Descuento1 = d1;
-            Descuento2 = d2;
-            Descuento3 = d3;
-            OnChanged(nameof(TextoDescuento));
-        }
-    }
-
-    [Obsolete("Use Descuento1")]
-    [Browsable(false)]
-    public decimal PorcentajeDescuento
-    {
-        get => Descuento1;
-        set => Descuento1 = value;
-    }
-
-
+    
     [Persistent(nameof(BaseImponible))]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
