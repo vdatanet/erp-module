@@ -67,6 +67,11 @@ public class VeriFactuAdapter : IVeriFactuAdapter
 
     private async Task ConfigureVeriFactuAsync(InformacionEmpresa companyInfo)
     {
+        if (!string.IsNullOrEmpty(companyInfo.NombreArchivoConfigVeriFactu))
+        {
+            Settings.SetConfigFileName(companyInfo.NombreArchivoConfigVeriFactu);
+        }
+
         // 1. Sobrescribir con valores de la base de datos (prioridad tenant)
         if (companyInfo.CertificadoVeriFactu != null && !string.IsNullOrEmpty(companyInfo.CertificadoVeriFactu.FileName))
         {
