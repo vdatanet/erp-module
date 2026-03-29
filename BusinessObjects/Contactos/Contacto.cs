@@ -261,20 +261,42 @@ public class Contacto(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Pais), ref _pais, value);
     }
 
-    [DataSourceProperty("Pais.Provincias")]
+    [DataSourceProperty("Pais.Provincias", DataSourcePropertyIsNullMode.SelectAll)]
     [XafDisplayName("Provincia")]
+    [ImmediatePostData]
     public Provincia? Provincia
     {
         get => _provincia;
-        set => SetPropertyValue(nameof(Provincia), ref _provincia, value);
+        set
+        {
+            if (!SetPropertyValue(nameof(Provincia), ref _provincia, value)) return;
+            if (IsLoading || IsSaving) return;
+            if (value != null)
+            {
+                Pais = value.Pais;
+            }
+            else
+            {
+                Pais = null;
+            }
+        }
     }
 
-    [DataSourceProperty("Provincia.Poblaciones")]
+    [DataSourceProperty("Provincia.Poblaciones", DataSourcePropertyIsNullMode.SelectAll)]
     [XafDisplayName("Población")]
+    [ImmediatePostData]
     public Poblacion? Poblacion
     {
         get => _poblacion;
-        set => SetPropertyValue(nameof(Poblacion), ref _poblacion, value);
+        set
+        {
+            if (!SetPropertyValue(nameof(Poblacion), ref _poblacion, value)) return;
+            if (IsLoading || IsSaving) return;
+            if (value != null)
+            {
+                Provincia = value.Provincia;
+            }
+        }
     }
 
     [Size(10)]
