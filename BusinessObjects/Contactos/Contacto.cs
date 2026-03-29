@@ -255,10 +255,20 @@ public class Contacto(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("País")]
+    [ImmediatePostData]
     public Pais? Pais
     {
         get => _pais;
-        set => SetPropertyValue(nameof(Pais), ref _pais, value);
+        set
+        {
+            if (!SetPropertyValue(nameof(Pais), ref _pais, value)) return;
+            if (IsLoading || IsSaving) return;
+            if (value == null)
+            {
+                Provincia = null;
+                Poblacion = null;
+            }
+        }
     }
 
     [DataSourceProperty("Pais.Provincias", DataSourcePropertyIsNullMode.SelectAll)]
@@ -277,7 +287,7 @@ public class Contacto(Session session) : EntidadBase(session)
             }
             else
             {
-                Pais = null;
+                Poblacion = null;
             }
         }
     }
