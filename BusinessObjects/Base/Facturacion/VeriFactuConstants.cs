@@ -58,9 +58,9 @@ public enum TipoIdentificacionAmigable
 
 public enum TipoImpuestoAmigable
 {
-    [XafDisplayName("IVA - Impuesto sobre el Valor Añadido")] IVA = 1,
-    [XafDisplayName("IPSI - Impuesto sobre la Producción, los Servicios y la Importación")] IPSI = 2,
-    [XafDisplayName("IGIC - Impuesto General Indirecto Canario")] IGIC = 3
+    [XafDisplayName("01 - IVA - Impuesto sobre el Valor Añadido")] IVA = 1,
+    [XafDisplayName("02 - IPSI - Impuesto sobre la Producción, los Servicios y la Importación")] IPSI = 2,
+    [XafDisplayName("03 - IGIC - Impuesto General Indirecto Canario")] IGIC = 3
 }
 
 public enum TipoOperacionAmigable

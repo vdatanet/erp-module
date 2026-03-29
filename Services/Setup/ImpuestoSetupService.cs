@@ -66,7 +66,7 @@ public class ImpuestoSetupService(IObjectSpace objectSpace)
         CreateTipoImpuesto("IVA_EXENTO_E6", "IVA Exento (Otros) (Repercutido)", 0, true, false, TipoImpuestoAmigable.IVA, (ClaveRegimen)1, TipoOperacionAmigable.S2, CausaExencionAmigable.E6, false, "4770000000");
 
         // --- INVERSIÓN SUJETO PASIVO REPERCUTIDO (S3) ---
-        CreateTipoImpuesto("IVA_ISP", "IVA Inversión Sujeto Pasivo (Repercutido)", 0, true, false, TipoImpuestoAmigable.IVA, (ClaveRegimen)1, TipoOperacionAmigable.S1, null, false, "4770000000");
+        CreateTipoImpuesto("IVA_ISP", "IVA Inversión Sujeto Pasivo (Repercutido)", 0, true, false, TipoImpuestoAmigable.IVA, (ClaveRegimen)1, TipoOperacionAmigable.S3, null, false, "4770000000");
 
         // --- OTROS REGÍMENES REPERCUTIDOS ---
         // Operaciones Intracomunitarias (Ventas de bienes suelen ser exentas en origen E5)

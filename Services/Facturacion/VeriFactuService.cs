@@ -181,16 +181,30 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         {
             if (tax.TipoImpuesto == null) continue;
 
+            var opType = tax.TipoImpuesto.TipoOperacion != null
+                ? (VeriFactu.Xml.Factu.Alta.CalificacionOperacion)(int)tax.TipoImpuesto.TipoOperacion
+                : default;
+
             var taxItem = new TaxItem
             {
-                TaxRate = tax.Tipo,
                 TaxBase = tax.BaseImponible,
-                TaxAmount = tax.ImporteImpuestos,
                 Tax = tax.TipoImpuesto.Impuesto != null ? (VeriFactu.Xml.Factu.Impuesto)(int)tax.TipoImpuesto.Impuesto : default,
-                TaxType = tax.TipoImpuesto.TipoOperacion != null ? (VeriFactu.Xml.Factu.Alta.CalificacionOperacion)(int)tax.TipoImpuesto.TipoOperacion : default,
+                TaxType = opType,
                 TaxScheme = tax.TipoImpuesto.RegimenFiscal ?? default,
                 TaxException = tax.TipoImpuesto.CausaExencion != null ? (VeriFactu.Xml.Factu.Alta.CausaExencion)(int)tax.TipoImpuesto.CausaExencion : default
             };
+
+            // Cuando CalificacionOperacion sea “S2” TipoImpositivo y CuotaRepercutida deben ser 0
+            if (opType == VeriFactu.Xml.Factu.Alta.CalificacionOperacion.S2)
+            {
+                taxItem.TaxRate = 0;
+                taxItem.TaxAmount = 0;
+            }
+            else
+            {
+                taxItem.TaxRate = tax.Tipo;
+                taxItem.TaxAmount = tax.ImporteImpuestos;
+            }
 
             veriFactuFactura.TaxItems.Add(taxItem);
         }

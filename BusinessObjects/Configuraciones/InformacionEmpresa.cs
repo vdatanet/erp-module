@@ -69,6 +69,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private string? _nombreArchivoConfigVeriFactu;
     private string? _nombreSistemaVeriFactu;
     private FileData? _certificadoVeriFactu;
+    [Persistent("PasswordCertificadoVeriFactu")]
     private string? _passwordCertificadoVeriFactu;
     private PosicionFiscal? _posicionFiscalPorDefecto;
     private string? _prefijoAsientosPorDefecto;
@@ -592,11 +593,22 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     [Size(255)]
     [XafDisplayName("Contraseña Certificado VeriFactu")]
     [PasswordPropertyText(true)]
-    [Persistent(nameof(PasswordCertificadoVeriFactu))]
+    [NonPersistent]
     public string? PasswordCertificadoVeriFactu
     {
         get => EncryptionHelper.Decrypt(_passwordCertificadoVeriFactu);
-        set => SetPropertyValue(nameof(PasswordCertificadoVeriFactu), ref _passwordCertificadoVeriFactu, EncryptionHelper.Encrypt(value));
+        set
+        {
+            var encrypted = EncryptionHelper.Encrypt(value);
+            bool isModified = _passwordCertificadoVeriFactu != encrypted;
+            _passwordCertificadoVeriFactu = encrypted;
+            if (isModified)
+            {
+                OnChanged(nameof(PasswordCertificadoVeriFactu));
+                // Disparamos el cambio en el campo persistente para que XPO detecte que el objeto es "dirty"
+                OnChanged(nameof(_passwordCertificadoVeriFactu));
+            }
+        }
     }
 
     [Size(500)]
