@@ -83,7 +83,7 @@ public class FacturaLifecycleController : ViewController
             ConfirmationMessage = "¿Desea procesar la factura hasta su contabilización final? (Validar -> Emitir -> VeriFactu -> Contabilizar)",
             ImageName = "Icon_PageNext",
             TargetObjectsCriteria = "EstadoFactura != 'Contabilizada'",
-            SelectionDependencyType = SelectionDependencyType.RequireSingleObject
+            SelectionDependencyType = SelectionDependencyType.RequireMultipleObjects
         };
         _procesarFlujoCompletoAction.Execute += ProcesarFlujoCompletoAction_Execute;
     }
@@ -166,11 +166,13 @@ public class FacturaLifecycleController : ViewController
         _emitirAction.Active["EstadoValido"] = factura.EstadoFactura == EstadoFactura.Validada;
         _enviarVerifactuAction.Active["EstadoValido"] = factura.EstadoFactura == EstadoFactura.Emitida && 
                                                       factura.EstadoVeriFactu != EstadoVeriFactu.AceptadaVeriFactu && 
-                                                      factura.EstadoVeriFactu != EstadoVeriFactu.EnviadaVeriFactu;
+                                                      factura.EstadoVeriFactu != EstadoVeriFactu.EnviadaVeriFactu &&
+                                                      factura.EstadoVeriFactu != EstadoVeriFactu.PendienteVeriFactu;
         
         _contabilizarAction.Active["EstadoValido"] = (factura.EstadoFactura == EstadoFactura.Enviada || 
                                                       factura.EstadoVeriFactu == EstadoVeriFactu.AceptadaVeriFactu || 
-                                                      factura.EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu) &&
+                                                      factura.EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu ||
+                                                      factura.EstadoVeriFactu == EstadoVeriFactu.PendienteVeriFactu) &&
                                                      factura.EstadoFactura != EstadoFactura.Contabilizada;
 
         _procesarFlujoCompletoAction.Active["EstadoValido"] = factura.EstadoFactura != EstadoFactura.Contabilizada;
@@ -233,9 +235,10 @@ public class FacturaLifecycleController : ViewController
         if (e.CurrentObject is not FacturaBase factura) return;
 
         if (factura.EstadoVeriFactu != EstadoVeriFactu.EnviadaVeriFactu && 
-            factura.EstadoVeriFactu != EstadoVeriFactu.AceptadaVeriFactu)
+            factura.EstadoVeriFactu != EstadoVeriFactu.AceptadaVeriFactu &&
+            factura.EstadoVeriFactu != EstadoVeriFactu.PendienteVeriFactu)
         {
-            throw new UserFriendlyException("La factura debe haber sido enviada a VeriFactu antes de contabilizarse.");
+            throw new UserFriendlyException("La factura debe haber sido enviada a VeriFactu (o estar en cola) antes de contabilizarse.");
         }
 
         factura.Contabilizar();
@@ -247,15 +250,34 @@ public class FacturaLifecycleController : ViewController
 
     private async void ProcesarFlujoCompletoAction_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
-        if (e.CurrentObject is not FacturaBase factura || _veriFactuService == null || _facturaOrchestrator == null) return;
+        if (_veriFactuService == null || _facturaOrchestrator == null) return;
 
-        var result = await _facturaOrchestrator.ProcesarHastaContabilizadaAsync(ObjectSpace, factura, _veriFactuService);
+        int procesadas = 0;
+        int errores = 0;
+
+        foreach (var selectedObject in e.SelectedObjects)
+        {
+            if (selectedObject is not FacturaBase factura) continue;
+
+            var result = await _facturaOrchestrator.ProcesarHastaContabilizadaAsync(ObjectSpace, factura, _veriFactuService);
+            if (result.Success)
+            {
+                procesadas++;
+            }
+            else
+            {
+                errores++;
+            }
+        }
+
+        var message = $"Proceso completado. Procesadas: {procesadas}, Errores: {errores}";
+        var type = errores == 0 ? InformationType.Success : (procesadas > 0 ? InformationType.Warning : InformationType.Error);
 
         var options = new MessageOptions
         {
             Duration = 5000,
-            Message = result.Message,
-            Type = result.Success ? InformationType.Success : InformationType.Error,
+            Message = message,
+            Type = type,
             Web = { Position = InformationPosition.Right }
         };
         Application.ShowViewStrategy.ShowMessage(options);
