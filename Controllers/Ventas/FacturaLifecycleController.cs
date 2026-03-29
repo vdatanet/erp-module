@@ -79,9 +79,9 @@ public class FacturaLifecycleController : ViewController
 
         _procesarFlujoCompletoAction = new SimpleAction(this, "Factura_ProcesarFlujoCompleto", PredefinedCategory.Edit)
         {
-            Caption = "Procesar y Contabilizar",
+            Caption = "Procesar",
             ConfirmationMessage = "¿Desea procesar la factura hasta su contabilización final? (Validar -> Emitir -> VeriFactu -> Contabilizar)",
-            ImageName = "Action_Workflow",
+            ImageName = "Icon_PageNext",
             TargetObjectsCriteria = "EstadoFactura != 'Contabilizada'",
             SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
