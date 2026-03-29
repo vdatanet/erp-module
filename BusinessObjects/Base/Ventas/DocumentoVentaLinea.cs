@@ -12,6 +12,7 @@ using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.Helpers.Comun;
 using erp.Module.Helpers.Contactos;
+using erp.Module.BusinessObjects.Ventas;
 using erp.Module.Services.Productos;
 
 namespace erp.Module.BusinessObjects.Base.Ventas;
@@ -32,10 +33,9 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
     private decimal _precioUnitario;
     private Producto? _producto;
     private CuentaContable? _cuentaContable;
-    private decimal _porcentajeComision;
-    private decimal _importeComisionFijo;
     private DocumentoVentaGrupo? _grupo;
     private UnidadFacturacion? _unidadFacturacion;
+
 
     [Association("DocumentoVenta-Lineas")]
     [XafDisplayName("Documento Venta")]
@@ -271,29 +271,6 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
         set => Descuento1 = value;
     }
 
-    [XafDisplayName("% Comisión")]
-    [ModelDefault("DisplayFormat", "{0:n2}")]
-    [ModelDefault("EditMask", "n2")]
-    public decimal PorcentajeComision
-    {
-        get => _porcentajeComision;
-        set => SetPropertyValue(nameof(PorcentajeComision), ref _porcentajeComision, value);
-    }
-
-    [XafDisplayName("Importe Fijo Comisión")]
-    [ModelDefault("DisplayFormat", "{0:n2}")]
-    [ModelDefault("EditMask", "n2")]
-    public decimal ImporteComisionFijo
-    {
-        get => _importeComisionFijo;
-        set => SetPropertyValue(nameof(ImporteComisionFijo), ref _importeComisionFijo, value);
-    }
-
-    [PersistentAlias("BaseImponible * (PorcentajeComision / 100) + ImporteComisionFijo")]
-    [XafDisplayName("Comisión Calculada")]
-    [ModelDefault("DisplayFormat", "{0:n2}")]
-    [ModelDefault("AllowEdit", "False")]
-    public decimal ComisionCalculada => Convert.ToDecimal(EvaluateAlias(nameof(ComisionCalculada)));
 
     [Persistent(nameof(BaseImponible))]
     [ModelDefault("DisplayFormat", "{0:n2}")]
@@ -359,11 +336,6 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        if (DocumentoVenta?.Vendedor != null)
-        {
-            PorcentajeComision = DocumentoVenta.Vendedor.PorcentajeComision;
-            ImporteComisionFijo = DocumentoVenta.Vendedor.ImporteComisionFijo;
-        }
 
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null) return;

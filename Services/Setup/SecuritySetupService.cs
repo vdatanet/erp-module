@@ -221,10 +221,6 @@ public class SecuritySetupService(IObjectSpace objectSpace)
             SecurityPermissionState.Allow);
         ventasRole.AddTypePermissionsRecursively<CategoriaVenta>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
-        ventasRole.AddTypePermissionsRecursively<Comision>(SecurityOperations.FullAccess,
-            SecurityPermissionState.Allow);
-        ventasRole.AddTypePermissionsRecursively<LiquidacionComision>(SecurityOperations.FullAccess,
-            SecurityPermissionState.Allow);
         ventasRole.AddTypePermissionsRecursively<GrupoMaestro>(SecurityOperations.FullAccess,
             SecurityPermissionState.Allow);
 

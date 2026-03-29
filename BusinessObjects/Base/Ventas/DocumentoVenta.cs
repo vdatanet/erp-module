@@ -1125,7 +1125,6 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     /// <summary>
     ///     Regla de negocio: Al asignar un vendedor se establece su equipo de venta
-    ///     y se sincronizan las comisiones de las líneas existentes.
     /// </summary>
     public virtual void AsignarVendedor(Contacto? value)
     {
@@ -1133,19 +1132,8 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
         if (value.EquipoVenta != null)
             EquipoVenta = value.EquipoVenta;
-
-        SincronizarComisionesLineas();
     }
 
-    public void SincronizarComisionesLineas()
-    {
-        if (Vendedor == null) return;
-        foreach (var linea in Lineas)
-        {
-            linea.PorcentajeComision = Vendedor.PorcentajeComision;
-            linea.ImporteComisionFijo = Vendedor.ImporteComisionFijo;
-        }
-    }
 
     protected override XPCollection<T> CreateCollection<T>(XPMemberInfo property)
     {
