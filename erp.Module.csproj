@@ -60,4 +60,7 @@
         <DependentUpon>Model.DesignedDiffs.xafml</DependentUpon>
       </None>
     </ItemGroup>
+    <ItemGroup>
+      <Compile Remove="BusinessObjects\Configuraciones\InformacionEmpresa.UI.cs" />
+    </ItemGroup>
 </Project>
