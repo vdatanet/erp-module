@@ -166,26 +166,58 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("País")]
+    [ImmediatePostData]
     public Pais? Pais
     {
         get => _pais;
-        set => SetPropertyValue(nameof(Pais), ref _pais, value);
+        set
+        {
+            if (!SetPropertyValue(nameof(Pais), ref _pais, value)) return;
+            if (IsLoading || IsSaving) return;
+            if (value == null)
+            {
+                Provincia = null;
+                Poblacion = null;
+            }
+        }
     }
 
-    [DataSourceProperty("Pais.Provincias")]
+    [DataSourceProperty("Pais.Provincias", DataSourcePropertyIsNullMode.SelectAll)]
     [XafDisplayName("Provincia")]
+    [ImmediatePostData]
     public Provincia? Provincia
     {
         get => _provincia;
-        set => SetPropertyValue(nameof(Provincia), ref _provincia, value);
+        set
+        {
+            if (!SetPropertyValue(nameof(Provincia), ref _provincia, value)) return;
+            if (IsLoading || IsSaving) return;
+            if (value != null)
+            {
+                Pais = value.Pais;
+            }
+            else
+            {
+                Poblacion = null;
+            }
+        }
     }
 
-    [DataSourceProperty("Provincia.Poblaciones")]
+    [DataSourceProperty("Provincia.Poblaciones", DataSourcePropertyIsNullMode.SelectAll)]
     [XafDisplayName("Población")]
+    [ImmediatePostData]
     public Poblacion? Poblacion
     {
         get => _poblacion;
-        set => SetPropertyValue(nameof(Poblacion), ref _poblacion, value);
+        set
+        {
+            if (!SetPropertyValue(nameof(Poblacion), ref _poblacion, value)) return;
+            if (IsLoading || IsSaving) return;
+            if (value != null)
+            {
+                Provincia = value.Provincia;
+            }
+        }
     }
 
     [Size(100)]
