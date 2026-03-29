@@ -56,6 +56,11 @@
         <PackageReference Include="VeriFactu" Version="1.0.64" />
     </ItemGroup>
     <ItemGroup>
+      <None Update="UnusableNodes.xml">
+        <DependentUpon>Model.DesignedDiffs.xafml</DependentUpon>
+      </None>
+    </ItemGroup>
+    <ItemGroup>
       <Compile Remove="BusinessObjects\Configuraciones\InformacionEmpresa.UI.cs" />
     </ItemGroup>
 </Project>
