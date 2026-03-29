@@ -37,66 +37,91 @@
         <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
           <TabbedGroup Id="Tabs" Index="0" RelativeSize="100" IsNewNode="True">
             <LayoutGroup Id="Identificacion" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="0" Caption="Identificación" RelativeSize="100" ImageName="BO_Customer" IsNewNode="True">
-              <LayoutGroup Id="col0" Index="0" ShowCaption="False" RelativeSize="49.78991596638655" IsNewNode="True">
-                <LayoutItem Id="Numero" ViewItem="Numero" Index="0" RelativeSize="4.086845466155811" IsNewNode="True" />
-                <LayoutItem Id="FechaAlta" ViewItem="FechaAlta" Index="1" RelativeSize="3.0651340996168583" IsNewNode="True" />
-                <LayoutItem Id="FechaBaja" ViewItem="FechaBaja" Index="2" RelativeSize="3.0651340996168583" IsNewNode="True" />
-                <LayoutItem Id="Nombre" ViewItem="Nombre" Index="3" RelativeSize="3.0651340996168583" IsNewNode="True" />
-                <LayoutItem Id="NombreComercial" ViewItem="NombreComercial" Index="4" RelativeSize="3.0651340996168583" IsNewNode="True" />
-                <LayoutItem Id="TipoIdentificacion" ViewItem="TipoIdentificacion" Index="5" RelativeSize="3.0651340996168583" IsNewNode="True" />
-                <LayoutItem Id="Nif" ViewItem="Nif" Index="6" RelativeSize="3.0651340996168583" IsNewNode="True" />
-                <LayoutItem Id="Direccion" ViewItem="Direccion" Index="7" RelativeSize="3.0651340996168583" IsNewNode="True" />
-                <LayoutItem Id="Pais" ViewItem="Pais" Index="8" RelativeSize="3.0651340996168583" IsNewNode="True" />
-                <LayoutItem Id="Provincia" ViewItem="Provincia" Index="9" RelativeSize="3.0651340996168583" IsNewNode="True" />
-                <LayoutItem Id="Poblacion" ViewItem="Poblacion" Index="10" RelativeSize="3.0651340996168583" IsNewNode="True" />
-                <LayoutItem Id="Activo" ViewItem="Activo" Index="11" RelativeSize="65.26181353767561" IsNewNode="True" />
+              <LayoutGroup Id="col0" Index="0" ShowCaption="False" RelativeSize="49.74471188913202" IsNewNode="True">
+                <LayoutItem Id="Numero" ViewItem="Numero" Index="0" RelativeSize="4.092071611253197" IsNewNode="True" />
+                <LayoutItem Id="FechaAlta" ViewItem="FechaAlta" Index="1" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="FechaBaja" ViewItem="FechaBaja" Index="2" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="Nombre" ViewItem="Nombre" Index="3" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="NombreComercial" ViewItem="NombreComercial" Index="4" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="TipoIdentificacion" ViewItem="TipoIdentificacion" Index="5" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="Nif" ViewItem="Nif" Index="6" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="Direccion" ViewItem="Direccion" Index="7" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="CodigoPostal" ViewItem="CodigoPostal" Index="8" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="Poblacion" ViewItem="Poblacion" Index="9" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="Provincia" ViewItem="Provincia" Index="10" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="Pais" ViewItem="Pais" Index="11" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="IsIPuedeParticiparEnVentas" ViewItem="IsIPuedeParticiparEnVentas" Index="12" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="Activo" ViewItem="Activo" Index="13" RelativeSize="59.07928388746803" IsNewNode="True" />
               </LayoutGroup>
-              <LayoutGroup Id="col2" Index="1" ShowCaption="False" RelativeSize="50.21008403361345" Caption="col2" IsNewNode="True">
-                <LayoutItem Id="CodigoPostal" ViewItem="CodigoPostal" Index="0" RelativeSize="4.086845466155811" IsNewNode="True" />
-                <LayoutItem Id="Telefono" ViewItem="Telefono" Index="1" RelativeSize="3.0651340996168583" IsNewNode="True" />
-                <LayoutItem Id="Movil" ViewItem="Movil" Index="2" RelativeSize="3.0651340996168583" IsNewNode="True" />
-                <LayoutItem Id="CorreoElectronico" ViewItem="CorreoElectronico" Index="3" RelativeSize="3.0651340996168583" IsNewNode="True" />
-                <LayoutItem Id="SitioWeb" ViewItem="SitioWeb" Index="4" RelativeSize="3.0651340996168583" IsNewNode="True" />
-                <LayoutItem Id="Sector" ViewItem="Sector" Index="5" RelativeSize="3.0651340996168583" IsNewNode="True" />
-                <LayoutItem Id="Notas" ViewItem="Notas" Index="6" RelativeSize="76.50063856960409" IsNewNode="True" />
-                <LayoutItem Id="Foto" ViewItem="Foto" Index="7" RelativeSize="4.086845466155811" IsNewNode="True" />
-              </LayoutGroup>
-            </LayoutGroup>
-            <LayoutGroup Id="Contabilidad" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="1" Caption="Contabilidad" RelativeSize="100" ImageName="Accounting" IsNewNode="True">
-              <LayoutGroup Id="col1" Index="0" ShowCaption="False" RelativeSize="49.68487394957983" IsNewNode="True">
-                <LayoutItem Id="PosicionFiscal" ViewItem="PosicionFiscal" Index="0" RelativeSize="4.086845466155811" IsNewNode="True" />
-                <LayoutItem Id="CuentaContable" ViewItem="CuentaContable" Index="1" RelativeSize="3.0651340996168583" IsNewNode="True" />
-                <LayoutItem Id="CuentaCobro" ViewItem="CuentaCobro" Index="2" RelativeSize="3.0651340996168583" IsNewNode="True" />
-                <LayoutItem Id="DiarioVentas" ViewItem="DiarioVentas" Index="3" RelativeSize="3.0651340996168583" IsNewNode="True" />
-                <LayoutItem Id="CondicionPago" ViewItem="CondicionPago" Index="4" RelativeSize="86.71775223499361" IsNewNode="True" />
-              </LayoutGroup>
-              <LayoutGroup Id="Autocd689017-c1fd-4597-9ff3-7d8ebb4bfd06" ShowCaption="False" Caption="Autocd689017-c1fd-4597-9ff3-7d8ebb4bfd06(36)" Index="1" RelativeSize="50.31512605042017" IsNewNode="True">
-                <LayoutGroup Id="col2" ShowCaption="False" Index="0" RelativeSize="98.7228607918263" IsNewNode="True" />
-                <LayoutItem Id="Item4" Index="1" RelativeSize="1.277139208173691" IsNewNode="True" />
+              <LayoutGroup Id="col2" Index="1" ShowCaption="False" RelativeSize="50.25528811086798" Caption="col2" IsNewNode="True">
+                <LayoutItem Id="Telefono" ViewItem="Telefono" Index="0" RelativeSize="4.092071611253197" IsNewNode="True" />
+                <LayoutItem Id="Movil" ViewItem="Movil" Index="1" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="CorreoElectronico" ViewItem="CorreoElectronico" Index="2" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="SitioWeb" ViewItem="SitioWeb" Index="3" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="Sector" ViewItem="Sector" Index="4" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="Notas" ViewItem="Notas" Index="5" RelativeSize="79.53964194373401" IsNewNode="True" />
+                <LayoutItem Id="Foto" ViewItem="Foto" Index="6" RelativeSize="4.092071611253197" IsNewNode="True" />
               </LayoutGroup>
             </LayoutGroup>
-            <LayoutGroup Id="Contactos" Index="2" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+            <LayoutGroup Id="Contactos" Index="1" ShowCaption="True" RelativeSize="100" IsNewNode="True">
               <LayoutItem Id="Contactos" ViewItem="Contactos" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
             </LayoutGroup>
-            <LayoutGroup Id="Oportunidades" Index="3" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+            <LayoutGroup Id="DireccionesEnvio" ShowCaption="True" CaptionLocation="Top" Direction="Vertical" Index="2" RelativeSize="100" Caption="Direcciones de Envío" IsNewNode="True">
+              <LayoutItem Id="DireccionesEnvio" ViewItem="DireccionesEnvio" Index="0" RelativeSize="100" IsNewNode="True" />
+            </LayoutGroup>
+            <LayoutGroup Id="DireccionesDIR3" ShowCaption="True" CaptionLocation="Top" Direction="Vertical" Index="3" RelativeSize="100" Caption="Direcciones DIR3 (e-Factura)" IsNewNode="True">
+              <LayoutItem Id="DireccionesDIR3" ViewItem="DireccionesDIR3" Index="0" RelativeSize="100" IsNewNode="True" />
+            </LayoutGroup>
+            <LayoutGroup Id="Contabilidad" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="4" Caption="Contabilidad" RelativeSize="100" ImageName="Accounting" IsNewNode="True">
+              <LayoutGroup Id="col1" Index="0" ShowCaption="False" RelativeSize="49.74471188913202" IsNewNode="True">
+                <LayoutItem Id="PosicionFiscal" ViewItem="PosicionFiscal" Index="0" RelativeSize="4.092071611253197" IsNewNode="True" />
+                <LayoutItem Id="CuentaContable" ViewItem="CuentaContable" Index="1" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="CuentaCobro" ViewItem="CuentaCobro" Index="2" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="DiarioVentas" ViewItem="DiarioVentas" Index="3" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="CondicionPago" ViewItem="CondicionPago" Index="4" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="MedioPago" ViewItem="MedioPago" Index="5" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="BancoPredeterminado" ViewItem="BancoPredeterminado" Index="6" RelativeSize="80.56265984654732" IsNewNode="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="Autocd689017-c1fd-4597-9ff3-7d8ebb4bfd06" ShowCaption="False" Caption="Autocd689017-c1fd-4597-9ff3-7d8ebb4bfd06(36)" Index="1" RelativeSize="50.25528811086798" IsNewNode="True">
+                <LayoutGroup Id="col2" ShowCaption="False" Index="0" RelativeSize="98.72122762148338" IsNewNode="True" />
+                <LayoutItem Id="Item4" Index="1" RelativeSize="1.278772378516624" IsNewNode="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+            <LayoutGroup Id="Bancos" ShowCaption="True" CaptionLocation="Top" Direction="Vertical" Index="5" RelativeSize="100" Caption="Bancos" IsNewNode="True">
+              <LayoutItem Id="Bancos" ViewItem="Bancos" Index="0" RelativeSize="100" IsNewNode="True" />
+            </LayoutGroup>
+            <LayoutGroup Id="MandatosSEPA" ShowCaption="True" CaptionLocation="Top" Direction="Vertical" Index="6" RelativeSize="100" Caption="Mandatos SEPA" IsNewNode="True">
+              <LayoutItem Id="MandatosSepa" ViewItem="MandatosSepa" Index="0" RelativeSize="100" IsNewNode="True" />
+            </LayoutGroup>
+            <LayoutGroup Id="PreciosEspeciales" ShowCaption="True" CaptionLocation="Top" Direction="Vertical" Index="7" RelativeSize="100" Caption="Precios Especiales" IsNewNode="True">
+              <LayoutItem Id="PreciosEspeciales" ViewItem="PreciosEspeciales" Index="0" RelativeSize="100" IsNewNode="True" />
+            </LayoutGroup>
+            <LayoutGroup Id="Suscripciones" ShowCaption="True" CaptionLocation="Top" Direction="Vertical" Index="8" RelativeSize="100" Caption="Suscripciones" IsNewNode="True">
+              <LayoutItem Id="Suscripciones" ViewItem="Suscripciones" Index="0" RelativeSize="100" IsNewNode="True" />
+            </LayoutGroup>
+            <LayoutGroup Id="Reservas" ShowCaption="True" CaptionLocation="Top" Direction="Vertical" Index="9" RelativeSize="100" Caption="Reservas de Alquiler" IsNewNode="True">
+              <LayoutItem Id="Reservas" ViewItem="Reservas" Index="0" RelativeSize="100" IsNewNode="True" />
+            </LayoutGroup>
+            <LayoutGroup Id="Oportunidades" Index="10" ShowCaption="True" RelativeSize="100" IsNewNode="True">
               <LayoutItem Id="Oportunidades" ViewItem="Oportunidades" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
             </LayoutGroup>
-            <LayoutGroup Id="Ofertas" Index="4" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+            <LayoutGroup Id="Ofertas" Index="11" ShowCaption="True" RelativeSize="100" IsNewNode="True">
               <LayoutItem Id="Ofertas" ViewItem="Ofertas" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
             </LayoutGroup>
-            <LayoutGroup Id="Pedidos" Index="5" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+            <LayoutGroup Id="Pedidos" Index="12" ShowCaption="True" RelativeSize="100" IsNewNode="True">
               <LayoutItem Id="Pedidos" ViewItem="Pedidos" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
             </LayoutGroup>
-            <LayoutGroup Id="Facturas" Index="6" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+            <LayoutGroup Id="Albaranes" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="13" IsNewNode="True" />
+            <LayoutGroup Id="Facturas" Index="14" ShowCaption="True" RelativeSize="100" IsNewNode="True">
               <LayoutItem Id="Facturas" ViewItem="Facturas" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
             </LayoutGroup>
-            <LayoutGroup Id="Tareas" Index="7" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+            <LayoutGroup Id="Tareas" Index="15" ShowCaption="True" RelativeSize="100" IsNewNode="True">
               <LayoutItem Id="Tareas" ViewItem="Tareas" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
             </LayoutGroup>
-            <LayoutGroup Id="Imagenes" Index="8" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+            <LayoutGroup Id="Imagenes" Index="16" ShowCaption="True" RelativeSize="100" IsNewNode="True">
               <LayoutItem Id="Imagenes" ViewItem="Imagenes" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
             </LayoutGroup>
-            <LayoutGroup Id="Documentos" Index="9" ShowCaption="True" RelativeSize="100" IsNewNode="True">
+            <LayoutGroup Id="Documentos" Index="17" ShowCaption="True" RelativeSize="100" IsNewNode="True">
               <LayoutItem Id="Documentos" ViewItem="Documentos" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True" />
             </LayoutGroup>
           </TabbedGroup>
