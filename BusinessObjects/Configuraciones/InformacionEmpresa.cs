@@ -127,6 +127,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
 
     [Size(50)]
     [XafDisplayName("NIF")]
+    [RuleRequiredField("RuleRequiredField_InformacionEmpresa_Nif", DefaultContexts.Save, CustomMessageTemplate = "El NIF es obligatorio")]
     [ImmediatePostData]
     public string? Nif
     {
@@ -593,6 +594,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("URL VeriFactu")]
+    [ModelDefault("AllowEdit", "False")]
     public string? PrefijoUrlVeriFactu
     {
         get => _prefijoUrlVeriFactu;
@@ -600,6 +602,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("URL Validación VeriFactu")]
+    [ModelDefault("AllowEdit", "False")]
     public string? PrefijoUrlValidacionVeriFactu
     {
         get => _prefijoUrlValidacionVeriFactu;
@@ -637,6 +640,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("VeriFactu Modo Pruebas")]
+    [ModelDefault("AllowEdit", "False")]
     public bool VeriFactuModoPruebas
     {
         get => _veriFactuModoPruebas;
