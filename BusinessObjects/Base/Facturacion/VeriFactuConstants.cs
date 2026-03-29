@@ -21,6 +21,12 @@ public static class VeriFactuConstants
     public const string Parcial = "Parcial";
 }
 
+public static class VeriFactuEndPointPrefixes
+{
+    public const string Prod = "https://www1.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/VeriFactuFE.wsdl";
+    public const string ProdValidate = "https://www1.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/VeriFactuFE_Validacion.wsdl";
+}
+
 public enum TipoFacturaAmigable
 {
     [XafDisplayName("Factura Completa")] F1,

@@ -95,7 +95,6 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private string? _versionSistemaVeriFactu;
     private MediaDataObject? _logo;
     private bool _activarVeriFactu;
-    private bool _veriFactuModoPruebas;
     private bool _activarFacturae;
     private string? _serieCertificadoFacturae;
     private string? _nombreReporteTicket;
@@ -633,18 +632,11 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Activar VeriFactu")]
+    [ModelDefault("AllowEdit", "False")]
     public bool ActivarVeriFactu
     {
         get => _activarVeriFactu;
         set => SetPropertyValue(nameof(ActivarVeriFactu), ref _activarVeriFactu, value);
-    }
-
-    [XafDisplayName("VeriFactu Modo Pruebas")]
-    [ModelDefault("AllowEdit", "False")]
-    public bool VeriFactuModoPruebas
-    {
-        get => _veriFactuModoPruebas;
-        set => SetPropertyValue(nameof(VeriFactuModoPruebas), ref _veriFactuModoPruebas, value);
     }
 
     [XafDisplayName("Activar Facturae")]
@@ -738,7 +730,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         TipoIdentificacion = TipoIdentificacionAmigable.NIF_IVA;
         PaddingNumero = 5;
         PaddingCuentaContable = 10;
-        VeriFactuModoPruebas = true;
+        ActivarVeriFactu = false;
     }
 
     public DateTime GetLocalTime()

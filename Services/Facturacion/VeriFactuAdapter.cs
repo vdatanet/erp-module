@@ -96,6 +96,13 @@ public class VeriFactuAdapter : IVeriFactuAdapter
         }
         
         Settings.Current.VeriFactuEndPointPrefix = companyInfo.PrefijoUrlVeriFactu ?? Settings.Current.VeriFactuEndPointPrefix;
+        Settings.Current.VeriFactuEndPointValidatePrefix = companyInfo.PrefijoUrlValidacionVeriFactu ?? Settings.Current.VeriFactuEndPointValidatePrefix;
+        
+        if (!companyInfo.ActivarVeriFactu)
+        {
+            Settings.Current.VeriFactuEndPointPrefix = VeriFactuEndPointPrefixes.Prod;
+            Settings.Current.VeriFactuEndPointValidatePrefix = VeriFactuEndPointPrefixes.ProdValidate;
+        }
 
         if (Settings.Current.SistemaInformatico != null)
         {
@@ -105,7 +112,7 @@ public class VeriFactuAdapter : IVeriFactuAdapter
             Settings.Current.SistemaInformatico.NIF = companyInfo.NifAdministradorSistemaVeriFactu ?? Settings.Current.SistemaInformatico.NIF;
             
             string hardwareId = MachineIdentifier.GetMachineId();
-            string suffix = companyInfo.VeriFactuModoPruebas ? "TEST" : "PROD";
+            string suffix = companyInfo.ActivarVeriFactu ? "PROD" : "TEST";
             Settings.Current.SistemaInformatico.NumeroInstalacion = $"INST-{hardwareId}-{suffix}";
         }
     }
