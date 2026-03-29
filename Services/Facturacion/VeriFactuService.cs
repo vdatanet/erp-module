@@ -52,11 +52,6 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
                 return new SendResult(true, "Factura enviada correctamente.");
             }
 
-            if (response.Status == VeriFactuConstants.PendienteVeriFactu)
-            {
-                return new SendResult(true, "La factura ha sido añadida a la cola de envío de VeriFactu.");
-            }
-
             return new SendResult(false, 
                 $"Error al enviar a VeriFactu: {response.Status} - {response.ErrorCode}", 
                 response.ErrorCode);
@@ -247,10 +242,6 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
                 qrMedia.MediaData = veriFactuResponse.QrData;
                 invoice.Qr = qrMedia;
             }
-        }
-        else if (veriFactuResponse.Status == VeriFactuConstants.PendienteVeriFactu)
-        {
-            invoice.EstadoVeriFactu = EstadoVeriFactu.PendienteVeriFactu;
         }
         else if (veriFactuResponse.Status == VeriFactuConstants.Parcial)
         {

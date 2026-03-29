@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VeriFactu.Business;
-using VeriFactu.Business.FlowControl;
 using VeriFactu.Config;
 using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Configuraciones;
@@ -31,21 +30,35 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger) : IVeriFactuAdap
 
             var invoiceEntry = new InvoiceEntry(veriFactuInvoice);
             
-            // Según requerimiento AEAT 5. Control de flujo:
-            // Añadimos el documento a la cola de procesamiento activa.
-            // En la cola se irán realizando los envíos cuando los documentos en espera sean 1.000 
-            // o cuando el tiempo de espera (establecido en las respuestas de la AEAT) haya finalizado.
-            // El envío se realiza en un hilo separado gestionado por la librería.
-            InvoiceQueue.ActiveInvoiceQueue.Add(invoiceEntry);
+            // Ejecutamos Save() de forma síncrona dentro del hilo protegido por el semáforo.
+            // Esto asegura que Settings.Current no cambie entre la configuración y el envío.
+            // Aunque sea síncrono, el impacto en la UI es mínimo ya que solo bloquea un hilo por tenant.
+            invoiceEntry.Save();
+
+            string? validationUrl = null;
+            byte[]? qrData = null;
+
+            var status = invoiceEntry.Status; 
+            var errorCode = invoiceEntry.ErrorCode;
+            var responseStr = invoiceEntry.Response;
+            var xml = invoiceEntry.Xml;
+            var csv = invoiceEntry.CSV;
+
+            if (invoiceEntry.Status == VeriFactuConstants.Correcto)
+            {
+                var registroAlta = veriFactuInvoice.GetRegistroAlta();
+                validationUrl = registroAlta?.GetUrlValidate();
+                qrData = registroAlta?.GetValidateQr();
+            }
 
             return new VeriFactuResponse(
-                VeriFactuConstants.PendienteVeriFactu, // Usamos un estado que indique que está en cola
-                null,
-                "Enviado a la cola de procesamiento de VeriFactu",
-                null,
-                null,
-                null,
-                null);
+                status,
+                errorCode,
+                responseStr,
+                xml,
+                csv,
+                validationUrl,
+                qrData);
         }
         finally
         {

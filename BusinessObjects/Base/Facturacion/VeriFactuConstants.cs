@@ -19,7 +19,6 @@ public static class VeriFactuConstants
     public const string Correcto = "Correcto";
     public const string Error = "Error";
     public const string Parcial = "Parcial";
-    public const string PendienteVeriFactu = "PendienteVeriFactu";
 }
 
 public static class VeriFactuEndPointPrefixes
