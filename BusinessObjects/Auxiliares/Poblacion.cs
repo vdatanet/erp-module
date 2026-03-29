@@ -26,6 +26,7 @@ public class Poblacion(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Provincia), ref _provincia, value);
     }
 
+    [Size(255)]
     [RuleRequiredField("RuleRequiredField_Poblacion_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre de la Población es obligatorio")]
     [RuleUniqueValue]
     [XafDisplayName("Nombre")]

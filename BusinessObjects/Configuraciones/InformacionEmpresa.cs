@@ -187,6 +187,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Poblacion), ref _poblacion, value);
     }
 
+    [Size(100)]
     [XafDisplayName("Teléfono")]
     public string? Telefono
     {
@@ -194,6 +195,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Telefono), ref _telefono, value);
     }
 
+    [Size(100)]
     [XafDisplayName("Móvil")]
     public string? Movil
     {
@@ -201,6 +203,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Movil), ref _movil, value);
     }
 
+    [Size(255)]
     [XafDisplayName("Correo Electrónico")]
     public string? CorreoElectronico
     {
@@ -208,6 +211,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(CorreoElectronico), ref _correoElectronico, value);
     }
 
+    [Size(255)]
     [XafDisplayName("Sitio Web")]
     public string? SitioWeb
     {
@@ -567,6 +571,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(TextoDefectoVeriFactu), ref _textoDefectoVeriFactu, value);
     }
 
+    [Size(500)]
     [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Archivo Config VeriFactu")]
     public string? NombreArchivoConfigVeriFactu
@@ -584,6 +589,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(CertificadoVeriFactu), ref _certificadoVeriFactu, value);
     }
 
+    [Size(255)]
     [XafDisplayName("Contraseña Certificado VeriFactu")]
     [PasswordPropertyText(true)]
     public string? PasswordCertificadoVeriFactu
@@ -592,6 +598,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(PasswordCertificadoVeriFactu), ref _passwordCertificadoVeriFactu, value);
     }
 
+    [Size(500)]
     [XafDisplayName("URL VeriFactu")]
     [ModelDefault("AllowEdit", "False")]
     public string? PrefijoUrlVeriFactu
@@ -600,6 +607,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(PrefijoUrlVeriFactu), ref _prefijoUrlVeriFactu, value);
     }
 
+    [Size(500)]
     [XafDisplayName("URL Validación VeriFactu")]
     [ModelDefault("AllowEdit", "False")]
     public string? PrefijoUrlValidacionVeriFactu
@@ -616,6 +624,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(NombreSistemaVeriFactu), ref _nombreSistemaVeriFactu, value);
     }
 
+    [Size(50)]
     [XafDisplayName("Versión Sistema VeriFactu")]
     public string? VersionSistemaVeriFactu
     {
@@ -678,6 +687,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(UnidadOrganicaUnidadTramitadora), ref _unidadOrganicaUnidadTramitadora, value);
     }
 
+    [Size(255)]
     [XafDisplayName("Nombre Admin Sistema VeriFactu")]
     public string? NombreAdministradorSistemaVeriFactu
     {
@@ -702,6 +712,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(PaddingCuentaContable), ref _paddingCuentaContable, value);
     }
 
+    [Size(50)]
     [XafDisplayName("NIF Admin Sistema VeriFactu")]
     public string? NifAdministradorSistemaVeriFactu
     {
@@ -709,6 +720,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(NifAdministradorSistemaVeriFactu), ref _nifAdministradorSistemaVeriFactu, value);
     }
 
+    [Size(255)]
     [XafDisplayName("Nombre Reporte Ticket")]
     public string? NombreReporteTicket
     {

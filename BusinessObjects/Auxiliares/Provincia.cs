@@ -25,6 +25,7 @@ public class Provincia(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Pais), ref _pais, value);
     }
 
+    [Size(255)]
     [RuleRequiredField("RuleRequiredField_Provincia_Nombre", DefaultContexts.Save, CustomMessageTemplate = "El Nombre de la Provincia es obligatorio")]
     [RuleUniqueValue]
     [XafDisplayName("Nombre")]
