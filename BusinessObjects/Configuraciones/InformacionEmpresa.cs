@@ -13,6 +13,8 @@ using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.BusinessObjects.Inventario;
+using erp.Module.BusinessObjects.Base.Facturacion;
+using erp.Module.Helpers.Comun;
 
 namespace erp.Module.BusinessObjects.Configuraciones;
 
@@ -39,6 +41,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private string? _movil;
     private string? _correoElectronico;
     private string? _sitioWeb;
+    private TipoIdentificacionAmigable _tipoIdentificacion;
     private ZonaHoraria? _zonaHorariaPorDefecto;
 
     private CuentaContable? _cuentaAcreedoresPorDefecto;
@@ -92,6 +95,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private string? _versionSistemaVeriFactu;
     private MediaDataObject? _logo;
     private bool _activarVeriFactu;
+    private bool _veriFactuModoPruebas;
     private bool _activarFacturae;
     private string? _serieCertificadoFacturae;
     private string? _nombreReporteTicket;
@@ -123,11 +127,26 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
 
     [Size(50)]
     [XafDisplayName("NIF")]
+    [ImmediatePostData]
     public string? Nif
     {
         get => _nif;
         set => SetPropertyValue(nameof(Nif), ref _nif, value);
     }
+
+    [XafDisplayName("Tipo de Identificación")]
+    [ImmediatePostData]
+    public TipoIdentificacionAmigable TipoIdentificacion
+    {
+        get => _tipoIdentificacion;
+        set => SetPropertyValue(nameof(TipoIdentificacion), ref _tipoIdentificacion, value);
+    }
+
+    [Browsable(false)]
+    [RuleFromBoolProperty("RuleFromBoolProperty_InformacionEmpresa_NifValido", DefaultContexts.Save,
+        "El NIF/CIF no tiene un formato válido", UsedProperties = nameof(Nif))]
+    public bool IsNifValid =>
+        TipoIdentificacion != TipoIdentificacionAmigable.NIF_IVA || IdentificacionHelper.ValidarNif(Nif);
 
     [Size(255)]
     [XafDisplayName("Dirección")]
@@ -617,6 +636,13 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(ActivarVeriFactu), ref _activarVeriFactu, value);
     }
 
+    [XafDisplayName("VeriFactu Modo Pruebas")]
+    public bool VeriFactuModoPruebas
+    {
+        get => _veriFactuModoPruebas;
+        set => SetPropertyValue(nameof(VeriFactuModoPruebas), ref _veriFactuModoPruebas, value);
+    }
+
     [XafDisplayName("Activar Facturae")]
     public bool ActivarFacturae
     {
@@ -705,8 +731,10 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     {
         base.AfterConstruction();
         TipoNumeracionDocumento = TipoNumeracionDocumento.PrefijoEjercicioNumero;
+        TipoIdentificacion = TipoIdentificacionAmigable.NIF_IVA;
         PaddingNumero = 5;
         PaddingCuentaContable = 10;
+        VeriFactuModoPruebas = true;
     }
 
     public DateTime GetLocalTime()

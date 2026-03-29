@@ -48,15 +48,16 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
 
         // Siempre establecemos estos valores o nos aseguramos de que existan
         
-        if (string.IsNullOrEmpty(informacionEmpresa.Nombre)) informacionEmpresa.Nombre = "Joan Pallàs Ribes";
-        if (string.IsNullOrEmpty(informacionEmpresa.Nif)) informacionEmpresa.Nif = "43725645T";
-        if (string.IsNullOrEmpty(informacionEmpresa.NombreComercial)) informacionEmpresa.NombreComercial = "vdata.net";
-        if (string.IsNullOrEmpty(informacionEmpresa.Direccion)) informacionEmpresa.Direccion = "C/. Vilamar, 2A";
-        if (string.IsNullOrEmpty(informacionEmpresa.CodigoPostal)) informacionEmpresa.CodigoPostal = "43820";
+        if (string.IsNullOrEmpty(informacionEmpresa.Nombre)) informacionEmpresa.Nombre = "Empresa de Demostración";
+        if (string.IsNullOrEmpty(informacionEmpresa.Nif)) informacionEmpresa.Nif = "12345678Z";
+        informacionEmpresa.TipoIdentificacion = erp.Module.BusinessObjects.Base.Facturacion.TipoIdentificacionAmigable.NIF_IVA;
+        //if (string.IsNullOrEmpty(informacionEmpresa.NombreComercial)) informacionEmpresa.NombreComercial = "vdata.net";
+        //if (string.IsNullOrEmpty(informacionEmpresa.Direccion)) informacionEmpresa.Direccion = "C/. Vilamar, 2A";
+        //if (string.IsNullOrEmpty(informacionEmpresa.CodigoPostal)) informacionEmpresa.CodigoPostal = "43820";
         
-        informacionEmpresa.Pais ??= OS.FirstOrDefault<Pais>(p => p.Nombre == "España");
-        informacionEmpresa.Provincia ??= OS.FirstOrDefault<Provincia>(p => p.Nombre == "Tarragona");
-        informacionEmpresa.Poblacion ??= OS.FirstOrDefault<Poblacion>(p => p.Nombre == "Calafell");
+        //informacionEmpresa.Pais ??= OS.FirstOrDefault<Pais>(p => p.Nombre == "España");
+        //informacionEmpresa.Provincia ??= OS.FirstOrDefault<Provincia>(p => p.Nombre == "Tarragona");
+        //informacionEmpresa.Poblacion ??= OS.FirstOrDefault<Poblacion>(p => p.Nombre == "Calafell");
 
         if (informacionEmpresa.AlmacenPorDefecto == null)
         {
@@ -78,9 +79,10 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
         }
 
         if (string.IsNullOrEmpty(informacionEmpresa.NombreSistemaVeriFactu)) informacionEmpresa.NombreSistemaVeriFactu = "VDATA ERP";
-        if (string.IsNullOrEmpty(informacionEmpresa.VersionSistemaVeriFactu)) informacionEmpresa.VersionSistemaVeriFactu = "1.0.0";
+        if (string.IsNullOrEmpty(informacionEmpresa.VersionSistemaVeriFactu)) informacionEmpresa.VersionSistemaVeriFactu = "1.0.1";
         if (string.IsNullOrEmpty(informacionEmpresa.NombreAdministradorSistemaVeriFactu)) informacionEmpresa.NombreAdministradorSistemaVeriFactu = "Joan Pallàs Ribes";
-        if (string.IsNullOrEmpty(informacionEmpresa.NifAdministradorSistemaVeriFactu)) informacionEmpresa.NifAdministradorSistemaVeriFactu = "43725645T";
+        if (string.IsNullOrEmpty(informacionEmpresa.NifAdministradorSistemaVeriFactu)) informacionEmpresa.NifAdministradorSistemaVeriFactu = "12345678Z";
+        informacionEmpresa.VeriFactuModoPruebas = true;
         //if (string.IsNullOrEmpty(informacionEmpresa.PrefijoUrlVeriFactu)) informacionEmpresa.PrefijoUrlVeriFactu = "https://www1.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/VeriFactuFE.wsdl";
         //if (string.IsNullOrEmpty(informacionEmpresa.PrefijoUrlValidacionVeriFactu)) informacionEmpresa.PrefijoUrlValidacionVeriFactu = "https://www1.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/VeriFactuFE_Validacion.wsdl";
         if (string.IsNullOrEmpty(informacionEmpresa.TextoDefectoVeriFactu)) informacionEmpresa.TextoDefectoVeriFactu = "Servicios de consultoría y asesoramiento técnico correspondientes al periodo....";
@@ -106,7 +108,7 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace)
 
         if (informacionEmpresa.PaddingNumero == 0) informacionEmpresa.PaddingNumero = 5;
         if (informacionEmpresa.PaddingCuentaContable == 0) informacionEmpresa.PaddingCuentaContable = 10;
-
+        
         int paddingCC = informacionEmpresa.PaddingCuentaContable;
 
         informacionEmpresa.CuentaPadreClientes ??= OS.FirstOrDefault<CuentaContable>(c => c.Codigo == "430".PadRight(paddingCC, '0').Substring(0, 5) || c.Codigo == "430" || c.Codigo == "43000");
