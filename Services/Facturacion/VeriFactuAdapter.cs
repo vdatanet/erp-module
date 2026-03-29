@@ -98,7 +98,10 @@ public class VeriFactuAdapter : IVeriFactuAdapter
             Settings.Current.SistemaInformatico.Version = companyInfo.VersionSistemaVeriFactu ?? Settings.Current.SistemaInformatico.Version;
             Settings.Current.SistemaInformatico.NombreRazon = companyInfo.NombreAdministradorSistemaVeriFactu ?? Settings.Current.SistemaInformatico.NombreRazon;
             Settings.Current.SistemaInformatico.NIF = companyInfo.NifAdministradorSistemaVeriFactu ?? Settings.Current.SistemaInformatico.NIF;
-            Settings.Current.SistemaInformatico.NumeroInstalacion = MachineIdentifier.GetMachineId();
+            
+            string hardwareId = MachineIdentifier.GetMachineId();
+            string suffix = companyInfo.VeriFactuModoPruebas ? "TEST" : "PROD";
+            Settings.Current.SistemaInformatico.NumeroInstalacion = $"INST-{hardwareId}-{suffix}";
         }
     }
 }
