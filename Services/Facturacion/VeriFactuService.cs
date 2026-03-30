@@ -36,12 +36,13 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             if (!validationResult.Success)
                 return validationResult;
 
-            // PrepareInvoice(objectSpace, invoice);
+            // Generar CorrelationId único para esta sesión de envío
+            invoice.CorrelationId = Guid.NewGuid();
 
             var veriFactuInvoice = MapToVeriFactuInvoice(invoice, companyInfo);
             
             var startTime = InformacionEmpresaHelper.GetLocalTime(invoice.Session);
-            var response = await veriFactuAdapter.SendInvoiceAsync(veriFactuInvoice, companyInfo);
+            var response = await veriFactuAdapter.SendInvoiceAsync(veriFactuInvoice, invoice, companyInfo);
             var duration = InformacionEmpresaHelper.GetLocalTime(invoice.Session) - startTime;
 
             UpdateInvoiceFromResponse(objectSpace, invoice, response, veriFactuInvoice);

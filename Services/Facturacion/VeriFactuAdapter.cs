@@ -27,11 +27,12 @@ public class TenantAwareInvoiceEntry(Invoice invoice, Guid tenantId, Guid correl
 
 public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger) : IVeriFactuAdapter
 {
-    private static readonly ConcurrentDictionary<string, SemaphoreSlim> TenantSemaphores = new();
+    private static readonly SemaphoreSlim GlobalVeriFactuSemaphore = new(1, 1);
 
-    public async Task<VeriFactuResponse> SendInvoiceAsync(Invoice veriFactuInvoice, InformacionEmpresa companyInfo)
+    public async Task<VeriFactuResponse> SendInvoiceAsync(Invoice veriFactuInvoice, FacturaBase invoice, InformacionEmpresa companyInfo)
     {
         ArgumentNullException.ThrowIfNull(veriFactuInvoice);
+        ArgumentNullException.ThrowIfNull(invoice);
         ArgumentNullException.ThrowIfNull(companyInfo);
 
         // Habilitar logging según documentación oficial
@@ -39,82 +40,39 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger) : IVeriFactuAdap
 
         var tenantProvider = companyInfo.Session.ServiceProvider?.GetService<DevExpress.ExpressApp.MultiTenancy.ITenantProvider>();
         var tenantId = tenantProvider?.TenantId ?? Guid.Empty;
-        var correlationId = Guid.NewGuid();
+        var correlationId = invoice.CorrelationId != Guid.Empty ? invoice.CorrelationId : Guid.NewGuid();
+        var invoiceOid = invoice.Oid;
 
         string tenantNif = companyInfo.Nif ?? "Global";
-        var semaphore = TenantSemaphores.GetOrAdd(tenantNif, _ => new SemaphoreSlim(1, 1));
-
-        await semaphore.WaitAsync();
+        
+        // Usamos un semáforo global para evitar que dos tenants distintos configuren 
+        // y encolen facturas simultáneamente, ya que la librería usa 'Settings.Current' estático global.
+        // Limitamos el bloqueo a la configuración y el encolado, liberándolo lo antes posible.
+        await GlobalVeriFactuSemaphore.WaitAsync();
         try
         {
             await ConfigureVeriFactuAsync(companyInfo);
 
+            // Validar que la configuración cargada en Settings.Current coincide con el emisor esperado
+            // AEAT requiere que el NIF del emisor en el XML coincida con el del certificado/configuración.
+            if (Settings.Current.SistemaInformatico != null)
+            {
+                if (!string.IsNullOrEmpty(veriFactuInvoice.SellerID) && 
+                    !string.Equals(Settings.Current.SistemaInformatico.NIF, companyInfo.Nif, StringComparison.OrdinalIgnoreCase))
+                {
+                    logger.LogWarning("VeriFactu: Discrepancia detectada entre NIF de empresa {EmpNif} y NIF en Settings.Current {SettNif}. Reintentando configuración.", 
+                        companyInfo.Nif, Settings.Current.SistemaInformatico.NIF);
+                    await ConfigureVeriFactuAsync(companyInfo);
+                }
+            }
+
             var invoiceEntry = new TenantAwareInvoiceEntry(veriFactuInvoice, tenantId, correlationId);
             
-            // Según requerimiento AEAT 5. Control de flujo:
-            // Añadimos el documento a la cola de procesamiento activa.
-            // En la cola se irán realizando los envíos cuando los documentos en espera sean 1.000 
-            // o cuando el tiempo de espera (establecido en las respuestas de la AEAT) haya finalizado.
-            // El envío se realiza en un hilo separado gestionado por la librería.
-            
-            logger.LogInformation("--- Datos de Invoice a encolar ---");
-            logger.LogInformation("InvoiceID: {InvoiceID}", veriFactuInvoice.InvoiceID);
-            logger.LogInformation("SellerID: {SellerID}", veriFactuInvoice.SellerID);
-            
-            // Intentar obtener SellerName mediante reflexión si no está accesible directamente
-            string sellerNameValue = string.Empty;
-            try
-            {
-                var sellerNameProp = veriFactuInvoice.GetType().GetProperty("SellerName");
-                if (sellerNameProp != null)
-                {
-                    sellerNameValue = sellerNameProp.GetValue(veriFactuInvoice)?.ToString() ?? string.Empty;
-                }
-            }
-            catch { /* Ignorar errores de reflexión en logs */ }
+            logger.LogInformation("--- Encolando Factura VeriFactu ---");
+            logger.LogInformation("InvoiceID: {InvoiceID} | SellerID: {SellerID} | Tenant: {TenantId}", 
+                veriFactuInvoice.InvoiceID, veriFactuInvoice.SellerID, tenantId);
 
-            logger.LogInformation("SellerName: {SellerName}", sellerNameValue);
-            
-            logger.LogInformation("InvoiceDate: {InvoiceDate}", veriFactuInvoice.InvoiceDate);
-            logger.LogInformation("InvoiceType: {InvoiceType}", veriFactuInvoice.InvoiceType);
-            logger.LogInformation("TotalAmount: {TotalAmount}", veriFactuInvoice.TotalAmount);
-            logger.LogInformation("BuyerID: {BuyerID}", veriFactuInvoice.BuyerID);
-
-            // Loguear si InvoiceQueue.ActiveInvoiceQueue es nulo o si tiene elementos
-            try 
-            {
-                if (InvoiceQueue.ActiveInvoiceQueue == null)
-                {
-                    logger.LogWarning("¡ATENCIÓN! InvoiceQueue.ActiveInvoiceQueue es nulo.");
-                }
-                else 
-                {
-                    logger.LogInformation("Estado de ActiveInvoiceQueue: Count={Count}", 
-                        InvoiceQueue.ActiveInvoiceQueue.Count);
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogWarning("No se pudo inspeccionar ActiveInvoiceQueue: {Message}", ex.Message);
-            }
-            
-            // Loguear campos del emisor si están disponibles
-            try
-            {
-                var invoiceType = veriFactuInvoice.GetType();
-                var idEmisor = invoiceType.GetProperty("IDEmisor")?.GetValue(veriFactuInvoice) ?? 
-                               invoiceType.GetProperty("IDEmisorFactura")?.GetValue(veriFactuInvoice);
-                var idType = invoiceType.GetProperty("IDType")?.GetValue(veriFactuInvoice) ?? 
-                             invoiceType.GetProperty("SellerIDType")?.GetValue(veriFactuInvoice);
-                logger.LogInformation("IDEmisor (Mapeado): {IDEmisor}", idEmisor);
-                logger.LogInformation("IDType (Mapeado): {IDType}", idType);
-            }
-            catch { }
-
-            logger.LogInformation("TaxItems Count: {TaxItemsCount}", veriFactuInvoice.TaxItems?.Count ?? 0);
-            logger.LogInformation("---------------------------------");
-
-            // Crear registro de auditoría antes de añadir a la cola
+            // Crear registro de auditoría preventivo en el HOST antes de añadir a la cola
             try
             {
                 var sp = companyInfo.Session.ServiceProvider;
@@ -124,55 +82,51 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger) : IVeriFactuAdap
                     var audit = hostOS.CreateObject<VeriFactuAudit>();
                     audit.TenantId = tenantId;
                     audit.CorrelationId = correlationId;
+                    audit.InvoiceOid = invoiceOid;
                     audit.InvoiceId = veriFactuInvoice.InvoiceID ?? string.Empty;
                     audit.NifEmisor = veriFactuInvoice.SellerID ?? string.Empty;
                     audit.NumeroSerie = companyInfo.PrefijoFacturasVentaPorDefecto ?? string.Empty;
+                    audit.ConfigName = companyInfo.NombreArchivoConfigVeriFactu ?? "default";
                     audit.BatchId = string.Empty; 
                     audit.EstadoEnvio = "Encolada";
+                    audit.FechaEnvio = InformacionEmpresaHelper.GetLocalTime(companyInfo.Session);
                     hostOS.CommitChanges();
-                    logger.LogInformation("Registro de auditoría VeriFactuAudit creado en el HOST para {InvoiceID}", veriFactuInvoice.InvoiceID);
+                    logger.LogTrace("VeriFactuAudit creado para {InvoiceID}", veriFactuInvoice.InvoiceID);
                 }
             }
             catch (Exception ex)
             {
-                logger.LogWarning(ex, "No se pudo crear el registro de auditoría VeriFactuAudit para {InvoiceID}", veriFactuInvoice.InvoiceID);
+                logger.LogWarning(ex, "Error al crear VeriFactuAudit para {InvoiceID}", veriFactuInvoice.InvoiceID);
             }
 
-            try
+            if (InvoiceQueue.ActiveInvoiceQueue != null)
             {
-                logger.LogInformation("Llamando a InvoiceQueue.ActiveInvoiceQueue.Add para la factura {InvoiceID}...", veriFactuInvoice.InvoiceID);
-                if (InvoiceQueue.ActiveInvoiceQueue != null)
-                {
-                    InvoiceQueue.ActiveInvoiceQueue.Add(invoiceEntry);
-                    logger.LogInformation("Factura {InvoiceID} añadida con éxito a ActiveInvoiceQueue.", veriFactuInvoice.InvoiceID);
-                }
-                else
-                {
-                    logger.LogWarning("ActiveInvoiceQueue es nulo. No se pudo añadir la factura {InvoiceID} a la cola.", veriFactuInvoice.InvoiceID);
-                }
+                InvoiceQueue.ActiveInvoiceQueue.Add(invoiceEntry);
+                logger.LogInformation("Factura {InvoiceID} añadida a ActiveInvoiceQueue.", veriFactuInvoice.InvoiceID);
             }
-            catch (Exception ex)
+            else
             {
-                logger.LogError(ex, "Error crítico al añadir factura a ActiveInvoiceQueue: {Message}. StackTrace: {StackTrace}", ex.Message, ex.StackTrace);
-                throw;
+                throw new InvalidOperationException("ActiveInvoiceQueue no está inicializado.");
             }
-
-            logger.LogInformation("Factura {InvoiceID} añadida a la cola para el tenant {TenantId} (NIF: {Nif}). ConfigFile: {ConfigFile}. NIF Emisor: {SellerID}", 
-                veriFactuInvoice.InvoiceID, tenantId, tenantNif, companyInfo.NombreArchivoConfigVeriFactu, veriFactuInvoice.SellerID);
-
-            return new VeriFactuResponse(
-                VeriFactuConstants.PendienteVeriFactu, // Usamos un estado que indique que está en cola
-                null,
-                "Enviado a la cola de procesamiento de VeriFactu",
-                null,
-                null,
-                null,
-                null);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error durante el encolado VeriFactu para {InvoiceID}", veriFactuInvoice.InvoiceID);
+            throw;
         }
         finally
         {
-            semaphore.Release();
+            GlobalVeriFactuSemaphore.Release();
         }
+
+        return new VeriFactuResponse(
+            VeriFactuConstants.PendienteVeriFactu,
+            null,
+            "Enviado a la cola de procesamiento de VeriFactu",
+            null,
+            null,
+            null,
+            null);
     }
 
     private async Task ConfigureVeriFactuAsync(InformacionEmpresa companyInfo)

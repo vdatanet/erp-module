@@ -40,6 +40,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     private DomicilioDIR3? _domicilioDIR;
     private Asiento? _asientoContable;
     private MediaDataObject? _qr;
+    private Guid _correlationId;
     private string? _respuestaAgenciaTributaria;
     private string? _texto;
     private TipoFactura _tipoFactura;
@@ -176,6 +177,15 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     {
         get => _texto;
         set => SetPropertyValue(nameof(Texto), ref _texto, value);
+    }
+
+    [ModelDefault("AllowEdit", "False")]
+    [NonCloneable]
+    [XafDisplayName("ID de Correlación")]
+    public Guid CorrelationId
+    {
+        get => _correlationId;
+        set => SetPropertyValue(nameof(CorrelationId), ref _correlationId, value);
     }
 
     [Size(SizeAttribute.Unlimited)]

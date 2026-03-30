@@ -1,4 +1,5 @@
 using System.Text;
+using System.Collections.Concurrent;
 using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp;
 using DevExpress.Xpo;
@@ -54,6 +55,15 @@ public class VeriFactuQueueManager
     {
         _logger.LogInformation("VeriFactu: Envío de lote finalizado con éxito. Respuesta AEAT: {Response}", aeatResponse);
         
+        // Registrar detalles del lote
+        if (invoiceActionList.Count > 0)
+        {
+            var firstAction = invoiceActionList[0];
+            var (batchTenantId, _) = GetTenantAndCorrelationId(firstAction);
+            _logger.LogInformation("VeriFactu: Procesando respuesta de lote con {Count} facturas. TenantId detectado en primera acción: {TenantId}", 
+                invoiceActionList.Count, batchTenantId);
+        }
+
         // Mostrar en log de la respuesta completa de la agencia tributaria
         if (_logger.IsEnabled(LogLevel.Debug))
         {
@@ -80,17 +90,8 @@ public class VeriFactuQueueManager
             }
         }
 
-        foreach (var action in invoiceActionList)
-        {
-            try
-            {
-                ProcessInvoiceAction(action, aeatResponse, null);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error procesando el resultado de la factura {InvoiceID} en el callback.", action.Invoice?.InvoiceID);
-            }
-        }
+        // Procesar todas las facturas del lote de forma asíncrona pero rastreable
+        _ = ProcessInvoiceActionListAsync(invoiceActionList, aeatResponse, null);
     }
 
     /// <summary>
@@ -100,36 +101,103 @@ public class VeriFactuQueueManager
     {
         _logger.LogError(ex, "VeriFactu: Error al enviar lote a la AEAT.");
 
-        foreach (var action in invoiceActionList)
+        if (invoiceActionList.Count > 0)
         {
-            try
-            {
-                ProcessInvoiceAction(action, null, ex);
-            }
-            catch (Exception innerEx)
-            {
-                _logger.LogError(innerEx, "Error procesando el error de la factura {InvoiceID} en el callback.", action.Invoice?.InvoiceID);
-            }
+            var firstAction = invoiceActionList[0];
+            var (batchTenantId, _) = GetTenantAndCorrelationId(firstAction);
+            _logger.LogWarning("VeriFactu: Procesando error de lote con {Count} facturas. TenantId detectado en primera acción: {TenantId}", 
+                invoiceActionList.Count, batchTenantId);
+        }
+
+        // Procesar todas las facturas del lote de forma asíncrona pero rastreable
+        _ = ProcessInvoiceActionListAsync(invoiceActionList, null, ex);
+    }
+
+    private async Task ProcessInvoiceActionListAsync(List<InvoiceAction> invoiceActionList, RespuestaRegFactuSistemaFacturacion? aeatResponse, Exception? error)
+    {
+        var tasks = invoiceActionList.Select(action => ProcessInvoiceActionAsync(action, aeatResponse, error));
+        try
+        {
+            await Task.WhenAll(tasks);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error crítico procesando lote de facturas VeriFactu.");
         }
     }
 
-    private void ProcessInvoiceAction(InvoiceAction action, RespuestaRegFactuSistemaFacturacion? aeatResponse, Exception? error)
+    private static readonly ConcurrentDictionary<Guid, SemaphoreAndCounter> InvoiceSemaphores = new();
+
+    private class SemaphoreAndCounter
+    {
+        public SemaphoreSlim Semaphore { get; } = new(1, 1);
+        public int ReferenceCount;
+    }
+
+    private async Task ProcessInvoiceActionAsync(InvoiceAction action, RespuestaRegFactuSistemaFacturacion? aeatResponse, Exception? error)
     {
         _logger.LogInformation("Procesando acción de factura {InvoiceID}. Resultado: {Status}. Error: {Error}", 
             action.Invoice?.InvoiceID, action.Status, error?.Message ?? "Ninguno");
 
         if (action.Invoice == null) return;
 
-        Task.Run(async () => {
-            try 
+        var (tenantId, correlationId) = GetTenantAndCorrelationId(action);
+        
+        Guid lockId;
+        if (correlationId.HasValue && correlationId.Value != Guid.Empty)
+        {
+            lockId = correlationId.Value;
+        }
+        else if (Guid.TryParse(action.Invoice.InvoiceID, out var parsedId))
+        {
+            lockId = parsedId;
+        }
+        else
+        {
+            lockId = GenerateGuidFromInvoiceId(action.Invoice.InvoiceID);
+        }
+
+        // Obtener o crear el objeto de control con contador de referencia
+        var sac = InvoiceSemaphores.AddOrUpdate(lockId, 
+            _ => new SemaphoreAndCounter { ReferenceCount = 1 },
+            (_, existing) => {
+                Interlocked.Increment(ref existing.ReferenceCount);
+                return existing;
+            });
+
+        await sac.Semaphore.WaitAsync();
+
+        try 
+        {
+            await UpdateInvoiceAsync(action, aeatResponse, error);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error asíncrono en UpdateInvoiceAsync para la factura {Id}", action.Invoice?.InvoiceID);
+        }
+        finally
+        {
+            sac.Semaphore.Release();
+            
+            // Decrementar el contador de referencia y limpiar si llega a cero
+            if (Interlocked.Decrement(ref sac.ReferenceCount) == 0)
             {
-                await UpdateInvoiceAsync(action, aeatResponse, error);
+                // Solo eliminamos si el contador sigue siendo 0 (doble comprobación)
+                // Usamos TryRemove con el valor esperado para ser ultra-seguros
+                InvoiceSemaphores.TryRemove(new KeyValuePair<Guid, SemaphoreAndCounter>(lockId, sac));
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error asíncrono en UpdateInvoiceAsync para la factura {Id}", action.Invoice?.InvoiceID);
-            }
-        });
+        }
+    }
+
+    private Guid GenerateGuidFromInvoiceId(string invoiceId)
+    {
+        if (string.IsNullOrEmpty(invoiceId)) return Guid.NewGuid();
+        
+        using (var md5 = System.Security.Cryptography.MD5.Create())
+        {
+            byte[] hash = md5.ComputeHash(Encoding.UTF8.GetBytes(invoiceId));
+            return new Guid(hash);
+        }
     }
 
     private async Task UpdateInvoiceAsync(InvoiceAction action, RespuestaRegFactuSistemaFacturacion? aeatResponse, Exception? error)
@@ -148,10 +216,14 @@ public class VeriFactuQueueManager
             // 1. Intentar resolución directa por CorrelationId y TenantId (LÓGICA PREFERENTE)
             if (tenantIdFromAction.HasValue && correlationIdFromAction.HasValue)
             {
-                if (await TryUpdateByCorrelationAndTenantAsync(sp, tenantIdFromAction.Value, correlationIdFromAction.Value, invoiceId, action, aeatResponse, error))
+                if (await TryUpdateByCorrelationAndTenantAsync(sp, tenantIdFromAction.Value, correlationIdFromAction.Value, invoiceId, sellerNif, action, aeatResponse, error))
                 {
                     return;
                 }
+            }
+            else
+            {
+                _logger.LogWarning("VeriFactu: La acción para la factura {InvoiceId} no contiene información de TenantId o CorrelationId. Procediendo con fallbacks.", invoiceId);
             }
 
             // 2. Fallback 1: Buscar en el registro de auditoría global por InvoiceId y NifEmisor
@@ -160,19 +232,19 @@ public class VeriFactuQueueManager
                 return;
             }
 
-            // 3. Fallback 2: Buscar en todos los tenants (SOLO EN DESARROLLO O COMO ÚLTIMO RECURSO)
-            var configuration = sp.GetService<IConfiguration>();
-            bool disableGlobalFallback = configuration?.GetValue<bool>("VeriFactu:DisableGlobalFallback") ?? true;
+        // 3. Fallback 2: Buscar en todos los tenants (SOLO SI SE PERMITE EXPLÍCITAMENTE)
+        var configuration = sp.GetService<IConfiguration>();
+        bool disableGlobalFallback = configuration?.GetValue<bool>("VeriFactu:DisableGlobalFallback") ?? true;
 
-            if (!disableGlobalFallback)
-            {
-                _logger.LogWarning("VeriFactu: Iniciando fallback global costoso para la factura {InvoiceId}. Este comportamiento debería evitarse en producción.", invoiceId);
-                await PerformGlobalTenantFallbackAsync(sp, invoiceId, sellerNif, action, aeatResponse, error);
-            }
-            else
-            {
-                _logger.LogWarning("VeriFactu: No se encontró la factura {InvoiceId} y el fallback global está deshabilitado.", invoiceId);
-            }
+        if (!disableGlobalFallback)
+        {
+            _logger.LogWarning("VeriFactu: Iniciando fallback global para la factura {InvoiceId} (NIF: {SellerNif}).", invoiceId, sellerNif);
+            await PerformGlobalTenantFallbackAsync(sp, invoiceId, sellerNif, action, aeatResponse, error);
+        }
+        else
+        {
+            _logger.LogError("VeriFactu: No se pudo resolver la factura {InvoiceId} (NIF: {SellerNif}) por ninguna vía técnica y el fallback global está deshabilitado.", invoiceId, sellerNif);
+        }
         }
     }
 
@@ -195,38 +267,77 @@ public class VeriFactuQueueManager
         return (null, null);
     }
 
-    private async Task<bool> TryUpdateByCorrelationAndTenantAsync(IServiceProvider sp, Guid tenantId, Guid correlationId, string invoiceId, InvoiceAction action, RespuestaRegFactuSistemaFacturacion? aeatResponse, Exception? error)
+    private async Task<bool> TryUpdateByCorrelationAndTenantAsync(IServiceProvider sp, Guid tenantId, Guid correlationId, string invoiceId, string sellerNif, InvoiceAction action, RespuestaRegFactuSistemaFacturacion? aeatResponse, Exception? error)
     {
+        _logger.LogTrace("Intentando resolución primaria por CorrelationId {CorrelationId} y TenantId {TenantId} para factura {InvoiceId}", correlationId, tenantId, invoiceId);
         try
         {
             using (var hostOS = CreateHostObjectSpace(sp))
             {
-                var audit = hostOS.FindObject<VeriFactuAudit>(CriteriaOperator.Parse("CorrelationId = ? AND TenantId = ?", correlationId, tenantId));
+                var criteria = CriteriaOperator.Parse("CorrelationId = ? AND TenantId = ?", correlationId, tenantId);
+                var audits = hostOS.GetObjects<VeriFactuAudit>(criteria);
+                
+                if (audits.Count > 1)
+                {
+                    _logger.LogError("[AMBIGÜEDAD CORRELACIÓN] Se encontraron múltiples registros de auditoría ({Count}) para CorrelationId {CorrelationId} y TenantId {TenantId}.", audits.Count, correlationId, tenantId);
+                    return false;
+                }
+
+                var audit = audits.FirstOrDefault();
                 if (audit != null)
                 {
+                    // Validación de NIF emisor para evitar cruces accidentales
+                    if (!IsNifMatch(audit.NifEmisor, sellerNif))
+                    {
+                        _logger.LogError("[ERROR CORRELACIÓN] Discrepancia de NIF: Auditoría={AuditNif}, Respuesta={RespNif} para CorrelationId={CorrId}", 
+                            audit.NifEmisor, sellerNif, correlationId);
+                        return false;
+                    }
+
                     UpdateAuditStatus(audit, action, error);
                     hostOS.CommitChanges();
 
                     var tenant = hostOS.GetObjectByKey<DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant>(audit.TenantId);
-                    if (tenant != null)
+                    if (tenant?.Name == null)
                     {
-                        var objectSpaceFactory = sp.GetRequiredService<IObjectSpaceFactory>();
-                        using (var tenantOS = objectSpaceFactory.CreateObjectSpace(typeof(InformacionEmpresa), tenant.Name))
+                        _logger.LogError("Tenant {TenantId} no encontrado o sin nombre válido.", audit.TenantId);
+                        return false;
+                    }
+
+                    var objectSpaceProvider = sp.GetRequiredService<IObjectSpaceFactory>();
+                    using (var tenantOS = objectSpaceProvider.CreateObjectSpace(typeof(InformacionEmpresa), tenant.Name))
+                    {
+                        FacturaBase? invoice = null;
+                        if (audit.InvoiceOid != Guid.Empty)
                         {
-                            var invoice = FindInvoiceInTenant(tenantOS, invoiceId);
-                            if (invoice != null)
-                            {
-                                await UpdateInvoiceInternalAsync(sp, tenantOS, invoice, action, aeatResponse, error);
-                                return true;
-                            }
+                            invoice = tenantOS.GetObjectByKey<FacturaBase>(audit.InvoiceOid);
                         }
+
+                        invoice ??= FindInvoiceInTenant(tenantOS, invoiceId);
+
+                        if (invoice != null)
+                        {
+                            var companyInfo = tenantOS.FindObject<InformacionEmpresa>(null);
+                            if (!IsNifMatch(companyInfo?.Nif, sellerNif))
+                            {
+                                _logger.LogError("[ERROR CONSISTENCIA] Factura {InvId} en Tenant {Tenant} tiene NIF {CompNif}, pero emisor es {SellNif}", 
+                                    invoiceId, tenant.Name, companyInfo?.Nif, sellerNif);
+                                return false;
+                            }
+
+                            await UpdateInvoiceInternalAsync(sp, tenantOS, invoice, action, aeatResponse, error);
+                            _logger.LogInformation("Factura {InvoiceId} actualizada con éxito en tenant {Tenant} vía CorrelationId.", invoiceId, tenant.Name);
+                            return true;
+                        }
+                        
+                        _logger.LogError("Factura {InvoiceId} no localizada en tenant {Tenant} (Oid: {Oid}).", invoiceId, tenant.Name, audit.InvoiceOid);
                     }
                 }
             }
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Error en resolución por CorrelationId {CorrelationId}", correlationId);
+            _logger.LogError(ex, "Fallo en TryUpdateByCorrelationAndTenantAsync para CorrelationId {CorrelationId}", correlationId);
         }
         return false;
     }
@@ -237,7 +348,15 @@ public class VeriFactuQueueManager
         {
             using (var hostOS = CreateHostObjectSpace(sp))
             {
-                var audit = hostOS.FindObject<VeriFactuAudit>(CriteriaOperator.Parse("InvoiceId = ? AND NifEmisor = ?", invoiceId, sellerNif));
+                // Buscar por InvoiceId y NifEmisor para mayor seguridad que solo InvoiceId
+                var audits = hostOS.GetObjects<VeriFactuAudit>(CriteriaOperator.Parse("InvoiceId = ? AND NifEmisor = ?", invoiceId, sellerNif));
+                if (audits.Count > 1)
+                {
+                    _logger.LogError("Ambigüedad detectada en auditoría: Se encontraron {Count} registros para InvoiceId {InvoiceId} y NIF {SellerNif}. No se puede proceder con la resolución automática.", audits.Count, invoiceId, sellerNif);
+                    return false;
+                }
+
+                var audit = audits.FirstOrDefault();
                 if (audit != null)
                 {
                     UpdateAuditStatus(audit, action, error);
@@ -249,20 +368,45 @@ public class VeriFactuQueueManager
                         var objectSpaceFactory = sp.GetRequiredService<IObjectSpaceFactory>();
                         using (var tenantOS = objectSpaceFactory.CreateObjectSpace(typeof(InformacionEmpresa), tenant.Name))
                         {
-                            var invoice = FindInvoiceInTenant(tenantOS, invoiceId);
+                            // Intentar buscar por Oid si está disponible
+                            FacturaBase? invoice = null;
+                            if (audit.InvoiceOid != Guid.Empty)
+                            {
+                                invoice = tenantOS.GetObjectByKey<FacturaBase>(audit.InvoiceOid);
+                            }
+                            
+                            invoice ??= FindInvoiceInTenant(tenantOS, invoiceId);
+
                             if (invoice != null)
                             {
+                                // Confirmar consistencia de NIF
+                                var companyInfo = tenantOS.FindObject<InformacionEmpresa>(null);
+                                if (!IsNifMatch(companyInfo?.Nif, sellerNif))
+                                {
+                                    _logger.LogError("Inconsistencia en fallback de auditoría: Factura {InvoiceId} en tenant {Tenant} no coincide con NIF emisor {SellerNif}", 
+                                        invoiceId, tenant.Name, sellerNif);
+                                    return false;
+                                }
+
                                 await UpdateInvoiceInternalAsync(sp, tenantOS, invoice, action, aeatResponse, error);
                                 return true;
                             }
+                            else
+                            {
+                                _logger.LogError("No se pudo encontrar la factura {InvoiceId} en el tenant {Tenant} referenciado por la auditoría.", invoiceId, tenant.Name);
+                            }
                         }
+                    }
+                    else
+                    {
+                        _logger.LogError("Tenant {TenantId} no encontrado para la factura {InvoiceId} en el fallback de auditoría.", audit.TenantId, invoiceId);
                     }
                 }
             }
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Error al intentar actualizar mediante registro de auditoría para {InvoiceId}", invoiceId);
+            _logger.LogError(ex, "Error al intentar actualizar mediante registro de auditoría para {InvoiceId}", invoiceId);
         }
         return false;
     }
@@ -286,7 +430,7 @@ public class VeriFactuQueueManager
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error recuperando lista de tenants del host.");
+            _logger.LogError(ex, "Error recuperando lista de tenants del host para fallback global.");
             return;
         }
         finally
@@ -294,23 +438,28 @@ public class VeriFactuQueueManager
             tenantProvider.TenantId = originalTenantId;
         }
 
+        var foundCandidates = new List<(Guid TenantOid, string TenantName, FacturaBase Invoice, IObjectSpace OS)>();
         var objectSpaceFactory = sp.GetRequiredService<IObjectSpaceFactory>();
+        
         foreach (var tenant in tenants)
         {
             try
             {
-                using (var tenantOS = objectSpaceFactory.CreateObjectSpace(typeof(InformacionEmpresa), tenant.Oid.ToString()))
+                var tenantOS = objectSpaceFactory.CreateObjectSpace(typeof(InformacionEmpresa), tenant.Oid.ToString());
+                var info = tenantOS.FindObject<InformacionEmpresa>(null);
+                if (IsNifMatch(info?.Nif, sellerNif))
                 {
-                    var info = tenantOS.FindObject<InformacionEmpresa>(null);
-                    if (IsNifMatch(info?.Nif, sellerNif))
+                    var invoice = FindInvoiceInTenant(tenantOS, invoiceId);
+                    if (invoice != null)
                     {
-                        var invoice = FindInvoiceInTenant(tenantOS, invoiceId);
-                        if (invoice != null)
-                        {
-                            await UpdateInvoiceInternalAsync(sp, tenantOS, invoice, action, aeatResponse, error);
-                            return;
-                        }
+                        foundCandidates.Add((tenant.Oid, tenant.Name, invoice, tenantOS));
                     }
+                }
+                
+                // Si no es la factura que buscamos, liberamos el OS
+                if (foundCandidates.All(c => c.TenantOid != tenant.Oid))
+                {
+                    tenantOS.Dispose();
                 }
             }
             catch (Exception ex)
@@ -318,6 +467,31 @@ public class VeriFactuQueueManager
                 _logger.LogTrace("Búsqueda en tenant {Tenant} fallida: {Msg}", tenant.Name, ex.Message);
             }
         }
+
+                if (foundCandidates.Count == 1)
+                {
+                    var candidate = foundCandidates[0];
+                    _logger.LogInformation("Factura {InvoiceId} resuelta mediante fallback global en tenant {Tenant}.", invoiceId, candidate.TenantName);
+                    
+                    try 
+                    {
+                        await UpdateInvoiceInternalAsync(sp, candidate.OS, candidate.Invoice, action, aeatResponse, error);
+                    }
+                    finally
+                    {
+                        foreach (var c in foundCandidates) c.OS.Dispose();
+                    }
+                }
+                else if (foundCandidates.Count > 1)
+                {
+                    _logger.LogError("[AMBIGÜEDAD CORRELACIÓN] Ambigüedad crítica en fallback global: Se encontró la factura {InvoiceId} en {Count} tenants ({Tenants}). No se aplicará ninguna actualización.", 
+                        invoiceId, foundCandidates.Count, string.Join(", ", foundCandidates.Select(c => c.TenantName)));
+                    foreach (var c in foundCandidates) c.OS.Dispose();
+                }
+                else
+                {
+                    _logger.LogError("[ERROR CORRELACIÓN] No se encontró la factura {InvoiceId} (NIF: {SellerNif}) en ningún tenant tras fallback global.", invoiceId, sellerNif);
+                }
     }
 
     private FacturaBase? FindInvoiceInTenant(IObjectSpace os, string invoiceId)
@@ -328,14 +502,15 @@ public class VeriFactuQueueManager
             if (invoice != null) return invoice;
         }
 
-        var foundInvoice = os.FindObject<FacturaBase>(CriteriaOperator.Parse("Secuencia = ?", invoiceId));
-        if (foundInvoice != null) return foundInvoice;
+        var foundInvoices = os.GetObjects<FacturaBase>(CriteriaOperator.Parse("Secuencia = ?", invoiceId));
+        if (foundInvoices.Count == 1) return foundInvoices[0];
+        if (foundInvoices.Count > 1)
+        {
+            _logger.LogWarning("Múltiples facturas encontradas con secuencia {Secuencia} en el mismo tenant. No se puede elegir una automáticamente.", invoiceId);
+            return null;
+        }
 
-        // Búsqueda flexible
-        string cleanInvoiceId = invoiceId.Replace(" ", "").Replace("-", "").Replace("/", "").ToUpper();
-        return os.GetObjects<FacturaBase>(null).FirstOrDefault(f =>
-            f.Secuencia != null &&
-            f.Secuencia.Replace(" ", "").Replace("-", "").Replace("/", "").ToUpper() == cleanInvoiceId);
+        return null;
     }
 
     private bool IsNifMatch(string? tenantNif, string sellerNif)
@@ -348,8 +523,31 @@ public class VeriFactuQueueManager
 
     private void UpdateAuditStatus(VeriFactuAudit audit, InvoiceAction action, Exception? error)
     {
-        audit.EstadoEnvio = action.Status.ToString();
-        if (error != null) audit.EstadoEnvio += " - Error: " + error.Message;
+        string prefix = "";
+        if (error != null)
+        {
+            prefix = "[ERROR TÉCNICO] ";
+        }
+        else if (action.Status.ToString().Contains("Rechazada", StringComparison.OrdinalIgnoreCase) || 
+                 action.Status.ToString().Contains("Error", StringComparison.OrdinalIgnoreCase))
+        {
+            prefix = "[ERROR RESPUESTA AEAT] ";
+        }
+
+        audit.EstadoEnvio = prefix + action.Status.ToString();
+        if (error != null) audit.EstadoEnvio += " - Detalle: " + error.Message;
+        
+        // Registrar BatchId si está disponible en la acción
+        try
+        {
+            var batchIdProp = action.GetType().GetProperty("BatchId") ?? action.GetType().GetProperty("TransactionId");
+            var batchId = batchIdProp?.GetValue(action)?.ToString();
+            if (!string.IsNullOrEmpty(batchId))
+            {
+                audit.BatchId = batchId;
+            }
+        }
+        catch { /* Ignorar errores de reflexión */ }
     }
 
     private async Task UpdateInvoiceInternalAsync(IServiceProvider serviceProvider, IObjectSpace tenantOS, FacturaBase invoice, InvoiceAction action, RespuestaRegFactuSistemaFacturacion? aeatResponse, Exception? error)
@@ -359,7 +557,14 @@ public class VeriFactuQueueManager
         
         var statusStr = action.Status.ToString();
         var status = error != null ? VeriFactuConstants.ErrorTecnico : 
-                     (statusStr.Contains("Rechazada", StringComparison.OrdinalIgnoreCase) ? VeriFactuConstants.Rechazada : VeriFactuConstants.Correcto);
+                     (statusStr.Contains("Rechazada", StringComparison.OrdinalIgnoreCase) || statusStr.Contains("Error", StringComparison.OrdinalIgnoreCase) ? VeriFactuConstants.Rechazada : VeriFactuConstants.Correcto);
+
+        // Actualizar factura con CorrelationId si no lo tenía
+        var (tenantIdFromAction, correlationIdFromAction) = GetTenantAndCorrelationId(action);
+        if (correlationIdFromAction.HasValue && invoice.CorrelationId == Guid.Empty)
+        {
+            invoice.CorrelationId = correlationIdFromAction.Value;
+        }
 
         // Si el estado de la acción es "Pendiente" y no hay error, mantenemos el estado PendienteVeriFactu
         if (error == null && statusStr.Contains("Pendiente", StringComparison.OrdinalIgnoreCase))

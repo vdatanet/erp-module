@@ -7,7 +7,7 @@ namespace erp.Module.Services.Facturacion;
 
 public interface IVeriFactuAdapter
 {
-    Task<VeriFactuResponse> SendInvoiceAsync(Invoice veriFactuInvoice, InformacionEmpresa companyInfo);
+    Task<VeriFactuResponse> SendInvoiceAsync(Invoice veriFactuInvoice, FacturaBase invoice, InformacionEmpresa companyInfo);
 }
 
 public record VeriFactuResponse(

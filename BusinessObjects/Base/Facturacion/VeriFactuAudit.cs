@@ -8,7 +8,7 @@ namespace erp.Module.BusinessObjects.Base.Facturacion;
 
 [NavigationItem("Facturación")]
 [XafDisplayName("Auditoría de Envíos VeriFactu")]
-[Indices("TenantId;InvoiceId", "CorrelationId")]
+[Indices("TenantId;InvoiceId", "CorrelationId", "TenantId;CorrelationId")]
 public class VeriFactuAudit(Session session) : BaseObject(session)
 {
     private Guid _tenantId;
@@ -17,7 +17,9 @@ public class VeriFactuAudit(Session session) : BaseObject(session)
     private string _nifEmisor = string.Empty;
     private string _estadoEnvio = string.Empty;
     private string _batchId = string.Empty;
+    private string _configName = string.Empty;
     private Guid _correlationId;
+    private Guid _invoiceOid;
     private DateTime _fechaEnvio;
 
     [XafDisplayName("ID del Tenant")]
@@ -42,6 +44,13 @@ public class VeriFactuAudit(Session session) : BaseObject(session)
     {
         get => _correlationId;
         set => SetPropertyValue(nameof(CorrelationId), ref _correlationId, value);
+    }
+
+    [XafDisplayName("OID de la Factura (Tenant)")]
+    public Guid InvoiceOid
+    {
+        get => _invoiceOid;
+        set => SetPropertyValue(nameof(InvoiceOid), ref _invoiceOid, value);
     }
 
     [XafDisplayName("Número de Serie")]
@@ -70,6 +79,13 @@ public class VeriFactuAudit(Session session) : BaseObject(session)
     {
         get => _batchId ?? string.Empty;
         set => SetPropertyValue(nameof(BatchId), ref _batchId, value);
+    }
+
+    [XafDisplayName("Nombre de la Configuración")]
+    public string ConfigName
+    {
+        get => _configName ?? string.Empty;
+        set => SetPropertyValue(nameof(ConfigName), ref _configName, value);
     }
 
     [XafDisplayName("Fecha de Envío")]
