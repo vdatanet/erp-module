@@ -47,9 +47,9 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             UpdateInvoiceFromResponse(objectSpace, invoice, response, veriFactuInvoice);
             objectSpace.CommitChanges();
 
-            if (response.Status == VeriFactuConstants.Correcto)
+            if (response.Status == VeriFactuConstants.Correcto || response.Status == VeriFactuConstants.PendienteVeriFactu)
             {
-                return new SendResult(true, "Factura enviada correctamente.");
+                return new SendResult(true, "Factura enviada o encolada correctamente.");
             }
 
             return new SendResult(false, 
@@ -120,7 +120,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         }
     }
 
-    private Invoice MapToVeriFactuInvoice(FacturaBase invoice, InformacionEmpresa companyInfo)
+    public Invoice MapToVeriFactuInvoice(FacturaBase invoice, InformacionEmpresa companyInfo)
     {
         var veriFactuFactura = new Invoice(invoice.Secuencia, invoice.Fecha, companyInfo.Nif)
         {
@@ -217,7 +217,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         return invoice.TipoFactura.ToString() == "F1";
     }
 
-    private void UpdateInvoiceFromResponse(IObjectSpace objectSpace, FacturaBase invoice, VeriFactuResponse veriFactuResponse,
+    public void UpdateInvoiceFromResponse(IObjectSpace objectSpace, FacturaBase invoice, VeriFactuResponse veriFactuResponse,
         Invoice veriFactuFactura)
     {
         invoice.EstadoEntradaFactura = veriFactuResponse.Status;
@@ -241,6 +241,14 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
                 var qrMedia = objectSpace.CreateObject<MediaDataObject>();
                 qrMedia.MediaData = veriFactuResponse.QrData;
                 invoice.Qr = qrMedia;
+            }
+        }
+        else if (veriFactuResponse.Status == VeriFactuConstants.PendienteVeriFactu)
+        {
+            invoice.EstadoVeriFactu = EstadoVeriFactu.PendienteVeriFactu;
+            if (invoice.EstadoFactura == EstadoFactura.Emitida)
+            {
+                invoice.StateMachine.CambiarA(EstadoFactura.Enviada);
             }
         }
         else if (veriFactuResponse.Status == VeriFactuConstants.Parcial)

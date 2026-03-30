@@ -72,7 +72,7 @@ public class FacturaLifecycleController : ViewController
             Caption = "Contabilizar",
             ConfirmationMessage = "¿Desea generar el asiento contable para esta factura?",
             ImageName = "Accounting",
-            TargetObjectsCriteria = "EstadoFactura = 'Enviada' OR (EstadoVeriFactu = 'AceptadaVeriFactu' OR EstadoVeriFactu = 'EnviadaVeriFactu')",
+            TargetObjectsCriteria = "EstadoFactura = 'Enviada' OR (EstadoVeriFactu = 'AceptadaVeriFactu' OR EstadoVeriFactu = 'EnviadaVeriFactu' OR EstadoVeriFactu = 'PendienteVeriFactu')",
             SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
         _contabilizarAction.Execute += ContabilizarAction_Execute;
@@ -170,7 +170,8 @@ public class FacturaLifecycleController : ViewController
         
         _contabilizarAction.Active["EstadoValido"] = (factura.EstadoFactura == EstadoFactura.Enviada || 
                                                       factura.EstadoVeriFactu == EstadoVeriFactu.AceptadaVeriFactu || 
-                                                      factura.EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu) &&
+                                                      factura.EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu ||
+                                                      factura.EstadoVeriFactu == EstadoVeriFactu.PendienteVeriFactu) &&
                                                      factura.EstadoFactura != EstadoFactura.Contabilizada;
 
         _procesarFlujoCompletoAction.Active["EstadoValido"] = factura.EstadoFactura != EstadoFactura.Contabilizada;
@@ -233,9 +234,10 @@ public class FacturaLifecycleController : ViewController
         if (e.CurrentObject is not FacturaBase factura) return;
 
         if (factura.EstadoVeriFactu != EstadoVeriFactu.EnviadaVeriFactu && 
-            factura.EstadoVeriFactu != EstadoVeriFactu.AceptadaVeriFactu)
+            factura.EstadoVeriFactu != EstadoVeriFactu.AceptadaVeriFactu &&
+            factura.EstadoVeriFactu != EstadoVeriFactu.PendienteVeriFactu)
         {
-            throw new UserFriendlyException("La factura debe haber sido enviada a VeriFactu antes de contabilizarse.");
+            throw new UserFriendlyException("La factura debe haber sido enviada o encolada para VeriFactu antes de contabilizarse.");
         }
 
         factura.Contabilizar();

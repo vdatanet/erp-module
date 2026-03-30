@@ -137,11 +137,12 @@ public class FacturaOrchestrator
                 }
             }
 
-            // 4. Contabilizar si está Enviada/Aceptada
+            // 4. Contabilizar si está Enviada/Aceptada/Pendiente
             if (factura.EstadoFactura != EstadoFactura.Contabilizada &&
                 (factura.EstadoFactura == EstadoFactura.Enviada ||
                  factura.EstadoVeriFactu == EstadoVeriFactu.AceptadaVeriFactu ||
-                 factura.EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu))
+                 factura.EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu ||
+                 factura.EstadoVeriFactu == EstadoVeriFactu.PendienteVeriFactu))
             {
                 Contabilizar(factura);
             }
