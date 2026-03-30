@@ -26,6 +26,10 @@ public class Updater : ModuleUpdater
     public override void UpdateDatabaseAfterUpdateSchema()
     {
         base.UpdateDatabaseAfterUpdateSchema();
+
+        var dataSeedService = ObjectSpace.ServiceProvider?.GetService<IDataSeedService>();
+        dataSeedService?.Seed(ObjectSpace, TenantName, TenantId);
+
         ObjectSpace.CommitChanges();
     }
 
