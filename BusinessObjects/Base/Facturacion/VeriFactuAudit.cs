@@ -1,3 +1,4 @@
+using erp.Module.Helpers.Contactos;
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
@@ -10,11 +11,11 @@ namespace erp.Module.BusinessObjects.Base.Facturacion;
 public class VeriFactuAudit(Session session) : BaseObject(session)
 {
     private Guid _tenantId;
-    private string _invoiceId;
-    private string _numeroSerie;
-    private string _nifEmisor;
-    private string _estadoEnvio;
-    private string _batchId;
+    private string _invoiceId = string.Empty;
+    private string _numeroSerie = string.Empty;
+    private string _nifEmisor = string.Empty;
+    private string _estadoEnvio = string.Empty;
+    private string _batchId = string.Empty;
     private DateTime _fechaEnvio;
 
     [XafDisplayName("ID del Tenant")]
@@ -69,7 +70,7 @@ public class VeriFactuAudit(Session session) : BaseObject(session)
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        FechaEnvio = DateTime.Now;
+        FechaEnvio = InformacionEmpresaHelper.GetLocalTime(Session);
         EstadoEnvio = "Encolada";
     }
 }

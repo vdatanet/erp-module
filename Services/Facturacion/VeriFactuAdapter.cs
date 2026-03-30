@@ -138,8 +138,15 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger) : IVeriFactuAdap
             try
             {
                 logger.LogInformation("Llamando a InvoiceQueue.ActiveInvoiceQueue.Add para la factura {InvoiceID}...", veriFactuInvoice.InvoiceID);
-                InvoiceQueue.ActiveInvoiceQueue.Add(invoiceEntry);
-                logger.LogInformation("Factura {InvoiceID} añadida con éxito a ActiveInvoiceQueue.", veriFactuInvoice.InvoiceID);
+                if (InvoiceQueue.ActiveInvoiceQueue != null)
+                {
+                    InvoiceQueue.ActiveInvoiceQueue.Add(invoiceEntry);
+                    logger.LogInformation("Factura {InvoiceID} añadida con éxito a ActiveInvoiceQueue.", veriFactuInvoice.InvoiceID);
+                }
+                else
+                {
+                    logger.LogWarning("ActiveInvoiceQueue es nulo. No se pudo añadir la factura {InvoiceID} a la cola.", veriFactuInvoice.InvoiceID);
+                }
             }
             catch (Exception ex)
             {
