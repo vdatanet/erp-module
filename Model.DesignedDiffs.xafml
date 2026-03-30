@@ -237,6 +237,33 @@
         <ColumnInfo Id="Nombre" Index="0" />
       </Columns>
     </ListView>
+    <DetailView Id="DocumentoVentaLinea_DetailView" FreezeLayout="True" DefaultFocusedItem="Producto">
+      <Layout IsNewNode="True" Removed="True">
+        <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
+          <LayoutGroup Id="SimpleEditors" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
+            <LayoutGroup Id="DocumentoVentaLinea" Index="0" Direction="Horizontal" ShowCaption="True" Caption="Línea de Documento de Venta" RelativeSize="100" IsNewNode="True">
+              <LayoutGroup Id="DocumentoVentaLinea_col1" Index="0" ShowCaption="False" RelativeSize="49.950445986124876" IsNewNode="True">
+                <LayoutItem Id="Orden" ViewItem="Orden" ShowCaption="" Index="0" RelativeSize="3.5437430786267994" IsNewNode="True" />
+                <LayoutItem Id="Producto" ViewItem="Producto" ShowCaption="" Index="1" RelativeSize="2.6578073089700998" IsNewNode="True" />
+                <LayoutItem Id="NombreProducto" ViewItem="NombreProducto" Index="2" RelativeSize="82.28128460686601" IsNewNode="True" />
+                <LayoutItem Id="Cantidad" ViewItem="Cantidad" ShowCaption="" Index="3" RelativeSize="2.6578073089700998" IsNewNode="True" />
+                <LayoutItem Id="UnidadFacturacion" ViewItem="UnidadFacturacion" ShowCaption="" Index="4" RelativeSize="2.6578073089700998" IsNewNode="True" />
+                <LayoutItem Id="PrecioUnitario" ViewItem="PrecioUnitario" ShowCaption="" Index="5" RelativeSize="2.6578073089700998" IsNewNode="True" />
+                <LayoutItem Id="Descuento1" ViewItem="Descuento1" Index="6" RelativeSize="3.5437430786267994" IsNewNode="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="DocumentoVentaLinea_col2" Index="1" ShowCaption="False" RelativeSize="50.049554013875124" IsNewNode="True">
+                <LayoutItem Id="CuentaContable" ViewItem="CuentaContable" ShowCaption="" Index="0" RelativeSize="3.5437430786267994" IsNewNode="True" />
+                <LayoutItem Id="BaseImponible" ViewItem="BaseImponible" ShowCaption="" Index="1" RelativeSize="2.6578073089700998" IsNewNode="True" />
+                <LayoutItem Id="TiposImpuestoVenta" ViewItem="TiposImpuestoVenta" Index="2" RelativeSize="13.732004429678849" IsNewNode="True" />
+                <LayoutItem Id="ImporteImpuestos" ViewItem="ImporteImpuestos" ShowCaption="" Index="3" RelativeSize="2.6578073089700998" IsNewNode="True" />
+                <LayoutItem Id="ImporteTotal" ViewItem="ImporteTotal" ShowCaption="" Index="4" RelativeSize="2.6578073089700998" IsNewNode="True" />
+                <LayoutItem Id="Notas" ViewItem="Notas" Index="5" RelativeSize="74.75083056478405" IsNewNode="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
     <DetailView Id="FacturaVenta_DetailView" FreezeLayout="True">
       <Layout IsNewNode="True" Removed="True">
         <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
