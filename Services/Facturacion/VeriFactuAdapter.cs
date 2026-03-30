@@ -17,11 +17,12 @@ using Microsoft.Extensions.Configuration;
 namespace erp.Module.Services.Facturacion;
 
 /// <summary>
-/// Entrada de factura extendida para incluir el ID del tenant.
+/// Entrada de factura extendida para incluir el ID del tenant y un ID de correlación único.
 /// </summary>
-public class TenantAwareInvoiceEntry(Invoice invoice, Guid tenantId) : InvoiceEntry(invoice)
+public class TenantAwareInvoiceEntry(Invoice invoice, Guid tenantId, Guid correlationId) : InvoiceEntry(invoice)
 {
     public Guid TenantId { get; } = tenantId;
+    public Guid CorrelationId { get; } = correlationId;
 }
 
 public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger) : IVeriFactuAdapter
@@ -38,6 +39,7 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger) : IVeriFactuAdap
 
         var tenantProvider = companyInfo.Session.ServiceProvider?.GetService<DevExpress.ExpressApp.MultiTenancy.ITenantProvider>();
         var tenantId = tenantProvider?.TenantId ?? Guid.Empty;
+        var correlationId = Guid.NewGuid();
 
         string tenantNif = companyInfo.Nif ?? "Global";
         var semaphore = TenantSemaphores.GetOrAdd(tenantNif, _ => new SemaphoreSlim(1, 1));
@@ -47,7 +49,7 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger) : IVeriFactuAdap
         {
             await ConfigureVeriFactuAsync(companyInfo);
 
-            var invoiceEntry = new TenantAwareInvoiceEntry(veriFactuInvoice, tenantId);
+            var invoiceEntry = new TenantAwareInvoiceEntry(veriFactuInvoice, tenantId, correlationId);
             
             // Según requerimiento AEAT 5. Control de flujo:
             // Añadimos el documento a la cola de procesamiento activa.
@@ -121,6 +123,7 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger) : IVeriFactuAdap
                     using var hostOS = CreateHostObjectSpace(sp);
                     var audit = hostOS.CreateObject<VeriFactuAudit>();
                     audit.TenantId = tenantId;
+                    audit.CorrelationId = correlationId;
                     audit.InvoiceId = veriFactuInvoice.InvoiceID ?? string.Empty;
                     audit.NifEmisor = veriFactuInvoice.SellerID ?? string.Empty;
                     audit.NumeroSerie = companyInfo.PrefijoFacturasVentaPorDefecto ?? string.Empty;

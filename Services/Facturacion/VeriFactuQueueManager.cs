@@ -137,6 +137,30 @@ public class VeriFactuQueueManager
         string sellerNif = action.Invoice.SellerID;
         string invoiceId = action.Invoice.InvoiceID;
 
+        // Intentar obtener información de tenant y correlación desde la entrada de la cola
+        Guid? tenantIdFromAction = null;
+        Guid? correlationIdFromAction = null;
+
+        try
+        {
+            // InvoiceAction.Entry suele ser de tipo InvoiceEntry.
+            // En VeriFactuAdapter.SendInvoiceAsync estamos usando TenantAwareInvoiceEntry.
+            var entryProp = action.GetType().GetProperty("Entry");
+            var entry = entryProp?.GetValue(action);
+            
+            if (entry is TenantAwareInvoiceEntry tenantEntry)
+            {
+                tenantIdFromAction = tenantEntry.TenantId;
+                correlationIdFromAction = tenantEntry.CorrelationId;
+                _logger.LogInformation("VeriFactu: Información de tenant {TenantId} y correlación {CorrelationId} recuperada de la cola para factura {InvoiceId}", 
+                    tenantIdFromAction, correlationIdFromAction, invoiceId);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug("No se pudo extraer TenantAwareInvoiceEntry de la acción: {Msg}", ex.Message);
+        }
+
         using (var scope = _serviceProvider.CreateScope())
         {
             var objectSpaceFactory = scope.ServiceProvider.GetRequiredService<IObjectSpaceFactory>();
@@ -144,7 +168,51 @@ public class VeriFactuQueueManager
             
             if (tenantProvider == null) return;
 
-            // 1. Obtener todos los tenants del host para buscar por NIF
+            // 1. Intentar resolución directa por CorrelationId y TenantId (NUEVA LÓGICA OPTIMIZADA)
+            if (tenantIdFromAction.HasValue && correlationIdFromAction.HasValue)
+            {
+                try
+                {
+                    using (var hostOS = CreateHostObjectSpace(scope.ServiceProvider))
+                    {
+                        var audit = hostOS.FindObject<VeriFactuAudit>(CriteriaOperator.Parse("CorrelationId = ? AND TenantId = ?", correlationIdFromAction.Value, tenantIdFromAction.Value));
+                        if (audit != null)
+                        {
+                            _logger.LogInformation("VeriFactu: Registro de auditoría encontrado por CorrelationId {CorrelationId} en tenant {TenantID}", correlationIdFromAction, audit.TenantId);
+                            
+                            // Actualizar el registro de auditoría
+                            audit.EstadoEnvio = action.Status.ToString();
+                            if (error != null) audit.EstadoEnvio += " - Error: " + error.Message;
+                            hostOS.CommitChanges();
+
+                            var tenant = hostOS.GetObjectByKey<DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant>(audit.TenantId);
+                            if (tenant != null)
+                            {
+                                using (var tenantOS = objectSpaceFactory.CreateObjectSpace(typeof(InformacionEmpresa), tenant.Name))
+                                {
+                                    FacturaBase? invoice = null;
+                                    if (Guid.TryParse(invoiceId, out Guid invoiceGuid))
+                                        invoice = tenantOS.GetObjectByKey<FacturaBase>(invoiceGuid);
+                                    
+                                    invoice ??= tenantOS.FindObject<FacturaBase>(CriteriaOperator.Parse("Secuencia = ?", invoiceId));
+
+                                    if (invoice != null)
+                                    {
+                                        await UpdateInvoiceInternalAsync(scope.ServiceProvider, tenantOS, invoice, action, aeatResponse, error);
+                                        return; // ÉXITO: Resolución directa completada
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Error en resolución directa por CorrelationId para la factura {InvoiceId}", invoiceId);
+                }
+            }
+
+            // 2. Obtener todos los tenants del host (necesario para fallbacks)
             var originalTenantId = tenantProvider.TenantId;
             List<(Guid Oid, string Name)> tenants;
             try
@@ -167,8 +235,7 @@ public class VeriFactuQueueManager
                 tenantProvider.TenantId = originalTenantId;
             }
 
-            // 2. Buscar en qué tenant coincide el NIF y el ID de factura
-            // Intentar primero a través de VeriFactuAudit
+            // 3. Fallback 1: Buscar en qué tenant coincide el NIF y el ID de factura a través de VeriFactuAudit
             bool updatedByAudit = false;
             try
             {
@@ -235,7 +302,7 @@ public class VeriFactuQueueManager
 
             if (updatedByAudit) return;
 
-            // 3. Fallback: buscar en todos los tenants (lógica original)
+            // 4. Fallback 2: buscar en todos los tenants (lógica original)
             foreach (var tenant in tenants)
             {
                 try

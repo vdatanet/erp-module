@@ -16,9 +16,11 @@ public class VeriFactuAudit(Session session) : BaseObject(session)
     private string _nifEmisor = string.Empty;
     private string _estadoEnvio = string.Empty;
     private string _batchId = string.Empty;
+    private Guid _correlationId;
     private DateTime _fechaEnvio;
 
     [XafDisplayName("ID del Tenant")]
+    [Indexed]
     public Guid TenantId
     {
         get => _tenantId;
@@ -26,10 +28,19 @@ public class VeriFactuAudit(Session session) : BaseObject(session)
     }
 
     [XafDisplayName("ID de Factura (Secuencia)")]
+    [Indexed]
     public string InvoiceId
     {
         get => _invoiceId ?? string.Empty;
         set => SetPropertyValue(nameof(InvoiceId), ref _invoiceId, value);
+    }
+
+    [XafDisplayName("ID de Correlación")]
+    [Indexed]
+    public Guid CorrelationId
+    {
+        get => _correlationId;
+        set => SetPropertyValue(nameof(CorrelationId), ref _correlationId, value);
     }
 
     [XafDisplayName("Número de Serie")]
