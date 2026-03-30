@@ -1,3 +1,4 @@
+using erp.Module.BusinessObjects.Alquileres;
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Xpo;
 using DevExpress.Xpo;
@@ -201,30 +202,30 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace, IServicePr
         var mes = companyInfo.GetLocalTime().Month.ToString("D2");
 
         // Tipos de documentos y sus prefijos
-        var docTypes = new (Type Type, string Prefix)[]
+        var docTypes = new (Type Type, string Prefix, string Serie)[]
         {
-            (typeof(OfertaVenta), companyInfo.PrefijoOfertasVentaPorDefecto ?? ""),
-            (typeof(PedidoVenta), companyInfo.PrefijoPedidosPorDefecto ?? ""),
-            (typeof(AlbaranVenta), companyInfo.PrefijoAlbaranesVentaPorDefecto ?? ""),
-            (typeof(FacturaVenta), companyInfo.PrefijoFacturasVentaPorDefecto ?? ""),
-            (typeof(FacturaSimplificada), companyInfo.PrefijoFacturasSimplificadasPorDefecto ?? ""),
-            (typeof(OfertaCompra), companyInfo.PrefijoOfertasCompraPorDefecto ?? ""),
-            (typeof(PedidoCompra), companyInfo.PrefijoPedidosCompraPorDefecto ?? ""),
-            (typeof(AlbaranCompra), companyInfo.PrefijoAlbaranesCompraPorDefecto ?? ""),
-            (typeof(FacturaCompra), companyInfo.PrefijoFacturasCompraPorDefecto ?? ""),
-            (typeof(ParteTrabajo), companyInfo.PrefijoParteTrabajoPorDefecto ?? ""),
+            (typeof(OfertaVenta), companyInfo.PrefijoOfertasVentaPorDefecto ?? "", companyInfo.PrefijoOfertasVentaPorDefecto ?? ""),
+            (typeof(PedidoVenta), companyInfo.PrefijoPedidosPorDefecto ?? "", companyInfo.PrefijoPedidosPorDefecto ?? ""),
+            (typeof(AlbaranVenta), companyInfo.PrefijoAlbaranesVentaPorDefecto ?? "", companyInfo.PrefijoAlbaranesVentaPorDefecto ?? ""),
+            (typeof(FacturaVenta), companyInfo.PrefijoFacturasVentaPorDefecto ?? "", companyInfo.PrefijoFacturasVentaPorDefecto ?? ""),
+            (typeof(FacturaSimplificada), companyInfo.PrefijoFacturasSimplificadasPorDefecto ?? "", companyInfo.PrefijoFacturasSimplificadasPorDefecto ?? ""),
+            (typeof(OfertaCompra), companyInfo.PrefijoOfertasCompraPorDefecto ?? "", companyInfo.PrefijoOfertasCompraPorDefecto ?? ""),
+            (typeof(PedidoCompra), companyInfo.PrefijoPedidosCompraPorDefecto ?? "", companyInfo.PrefijoPedidosCompraPorDefecto ?? ""),
+            (typeof(AlbaranCompra), companyInfo.PrefijoAlbaranesCompraPorDefecto ?? "", companyInfo.PrefijoAlbaranesCompraPorDefecto ?? ""),
+            (typeof(FacturaCompra), companyInfo.PrefijoFacturasCompraPorDefecto ?? "", companyInfo.PrefijoFacturasCompraPorDefecto ?? ""),
+            (typeof(ParteTrabajo), companyInfo.PrefijoParteTrabajoPorDefecto ?? "", companyInfo.PrefijoParteTrabajoPorDefecto ?? ""),
         };
 
-        foreach (var (type, prefix) in docTypes)
+        foreach (var (type, prefix, serie) in docTypes)
         {
             if (string.IsNullOrEmpty(prefix)) continue;
 
             var sequenceName = companyInfo.TipoNumeracionDocumento switch
             {
-                TipoNumeracionDocumento.PrefijoNumero => $"{type.FullName}",
-                TipoNumeracionDocumento.PrefijoEjercicioNumero => $"{type.FullName}.{anio}",
-                TipoNumeracionDocumento.PrefijoEjercicioMesNumero => $"{type.FullName}.{anio}.{mes}",
-                _ => $"{type.FullName}.{anio}"
+                TipoNumeracionDocumento.PrefijoNumero => $"{type.FullName}.{serie}",
+                TipoNumeracionDocumento.PrefijoEjercicioNumero => $"{type.FullName}.{anio}.{serie}",
+                TipoNumeracionDocumento.PrefijoEjercicioMesNumero => $"{type.FullName}.{anio}.{mes}.{serie}",
+                _ => $"{type.FullName}.{anio}.{serie}"
             };
 
             SequenceFactory.EnsureSequenceExists(session, sequenceName, prefix, padding);
@@ -243,13 +244,7 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace, IServicePr
         {
             if (string.IsNullOrEmpty(prefix)) continue;
 
-            var sequenceName = companyInfo.TipoNumeracionDocumento switch
-            {
-                TipoNumeracionDocumento.PrefijoNumero => $"{type.FullName}",
-                TipoNumeracionDocumento.PrefijoEjercicioNumero => $"{type.FullName}.{anio}",
-                TipoNumeracionDocumento.PrefijoEjercicioMesNumero => $"{type.FullName}.{anio}.{mes}",
-                _ => $"{type.FullName}.{anio}"
-            };
+            var sequenceName = type.FullName ?? type.Name;
 
             SequenceFactory.EnsureSequenceExists(session, sequenceName, prefix, padding);
         }
@@ -278,6 +273,14 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace, IServicePr
             
             var fullPrefix = $"{prefix}/{tpvCodigo}";
             SequenceFactory.EnsureSequenceExists(session, sequenceName, fullPrefix, padding);
+        }
+
+        // Reservas
+        if (!string.IsNullOrEmpty(companyInfo.PrefijoReservas))
+        {
+            var sequenceName = $"erp.Module.BusinessObjects.Alquileres.Reserva.{anio}";
+            var prefix = $"{companyInfo.PrefijoReservas}/{anio}";
+            SequenceFactory.EnsureSequenceExists(session, sequenceName, prefix, padding);
         }
     }
 }

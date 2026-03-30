@@ -385,7 +385,7 @@ public class Reserva(Session session) : EventoBase(session), IReservaCalculable
                                  throw new UserFriendlyException("El prefijo de reservas no está configurado.");
                 string prefixSequence = $"{prefijo}/{Ejercicio.Anio}";
 
-                Numero = SequenceFactory.GetNextSequence(Session, $"{GetType().FullName}-{Ejercicio.Anio}",
+                Numero = SequenceFactory.GetNextSequence(Session, $"{GetType().FullName}.{Ejercicio.Anio}",
                     out var formattedSequence, prefixSequence, padding);
                 Secuencia = formattedSequence;
             }
