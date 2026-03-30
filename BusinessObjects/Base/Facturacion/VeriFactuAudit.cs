@@ -8,6 +8,7 @@ namespace erp.Module.BusinessObjects.Base.Facturacion;
 
 [NavigationItem("Facturación")]
 [XafDisplayName("Auditoría de Envíos VeriFactu")]
+[Indices("TenantId;InvoiceId", "CorrelationId")]
 public class VeriFactuAudit(Session session) : BaseObject(session)
 {
     private Guid _tenantId;

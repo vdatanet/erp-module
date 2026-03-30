@@ -138,246 +138,218 @@ public class VeriFactuQueueManager
         string invoiceId = action.Invoice.InvoiceID;
 
         // Intentar obtener información de tenant y correlación desde la entrada de la cola
-        Guid? tenantIdFromAction = null;
-        Guid? correlationIdFromAction = null;
+        var (tenantIdFromAction, correlationIdFromAction) = GetTenantAndCorrelationId(action);
 
+        using (var scope = _serviceProvider.CreateScope())
+        {
+            var sp = scope.ServiceProvider;
+            var objectSpaceFactory = sp.GetRequiredService<IObjectSpaceFactory>();
+
+            // 1. Intentar resolución directa por CorrelationId y TenantId (LÓGICA PREFERENTE)
+            if (tenantIdFromAction.HasValue && correlationIdFromAction.HasValue)
+            {
+                if (await TryUpdateByCorrelationAndTenantAsync(sp, tenantIdFromAction.Value, correlationIdFromAction.Value, invoiceId, action, aeatResponse, error))
+                {
+                    return;
+                }
+            }
+
+            // 2. Fallback 1: Buscar en el registro de auditoría global por InvoiceId y NifEmisor
+            if (await TryUpdateByAuditRegistryAsync(sp, invoiceId, sellerNif, action, aeatResponse, error))
+            {
+                return;
+            }
+
+            // 3. Fallback 2: Buscar en todos los tenants (SOLO EN DESARROLLO O COMO ÚLTIMO RECURSO)
+            var configuration = sp.GetService<IConfiguration>();
+            bool disableGlobalFallback = configuration?.GetValue<bool>("VeriFactu:DisableGlobalFallback") ?? true;
+
+            if (!disableGlobalFallback)
+            {
+                _logger.LogWarning("VeriFactu: Iniciando fallback global costoso para la factura {InvoiceId}. Este comportamiento debería evitarse en producción.", invoiceId);
+                await PerformGlobalTenantFallbackAsync(sp, invoiceId, sellerNif, action, aeatResponse, error);
+            }
+            else
+            {
+                _logger.LogWarning("VeriFactu: No se encontró la factura {InvoiceId} y el fallback global está deshabilitado.", invoiceId);
+            }
+        }
+    }
+
+    private (Guid? tenantId, Guid? correlationId) GetTenantAndCorrelationId(InvoiceAction action)
+    {
         try
         {
-            // InvoiceAction.Entry suele ser de tipo InvoiceEntry.
-            // En VeriFactuAdapter.SendInvoiceAsync estamos usando TenantAwareInvoiceEntry.
             var entryProp = action.GetType().GetProperty("Entry");
             var entry = entryProp?.GetValue(action);
-            
+
             if (entry is TenantAwareInvoiceEntry tenantEntry)
             {
-                tenantIdFromAction = tenantEntry.TenantId;
-                correlationIdFromAction = tenantEntry.CorrelationId;
-                _logger.LogInformation("VeriFactu: Información de tenant {TenantId} y correlación {CorrelationId} recuperada de la cola para factura {InvoiceId}", 
-                    tenantIdFromAction, correlationIdFromAction, invoiceId);
+                return (tenantEntry.TenantId, tenantEntry.CorrelationId);
             }
         }
         catch (Exception ex)
         {
             _logger.LogDebug("No se pudo extraer TenantAwareInvoiceEntry de la acción: {Msg}", ex.Message);
         }
+        return (null, null);
+    }
 
-        using (var scope = _serviceProvider.CreateScope())
+    private async Task<bool> TryUpdateByCorrelationAndTenantAsync(IServiceProvider sp, Guid tenantId, Guid correlationId, string invoiceId, InvoiceAction action, RespuestaRegFactuSistemaFacturacion? aeatResponse, Exception? error)
+    {
+        try
         {
-            var objectSpaceFactory = scope.ServiceProvider.GetRequiredService<IObjectSpaceFactory>();
-            var tenantProvider = scope.ServiceProvider.GetService<DevExpress.ExpressApp.MultiTenancy.ITenantProvider>();
-            
-            if (tenantProvider == null) return;
-
-            // 1. Intentar resolución directa por CorrelationId y TenantId (NUEVA LÓGICA OPTIMIZADA)
-            if (tenantIdFromAction.HasValue && correlationIdFromAction.HasValue)
+            using (var hostOS = CreateHostObjectSpace(sp))
             {
-                try
+                var audit = hostOS.FindObject<VeriFactuAudit>(CriteriaOperator.Parse("CorrelationId = ? AND TenantId = ?", correlationId, tenantId));
+                if (audit != null)
                 {
-                    using (var hostOS = CreateHostObjectSpace(scope.ServiceProvider))
+                    UpdateAuditStatus(audit, action, error);
+                    hostOS.CommitChanges();
+
+                    var tenant = hostOS.GetObjectByKey<DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant>(audit.TenantId);
+                    if (tenant != null)
                     {
-                        var audit = hostOS.FindObject<VeriFactuAudit>(CriteriaOperator.Parse("CorrelationId = ? AND TenantId = ?", correlationIdFromAction.Value, tenantIdFromAction.Value));
-                        if (audit != null)
+                        var objectSpaceFactory = sp.GetRequiredService<IObjectSpaceFactory>();
+                        using (var tenantOS = objectSpaceFactory.CreateObjectSpace(typeof(InformacionEmpresa), tenant.Name))
                         {
-                            _logger.LogInformation("VeriFactu: Registro de auditoría encontrado por CorrelationId {CorrelationId} en tenant {TenantID}", correlationIdFromAction, audit.TenantId);
-                            
-                            // Actualizar el registro de auditoría
-                            audit.EstadoEnvio = action.Status.ToString();
-                            if (error != null) audit.EstadoEnvio += " - Error: " + error.Message;
-                            hostOS.CommitChanges();
-
-                            var tenant = hostOS.GetObjectByKey<DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant>(audit.TenantId);
-                            if (tenant != null)
-                            {
-                                using (var tenantOS = objectSpaceFactory.CreateObjectSpace(typeof(InformacionEmpresa), tenant.Name))
-                                {
-                                    FacturaBase? invoice = null;
-                                    if (Guid.TryParse(invoiceId, out Guid invoiceGuid))
-                                        invoice = tenantOS.GetObjectByKey<FacturaBase>(invoiceGuid);
-                                    
-                                    invoice ??= tenantOS.FindObject<FacturaBase>(CriteriaOperator.Parse("Secuencia = ?", invoiceId));
-
-                                    if (invoice != null)
-                                    {
-                                        await UpdateInvoiceInternalAsync(scope.ServiceProvider, tenantOS, invoice, action, aeatResponse, error);
-                                        return; // ÉXITO: Resolución directa completada
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Error en resolución directa por CorrelationId para la factura {InvoiceId}", invoiceId);
-                }
-            }
-
-            // 2. Obtener todos los tenants del host (necesario para fallbacks)
-            var originalTenantId = tenantProvider.TenantId;
-            List<(Guid Oid, string Name)> tenants;
-            try
-            {
-                tenantProvider.TenantId = null; // Contexto host
-                using (var hostOS = CreateHostObjectSpace(scope.ServiceProvider))
-                {
-                    tenants = hostOS.GetObjects<DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant>()
-                        .Select(t => (t.Oid, t.Name))
-                        .ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error recuperando lista de tenants del host.");
-                return;
-            }
-            finally
-            {
-                tenantProvider.TenantId = originalTenantId;
-            }
-
-            // 3. Fallback 1: Buscar en qué tenant coincide el NIF y el ID de factura a través de VeriFactuAudit
-            bool updatedByAudit = false;
-            try
-            {
-                using (var hostOS = CreateHostObjectSpace(scope.ServiceProvider))
-                {
-                    var audit = hostOS.FindObject<VeriFactuAudit>(CriteriaOperator.Parse("InvoiceId = ? AND NifEmisor = ?", invoiceId, sellerNif));
-                    if (audit != null)
-                    {
-                        _logger.LogInformation("Registro de auditoría VeriFactuAudit encontrado para {InvoiceID} en tenant {TenantID}", invoiceId, audit.TenantId);
-                        
-                        // Actualizar el registro de auditoría
-                        audit.EstadoEnvio = action.Status.ToString();
-                        if (error != null) audit.EstadoEnvio += " - Error: " + error.Message;
-                        hostOS.CommitChanges();
-
-                        // Obtener el nombre del tenant para poder crear su ObjectSpace (DevExpress MultiTenancy usa el Name)
-                        string? tenantName = null;
-                        var tenant = hostOS.GetObjectByKey<DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant>(audit.TenantId);
-                        tenantName = tenant?.Name;
-
-                        if (tenantName != null)
-                        {
-                            // Ahora buscar la factura en el tenant indicado por el audit
-                            using (var tenantOS = objectSpaceFactory.CreateObjectSpace(typeof(InformacionEmpresa), tenantName))
-                            {
-                                // Verificamos si invoiceId es un Guid para evitar el error de casting en Oid
-                                FacturaBase? invoice = null;
-                                if (Guid.TryParse(invoiceId, out Guid invoiceGuid))
-                                {
-                                    invoice = tenantOS.FindObject<FacturaBase>(CriteriaOperator.Parse("Oid = ?", invoiceGuid));
-                                }
-                                    
-                                if (invoice == null)
-                                {
-                                    invoice = tenantOS.FindObject<FacturaBase>(CriteriaOperator.Parse("Secuencia = ?", invoiceId));
-                                }
-
-                                if (invoice == null)
-                                {
-                                    string cleanInvoiceId = invoiceId.Replace(" ", "").Replace("-", "").Replace("/", "").ToUpper();
-                                    invoice = tenantOS.GetObjects<FacturaBase>(null).FirstOrDefault(f => 
-                                        f.Secuencia != null && 
-                                        f.Secuencia.Replace(" ", "").Replace("-", "").Replace("/", "").ToUpper() == cleanInvoiceId);
-                                }
-
-                                if (invoice != null)
-                                {
-                                    await UpdateInvoiceInternalAsync(scope.ServiceProvider, tenantOS, invoice, action, aeatResponse, error);
-                                    updatedByAudit = true;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            _logger.LogWarning("No se encontró el nombre del tenant {TenantID} para el registro de auditoría de {InvoiceID}", audit.TenantId, invoiceId);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Error al intentar actualizar factura mediante VeriFactuAudit.");
-            }
-
-            if (updatedByAudit) return;
-
-            // 4. Fallback 2: buscar en todos los tenants (lógica original)
-            foreach (var tenant in tenants)
-            {
-                try
-                {
-                    using (var tenantOS = objectSpaceFactory.CreateObjectSpace(typeof(InformacionEmpresa), tenant.Oid.ToString()))
-                    {
-                        var info = tenantOS.FindObject<InformacionEmpresa>(null);
-                        
-                        // Normalizamos los NIFs para la comparación
-                        string? infoNif = info?.Nif?.Trim().ToUpper();
-                        string? normalizedSellerNif = sellerNif.Trim().ToUpper();
-
-                        _logger.LogTrace("Comparando NIF emisor {SellerNif} con NIF tenant {TenantNif} (Tenant: {TenantName})", 
-                            normalizedSellerNif, infoNif, tenant.Name);
-
-                        if (infoNif != null && (infoNif == normalizedSellerNif || infoNif == "ES" + normalizedSellerNif || normalizedSellerNif == "ES" + infoNif))
-                        {
-                            // Buscamos la factura por Oid o Secuencia. 
-                            // Verificamos si invoiceId es un Guid para evitar el error de casting en Oid
-                            FacturaBase? invoice = null;
-                            if (Guid.TryParse(invoiceId, out Guid invoiceGuid))
-                            {
-                                invoice = tenantOS.FindObject<FacturaBase>(CriteriaOperator.Parse("Oid = ?", invoiceGuid));
-                            }
-                            
-                            if (invoice == null)
-                            {
-                                invoice = tenantOS.FindObject<FacturaBase>(CriteriaOperator.Parse("Secuencia = ?", invoiceId));
-                            }
-                            
-                            if (invoice == null && invoiceId.Contains("/"))
-                            {
-                                // Si no se encuentra y parece un número de factura (serie/año/número), buscamos solo por Secuencia
-                                // Usamos una comparación más flexible (ignorando espacios/case)
-                                string normalizedInvoiceId = invoiceId.Replace(" ", "").ToUpper();
-                                invoice = tenantOS.FindObject<FacturaBase>(CriteriaOperator.FromLambda<FacturaBase>(f => f.Secuencia != null && f.Secuencia.Replace(" ", "").ToUpper() == normalizedInvoiceId));
-                            }
-
-                            if (invoice == null)
-                            {
-                                // Si aún no se encuentra, intentamos una búsqueda por Secuencia ignorando espacios y separadores comunes
-                                string cleanInvoiceId = invoiceId.Replace(" ", "").Replace("-", "").Replace("/", "").ToUpper();
-                                invoice = tenantOS.FindObject<FacturaBase>(CriteriaOperator.FromLambda<FacturaBase>(f => 
-                                    f.Secuencia != null && 
-                                    f.Secuencia.Replace(" ", "").Replace("-", "").Replace("/", "").ToUpper() == cleanInvoiceId));
-                            }
-
-                            if (invoice == null)
-                            {
-                                // Si aún no se encuentra, logueamos las últimas facturas para diagnóstico con detalles de limpieza
-                                var sorting = new List<SortProperty> { new SortProperty("Secuencia", DevExpress.Xpo.DB.SortingDirection.Descending) };
-                                var recentInvoices = tenantOS.GetObjects<FacturaBase>(null, sorting, false).Take(20).ToList();
-                                string recentSeqs = string.Join(", ", recentInvoices.Select(f => $"'{f.Secuencia}'"));
-                                string cleanInvoiceId = invoiceId.Replace(" ", "").Replace("-", "").Replace("/", "").ToUpper();
-                                
-                                _logger.LogDebug("Factura {Id} (Limpia: {CleanId}) no encontrada en tenant {Tenant}. Facturas recientes: {Recent}", 
-                                    invoiceId, cleanInvoiceId, tenant.Name, recentSeqs);
-                            }
-
+                            var invoice = FindInvoiceInTenant(tenantOS, invoiceId);
                             if (invoice != null)
                             {
-                                await UpdateInvoiceInternalAsync(scope.ServiceProvider, tenantOS, invoice, action, aeatResponse, error);
-                                return; // Éxito en el fallback
+                                await UpdateInvoiceInternalAsync(sp, tenantOS, invoice, action, aeatResponse, error);
+                                return true;
                             }
                         }
                     }
                 }
-                catch (Exception ex)
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error en resolución por CorrelationId {CorrelationId}", correlationId);
+        }
+        return false;
+    }
+
+    private async Task<bool> TryUpdateByAuditRegistryAsync(IServiceProvider sp, string invoiceId, string sellerNif, InvoiceAction action, RespuestaRegFactuSistemaFacturacion? aeatResponse, Exception? error)
+    {
+        try
+        {
+            using (var hostOS = CreateHostObjectSpace(sp))
+            {
+                var audit = hostOS.FindObject<VeriFactuAudit>(CriteriaOperator.Parse("InvoiceId = ? AND NifEmisor = ?", invoiceId, sellerNif));
+                if (audit != null)
                 {
-                    _logger.LogTrace("Búsqueda en tenant {Tenant} fallida o sin resultados: {Msg}", tenant.Name, ex.Message);
+                    UpdateAuditStatus(audit, action, error);
+                    hostOS.CommitChanges();
+
+                    var tenant = hostOS.GetObjectByKey<DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant>(audit.TenantId);
+                    if (tenant?.Name != null)
+                    {
+                        var objectSpaceFactory = sp.GetRequiredService<IObjectSpaceFactory>();
+                        using (var tenantOS = objectSpaceFactory.CreateObjectSpace(typeof(InformacionEmpresa), tenant.Name))
+                        {
+                            var invoice = FindInvoiceInTenant(tenantOS, invoiceId);
+                            if (invoice != null)
+                            {
+                                await UpdateInvoiceInternalAsync(sp, tenantOS, invoice, action, aeatResponse, error);
+                                return true;
+                            }
+                        }
+                    }
                 }
             }
-            
-            _logger.LogWarning("No se encontró la factura {InvoiceID} del emisor {Nif} en ningún tenant.", invoiceId, sellerNif);
         }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error al intentar actualizar mediante registro de auditoría para {InvoiceId}", invoiceId);
+        }
+        return false;
+    }
+
+    private async Task PerformGlobalTenantFallbackAsync(IServiceProvider sp, string invoiceId, string sellerNif, InvoiceAction action, RespuestaRegFactuSistemaFacturacion? aeatResponse, Exception? error)
+    {
+        var tenantProvider = sp.GetService<DevExpress.ExpressApp.MultiTenancy.ITenantProvider>();
+        if (tenantProvider == null) return;
+
+        var originalTenantId = tenantProvider.TenantId;
+        List<(Guid Oid, string Name)> tenants;
+        try
+        {
+            tenantProvider.TenantId = null;
+            using (var hostOS = CreateHostObjectSpace(sp))
+            {
+                tenants = hostOS.GetObjects<DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant>()
+                    .Select(t => (t.Oid, t.Name))
+                    .ToList();
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error recuperando lista de tenants del host.");
+            return;
+        }
+        finally
+        {
+            tenantProvider.TenantId = originalTenantId;
+        }
+
+        var objectSpaceFactory = sp.GetRequiredService<IObjectSpaceFactory>();
+        foreach (var tenant in tenants)
+        {
+            try
+            {
+                using (var tenantOS = objectSpaceFactory.CreateObjectSpace(typeof(InformacionEmpresa), tenant.Oid.ToString()))
+                {
+                    var info = tenantOS.FindObject<InformacionEmpresa>(null);
+                    if (IsNifMatch(info?.Nif, sellerNif))
+                    {
+                        var invoice = FindInvoiceInTenant(tenantOS, invoiceId);
+                        if (invoice != null)
+                        {
+                            await UpdateInvoiceInternalAsync(sp, tenantOS, invoice, action, aeatResponse, error);
+                            return;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogTrace("Búsqueda en tenant {Tenant} fallida: {Msg}", tenant.Name, ex.Message);
+            }
+        }
+    }
+
+    private FacturaBase? FindInvoiceInTenant(IObjectSpace os, string invoiceId)
+    {
+        if (Guid.TryParse(invoiceId, out Guid invoiceGuid))
+        {
+            var invoice = os.GetObjectByKey<FacturaBase>(invoiceGuid);
+            if (invoice != null) return invoice;
+        }
+
+        var foundInvoice = os.FindObject<FacturaBase>(CriteriaOperator.Parse("Secuencia = ?", invoiceId));
+        if (foundInvoice != null) return foundInvoice;
+
+        // Búsqueda flexible
+        string cleanInvoiceId = invoiceId.Replace(" ", "").Replace("-", "").Replace("/", "").ToUpper();
+        return os.GetObjects<FacturaBase>(null).FirstOrDefault(f =>
+            f.Secuencia != null &&
+            f.Secuencia.Replace(" ", "").Replace("-", "").Replace("/", "").ToUpper() == cleanInvoiceId);
+    }
+
+    private bool IsNifMatch(string? tenantNif, string sellerNif)
+    {
+        if (string.IsNullOrEmpty(tenantNif)) return false;
+        string tNif = tenantNif.Trim().ToUpper();
+        string sNif = sellerNif.Trim().ToUpper();
+        return tNif == sNif || tNif == "ES" + sNif || sNif == "ES" + tNif;
+    }
+
+    private void UpdateAuditStatus(VeriFactuAudit audit, InvoiceAction action, Exception? error)
+    {
+        audit.EstadoEnvio = action.Status.ToString();
+        if (error != null) audit.EstadoEnvio += " - Error: " + error.Message;
     }
 
     private async Task UpdateInvoiceInternalAsync(IServiceProvider serviceProvider, IObjectSpace tenantOS, FacturaBase invoice, InvoiceAction action, RespuestaRegFactuSistemaFacturacion? aeatResponse, Exception? error)
