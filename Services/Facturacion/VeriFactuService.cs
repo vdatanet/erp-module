@@ -148,10 +148,9 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
                 {
                     // Usamos dynamic o object temporal para evitar errores de compilación directos si el tipo es problemático
                     // pero el objetivo es asignar el valor del enum del negocio al enum de la librería
-                    var idTypeValue = (int)invoice.TipoIdentificacionCliente;
-                    if (Enum.IsDefined(typeof(VeriFactu.Xml.Factu.IDType), idTypeValue))
+                    if (Enum.TryParse<VeriFactu.Xml.Factu.IDType>(invoice.TipoIdentificacionCliente.ToString(), out var idType))
                     {
-                        veriFactuFactura.BuyerIDType = (VeriFactu.Xml.Factu.IDType)idTypeValue;
+                        veriFactuFactura.BuyerIDType = idType;
                     }
                 }
                 catch (Exception ex)
@@ -181,18 +180,28 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         {
             if (tax.TipoImpuesto == null) continue;
 
-            var opType = tax.TipoImpuesto.TipoOperacion != null
-                ? (VeriFactu.Xml.Factu.Alta.CalificacionOperacion)(int)tax.TipoImpuesto.TipoOperacion
-                : default;
+            VeriFactu.Xml.Factu.Alta.CalificacionOperacion opType = default;
+            if (tax.TipoImpuesto.TipoOperacion != null && Enum.TryParse<VeriFactu.Xml.Factu.Alta.CalificacionOperacion>(tax.TipoImpuesto.TipoOperacion.ToString(), out var op))
+            {
+                opType = op;
+            }
 
             var taxItem = new TaxItem
             {
                 TaxBase = tax.BaseImponible,
-                Tax = tax.TipoImpuesto.Impuesto != null ? (VeriFactu.Xml.Factu.Impuesto)(int)tax.TipoImpuesto.Impuesto : default,
                 TaxType = opType,
                 TaxScheme = tax.TipoImpuesto.RegimenFiscal ?? default,
-                TaxException = tax.TipoImpuesto.CausaExencion != null ? (VeriFactu.Xml.Factu.Alta.CausaExencion)(int)tax.TipoImpuesto.CausaExencion : default
             };
+
+            if (tax.TipoImpuesto.Impuesto != null && Enum.TryParse<VeriFactu.Xml.Factu.Impuesto>(tax.TipoImpuesto.Impuesto.ToString(), out var imp))
+            {
+                taxItem.Tax = imp;
+            }
+
+            if (tax.TipoImpuesto.CausaExencion != null && Enum.TryParse<VeriFactu.Xml.Factu.Alta.CausaExencion>(tax.TipoImpuesto.CausaExencion.ToString(), out var cau))
+            {
+                taxItem.TaxException = cau;
+            }
 
             // Cuando CalificacionOperacion sea “S2” TipoImpositivo y CuotaRepercutida deben ser 0
             if (opType == VeriFactu.Xml.Factu.Alta.CalificacionOperacion.S2)
