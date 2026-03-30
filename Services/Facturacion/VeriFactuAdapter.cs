@@ -68,10 +68,6 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger) : IVeriFactuAdap
 
             var invoiceEntry = new TenantAwareInvoiceEntry(veriFactuInvoice, tenantId, correlationId);
             
-            logger.LogInformation("--- Encolando Factura VeriFactu ---");
-            logger.LogInformation("InvoiceID: {InvoiceID} | SellerID: {SellerID} | Tenant: {TenantId}", 
-                veriFactuInvoice.InvoiceID, veriFactuInvoice.SellerID, tenantId);
-
             // Crear registro de auditoría preventivo en el HOST antes de añadir a la cola
             try
             {
@@ -91,7 +87,6 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger) : IVeriFactuAdap
                     audit.EstadoEnvio = "Encolada";
                     audit.FechaEnvio = InformacionEmpresaHelper.GetLocalTime(companyInfo.Session);
                     hostOS.CommitChanges();
-                    logger.LogTrace("VeriFactuAudit creado para {InvoiceID}", veriFactuInvoice.InvoiceID);
                 }
             }
             catch (Exception ex)
@@ -102,7 +97,6 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger) : IVeriFactuAdap
             if (InvoiceQueue.ActiveInvoiceQueue != null)
             {
                 InvoiceQueue.ActiveInvoiceQueue.Add(invoiceEntry);
-                logger.LogInformation("Factura {InvoiceID} añadida a ActiveInvoiceQueue.", veriFactuInvoice.InvoiceID);
             }
             else
             {
@@ -131,11 +125,8 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger) : IVeriFactuAdap
 
     private async Task ConfigureVeriFactuAsync(InformacionEmpresa companyInfo)
     {
-        logger.LogInformation("Iniciando configuración de VeriFactu para la empresa {Empresa} (NIF: {Nif})", companyInfo.Nombre, companyInfo.Nif);
-
         if (!string.IsNullOrEmpty(companyInfo.NombreArchivoConfigVeriFactu))
         {
-            logger.LogDebug("Estableciendo nombre de archivo de configuración: {Archivo}", companyInfo.NombreArchivoConfigVeriFactu);
             Settings.SetConfigFileName(companyInfo.NombreArchivoConfigVeriFactu);
         }
 
@@ -181,7 +172,6 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger) : IVeriFactuAdap
             if (!Directory.Exists(baseDataDir)) Directory.CreateDirectory(baseDataDir);
 
             string certPath = Path.Combine(baseDataDir, "cert_verifactu.pfx");
-            logger.LogDebug("Procesando certificado. Ruta: {CertPath}", certPath);
             
             // Usar FileStream síncrono para asegurar el cierre inmediato del archivo
             using (var stream = new FileStream(certPath, FileMode.Create, FileAccess.Write, FileShare.None))
@@ -219,26 +209,14 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger) : IVeriFactuAdap
             string hardwareId = MachineIdentifier.GetMachineId();
             string suffix = companyInfo.ActivarVeriFactu ? "PROD" : "TEST";
             Settings.Current.SistemaInformatico.NumeroInstalacion = $"INST-{hardwareId}-{suffix}";
-            logger.LogDebug("Sistema informático configurado. NumeroInstalacion: {NumeroInstalacion}", Settings.Current.SistemaInformatico.NumeroInstalacion);
         }
 
-        // Logs de rutas de configuración para diagnóstico
-        logger.LogInformation("Rutas de trabajo de VeriFactu (Settings.Current): \n" +
-                              "- LogPath: {LogPath}\n" +
-                              "- InboxPath: {InboxPath}\n" +
-                              "- OutboxPath: {OutboxPath}\n" +
-                              "- BlockchainPath: {BlockchainPath}\n" +
-                              "- InvoicePath: {InvoicePath}\n" +
-                              "- CertificatePath: {CertificatePath}",
-            Settings.Current.LogPath, Settings.Current.InboxPath, Settings.Current.OutboxPath, 
-            Settings.Current.BlockchainPath, Settings.Current.InvoicePath, Settings.Current.CertificatePath);
+        // Según documentación oficial, activamos el log
+        Settings.Current.LoggingEnabled = true;
 
-        // Guardo los cambios según la documentación
-        logger.LogInformation("Guardando configuración de VeriFactu llamando a Settings.Save().");
         try
         {
             Settings.Save();
-            logger.LogInformation("Configuración de VeriFactu guardada correctamente.");
         }
         catch (Exception ex)
         {

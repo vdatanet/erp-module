@@ -53,41 +53,13 @@ public class VeriFactuQueueManager
     /// </summary>
     private void OnSentFinished(List<InvoiceAction> invoiceActionList, RespuestaRegFactuSistemaFacturacion aeatResponse)
     {
-        _logger.LogInformation("VeriFactu: Envío de lote finalizado con éxito. Respuesta AEAT: {Response}", aeatResponse);
-        
         // Registrar detalles del lote
         if (invoiceActionList.Count > 0)
         {
             var firstAction = invoiceActionList[0];
             var (batchTenantId, _) = GetTenantAndCorrelationId(firstAction);
-            _logger.LogInformation("VeriFactu: Procesando respuesta de lote con {Count} facturas. TenantId detectado en primera acción: {TenantId}", 
+            _logger.LogInformation("VeriFactu: Procesando respuesta de lote con {Count} facturas. TenantId: {TenantId}", 
                 invoiceActionList.Count, batchTenantId);
-        }
-
-        // Mostrar en log de la respuesta completa de la agencia tributaria
-        if (_logger.IsEnabled(LogLevel.Debug))
-        {
-            try
-            {
-                var serializedResponse = SerializeRespuesta(aeatResponse);
-                _logger.LogDebug("VeriFactu: Respuesta completa AEAT:\n{FullResponse}", serializedResponse);
-                
-                // También intentar mostrar el XML crudo (ResponseEnvelope) si está disponible en la primera acción
-                if (invoiceActionList.Count > 0)
-                {
-                    var action = invoiceActionList[0];
-                    var responseEnvelopeProp = action.GetType().GetProperty("ResponseEnvelope");
-                    var envelope = responseEnvelopeProp?.GetValue(action);
-                    if (envelope != null)
-                    {
-                        _logger.LogDebug("VeriFactu: XML de respuesta AEAT (ResponseEnvelope):\n{XmlResponse}", envelope);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogDebug("VeriFactu: No se pudo obtener detalles de la respuesta AEAT para el log: {Msg}", ex.Message);
-            }
         }
 
         // Procesar todas las facturas del lote de forma asíncrona pero rastreable
@@ -105,7 +77,7 @@ public class VeriFactuQueueManager
         {
             var firstAction = invoiceActionList[0];
             var (batchTenantId, _) = GetTenantAndCorrelationId(firstAction);
-            _logger.LogWarning("VeriFactu: Procesando error de lote con {Count} facturas. TenantId detectado en primera acción: {TenantId}", 
+            _logger.LogWarning("VeriFactu: Procesando error de lote con {Count} facturas. TenantId: {TenantId}", 
                 invoiceActionList.Count, batchTenantId);
         }
 
@@ -136,9 +108,6 @@ public class VeriFactuQueueManager
 
     private async Task ProcessInvoiceActionAsync(InvoiceAction action, RespuestaRegFactuSistemaFacturacion? aeatResponse, Exception? error)
     {
-        _logger.LogInformation("Procesando acción de factura {InvoiceID}. Resultado: {Status}. Error: {Error}", 
-            action.Invoice?.InvoiceID, action.Status, error?.Message ?? "Ninguno");
-
         if (action.Invoice == null) return;
 
         var (tenantId, correlationId) = GetTenantAndCorrelationId(action);
@@ -590,30 +559,6 @@ public class VeriFactuQueueManager
         {
             if (aeatResponse != null)
             {
-                _logger.LogTrace("Extrayendo detalles de aeatResponse para {Id}", invoiceId);
-                
-                // Mostrar en log de la respuesta completa
-                if (_logger.IsEnabled(LogLevel.Debug))
-                {
-                    try
-                    {
-                        _logger.LogDebug("VeriFactu: Procesando respuesta completa para factura {Id}:\n{FullResponse}", 
-                            invoiceId, SerializeRespuesta(aeatResponse));
-
-                        // Intentar obtener el XML crudo para el log
-                        var responseEnvelopePropDebug = action.GetType().GetProperty("ResponseEnvelope");
-                        var envelopeDebug = responseEnvelopePropDebug?.GetValue(action);
-                        if (envelopeDebug != null)
-                        {
-                            _logger.LogDebug("VeriFactu: XML de respuesta para factura {Id} (ResponseEnvelope):\n{XmlResponse}", invoiceId, envelopeDebug);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogDebug("VeriFactu: No se pudo obtener detalles de la respuesta AEAT para la factura {Id}: {Msg}", invoiceId, ex.Message);
-                    }
-                }
-                
                 // Extraer CSV de la respuesta global
                 var csvProp = aeatResponse.GetType().GetProperty("CSV");
                 csv = csvProp?.GetValue(aeatResponse) as string;
@@ -790,7 +735,6 @@ public class VeriFactuQueueManager
             
             veriFactuService.UpdateInvoiceFromResponse(tenantOS, invoice, response, action.Invoice);
             tenantOS.CommitChanges();
-            _logger.LogInformation("Factura {Id} actualizada correctamente.", invoiceId);
         }
         catch (Exception ex)
         {
