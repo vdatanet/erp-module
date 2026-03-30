@@ -237,6 +237,26 @@
         <ColumnInfo Id="Nombre" Index="0" />
       </Columns>
     </ListView>
+    <ListView Id="DocumentoVenta_Lineas_ListView">
+      <Columns>
+        <ColumnInfo Id="CuentaContable" Index="-1" Width="109" />
+        <ColumnInfo Id="Descuento2" Index="-1" Width="98" />
+        <ColumnInfo Id="Descuento3" Index="-1" Width="98" />
+        <ColumnInfo Id="Grupo" Index="-1" />
+        <ColumnInfo Id="Producto" Index="-1" Width="69" />
+        <ColumnInfo Id="TextoDescuento" Index="-1" Width="103" />
+        <ColumnInfo Id="Orden" Index="0" Width="66" SortIndex="0" SortOrder="Ascending" />
+        <ColumnInfo Id="NombreProducto" Index="1" Width="111" SortIndex="-1" SortOrder="None" />
+        <ColumnInfo Id="Cantidad" Index="2" Width="68" />
+        <ColumnInfo Id="UnidadFacturacion" Index="3" Width="118" />
+        <ColumnInfo Id="PrecioUnitario" Index="4" Width="98" />
+        <ColumnInfo Id="Descuento1" Index="5" Width="98" />
+        <ColumnInfo Id="BaseImponible" Index="6" Width="101" />
+        <ColumnInfo Id="ImporteImpuestos" Index="7" Width="120" />
+        <ColumnInfo Id="ImporteTotal" Index="8" Width="47" />
+        <ColumnInfo Id="Notas" Index="9" Width="51" />
+      </Columns>
+    </ListView>
     <DetailView Id="DocumentoVentaLinea_DetailView" FreezeLayout="True" DefaultFocusedItem="Producto">
       <Layout IsNewNode="True" Removed="True">
         <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">

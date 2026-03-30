@@ -217,7 +217,7 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
     [ModelDefault("AllowEdit", "False")]
-    [XafDisplayName("Impuestos")]
+    [XafDisplayName("Importe Impuestos")]
     public decimal ImporteImpuestos
     {
         get => _importeImpuestos;
