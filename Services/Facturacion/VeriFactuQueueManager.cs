@@ -600,13 +600,8 @@ public class VeriFactuQueueManager
                 var csvProp = aeatResponse.GetType().GetProperty("CSV");
                 csv = csvProp?.GetValue(aeatResponse) as string;
 
-                // Extraer BatchId (TransactionId/CSV)
-                var batchIdProp = action.GetType().GetProperty("TransactionID") ?? action.GetType().GetProperty("BatchID") ?? action.GetType().GetProperty("CSV");
-                batchId = batchIdProp?.GetValue(action) as string;
-                if (string.IsNullOrEmpty(batchId))
-                {
-                    batchId = csv;
-                }
+                // Extraer BatchId usando lógica centralizada
+                batchId = ExtractBatchId(action, aeatResponse);
 
                 // Intentar obtener el XML de la respuesta de action.ResponseEnvelope (si existe)
                 var responseEnvelopeProp = action.GetType().GetProperty("ResponseEnvelope");
