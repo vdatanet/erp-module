@@ -35,20 +35,22 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
             return;
         }
 
-#if DEBUG
-        // En modo DEBUG, si estamos en el Host, queremos crear el usuario 'admin' administrador.
+        // Si el ObjectSpace conoce el tipo Tenant, estamos en el Host.
         if (objectSpace.IsKnownType(typeof(DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant)))
         {
             // Intentamos obtener el TenantId del ServiceProvider para ver si realmente estamos en el Host.
             // En el Host el TenantId debería ser nulo.
             var isHost = true;
-            try {
+            try
+            {
                 var tenantProvider = objectSpace.ServiceProvider?.GetService(typeof(DevExpress.ExpressApp.MultiTenancy.ITenantProvider)) as DevExpress.ExpressApp.MultiTenancy.ITenantProvider;
                 if (tenantProvider != null && tenantProvider.TenantId != null)
                 {
                     isHost = false;
                 }
-            } catch {
+            }
+            catch
+            {
                 // Si no se puede obtener el provider, confiamos en IsKnownType pero sin return prematuro si no estamos seguros
             }
 
@@ -65,7 +67,7 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
                     adminUser.SetPassword("");
                     adminUser.ChangePasswordOnFirstLogon = true;
                     adminUser.Roles.Add(adminRole);
-                    
+
                     if (adminUser is ISecurityUserWithLoginInfo userWithLoginInfo)
                     {
                         userWithLoginInfo.CreateUserLoginInfo(DevExpress.ExpressApp.Security.SecurityDefaults.PasswordAuthentication, adminUserName);
@@ -75,21 +77,12 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
                 // Crear un tenant de ejemplo 'demo' en postgresql local
                 var tenantSetup = new TenantSetupService(objectSpace);
                 tenantSetup.CreateTenant("demo", "erp_demo", "postgres", "db-local", "postgres", "");
-                
+
                 objectSpace.CommitChanges();
                 return;
             }
         }
-#else
-        // Si el ObjectSpace conoce el tipo Tenant, estamos en el Host.
-        // El usuario indica que la siembra solo debe hacerse en el tenant.
-        if (objectSpace.IsKnownType(typeof(DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant)))
-        {
-            return;
-        }
-#endif
 
-#if DEBUG
         new SecuritySetupService(objectSpace).CreateRolesAndUsers(tenantName);
         objectSpace.CommitChanges();
 
@@ -126,6 +119,5 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
         // una vez ya han sido creadas por ContabilidadSetupService
         new InformacionEmpresaSetupService(objectSpace, serviceProvider).CreateInitialInformacionEmpresa(tenantName);
         objectSpace.CommitChanges();
-#endif
     }
 }
