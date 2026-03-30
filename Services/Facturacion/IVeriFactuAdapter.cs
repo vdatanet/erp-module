@@ -17,4 +17,5 @@ public record VeriFactuResponse(
     byte[]? Xml, 
     string? CSV,
     string? ValidationUrl,
-    byte[]? QrData);
+    byte[]? QrData,
+    string? BatchId = null);

@@ -2,6 +2,7 @@
 using DevExpress.ExpressApp.MultiTenancy;
 using DevExpress.ExpressApp.Updating;
 using erp.Module.BusinessObjects;
+using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.Services.Setup;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -50,8 +51,15 @@ public class Updater : ModuleUpdater
     public override void UpdateDatabaseBeforeUpdateSchema()
     {
         base.UpdateDatabaseBeforeUpdateSchema();
-        //if(CurrentDBVersion < new Version("1.1.0.0") && CurrentDBVersion > new Version("0.0.0.0")) {
-        //    RenameColumn("DomainObject1Table", "OldColumnName", "NewColumnName");
-        //}
+
+        if (ObjectSpace is DevExpress.ExpressApp.Xpo.XPObjectSpace xpObjectSpace)
+        {
+            var session = xpObjectSpace.Session;
+            try
+            {
+                session.UpdateSchema(typeof(FacturaBase));
+            }
+            catch { /* Silencioso */ }
+        }
     }
 }

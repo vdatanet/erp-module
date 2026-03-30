@@ -245,6 +245,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             }
             invoice.UrlValidacion = veriFactuResponse.ValidationUrl;
             invoice.Csv = veriFactuResponse.CSV;
+            invoice.BatchId = veriFactuResponse.BatchId;
             
             if (veriFactuResponse.QrData != null)
             {

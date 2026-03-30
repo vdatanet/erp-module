@@ -29,6 +29,7 @@ namespace erp.Module.BusinessObjects.Base.Facturacion;
 public abstract class FacturaBase(Session session) : DocumentoVenta(session)
 {
 
+    private string? _batchId;
     private TipoFacturaAmigable _tipoFacturaAmigable;
     private TipoRectificativaAmigable _tipoRectificativaAmigable;
     private Diario? _diarioVentas;
@@ -48,6 +49,15 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     private string? _urlValidacion;
     private string? _xmlAgenciaTributaria;
     private EstadoFactura _estadoFactura;
+
+    [ModelDefault("AllowEdit", "False")]
+    [NonCloneable]
+    [XafDisplayName("ID de Lote (Batch/Transaction)")]
+    public string? BatchId
+    {
+        get => _batchId;
+        set => SetPropertyValue(nameof(BatchId), ref _batchId, value);
+    }
 
     [XafDisplayName("Diario Ventas")]
     [DataSourceCriteria("EstaActivo = True")]

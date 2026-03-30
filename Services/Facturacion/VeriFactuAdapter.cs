@@ -120,6 +120,7 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger) : IVeriFactuAdap
             null,
             null,
             null,
+            null,
             null);
     }
 

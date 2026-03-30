@@ -263,6 +263,14 @@ public class VeriFactuQueueManager
                         return false;
                     }
 
+                    // Validación de BatchId para reforzar la correlación técnica
+                    string? responseBatchId = ExtractBatchId(action, aeatResponse);
+                    if (!string.IsNullOrEmpty(audit.BatchId) && !string.IsNullOrEmpty(responseBatchId) && audit.BatchId != responseBatchId)
+                    {
+                        _logger.LogWarning("[DISCREPANCIA LOTE] El BatchId en auditoría ({AuditBatch}) no coincide con el de la respuesta ({RespBatch}) para CorrelationId {CorrId}. Se actualizará al nuevo valor.", 
+                            audit.BatchId, responseBatchId, correlationId);
+                    }
+
                     UpdateAuditStatus(audit, action, aeatResponse, error);
                     hostOS.CommitChanges();
 
@@ -328,6 +336,14 @@ public class VeriFactuQueueManager
                 var audit = audits.FirstOrDefault();
                 if (audit != null)
                 {
+                    // Validación de BatchId si está disponible
+                    string? responseBatchId = ExtractBatchId(action, aeatResponse);
+                    if (!string.IsNullOrEmpty(audit.BatchId) && !string.IsNullOrEmpty(responseBatchId) && audit.BatchId != responseBatchId)
+                    {
+                        _logger.LogWarning("[DISCREPANCIA LOTE] El BatchId en auditoría ({AuditBatch}) no coincide con el de la respuesta ({RespBatch}) para InvoiceId {InvId}. Posible reintento o cruce.", 
+                            audit.BatchId, responseBatchId, invoiceId);
+                    }
+
                     UpdateAuditStatus(audit, action, aeatResponse, error);
                     hostOS.CommitChanges();
 
@@ -440,6 +456,15 @@ public class VeriFactuQueueManager
                 if (foundCandidates.Count == 1)
                 {
                     var candidate = foundCandidates[0];
+
+                    // Verificación adicional de BatchId en la factura si existe
+                    string? responseBatchId = ExtractBatchId(action, aeatResponse);
+                    if (!string.IsNullOrEmpty(candidate.Invoice.BatchId) && !string.IsNullOrEmpty(responseBatchId) && candidate.Invoice.BatchId != responseBatchId)
+                    {
+                        _logger.LogWarning("[DISCREPANCIA LOTE] En fallback global, la factura {InvId} tiene BatchId {FactBatch} pero la respuesta indica {RespBatch}.", 
+                            invoiceId, candidate.Invoice.BatchId, responseBatchId);
+                    }
+
                     _logger.LogInformation("Factura {InvoiceId} resuelta mediante fallback global en tenant {Tenant}.", invoiceId, candidate.TenantName);
                     
                     try 
@@ -490,6 +515,31 @@ public class VeriFactuQueueManager
         return tNif == sNif || tNif == "ES" + sNif || sNif == "ES" + tNif;
     }
 
+    private string? ExtractBatchId(InvoiceAction action, RespuestaRegFactuSistemaFacturacion? aeatResponse)
+    {
+        try
+        {
+            var batchIdProp = action.GetType().GetProperty("BatchId") ?? 
+                             action.GetType().GetProperty("TransactionId") ?? 
+                             action.GetType().GetProperty("TransactionID") ?? 
+                             action.GetType().GetProperty("BatchID");
+            
+            var batchId = batchIdProp?.GetValue(action)?.ToString();
+            
+            if (string.IsNullOrEmpty(batchId) && aeatResponse != null)
+            {
+                var csvProp = aeatResponse.GetType().GetProperty("CSV");
+                batchId = csvProp?.GetValue(aeatResponse) as string;
+            }
+            
+            return batchId;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     private void UpdateAuditStatus(VeriFactuAudit audit, InvoiceAction action, RespuestaRegFactuSistemaFacturacion? aeatResponse, Exception? error)
     {
         string prefix = "";
@@ -507,25 +557,11 @@ public class VeriFactuQueueManager
         if (error != null) audit.EstadoEnvio += " - Detalle: " + error.Message;
         
         // Registrar BatchId si está disponible en la acción o en la respuesta AEAT
-        try
+        string? batchId = ExtractBatchId(action, aeatResponse);
+        if (!string.IsNullOrEmpty(batchId))
         {
-            // Intentar obtener BatchId/TransactionId de la acción (específico de la línea)
-            var batchIdProp = action.GetType().GetProperty("BatchId") ?? action.GetType().GetProperty("TransactionId");
-            var batchId = batchIdProp?.GetValue(action)?.ToString();
-            
-            // Si no está en la acción, intentar obtener el CSV de la respuesta global (común para todo el lote)
-            if (string.IsNullOrEmpty(batchId) && aeatResponse != null)
-            {
-                var csvProp = aeatResponse.GetType().GetProperty("CSV");
-                batchId = csvProp?.GetValue(aeatResponse) as string;
-            }
-
-            if (!string.IsNullOrEmpty(batchId))
-            {
-                audit.BatchId = batchId;
-            }
+            audit.BatchId = batchId;
         }
-        catch { /* Ignorar errores de reflexión */ }
     }
 
     private async Task UpdateInvoiceInternalAsync(IServiceProvider serviceProvider, IObjectSpace tenantOS, FacturaBase invoice, InvoiceAction action, RespuestaRegFactuSistemaFacturacion? aeatResponse, Exception? error)
@@ -554,6 +590,7 @@ public class VeriFactuQueueManager
         string? validationUrl = null;
         byte[]? qrData = null;
         byte[]? xmlData = null;
+        string? batchId = null;
 
         try
         {
@@ -562,6 +599,14 @@ public class VeriFactuQueueManager
                 // Extraer CSV de la respuesta global
                 var csvProp = aeatResponse.GetType().GetProperty("CSV");
                 csv = csvProp?.GetValue(aeatResponse) as string;
+
+                // Extraer BatchId (TransactionId/CSV)
+                var batchIdProp = action.GetType().GetProperty("TransactionID") ?? action.GetType().GetProperty("BatchID") ?? action.GetType().GetProperty("CSV");
+                batchId = batchIdProp?.GetValue(action) as string;
+                if (string.IsNullOrEmpty(batchId))
+                {
+                    batchId = csv;
+                }
 
                 // Intentar obtener el XML de la respuesta de action.ResponseEnvelope (si existe)
                 var responseEnvelopeProp = action.GetType().GetProperty("ResponseEnvelope");
@@ -726,7 +771,8 @@ public class VeriFactuQueueManager
             xmlData,
             csv,
             validationUrl,
-            qrData);
+            qrData,
+            batchId);
 
         try
         {
