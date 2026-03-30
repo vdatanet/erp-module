@@ -1,18 +1,15 @@
-using System.ComponentModel;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Editors;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 using DevExpress.Xpo.Metadata;
-using erp.Module.BusinessObjects.Auxiliares;
-using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Base.Comun;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Impuestos;
+using erp.Module.BusinessObjects.Productos;
 using erp.Module.Helpers.Comun;
 using erp.Module.Helpers.Contactos;
-using erp.Module.BusinessObjects.Ventas;
 using erp.Module.Services.Productos;
 
 namespace erp.Module.BusinessObjects.Base.Ventas;
@@ -22,18 +19,19 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
 {
     private decimal _baseImponible;
     private decimal _cantidad;
+    private CuentaContable? _cuentaContable;
+    private decimal _descuento1;
+    private decimal _descuento2;
+    private decimal _descuento3;
     private DocumentoVenta? _documentoVenta;
+    private DocumentoVentaGrupo? _grupo;
     private decimal _importeImpuestos;
     private decimal _importeTotal;
     private string? _nombreProducto;
     private string? _notas;
-    private decimal _descuento1;
-    private decimal _descuento2;
-    private decimal _descuento3;
+    private int _orden;
     private decimal _precioUnitario;
     private Producto? _producto;
-    private CuentaContable? _cuentaContable;
-    private DocumentoVentaGrupo? _grupo;
     private UnidadFacturacion? _unidadFacturacion;
 
 
@@ -42,7 +40,14 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
     public DocumentoVenta? DocumentoVenta
     {
         get => _documentoVenta;
-        set => SetPropertyValue(nameof(DocumentoVenta), ref _documentoVenta, value);
+        set
+        {
+            var modified = SetPropertyValue(nameof(DocumentoVenta), ref _documentoVenta, value);
+            if (!modified || IsLoading || IsSaving || IsDeleted || value == null || Orden != 0) return;
+
+            var maxOrden = value.Lineas.Max(l => (int?)l.Orden) ?? -5;
+            Orden = maxOrden + 5;
+        }
     }
 
     [Association("DocumentoVentaGrupo-Lineas")]
@@ -53,23 +58,14 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Grupo), ref _grupo, value);
     }
 
-    [DataSourceCriteria("EstaActiva = True AND EsAsentable = True")]
-    [XafDisplayName("Cuenta Contable")]
-    public CuentaContable? CuentaContable
+    [XafDisplayName("Orden")]
+    public int Orden
     {
-        get => _cuentaContable;
-        set => SetPropertyValue(nameof(CuentaContable), ref _cuentaContable, value);
-    }
-
-    [XafDisplayName("Unidad de Facturación")]
-    public UnidadFacturacion? UnidadFacturacion
-    {
-        get => _unidadFacturacion;
-        set => SetPropertyValue(nameof(UnidadFacturacion), ref _unidadFacturacion, value);
+        get => _orden;
+        set => SetPropertyValue(nameof(Orden), ref _orden, value);
     }
 
     [ImmediatePostData]
-    [LookupEditorMode(LookupEditorMode.Search)]
     [XafDisplayName("Producto")]
     public Producto? Producto
     {
@@ -82,90 +78,12 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
         }
     }
 
-    /// <summary>
-    /// Regla de negocio: Al asignar un producto se actualizan los datos de la línea 
-    /// (nombre, precio, cuenta contable e impuestos) desde el producto.
-    /// </summary>
-    public virtual void AsignarProducto(Producto? value)
-    {
-        BorrarImpuestosProducto();
-
-        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
-        if (companyInfo != null)
-        {
-            CuentaContable = companyInfo.CuentaVentasPorDefecto;
-            UnidadFacturacion = companyInfo.UnidadFacturacionPredeterminada;
-            foreach (var tax in companyInfo.ImpuestosVentas.OrderBy(t => t.Secuencia))
-                TiposImpuestoVenta.Add(tax);
-        }
-
-        if (value == null)
-        {
-            NombreProducto = null;
-            Notas = null;
-            PrecioUnitario = 0m;
-            // No reseteamos cantidad ni descuento por defecto si se quita el producto, 
-            // aunque se podría valorar.
-            RecalcularYNotificar();
-            return;
-        }
-
-        NombreProducto = value.Nombre;
-        Notas = value.Notas;
-        PrecioUnitario = value.PrecioVenta;
-
-        if (DocumentoVenta?.Cliente != null)
-        {
-            var localTime = InformacionEmpresaHelper.GetLocalTime(Session);
-            var precioEspecial = PrecioEspecialService.GetPrecioEspecialActivo(value, DocumentoVenta.Cliente, ContextoPrecio.Venta, localTime);
-            if (precioEspecial != null)
-            {
-                PrecioUnitario = precioEspecial.Precio;
-                Descuento1 = precioEspecial.Descuento1;
-                Descuento2 = precioEspecial.Descuento2;
-                Descuento3 = precioEspecial.Descuento3;
-            }
-        }
-
-        CuentaContable = value.CuentaVentas ?? CuentaContable;
-        UnidadFacturacion = value.UnidadFacturacion ?? UnidadFacturacion;
-
-        if (value.ImpuestosVentas.Count > 0)
-        {
-            BorrarImpuestosProducto();
-            foreach (var tax in value.ImpuestosVentas.OrderBy(t => t.Secuencia))
-                TiposImpuestoVenta.Add(tax);
-        }
-
-        if (Cantidad == 0m)
-            Cantidad = 1m;
-
-        RecalcularYNotificar();
-        OnAsignarProductoFinished();
-    }
-
-    protected virtual void OnAsignarProductoFinished()
-    {
-    }
-
-    protected virtual void OnCantidadChanged()
-    {
-    }
-
     [Size(SizeAttribute.Unlimited)]
-    [XafDisplayName("Nombre Producto")]
+    [XafDisplayName("Descripción")]
     public string? NombreProducto
     {
         get => _nombreProducto;
         set => SetPropertyValue(nameof(NombreProducto), ref _nombreProducto, value);
-    }
-
-    [Size(SizeAttribute.Unlimited)]
-    [XafDisplayName("Notas")]
-    public string? Notas
-    {
-        get => _notas;
-        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
     [ImmediatePostData]
@@ -182,6 +100,13 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
             RecalcularYNotificar();
             OnCantidadChanged();
         }
+    }
+
+    [XafDisplayName("Unidad")]
+    public UnidadFacturacion? UnidadFacturacion
+    {
+        get => _unidadFacturacion;
+        set => SetPropertyValue(nameof(UnidadFacturacion), ref _unidadFacturacion, value);
     }
 
     [ImmediatePostData]
@@ -262,7 +187,7 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
             OnChanged(nameof(TextoDescuento));
         }
     }
-    
+
     [Persistent(nameof(BaseImponible))]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
@@ -273,7 +198,21 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
         get => _baseImponible;
         protected set => SetPropertyValue(nameof(BaseImponible), ref _baseImponible, value);
     }
-
+    
+    [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
+    [Association("DocumentoVentaLinea-TipoImpuestos")]
+    [DataSourceCriteria("DisponibleEnVentas = True AND EstaActivo = True")]
+    [XafDisplayName("Impuestos")]
+    public XPCollection<TipoImpuesto> TiposImpuestoVenta => GetCollection<TipoImpuesto>();
+    
+    [DataSourceCriteria("EstaActiva = True AND EsAsentable = True")]
+    [XafDisplayName("Cuenta Contable")]
+    public CuentaContable? CuentaContable
+    {
+        get => _cuentaContable;
+        set => SetPropertyValue(nameof(CuentaContable), ref _cuentaContable, value);
+    }
+    
     [Persistent(nameof(ImporteImpuestos))]
     [ModelDefault("DisplayFormat", "{0:n2}")]
     [ModelDefault("EditMask", "n2")]
@@ -295,21 +234,13 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
         get => _importeTotal;
         protected set => SetPropertyValue(nameof(ImporteTotal), ref _importeTotal, value);
     }
-
-    [EditorAlias(EditorAliases.TagBoxListPropertyEditor)]
-    [Association("DocumentoVentaLinea-TipoImpuestos")]
-    [DataSourceCriteria("DisponibleEnVentas = True AND EstaActivo = True")]
-    [XafDisplayName("Impuestos")]
-    public XPCollection<TipoImpuesto> TiposImpuestoVenta => GetCollection<TipoImpuesto>();
-
-    protected override XPCollection<T> CreateCollection<T>(XPMemberInfo property)
+    
+    [Size(SizeAttribute.Unlimited)]
+    [XafDisplayName("Notas")]
+    public string? Notas
     {
-        var collection = base.CreateCollection<T>(property);
-        if (property.Name == nameof(TiposImpuestoVenta))
-        {
-            collection.CollectionChanged += TiposImpuestoVenta_CollectionChanged;
-        }
-        return collection;
+        get => _notas;
+        set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
     [DevExpress.Xpo.Aggregated]
@@ -317,6 +248,87 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
     [Association("DocumentoVentaLinea-Impuestos")]
     [XafDisplayName("Detalle Impuestos")]
     public XPCollection<DocumentoVentaLineaImpuesto> Impuestos => GetCollection<DocumentoVentaLineaImpuesto>();
+
+    protected override XPCollection<T> CreateCollection<T>(XPMemberInfo property)
+    {
+        var collection = base.CreateCollection<T>(property);
+        if (property.Name == nameof(TiposImpuestoVenta))
+            collection.CollectionChanged += TiposImpuestoVenta_CollectionChanged;
+        return collection;
+    }
+
+
+    protected virtual void OnAsignarProductoFinished()
+    {
+    }
+
+    protected virtual void OnCantidadChanged()
+    {
+    }
+
+    /// <summary>
+    ///     Regla de negocio: Al asignar un producto se actualizan los datos de la línea
+    ///     (nombre, precio, cuenta contable e impuestos) desde el producto.
+    /// </summary>
+    public virtual void AsignarProducto(Producto? value)
+    {
+        BorrarImpuestosProducto();
+
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        if (companyInfo != null)
+        {
+            CuentaContable = companyInfo.CuentaVentasPorDefecto;
+            UnidadFacturacion = companyInfo.UnidadFacturacionPredeterminada;
+            foreach (var tax in companyInfo.ImpuestosVentas.OrderBy(t => t.Secuencia))
+                TiposImpuestoVenta.Add(tax);
+        }
+
+        if (value == null)
+        {
+            NombreProducto = null;
+            Notas = null;
+            PrecioUnitario = 0m;
+            // No reseteamos cantidad ni descuento por defecto si se quita el producto, 
+            // aunque se podría valorar.
+            RecalcularYNotificar();
+            return;
+        }
+
+        NombreProducto = value.Nombre;
+        Notas = value.Notas;
+        PrecioUnitario = value.PrecioVenta;
+
+        if (DocumentoVenta?.Cliente != null)
+        {
+            var localTime = InformacionEmpresaHelper.GetLocalTime(Session);
+            var precioEspecial =
+                PrecioEspecialService.GetPrecioEspecialActivo(value, DocumentoVenta.Cliente, ContextoPrecio.Venta,
+                    localTime);
+            if (precioEspecial != null)
+            {
+                PrecioUnitario = precioEspecial.Precio;
+                Descuento1 = precioEspecial.Descuento1;
+                Descuento2 = precioEspecial.Descuento2;
+                Descuento3 = precioEspecial.Descuento3;
+            }
+        }
+
+        CuentaContable = value.CuentaVentas ?? CuentaContable;
+        UnidadFacturacion = value.UnidadFacturacion ?? UnidadFacturacion;
+
+        if (value.ImpuestosVentas.Count > 0)
+        {
+            BorrarImpuestosProducto();
+            foreach (var tax in value.ImpuestosVentas.OrderBy(t => t.Secuencia))
+                TiposImpuestoVenta.Add(tax);
+        }
+
+        if (Cantidad == 0m)
+            Cantidad = 1m;
+
+        RecalcularYNotificar();
+        OnAsignarProductoFinished();
+    }
 
     private void TiposImpuestoVenta_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
     {
@@ -331,7 +343,7 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null) return;
         CuentaContable ??= companyInfo.CuentaVentasPorDefecto;
-        foreach (var tax in companyInfo.ImpuestosVentas.OrderBy(t => t.Secuencia)) 
+        foreach (var tax in companyInfo.ImpuestosVentas.OrderBy(t => t.Secuencia))
             TiposImpuestoVenta.Add(tax);
     }
 
@@ -345,7 +357,8 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
 
     private void EstablecerBaseImponible()
     {
-        BaseImponible = AmountCalculator.GetTaxableAmountCascading(Cantidad, PrecioUnitario, Descuento1, Descuento2, Descuento3);
+        BaseImponible =
+            AmountCalculator.GetTaxableAmountCascading(Cantidad, PrecioUnitario, Descuento1, Descuento2, Descuento3);
     }
 
     private void ReconstruirImpuestos()
