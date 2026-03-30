@@ -294,7 +294,7 @@ public class VeriFactuQueueManager
                         return false;
                     }
 
-                    UpdateAuditStatus(audit, action, error);
+                    UpdateAuditStatus(audit, action, aeatResponse, error);
                     hostOS.CommitChanges();
 
                     var tenant = hostOS.GetObjectByKey<DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant>(audit.TenantId);
@@ -359,7 +359,7 @@ public class VeriFactuQueueManager
                 var audit = audits.FirstOrDefault();
                 if (audit != null)
                 {
-                    UpdateAuditStatus(audit, action, error);
+                    UpdateAuditStatus(audit, action, aeatResponse, error);
                     hostOS.CommitChanges();
 
                     var tenant = hostOS.GetObjectByKey<DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant>(audit.TenantId);
@@ -521,7 +521,7 @@ public class VeriFactuQueueManager
         return tNif == sNif || tNif == "ES" + sNif || sNif == "ES" + tNif;
     }
 
-    private void UpdateAuditStatus(VeriFactuAudit audit, InvoiceAction action, Exception? error)
+    private void UpdateAuditStatus(VeriFactuAudit audit, InvoiceAction action, RespuestaRegFactuSistemaFacturacion? aeatResponse, Exception? error)
     {
         string prefix = "";
         if (error != null)
@@ -537,11 +537,20 @@ public class VeriFactuQueueManager
         audit.EstadoEnvio = prefix + action.Status.ToString();
         if (error != null) audit.EstadoEnvio += " - Detalle: " + error.Message;
         
-        // Registrar BatchId si está disponible en la acción
+        // Registrar BatchId si está disponible en la acción o en la respuesta AEAT
         try
         {
+            // Intentar obtener BatchId/TransactionId de la acción (específico de la línea)
             var batchIdProp = action.GetType().GetProperty("BatchId") ?? action.GetType().GetProperty("TransactionId");
             var batchId = batchIdProp?.GetValue(action)?.ToString();
+            
+            // Si no está en la acción, intentar obtener el CSV de la respuesta global (común para todo el lote)
+            if (string.IsNullOrEmpty(batchId) && aeatResponse != null)
+            {
+                var csvProp = aeatResponse.GetType().GetProperty("CSV");
+                batchId = csvProp?.GetValue(aeatResponse) as string;
+            }
+
             if (!string.IsNullOrEmpty(batchId))
             {
                 audit.BatchId = batchId;
