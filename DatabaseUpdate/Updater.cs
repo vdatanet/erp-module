@@ -48,19 +48,9 @@ public class Updater : ModuleUpdater
             var session = xpObjectSpace.Session;
             try
             {
-                // Solo forzamos la creación de FacturaBase si no estamos en el host
-                // para asegurar que las tablas de negocio existan antes de la siembra de datos.
-                // En el contexto del DatabaseUpdater manual, Tenant no suele estar registrado.
-                if (TenantId.HasValue || !ObjectSpace.IsKnownType(typeof(DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant)))
-                {
-                    session.UpdateSchema(typeof(FacturaBase));
-                }
+                session.UpdateSchema(typeof(FacturaBase));
             }
-            catch (Exception ex)
-            {
-                // No silenciamos del todo en DEBUG para poder diagnosticar
-                System.Diagnostics.Debug.WriteLine($"Error en UpdateSchema(FacturaBase): {ex.Message}");
-            }
+            catch { /* Silencioso */ }
         }
     }
 }
