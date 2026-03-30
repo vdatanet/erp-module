@@ -36,15 +36,5 @@ public class Updater : ModuleUpdater
     public override void UpdateDatabaseBeforeUpdateSchema()
     {
         base.UpdateDatabaseBeforeUpdateSchema();
-
-        if (ObjectSpace is DevExpress.ExpressApp.Xpo.XPObjectSpace xpObjectSpace)
-        {
-            var session = xpObjectSpace.Session;
-            try
-            {
-                session.UpdateSchema(typeof(FacturaBase));
-            }
-            catch { /* Silencioso */ }
-        }
     }
 }
