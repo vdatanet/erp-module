@@ -53,6 +53,32 @@ public class VeriFactuQueueManager
     private void OnSentFinished(List<InvoiceAction> invoiceActionList, RespuestaRegFactuSistemaFacturacion aeatResponse)
     {
         _logger.LogInformation("VeriFactu: Envío de lote finalizado con éxito. Respuesta AEAT: {Response}", aeatResponse);
+        
+        // Mostrar en log de la respuesta completa de la agencia tributaria
+        if (_logger.IsEnabled(LogLevel.Debug))
+        {
+            try
+            {
+                var serializedResponse = SerializeRespuesta(aeatResponse);
+                _logger.LogDebug("VeriFactu: Respuesta completa AEAT:\n{FullResponse}", serializedResponse);
+                
+                // También intentar mostrar el XML crudo (ResponseEnvelope) si está disponible en la primera acción
+                if (invoiceActionList.Count > 0)
+                {
+                    var action = invoiceActionList[0];
+                    var responseEnvelopeProp = action.GetType().GetProperty("ResponseEnvelope");
+                    var envelope = responseEnvelopeProp?.GetValue(action);
+                    if (envelope != null)
+                    {
+                        _logger.LogDebug("VeriFactu: XML de respuesta AEAT (ResponseEnvelope):\n{XmlResponse}", envelope);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogDebug("VeriFactu: No se pudo obtener detalles de la respuesta AEAT para el log: {Msg}", ex.Message);
+            }
+        }
 
         foreach (var action in invoiceActionList)
         {
@@ -159,7 +185,7 @@ public class VeriFactuQueueManager
                         hostOS.CommitChanges();
 
                         // Obtener el nombre del tenant para poder crear su ObjectSpace (DevExpress MultiTenancy usa el Name)
-                        string tenantName = null;
+                        string? tenantName = null;
                         var tenant = hostOS.GetObjectByKey<DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant>(audit.TenantId);
                         tenantName = tenant?.Name;
 
@@ -169,7 +195,7 @@ public class VeriFactuQueueManager
                             using (var tenantOS = objectSpaceFactory.CreateObjectSpace(typeof(InformacionEmpresa), tenantName))
                             {
                                 // Verificamos si invoiceId es un Guid para evitar el error de casting en Oid
-                                FacturaBase invoice = null;
+                                FacturaBase? invoice = null;
                                 if (Guid.TryParse(invoiceId, out Guid invoiceGuid))
                                 {
                                     invoice = tenantOS.FindObject<FacturaBase>(CriteriaOperator.Parse("Oid = ?", invoiceGuid));
@@ -229,7 +255,7 @@ public class VeriFactuQueueManager
                         {
                             // Buscamos la factura por Oid o Secuencia. 
                             // Verificamos si invoiceId es un Guid para evitar el error de casting en Oid
-                            FacturaBase invoice = null;
+                            FacturaBase? invoice = null;
                             if (Guid.TryParse(invoiceId, out Guid invoiceGuid))
                             {
                                 invoice = tenantOS.FindObject<FacturaBase>(CriteriaOperator.Parse("Oid = ?", invoiceGuid));
@@ -313,6 +339,28 @@ public class VeriFactuQueueManager
             {
                 _logger.LogTrace("Extrayendo detalles de aeatResponse para {Id}", invoiceId);
                 
+                // Mostrar en log de la respuesta completa
+                if (_logger.IsEnabled(LogLevel.Debug))
+                {
+                    try
+                    {
+                        _logger.LogDebug("VeriFactu: Procesando respuesta completa para factura {Id}:\n{FullResponse}", 
+                            invoiceId, SerializeRespuesta(aeatResponse));
+
+                        // Intentar obtener el XML crudo para el log
+                        var responseEnvelopePropDebug = action.GetType().GetProperty("ResponseEnvelope");
+                        var envelopeDebug = responseEnvelopePropDebug?.GetValue(action);
+                        if (envelopeDebug != null)
+                        {
+                            _logger.LogDebug("VeriFactu: XML de respuesta para factura {Id} (ResponseEnvelope):\n{XmlResponse}", invoiceId, envelopeDebug);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogDebug("VeriFactu: No se pudo obtener detalles de la respuesta AEAT para la factura {Id}: {Msg}", invoiceId, ex.Message);
+                    }
+                }
+                
                 // Extraer CSV de la respuesta global
                 var csvProp = aeatResponse.GetType().GetProperty("CSV");
                 csv = csvProp?.GetValue(aeatResponse) as string;
@@ -346,7 +394,7 @@ public class VeriFactuQueueManager
                             var numSerieProp = idFactura.GetType().GetProperty("NumSerieFactura");
                             var numSerie = numSerieProp?.GetValue(idFactura) as string;
                             
-                            if (numSerie != null && numSerie.Replace(" ", "").ToUpper() == invoice.Secuencia.Replace(" ", "").ToUpper())
+                            if (numSerie != null && invoice.Secuencia != null && numSerie.Replace(" ", "").ToUpper() == invoice.Secuencia.Replace(" ", "").ToUpper())
                             {
                                 // Estado de la línea
                                 var estadoLineaProp = linea.GetType().GetProperty("EstadoRegistro");
@@ -406,6 +454,64 @@ public class VeriFactuQueueManager
                     if (urlProp != null)
                     {
                         validationUrl = urlProp.GetValue(action) as string;
+                    }
+                }
+
+                // Fallback: Si no hay URL de validación o QR, intentamos generarlos localmente desde la factura de VeriFactu
+                if (status == VeriFactuConstants.Correcto && (string.IsNullOrEmpty(validationUrl) || qrData == null))
+                {
+                    try
+                    {
+                        _logger.LogInformation("VeriFactu: Intentando generar URL de validación local para {Id}", invoiceId);
+                        var registro = action.Invoice.GetRegistroAlta();
+                        
+                        if (string.IsNullOrEmpty(validationUrl))
+                        {
+                            validationUrl = registro.GetUrlValidate();
+                            _logger.LogInformation("VeriFactu: URL de validación generada localmente: {Url}", validationUrl);
+                        }
+                        
+                        if (qrData == null)
+                        {
+                            var qrProp = registro.GetType().GetProperty("QrCode") ?? registro.GetType().GetProperty("QR") ?? registro.GetType().GetProperty("Qr");
+                            if (qrProp != null)
+                            {
+                                qrData = qrProp.GetValue(registro) as byte[];
+                            }
+
+                            if (qrData == null)
+                            {
+                                // Intentar a través de GetValidateQr() (recomendado por usuario)
+                                var qrMethod = registro.GetType().GetMethod("GetValidateQr");
+                                if (qrMethod != null)
+                                {
+                                    qrData = qrMethod.Invoke(registro, null) as byte[];
+                                }
+                            }
+
+                            if (qrData == null)
+                            {
+                                // Intentar a través de GetQrCode() si existe como método
+                                var qrMethod = registro.GetType().GetMethod("GetQrCode") ?? registro.GetType().GetMethod("GetQR");
+                                if (qrMethod != null)
+                                {
+                                    qrData = qrMethod.Invoke(registro, null) as byte[];
+                                }
+                            }
+                            
+                            if (qrData != null)
+                            {
+                                _logger.LogInformation("VeriFactu: QR obtenido localmente del registro para {Id}", invoiceId);
+                            }
+                            else
+                            {
+                                _logger.LogWarning("VeriFactu: No se pudo obtener el QR localmente del registro para {Id} (Propiedades intentadas: QrCode, QR, Qr; Métodos: GetValidateQr, GetQrCode, GetQR)", invoiceId);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning("VeriFactu: No se pudo generar la URL de validación o QR localmente para {Id}: {Msg}", invoiceId, ex.Message);
                     }
                 }
             }

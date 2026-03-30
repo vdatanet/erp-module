@@ -19,7 +19,7 @@ public class HostDatabaseInitializer(IConfiguration configuration, ILogger<HostD
         {
             logger.LogInformation("Iniciando HostDatabaseInitializer para actualizar esquema del Host.");
 
-            string connectionString = configuration.GetConnectionString("ConnectionString");
+            string? connectionString = configuration.GetConnectionString("ConnectionString");
             if (string.IsNullOrEmpty(connectionString))
             {
                 logger.LogWarning("No se encontró la cadena de conexión 'ConnectionString' para el Host.");

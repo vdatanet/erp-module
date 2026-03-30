@@ -27,35 +27,35 @@ public class VeriFactuAudit(Session session) : BaseObject(session)
     [XafDisplayName("ID de Factura (Secuencia)")]
     public string InvoiceId
     {
-        get => _invoiceId;
+        get => _invoiceId ?? string.Empty;
         set => SetPropertyValue(nameof(InvoiceId), ref _invoiceId, value);
     }
 
     [XafDisplayName("Número de Serie")]
     public string NumeroSerie
     {
-        get => _numeroSerie;
+        get => _numeroSerie ?? string.Empty;
         set => SetPropertyValue(nameof(NumeroSerie), ref _numeroSerie, value);
     }
 
     [XafDisplayName("NIF del Emisor")]
     public string NifEmisor
     {
-        get => _nifEmisor;
+        get => _nifEmisor ?? string.Empty;
         set => SetPropertyValue(nameof(NifEmisor), ref _nifEmisor, value);
     }
 
     [XafDisplayName("Estado del Envío")]
     public string EstadoEnvio
     {
-        get => _estadoEnvio;
+        get => _estadoEnvio ?? string.Empty;
         set => SetPropertyValue(nameof(EstadoEnvio), ref _estadoEnvio, value);
     }
 
     [XafDisplayName("ID de Lote (Batch/Transaction)")]
     public string BatchId
     {
-        get => _batchId;
+        get => _batchId ?? string.Empty;
         set => SetPropertyValue(nameof(BatchId), ref _batchId, value);
     }
 

@@ -115,16 +115,20 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger) : IVeriFactuAdap
             // Crear registro de auditoría antes de añadir a la cola
             try
             {
-                using var hostOS = CreateHostObjectSpace(companyInfo.Session.ServiceProvider);
-                var audit = hostOS.CreateObject<VeriFactuAudit>();
-                audit.TenantId = tenantId;
-                audit.InvoiceId = veriFactuInvoice.InvoiceID;
-                audit.NifEmisor = veriFactuInvoice.SellerID;
-                audit.NumeroSerie = companyInfo.PrefijoFacturasVentaPorDefecto; // Usar prefijo por defecto
-                audit.BatchId = null; 
-                audit.EstadoEnvio = "Encolada";
-                hostOS.CommitChanges();
-                logger.LogInformation("Registro de auditoría VeriFactuAudit creado en el HOST para {InvoiceID}", veriFactuInvoice.InvoiceID);
+                var sp = companyInfo.Session.ServiceProvider;
+                if (sp != null)
+                {
+                    using var hostOS = CreateHostObjectSpace(sp);
+                    var audit = hostOS.CreateObject<VeriFactuAudit>();
+                    audit.TenantId = tenantId;
+                    audit.InvoiceId = veriFactuInvoice.InvoiceID ?? string.Empty;
+                    audit.NifEmisor = veriFactuInvoice.SellerID ?? string.Empty;
+                    audit.NumeroSerie = companyInfo.PrefijoFacturasVentaPorDefecto ?? string.Empty;
+                    audit.BatchId = string.Empty; 
+                    audit.EstadoEnvio = "Encolada";
+                    hostOS.CommitChanges();
+                    logger.LogInformation("Registro de auditoría VeriFactuAudit creado en el HOST para {InvoiceID}", veriFactuInvoice.InvoiceID);
+                }
             }
             catch (Exception ex)
             {
@@ -296,7 +300,7 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger) : IVeriFactuAdap
     {
         var configuration = sp.GetRequiredService<IConfiguration>();
         var connectionString = configuration.GetConnectionString("ConnectionString");
-        var xpoObjectSpaceProvider = new DevExpress.ExpressApp.Xpo.XPObjectSpaceProvider(connectionString, null, true, true);
+        var xpoObjectSpaceProvider = new DevExpress.ExpressApp.Xpo.XPObjectSpaceProvider(connectionString ?? string.Empty, null, true, true);
         return xpoObjectSpaceProvider.CreateObjectSpace();
     }
 }
