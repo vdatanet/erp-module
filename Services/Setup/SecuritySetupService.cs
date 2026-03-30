@@ -53,7 +53,8 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
         var adminRole = CreateAdminRole();
 
-        // Al crear la base de datos del tenant o actualizar, 
+#if DEBUG
+        // Solo en debug: Al crear la base de datos del tenant o actualizar, 
         // sino existe admin o admin@... crearlo como administrador, sin contraseña 
         // y forzar cambio de contraseña al siguiente inicio de sesión
         var adminUserName = string.IsNullOrEmpty(tenantName) ? "admin" : $"admin@{tenantName.ToLower()}";
@@ -71,6 +72,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
                 userWithLoginInfo.CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, adminUserName);
             }
         }
+#endif
 
         // Crear roles de negocio si no es onlyAdmin
         if (!onlyAdmin)
