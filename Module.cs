@@ -46,14 +46,11 @@ public sealed class erpModule : ModuleBase
         AdditionalExportedTypes.Add(typeof(Event));
         AdditionalExportedTypes.Add(typeof(Resource));
         AdditionalExportedTypes.Add(typeof(HCategory));
-        AdditionalExportedTypes.Add(typeof(ImportarClientesParameters));
+        //AdditionalExportedTypes.Add(typeof(ImportarClientesParameters));
         AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.PermissionPolicy.UserToken));
         AdditionalExportedTypes.Add(typeof(Pais));
         AdditionalExportedTypes.Add(typeof(Provincia));
         AdditionalExportedTypes.Add(typeof(Poblacion));
-        // Se comenta para evitar que XAF lo cree automáticamente en los tenants.
-        // Se creará en el Host mediante HostDatabaseInitializer.
-        // AdditionalExportedTypes.Add(typeof(erp.Module.BusinessObjects.Base.Facturacion.VeriFactuAudit));
         RequiredModuleTypes.Add(typeof(SystemModule));
         RequiredModuleTypes.Add(typeof(SecurityModule));
         RequiredModuleTypes.Add(typeof(ChartModule));

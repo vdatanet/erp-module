@@ -26,6 +26,16 @@ public class Updater : ModuleUpdater
     public override void UpdateDatabaseAfterUpdateSchema()
     {
         base.UpdateDatabaseAfterUpdateSchema();
+
+#if DEBUG
+        // En modo DEBUG, crear datos iniciales
+        var dataSeedService = ObjectSpace.ServiceProvider?.GetService<IDataSeedService>();
+        if (dataSeedService != null)
+        {
+            dataSeedService.Seed(ObjectSpace, TenantName, TenantId);
+        }
+#endif
+
         ObjectSpace.CommitChanges();
     }
 
