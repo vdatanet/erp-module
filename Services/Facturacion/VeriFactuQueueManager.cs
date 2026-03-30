@@ -847,7 +847,24 @@ public class VeriFactuQueueManager
     {
         var configuration = sp.GetRequiredService<IConfiguration>();
         var connectionString = configuration.GetConnectionString("ConnectionString");
-        var xpoObjectSpaceProvider = new DevExpress.ExpressApp.Xpo.XPObjectSpaceProvider(connectionString, null, true, true);
+        
+        // El proveedor de XPO del host para tipos compartidos (Audit) no debe actualizar el esquema 
+        // para evitar la creación de tablas de seguridad del tenant en el host.
+        // Se usa el constructor que permite especificar si se debe crear el esquema.
+        var xpoObjectSpaceProvider = new DevExpress.ExpressApp.Xpo.XPObjectSpaceProvider(connectionString, null, false);
+        
+        // IMPORTANTE: Solo registrar las entidades necesarias para el host en este provider manual
+        // para que XPO no intente validar el esquema de todo el modelo del tenant.
+        var typesInfo = xpoObjectSpaceProvider.TypesInfo;
+        if (typesInfo.FindTypeInfo(typeof(VeriFactuAudit)) == null)
+        {
+            typesInfo.RegisterEntity(typeof(VeriFactuAudit));
+        }
+        if (typesInfo.FindTypeInfo(typeof(DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant)) == null)
+        {
+            typesInfo.RegisterEntity(typeof(DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant));
+        }
+
         return xpoObjectSpaceProvider.CreateObjectSpace();
     }
 }
