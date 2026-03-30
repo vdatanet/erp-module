@@ -15,20 +15,10 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
 {
     public void Seed(IObjectSpace objectSpace, string? tenantName, Guid? tenantId)
     {
-        // En el Host el TenantId debería ser nulo.
-        var isHost = false;
-        try
-        {
-            var tenantProvider = objectSpace.ServiceProvider?.GetService(typeof(DevExpress.ExpressApp.MultiTenancy.ITenantProvider)) as DevExpress.ExpressApp.MultiTenancy.ITenantProvider;
-            if (tenantProvider == null || tenantProvider.TenantId == null)
-            {
-                isHost = objectSpace.IsKnownType(typeof(DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant));
-            }
-        }
-        catch
-        {
-            isHost = objectSpace.IsKnownType(typeof(DevExpress.Persistent.BaseImpl.MultiTenancy.Tenant));
-        }
+        // El TenantId es la fuente de verdad:
+        // Si es null => Host
+        // Si tiene valor => Tenant
+        var isHost = tenantId == null;
 
         // Intentamos asignar el ServiceProvider mediante reflexión si es necesario
         if (objectSpace is BaseObjectSpace baseOs && baseOs.ServiceProvider == null)

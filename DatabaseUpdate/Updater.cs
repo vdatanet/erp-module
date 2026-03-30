@@ -25,10 +25,20 @@ public class Updater : ModuleUpdater
 
     public override void UpdateDatabaseAfterUpdateSchema()
     {
+        // En el Host (TenantId == null), el DatabaseUpdater de XAF ya ha creado el esquema antes de llegar aquí.
+        // El problema es que el ObjectSpaceProvider del Host contiene todos los tipos de negocio.
+        
         base.UpdateDatabaseAfterUpdateSchema();
 
+        // Si estamos en un TENANT, TenantId NO será null.
+        // Si estamos en el HOST, TenantId SERÁ null.
+        
         var dataSeedService = ObjectSpace.ServiceProvider?.GetService<IDataSeedService>();
-        dataSeedService?.Seed(ObjectSpace, TenantName, TenantId);
+        if (dataSeedService != null)
+        {
+            // Forzar que el contexto sea explícito según el TenantId del Updater
+            dataSeedService.Seed(ObjectSpace, TenantName, TenantId);
+        }
 
         ObjectSpace.CommitChanges();
     }

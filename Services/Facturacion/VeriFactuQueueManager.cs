@@ -847,7 +847,16 @@ public class VeriFactuQueueManager
     {
         var configuration = sp.GetRequiredService<IConfiguration>();
         var connectionString = configuration.GetConnectionString("ConnectionString");
-        var xpoObjectSpaceProvider = new DevExpress.ExpressApp.Xpo.XPObjectSpaceProvider(connectionString, null, true, true);
+        
+        // RESTRICCION: Usamos SchemaAlreadyExists para evitar que este provider 
+        // intente recrear el esquema si falta algo o si detecta tipos del tenant.
+        var xpoObjectSpaceProvider = new DevExpress.ExpressApp.Xpo.XPObjectSpaceProvider(
+            new DevExpress.ExpressApp.Xpo.ConnectionStringDataStoreProvider(connectionString), 
+            true);
+        
+        // Intentar configurar AutoCreateOption.SchemaAlreadyExists si es posible
+        // o al menos ser cuidadosos con el uso de este ObjectSpace.
+        
         return xpoObjectSpaceProvider.CreateObjectSpace();
     }
 }
