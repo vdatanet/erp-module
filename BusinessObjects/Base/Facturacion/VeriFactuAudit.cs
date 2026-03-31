@@ -98,7 +98,7 @@ public class VeriFactuAudit(Session session) : BaseObject(session)
     public override void AfterConstruction()
     {
         base.AfterConstruction();
-        FechaEnvio = InformacionEmpresaHelper.GetLocalTime(Session);
+        FechaEnvio = DateTime.Now;
         EstadoEnvio = "Encolada";
     }
 }
