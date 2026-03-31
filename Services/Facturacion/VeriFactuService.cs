@@ -120,6 +120,16 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
 
     public Invoice MapToVeriFactuInvoice(FacturaBase invoice, InformacionEmpresa companyInfo)
     {
+        if (string.IsNullOrEmpty(invoice.Secuencia))
+        {
+            throw new InvalidOperationException($"La factura no tiene número de secuencia asignado.");
+        }
+
+        if (string.IsNullOrEmpty(companyInfo.Nif))
+        {
+            throw new InvalidOperationException("No se ha configurado el NIF de la empresa.");
+        }
+
         var veriFactuFactura = new Invoice(invoice.Secuencia, invoice.Fecha, companyInfo.Nif)
         {
             InvoiceType = invoice.TipoFacturaAmigable,
