@@ -287,7 +287,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
 
     private void InitValues()
     {
-        // EstadoVeriFactu = EstadoVeriFactu.Borrador;
+        EstadoVeriFactu = EstadoVeriFactu.Borrador;
         EsSubsanacion = false;
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null) return;
@@ -305,14 +305,8 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     public bool PuedeEmitir => EstadoFactura == EstadoFactura.Validada;
     public bool PuedeRevertirABorrador => EstadoFactura == EstadoFactura.Validada;
     public bool PuedeEnviarVerifactu => EstadoFactura == EstadoFactura.Emitida && 
-                                        EstadoVeriFactu != EstadoVeriFactu.Correcto && 
-                                        EstadoVeriFactu != EstadoVeriFactu.EnviadaVeriFactu &&
-                                        EstadoVeriFactu != EstadoVeriFactu.Pendiente;
-    public bool PuedeContabilizar => (EstadoFactura == EstadoFactura.Enviada || 
-                                      EstadoFactura == EstadoFactura.VeriFactuNoNecesario ||
-                                      EstadoVeriFactu == EstadoVeriFactu.Correcto || 
-                                      EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu ||
-                                      EstadoVeriFactu == EstadoVeriFactu.Pendiente) &&
+                                        EstadoVeriFactu == EstadoVeriFactu.Borrador;
+    public bool PuedeContabilizar => EstadoVeriFactu == EstadoVeriFactu.Correcto &&
                                      EstadoFactura != EstadoFactura.Contabilizada;
 
     public virtual ValidationResult ValidarParaEmision()

@@ -94,7 +94,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
 
             var response = await veriFactuAdapter.GetStatusAsync(invoice.Uuid, companyInfo);
 
-            UpdateInvoiceFromResponse(objectSpace, invoice, response, null!);
+            UpdateInvoiceFromResponse(objectSpace, invoice, response, null!, onlyUpdateStatus: true);
             objectSpace.CommitChanges();
 
             return new SendResult(true, $"Estado actualizado: {invoice.EstadoVeriFactu}");
@@ -277,8 +277,18 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
     }
 
     public void UpdateInvoiceFromResponse(IObjectSpace objectSpace, FacturaBase invoice, VeriFactuResponse veriFactuResponse,
-        Invoice veriFactuFactura)
+        Invoice veriFactuFactura, bool onlyUpdateStatus = false)
     {
+        if (onlyUpdateStatus)
+        {
+            if (veriFactuResponse.Status != EstadoVeriFactu.Pendiente && 
+                veriFactuResponse.Status != default)
+            {
+                invoice.EstadoVeriFactu = veriFactuResponse.Status;
+            }
+            return;
+        }
+
         invoice.CodigoErrorEntradaFactura = veriFactuResponse.ErrorCode;
         
         // Respuesta técnica completa ya no se persiste en factura
