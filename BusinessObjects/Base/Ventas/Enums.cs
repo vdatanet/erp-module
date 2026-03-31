@@ -51,6 +51,7 @@ public enum EstadoFactura
     [XafDisplayName("Validada")] Validada,
     [XafDisplayName("Emitida")] Emitida,
     [XafDisplayName("Enviada")] Enviada,
+    [XafDisplayName("VeriFactu No Necesario")] VeriFactuNoNecesario,
     [XafDisplayName("Contabilizada")] Contabilizada
 }
 

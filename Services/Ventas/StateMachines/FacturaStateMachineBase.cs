@@ -16,6 +16,7 @@ public abstract class FacturaStateMachineBase(FacturaBase documento) : IFacturaS
         { EstadoFactura.Validada, [EstadoFactura.Emitida, EstadoFactura.Borrador] },
         { EstadoFactura.Emitida, [EstadoFactura.Enviada, EstadoFactura.Contabilizada] },
         { EstadoFactura.Enviada, [EstadoFactura.Contabilizada] },
+        { EstadoFactura.VeriFactuNoNecesario, [EstadoFactura.Contabilizada] },
         { EstadoFactura.Contabilizada, [] }
     };
 
@@ -62,6 +63,28 @@ public abstract class FacturaStateMachineBase(FacturaBase documento) : IFacturaS
 
     public virtual IEnumerable<EstadoFactura> GetEstadosAlcanzables()
     {
+        if (EstadoActual == EstadoFactura.Emitida)
+        {
+            var infoEmpresa = Helpers.Contactos.InformacionEmpresaHelper.GetInformacionEmpresa(Factura.Session);
+            var activarVeriFactu = infoEmpresa?.ActivarVeriFactu ?? false;
+
+            if (activarVeriFactu)
+            {
+                // Si VeriFactu está activo, debe pasar por Enviada
+                return new List<EstadoFactura> { EstadoFactura.Enviada, EstadoFactura.Contabilizada };
+            }
+            else
+            {
+                // Si no está activo, puede saltar a VeriFactuNoNecesario o directamente a Contabilizada
+                return new List<EstadoFactura> { EstadoFactura.VeriFactuNoNecesario, EstadoFactura.Contabilizada };
+            }
+        }
+
+        if (EstadoActual == EstadoFactura.VeriFactuNoNecesario)
+        {
+            return new List<EstadoFactura> { EstadoFactura.Contabilizada };
+        }
+
         return Transiciones.TryGetValue(EstadoActual, out var estados) ? estados : [];
     }
 

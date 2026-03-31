@@ -125,21 +125,38 @@ public class FacturaOrchestrator
                 Emitir(factura);
             }
 
-            // 3. Enviar a VeriFactu si está Emitida
-            if (factura.EstadoFactura == EstadoFactura.Emitida &&
-                factura.EstadoVeriFactu != EstadoVeriFactu.AceptadaVeriFactu &&
-                factura.EstadoVeriFactu != EstadoVeriFactu.EnviadaVeriFactu)
+            // 3. Enviar a VeriFactu si está Emitida y VeriFactu está activo
+            if (factura.EstadoFactura == EstadoFactura.Emitida)
             {
-                var sendResult = await EnviarAVerifactuAsync(objectSpace, factura, veriFactuService);
-                if (!sendResult.Success)
+                var infoEmpresa = InformacionEmpresaHelper.GetInformacionEmpresa(factura.Session);
+                var activarVeriFactu = infoEmpresa?.ActivarVeriFactu ?? false;
+
+                if (activarVeriFactu)
                 {
-                    return sendResult;
+                    if (factura.EstadoVeriFactu != EstadoVeriFactu.AceptadaVeriFactu &&
+                        factura.EstadoVeriFactu != EstadoVeriFactu.EnviadaVeriFactu)
+                    {
+                        var sendResult = await EnviarAVerifactuAsync(objectSpace, factura, veriFactuService);
+                        if (!sendResult.Success)
+                        {
+                            return sendResult;
+                        }
+                    }
+                }
+                else
+                {
+                    // Si no es necesario VeriFactu, cambiamos al nuevo estado de factura
+                    factura.StateMachine.CambiarA(EstadoFactura.VeriFactuNoNecesario);
+                    
+                    // También marcamos el estado VeriFactu como no necesario para claridad visual
+                    factura.EstadoVeriFactu = EstadoVeriFactu.NoNecesario;
                 }
             }
 
-            // 4. Contabilizar si está Enviada/Aceptada/Pendiente
+            // 4. Contabilizar si está Enviada/Aceptada/Pendiente o VeriFactu No Necesario
             if (factura.EstadoFactura != EstadoFactura.Contabilizada &&
                 (factura.EstadoFactura == EstadoFactura.Enviada ||
+                 factura.EstadoFactura == EstadoFactura.VeriFactuNoNecesario ||
                  factura.EstadoVeriFactu == EstadoVeriFactu.AceptadaVeriFactu ||
                  factura.EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu ||
                  factura.EstadoVeriFactu == EstadoVeriFactu.PendienteVeriFactu))

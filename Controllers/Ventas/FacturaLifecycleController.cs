@@ -72,7 +72,7 @@ public class FacturaLifecycleController : ViewController
             Caption = "Contabilizar",
             ConfirmationMessage = "¿Desea generar el asiento contable para las facturas seleccionadas?",
             ImageName = "Accounting",
-            TargetObjectsCriteria = "EstadoFactura = 'Enviada' OR (EstadoVeriFactu = 'AceptadaVeriFactu' OR EstadoVeriFactu = 'EnviadaVeriFactu' OR EstadoVeriFactu = 'PendienteVeriFactu')",
+            TargetObjectsCriteria = "EstadoFactura = 'Enviada' OR EstadoFactura = 'VeriFactuNoNecesario' OR (EstadoVeriFactu = 'AceptadaVeriFactu' OR EstadoVeriFactu = 'EnviadaVeriFactu' OR EstadoVeriFactu = 'PendienteVeriFactu')",
             SelectionDependencyType = SelectionDependencyType.RequireMultipleObjects
         };
         _contabilizarAction.Execute += ContabilizarAction_Execute;
@@ -168,6 +168,7 @@ public class FacturaLifecycleController : ViewController
                                                                            f.EstadoVeriFactu != EstadoVeriFactu.EnviadaVeriFactu);
         
         _contabilizarAction.Active["EstadoValido"] = selectedFacturas.Any(f => (f.EstadoFactura == EstadoFactura.Enviada || 
+                                                                              f.EstadoFactura == EstadoFactura.VeriFactuNoNecesario ||
                                                                               f.EstadoVeriFactu == EstadoVeriFactu.AceptadaVeriFactu || 
                                                                               f.EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu ||
                                                                               f.EstadoVeriFactu == EstadoVeriFactu.PendienteVeriFactu) &&
@@ -290,6 +291,7 @@ public class FacturaLifecycleController : ViewController
         foreach (var factura in selectedFacturas)
         {
             bool puedeContabilizar = (factura.EstadoFactura == EstadoFactura.Enviada || 
+                                     factura.EstadoFactura == EstadoFactura.VeriFactuNoNecesario ||
                                      factura.EstadoVeriFactu == EstadoVeriFactu.AceptadaVeriFactu || 
                                      factura.EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu ||
                                      factura.EstadoVeriFactu == EstadoVeriFactu.PendienteVeriFactu) &&

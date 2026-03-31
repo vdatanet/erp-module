@@ -12,7 +12,8 @@ public enum EstadoVeriFactu
     RechazadaVeriFactu,
     Impresa,
     ErrorTecnico,
-    Pendiente
+    [XafDisplayName("Pendiente")] Pendiente,
+    [XafDisplayName("No Necesario")] NoNecesario
 }
 
 public static class VeriFactuConstants

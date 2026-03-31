@@ -24,7 +24,7 @@ namespace erp.Module.BusinessObjects.Base.Facturacion;
 [Appearance("BlockDeletionWhenSent", AppearanceItemType = "Action", TargetItems = "Delete",
     Criteria = "EstadoFactura != 'Borrador' AND EstadoFactura != 'Validada'", Context = "Any", Enabled = false)]
 [Appearance("BlockSendActionOnlyWhenEmitida", AppearanceItemType = "Action", TargetItems = "Factura_EnviarVerifactu",
-    Criteria = "EstadoFactura != 'Emitida' OR EstadoVeriFactu = 'AceptadaVeriFactu' OR EstadoVeriFactu = 'EnviadaVeriFactu'", Context = "Any", Enabled = false)]
+    Criteria = "EstadoFactura != 'Emitida' OR EstadoVeriFactu = 'AceptadaVeriFactu' OR EstadoVeriFactu = 'EnviadaVeriFactu' OR VeriFactuNoNecesario", Context = "Any", Enabled = false)]
 public abstract class FacturaBase(Session session) : DocumentoVenta(session)
 {
 
@@ -233,8 +233,10 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     [XafDisplayName("Confirmado")]
     public bool Confirmado => EstadoFactura >= EstadoFactura.Validada;
 
-    [XafDisplayName("Emitido")]
-    public bool Emitido => EstadoFactura >= EstadoFactura.Emitida;
+    [XafDisplayName("Emitido")] public bool Emitido => EstadoFactura >= EstadoFactura.Emitida;
+
+    [XafDisplayName("VeriFactu No Necesario")]
+    public bool VeriFactuNoNecesario => EstadoFactura == EstadoFactura.VeriFactuNoNecesario;
 
     [XafDisplayName("Impreso")]
     public bool Impreso => false;
@@ -274,7 +276,11 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     protected abstract IFacturaStateMachine GetStateMachine();
 
     public bool Contabilizada => EstadoFactura == EstadoFactura.Contabilizada;
-    public bool EnviadaVeriFactu => EstadoFactura == EstadoFactura.Enviada || EstadoVeriFactu == EstadoVeriFactu.AceptadaVeriFactu || EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu;
+    public bool EnviadaVeriFactu => EstadoFactura == EstadoFactura.Enviada || 
+                                    EstadoFactura == EstadoFactura.VeriFactuNoNecesario || 
+                                    EstadoVeriFactu == EstadoVeriFactu.AceptadaVeriFactu || 
+                                    EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu ||
+                                    EstadoVeriFactu == EstadoVeriFactu.NoNecesario;
     public bool Emitida => EstadoFactura >= EstadoFactura.Emitida;
     public bool Cobrada => EstadoCobro == EstadoCobroFactura.Pagada;
 
@@ -285,6 +291,11 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
         var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
         if (companyInfo == null) return;
         Texto ??= companyInfo.TextoDefectoVeriFactu;
+        
+        if (!companyInfo.ActivarVeriFactu)
+        {
+            EstadoVeriFactu = EstadoVeriFactu.NoNecesario;
+        }
     }
 
     public abstract bool EsValida();
