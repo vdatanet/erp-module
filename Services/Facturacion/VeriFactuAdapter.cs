@@ -54,7 +54,7 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger, VerifactuClient 
                     ValidationUrl = apiResponse.Url,
                     HuellaFiscal = apiResponse.Huella,
                     QrData = !string.IsNullOrEmpty(apiResponse.Qr) ? Convert.FromBase64String(apiResponse.Qr) : null,
-                    BatchId = apiResponse.Uuid
+                    Uuid = apiResponse.Uuid
                 };
             }
 

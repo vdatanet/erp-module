@@ -47,6 +47,6 @@ public class VeriFactuResponse
     public string? RawResponse { get; set; }
     public string? ValidationUrl { get; set; }
     public byte[]? QrData { get; set; }
-    public string? BatchId { get; set; }
+    public string? Uuid { get; set; }
     public byte[]? Xml { get; set; }
 }

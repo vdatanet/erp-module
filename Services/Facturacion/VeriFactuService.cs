@@ -268,7 +268,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             }
             invoice.UrlValidacion = veriFactuResponse.ValidationUrl;
             invoice.HuellaFiscal = veriFactuResponse.HuellaFiscal;
-            invoice.BatchId = veriFactuResponse.BatchId;
+            invoice.Uuid = veriFactuResponse.Uuid;
             
             if (veriFactuResponse.QrData != null)
             {
