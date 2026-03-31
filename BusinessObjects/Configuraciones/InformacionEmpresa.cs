@@ -64,13 +64,11 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private Diario? _diarioAperturaPorDefecto;
     private Diario? _diarioCierrePorDefecto;
     private Diario? _diarioRegularizacionPorDefecto;
+    private string? _apiKeyVeriFactu;
     private string? _nifAdministradorSistemaVeriFactu;
     private string? _nombreAdministradorSistemaVeriFactu;
     private string? _nombreArchivoConfigVeriFactu;
     private string? _nombreSistemaVeriFactu;
-    private FileData? _certificadoVeriFactu;
-    [Persistent("PasswordCertificadoVeriFactu")]
-    private string? _passwordCertificadoVeriFactu;
     private PosicionFiscal? _posicionFiscalPorDefecto;
     private string? _prefijoAsientosPorDefecto;
     private string? _prefijoAlbaranesCompraPorDefecto;
@@ -613,34 +611,12 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(NombreArchivoConfigVeriFactu), ref _nombreArchivoConfigVeriFactu, value);
     }
 
-    [XafDisplayName("Certificado VeriFactu")]
-    [FileTypeFilter("Certificados (*.pfx;*.p12)", "*.pfx;*.p12")]
-    [ExpandObjectMembers(ExpandObjectMembers.Never)]
-    public FileData? CertificadoVeriFactu
-    {
-        get => _certificadoVeriFactu;
-        set => SetPropertyValue(nameof(CertificadoVeriFactu), ref _certificadoVeriFactu, value);
-    }
-
     [Size(255)]
-    [XafDisplayName("Contraseña Certificado VeriFactu")]
-    [PasswordPropertyText(true)]
-    [NonPersistent]
-    public string? PasswordCertificadoVeriFactu
+    [XafDisplayName("API Key VeriFactu")]
+    public string? ApiKeyVeriFactu
     {
-        get => EncryptionHelper.Decrypt(_passwordCertificadoVeriFactu);
-        set
-        {
-            var encrypted = EncryptionHelper.Encrypt(value);
-            bool isModified = _passwordCertificadoVeriFactu != encrypted;
-            _passwordCertificadoVeriFactu = encrypted;
-            if (isModified)
-            {
-                OnChanged(nameof(PasswordCertificadoVeriFactu));
-                // Disparamos el cambio en el campo persistente para que XPO detecte que el objeto es "dirty"
-                OnChanged(nameof(_passwordCertificadoVeriFactu));
-            }
-        }
+        get => _apiKeyVeriFactu;
+        set => SetPropertyValue(nameof(ApiKeyVeriFactu), ref _apiKeyVeriFactu, value);
     }
 
     [Size(500)]

@@ -453,8 +453,7 @@
             <LayoutGroup Id="VeriFactu" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="4" Caption="VeriFactu" RelativeSize="100" ImageName="Actions_Send" IsNewNode="True">
               <LayoutGroup Id="col1" Index="0" ShowCaption="False" RelativeSize="50" IsNewNode="True">
                 <LayoutItem Id="NombreArchivoConfigVeriFactu" ViewItem="NombreArchivoConfigVeriFactu" Index="0" RelativeSize="4.086845466155811" IsNewNode="True" />
-                <LayoutItem Id="CertificadoVeriFactu" ViewItem="CertificadoVeriFactu" Index="1" RelativeSize="3.0651340996168583" IsNewNode="True" />
-                <LayoutItem Id="PasswordCertificadoVeriFactu" ViewItem="PasswordCertificadoVeriFactu" Index="2" RelativeSize="3.0651340996168583" IsNewNode="True" />
+                <LayoutItem Id="ApiKeyVeriFactu" ViewItem="ApiKeyVeriFactu" Index="1" RelativeSize="3.0651340996168583" IsNewNode="True" />
                 <LayoutItem Id="NombreSistemaVeriFactu" ViewItem="NombreSistemaVeriFactu" Index="3" RelativeSize="3.0651340996168583" IsNewNode="True" />
                 <LayoutItem Id="NombreAdministradorSistemaVeriFactu" ViewItem="NombreAdministradorSistemaVeriFactu" Index="4" RelativeSize="3.0651340996168583" IsNewNode="True" />
                 <LayoutItem Id="NifAdministradorSistemaVeriFactu" ViewItem="NifAdministradorSistemaVeriFactu" Index="5" RelativeSize="3.0651340996168583" IsNewNode="True" />

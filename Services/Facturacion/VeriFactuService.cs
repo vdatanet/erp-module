@@ -78,9 +78,9 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         if (invoice.Fecha > InformacionEmpresaHelper.GetLocalTime(invoice.Session))
              return new SendResult(false, "La fecha de la factura no puede ser posterior a la fecha actual.");
 
-        if (companyInfo.CertificadoVeriFactu == null || string.IsNullOrEmpty(companyInfo.CertificadoVeriFactu.FileName))
+        if (string.IsNullOrEmpty(companyInfo.ApiKeyVeriFactu))
         {
-            return new SendResult(false, "El certificado de VeriFactu (.pfx) no está cargado en la configuración de la empresa.");
+            return new SendResult(false, "La API Key de VeriFactu no está configurada en la empresa.");
         }
 
         // Para facturas que requieren cliente, validar que tengamos los datos en el snapshot o en el cliente
