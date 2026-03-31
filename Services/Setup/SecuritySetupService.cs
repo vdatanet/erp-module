@@ -47,7 +47,7 @@ public class SecuritySetupService(IObjectSpace objectSpace)
         return objectSpace;
     }
 
-    public void CreateRolesAndUsers(string? tenantName, bool onlyAdmin = false)
+    public void CreateRolesAndUsers(string? tenantName, bool onlyAdmin = true)
     {
         if (!OS.IsKnownType(typeof(ApplicationRole))) return;
 

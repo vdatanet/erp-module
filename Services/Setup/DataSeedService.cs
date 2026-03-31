@@ -77,7 +77,7 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
 
     private void SeedTenant(IObjectSpace objectSpace, string? tenantName)
     {
-        new SecuritySetupService(objectSpace).CreateRolesAndUsers(tenantName);
+        new SecuritySetupService(objectSpace).CreateRolesAndUsers(tenantName, true);
         objectSpace.CommitChanges();
 
         new PaisProvinciaPoblacionSetupService(objectSpace).CreateInitialData();
