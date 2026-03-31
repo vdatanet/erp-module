@@ -43,7 +43,7 @@ public class VeriFactuResponse
     public EstadoVeriFactu Status { get; set; }
     public string? ErrorCode { get; set; }
     public string? ErrorMessage { get; set; }
-    public string? CSV { get; set; }
+    public string? HuellaFiscal { get; set; }
     public string? RawResponse { get; set; }
     public string? ValidationUrl { get; set; }
     public byte[]? QrData { get; set; }

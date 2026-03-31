@@ -45,7 +45,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             UpdateInvoiceFromResponse(objectSpace, invoice, response, veriFactuInvoice);
             objectSpace.CommitChanges();
 
-            if (response.Status == EstadoVeriFactu.AceptadaVeriFactu)
+            if (response.Status == EstadoVeriFactu.AceptadaVeriFactu || response.Status == EstadoVeriFactu.Pendiente)
             {
                 return new SendResult(true, "Factura enviada correctamente.");
             }
@@ -58,7 +58,6 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         {
             logger.LogError(ex, "Error técnico al enviar factura {Secuencia}", invoice.Secuencia);
             invoice.EstadoVeriFactu = EstadoVeriFactu.ErrorTecnico;
-            invoice.RespuestaAgenciaTributaria = $"Error técnico: {ex.Message}";
             objectSpace.CommitChanges();
             return new SendResult(false, $"Error técnico: {ex.Message}");
         }
@@ -206,7 +205,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
                 taxItem.Tax = imp;
             }
 
-            if (tax.TipoImpuesto.CausaExencion != null && Enum.TryParse<CausaExencion>(tax.TipoImpuesto.CausaExencion.ToString(), out var cau))
+            if (tax.TipoImpuesto.CausaExencion != null && opType == CalificacionOperacion.S2 && Enum.TryParse<CausaExencion>(tax.TipoImpuesto.CausaExencion.ToString(), out var cau))
             {
                 taxItem.TaxException = cau;
             }
@@ -240,8 +239,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         invoice.EstadoVeriFactu = veriFactuResponse.Status;
         invoice.CodigoErrorEntradaFactura = veriFactuResponse.ErrorCode;
         
-        // Conservar respuesta técnica completa
-        invoice.RespuestaAgenciaTributaria = veriFactuResponse.RawResponse;
+        // Respuesta técnica completa ya no se persiste en factura
 
         if (veriFactuResponse.Status == EstadoVeriFactu.AceptadaVeriFactu || veriFactuResponse.Status == EstadoVeriFactu.Pendiente)
         {
@@ -250,7 +248,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
                 invoice.StateMachine.CambiarA(EstadoFactura.Enviada);
             }
             invoice.UrlValidacion = veriFactuResponse.ValidationUrl;
-            invoice.Csv = veriFactuResponse.CSV;
+            invoice.HuellaFiscal = veriFactuResponse.HuellaFiscal;
             invoice.BatchId = veriFactuResponse.BatchId;
             
             if (veriFactuResponse.QrData != null)
@@ -277,67 +275,6 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             invoice.EstadoVeriFactu = EstadoVeriFactu.RechazadaVeriFactu;
         }
 
-        try
-        {
-            if (!string.IsNullOrWhiteSpace(veriFactuResponse.RawResponse))
-            {
-                var trimmedResponse = veriFactuResponse.RawResponse.Trim();
-                if (trimmedResponse.StartsWith('{'))
-                {
-                    // Es JSON, lo guardamos tal cual (ya viene serializado desde el adaptador)
-                    invoice.RespuestaAgenciaTributaria = trimmedResponse;
-                }
-                else if (trimmedResponse.StartsWith('<'))
-                {
-                    try
-                    {
-                        var response = XDocument.Parse(trimmedResponse);
-                        invoice.RespuestaAgenciaTributaria = response.ToString();
-                    }
-                    catch (XmlException)
-                    {
-                        // No es XML válido, mantenemos el texto original
-                        invoice.RespuestaAgenciaTributaria = veriFactuResponse.RawResponse;
-                    }
-                }
-                else
-                {
-                    invoice.RespuestaAgenciaTributaria = veriFactuResponse.RawResponse;
-                }
-            }
-
-            if (veriFactuResponse.Xml is { Length: > 0 })
-            {
-                var xmlString = Encoding.UTF8.GetString(veriFactuResponse.Xml);
-                if (!string.IsNullOrWhiteSpace(xmlString))
-                {
-                    var trimmedXml = xmlString.Trim();
-                    if (trimmedXml.StartsWith('<'))
-                    {
-                        try
-                        {
-                            var xml = XDocument.Parse(trimmedXml);
-                            invoice.XmlAgenciaTributaria = xml.ToString();
-                        }
-                        catch (XmlException)
-                        {
-                            invoice.XmlAgenciaTributaria = xmlString;
-                        }
-                    }
-                    else
-                    {
-                        invoice.XmlAgenciaTributaria = xmlString;
-                    }
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            logger.LogWarning(ex, "Error procesando el detalle XML de la respuesta para factura {Secuencia}", invoice.Secuencia);
-            if (!string.IsNullOrEmpty(invoice.RespuestaAgenciaTributaria))
-                invoice.RespuestaAgenciaTributaria += $"\n[Error processing XML detail: {ex.Message}]";
-            else
-                invoice.RespuestaAgenciaTributaria = $"Error processing XML: {ex.Message}";
-        }
+        // No persistimos detalle técnico de respuesta ni XML en la factura
     }
 }

@@ -19,15 +19,33 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger, VerifactuClient 
 
             // Configurar API Key del cliente desde la configuración de la empresa
             client.ApiKey = companyInfo.ApiKeyVeriFactu;
+            
+            if (string.IsNullOrEmpty(client.ApiKey))
+            {
+                logger.LogWarning("VeriFactuAdapter: ApiKeyVeriFactu está vacía en la configuración de la empresa.");
+            }
+            else
+            {
+                var maskedKey = client.ApiKey.Length > 8 
+                    ? client.ApiKey.Substring(0, 4) + "..." + client.ApiKey.Substring(client.ApiKey.Length - 4)
+                    : "****";
+                logger.LogInformation("VeriFactuAdapter: Usando API Key: {MaskedKey} (Longitud: {Length})", maskedKey, client.ApiKey.Length);
+            }
 
             var body = MapToBody2(veriFactuInvoice, companyInfo);
             
-            // La API espera una colección para BulkAsync
-            var responseList = await client.BulkAsync([body]);
-            var apiResponse = responseList?.FirstOrDefault();
-
+            // Según la actualización del usuario, usamos el endpoint individual "create"
+            // Hemos implementado CreateAsync en la clase parcial VerifactuClient
+            var apiResponse = await client.CreateAsync(body);
+            
+            // Log de la respuesta cruda para depuración si falla o para ver qué devuelve
+            logger.LogInformation("VeriFactuAdapter: Respuesta recibida de la API");
+            
             if (apiResponse != null)
             {
+                logger.LogInformation("VeriFactuAdapter: Factura {Secuencia} procesada. UUID: {Uuid}, Estado: {Estado}", 
+                    invoice.Secuencia, apiResponse.Uuid, apiResponse.Estado);
+
                 var status = apiResponse.Estado == "Pendiente" 
                     ? EstadoVeriFactu.Pendiente 
                     : EstadoVeriFactu.AceptadaVeriFactu;
@@ -37,7 +55,7 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger, VerifactuClient 
                     Status = status,
                     RawResponse = JsonConvert.SerializeObject(apiResponse),
                     ValidationUrl = apiResponse.Url,
-                    CSV = apiResponse.Huella,
+                    HuellaFiscal = apiResponse.Huella,
                     QrData = !string.IsNullOrEmpty(apiResponse.Qr) ? Convert.FromBase64String(apiResponse.Qr) : null,
                     BatchId = apiResponse.Uuid
                 };
@@ -99,21 +117,40 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger, VerifactuClient 
             Nombre = invoice.BuyerName
         };
 
+        // Requerido y permitido únicamente para facturas rectificativas (R1, R2, R3, R4, R5).
+        if (invoice.InvoiceType is TipoFacturaAmigable.R1 or TipoFacturaAmigable.R2 or TipoFacturaAmigable.R3 or TipoFacturaAmigable.R4 or TipoFacturaAmigable.R5)
+        {
+            body.Tipo_rectificativa = Body2Tipo_rectificativa.S; // Por defecto Sustitución, ya que no tenemos este campo en el modelo aún
+        }
+
         foreach (var taxItem in invoice.TaxItems)
         {
             var linea = new Lineas
             {
                 Base_imponible = taxItem.TaxBase.ToString("F2").Replace(",", "."),
-                Tipo_impositivo = taxItem.TaxRate.ToString("F2").Replace(",", "."),
-                Cuota_repercutida = taxItem.TaxAmount.ToString("F2").Replace(",", "."),
                 Impuesto = MapImpuesto(taxItem.Tax),
-                Calificacion_operacion = MapCalificacion(taxItem.TaxType),
                 Clave_regimen = MapRegimen(taxItem.TaxScheme)
             };
             
             if (taxItem.TaxException.HasValue)
             {
                 linea.Operacion_exenta = MapExencion(taxItem.TaxException.Value);
+                // Si hay exención, no se deben enviar tipos ni cuotas impositivas ni calificación según la API
+                linea.Tipo_impositivo = null;
+                linea.Cuota_repercutida = null;
+                // Además, tampoco se deben informar los campos de recargo de equivalencia
+                linea.Tipo_recargo_equivalencia = null;
+                linea.Cuota_recargo_equivalencia = null;
+                // Calificación se anula para evitar el 400
+                linea.Calificacion_operacion = null;
+            }
+            else
+            {
+                linea.Calificacion_operacion = MapCalificacion(taxItem.TaxType);
+                linea.Tipo_impositivo = taxItem.TaxRate.ToString("F2").Replace(",", ".");
+                linea.Cuota_repercutida = taxItem.TaxAmount.ToString("F2").Replace(",", ".");
+                // Operacion_exenta se mantiene nula
+                linea.Operacion_exenta = null;
             }
             
             body.Lineas.Add(linea);

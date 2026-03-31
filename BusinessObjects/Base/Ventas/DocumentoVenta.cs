@@ -939,6 +939,8 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [Size(255)]
+    [ModelDefault("AllowEdit", "False")]
+    [NonCloneable]
     [XafDisplayName("Huella Fiscal")]
     public string? HuellaFiscal
     {

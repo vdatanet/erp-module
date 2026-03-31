@@ -33,7 +33,6 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     private TipoRectificativaAmigable _tipoRectificativaAmigable;
     private Diario? _diarioVentas;
     private string? _codigoErrorEntradaFactura;
-    private string? _csv;
     private bool _esSubsanacion;
     private string? _estadoEntradaFactura;
     private EstadoVeriFactu _estadoVeriFactu;
@@ -41,12 +40,10 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     private Asiento? _asientoContable;
     private MediaDataObject? _qr;
     private Guid _correlationId;
-    private string? _respuestaAgenciaTributaria;
     private string? _texto;
     private TipoFactura _tipoFactura;
     private TipoRectificativa _tipoRectificativa;
     private string? _urlValidacion;
-    private string? _xmlAgenciaTributaria;
     private EstadoFactura _estadoFactura;
 
     [ModelDefault("AllowEdit", "False")]
@@ -195,35 +192,6 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     {
         get => _correlationId;
         set => SetPropertyValue(nameof(CorrelationId), ref _correlationId, value);
-    }
-
-    [Size(SizeAttribute.Unlimited)]
-    [ModelDefault("AllowEdit", "False")]
-    [NonCloneable]
-    [XafDisplayName("Respuesta Agencia Tributaria")]
-    public string? RespuestaAgenciaTributaria
-    {
-        get => _respuestaAgenciaTributaria;
-        set => SetPropertyValue(nameof(RespuestaAgenciaTributaria), ref _respuestaAgenciaTributaria, value);
-    }
-
-    [Size(SizeAttribute.Unlimited)]
-    [ModelDefault("AllowEdit", "False")]
-    [NonCloneable]
-    [XafDisplayName("XML Agencia Tributaria")]
-    public string? XmlAgenciaTributaria
-    {
-        get => _xmlAgenciaTributaria;
-        set => SetPropertyValue(nameof(XmlAgenciaTributaria), ref _xmlAgenciaTributaria, value);
-    }
-
-    [ModelDefault("AllowEdit", "False")]
-    [NonCloneable]
-    [XafDisplayName("CSV")]
-    public string? Csv
-    {
-        get => _csv;
-        set => SetPropertyValue(nameof(Csv), ref _csv, value);
     }
 
     [Size(255)]
