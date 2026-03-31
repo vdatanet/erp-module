@@ -166,6 +166,12 @@ public class VerifactuWebhookService : IVerifactuWebhookService
             using var tenantOs = osProvider.CreateObjectSpace();
 
             // Lógica de mapeo de estados y actualización de factura
+            if (string.IsNullOrEmpty(ev.Payload))
+            {
+                _logger.LogWarning("Event {EventOid} has no payload", eventOid);
+                return;
+            }
+
             using var jsonDoc = JsonDocument.Parse(ev.Payload);
             var root = jsonDoc.RootElement;
             

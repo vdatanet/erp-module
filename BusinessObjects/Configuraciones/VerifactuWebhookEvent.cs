@@ -7,7 +7,7 @@ using erp.Module.BusinessObjects.Base.Comun;
 namespace erp.Module.BusinessObjects.Configuraciones;
 
 [DefaultClassOptions]
-[NavigationItem("Configuraciones")]
+//[NavigationItem("Configuraciones")]
 [XafDisplayName("Evento Webhook VeriFactu")]
 [ImageName("Action_Log_History")]
 public class VerifactuWebhookEvent(Session session) : EntidadBase(session)

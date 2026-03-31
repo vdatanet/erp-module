@@ -9,7 +9,7 @@ using erp.Module.BusinessObjects.Base.Comun;
 namespace erp.Module.BusinessObjects.Configuraciones;
 
 [DefaultClassOptions]
-[NavigationItem("Configuraciones")]
+//[NavigationItem("Configuraciones")]
 [XafDisplayName("Configuración Webhook VeriFactu")]
 [ImageName("Action_Cloud")]
 public class VerifactuWebhookConfig(Session session) : EntidadBase(session)
