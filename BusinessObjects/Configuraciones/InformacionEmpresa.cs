@@ -65,10 +65,6 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private Diario? _diarioCierrePorDefecto;
     private Diario? _diarioRegularizacionPorDefecto;
     private string? _apiKeyVeriFactu;
-    private string? _nifAdministradorSistemaVeriFactu;
-    private string? _nombreAdministradorSistemaVeriFactu;
-    private string? _nombreArchivoConfigVeriFactu;
-    private string? _nombreSistemaVeriFactu;
     private PosicionFiscal? _posicionFiscalPorDefecto;
     private string? _prefijoAsientosPorDefecto;
     private string? _prefijoAlbaranesCompraPorDefecto;
@@ -81,8 +77,6 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private string? _prefijoPedidosPorDefecto;
     private string? _prefijoOfertasCompraPorDefecto;
     private string? _prefijoOfertasVentaPorDefecto;
-    private string? _prefijoUrlValidacionVeriFactu;
-    private string? _prefijoUrlVeriFactu;
     private string? _prefijoClientes;
     private string? _prefijoProveedores;
     private string? _prefijoAcreedores;
@@ -91,15 +85,9 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private string? _prefijoSesionTpvPorDefecto;
     private string? _prefijoVentaTpvPorDefecto;
     private string? _textoDefectoVeriFactu;
-    private string? _versionSistemaVeriFactu;
     private MediaDataObject? _logo;
     private bool _activarVeriFactu;
-    private bool _activarFacturae;
-    private string? _serieCertificadoFacturae;
     private string? _nombreReporteTicket;
-    private string? _unidadOrganicaOficinaContable;
-    private string? _unidadOrganicaOrganoGestor;
-    private string? _unidadOrganicaUnidadTramitadora;
     private int _paddingNumero;
     private int _paddingCuentaContable;
     private TipoNumeracionDocumento _tipoNumeracionDocumento;
@@ -602,57 +590,12 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(TextoDefectoVeriFactu), ref _textoDefectoVeriFactu, value);
     }
 
-    [Size(500)]
-    [ModelDefault("AllowEdit", "False")]
-    [XafDisplayName("Archivo Config VeriFactu")]
-    public string? NombreArchivoConfigVeriFactu
-    {
-        get => _nombreArchivoConfigVeriFactu;
-        set => SetPropertyValue(nameof(NombreArchivoConfigVeriFactu), ref _nombreArchivoConfigVeriFactu, value);
-    }
-
     [Size(255)]
     [XafDisplayName("API Key VeriFactu")]
     public string? ApiKeyVeriFactu
     {
         get => _apiKeyVeriFactu;
         set => SetPropertyValue(nameof(ApiKeyVeriFactu), ref _apiKeyVeriFactu, value);
-    }
-
-    [Size(500)]
-    [XafDisplayName("URL VeriFactu")]
-    [ModelDefault("AllowEdit", "False")]
-    public string? PrefijoUrlVeriFactu
-    {
-        get => _prefijoUrlVeriFactu;
-        set => SetPropertyValue(nameof(PrefijoUrlVeriFactu), ref _prefijoUrlVeriFactu, value);
-    }
-
-    [Size(500)]
-    [XafDisplayName("URL Validación VeriFactu")]
-    [ModelDefault("AllowEdit", "False")]
-    public string? PrefijoUrlValidacionVeriFactu
-    {
-        get => _prefijoUrlValidacionVeriFactu;
-        set => SetPropertyValue(nameof(PrefijoUrlValidacionVeriFactu), ref _prefijoUrlValidacionVeriFactu, value);
-    }
-
-    [Size(30)]
-    [ModelDefault("AllowEdit", "False")]
-    [XafDisplayName("Nombre Sistema VeriFactu")]
-    public string? NombreSistemaVeriFactu
-    {
-        get => _nombreSistemaVeriFactu;
-        set => SetPropertyValue(nameof(NombreSistemaVeriFactu), ref _nombreSistemaVeriFactu, value);
-    }
-
-    [Size(50)]
-    [ModelDefault("AllowEdit", "False")]
-    [XafDisplayName("Versión Sistema VeriFactu")]
-    public string? VersionSistemaVeriFactu
-    {
-        get => _versionSistemaVeriFactu;
-        set => SetPropertyValue(nameof(VersionSistemaVeriFactu), ref _versionSistemaVeriFactu, value);
     }
 
     [XafDisplayName("Logo")]
@@ -664,60 +607,10 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Activar VeriFactu")]
-    [ModelDefault("AllowEdit", "False")]
     public bool ActivarVeriFactu
     {
         get => _activarVeriFactu;
         set => SetPropertyValue(nameof(ActivarVeriFactu), ref _activarVeriFactu, value);
-    }
-
-    [XafDisplayName("Activar Facturae")]
-    public bool ActivarFacturae
-    {
-        get => _activarFacturae;
-        set => SetPropertyValue(nameof(ActivarFacturae), ref _activarFacturae, value);
-    }
-
-    [Size(255)]
-    [XafDisplayName("Serie Certificado Facturae")]
-    public string? SerieCertificadoFacturae
-    {
-        get => _serieCertificadoFacturae;
-        set => SetPropertyValue(nameof(SerieCertificadoFacturae), ref _serieCertificadoFacturae, value);
-    }
-
-    [Size(50)]
-    [XafDisplayName("Oficina Contable (FACe)")]
-    public string? UnidadOrganicaOficinaContable
-    {
-        get => _unidadOrganicaOficinaContable;
-        set => SetPropertyValue(nameof(UnidadOrganicaOficinaContable), ref _unidadOrganicaOficinaContable, value);
-    }
-
-    [Size(50)]
-    [XafDisplayName("Órgano Gestor (FACe)")]
-    public string? UnidadOrganicaOrganoGestor
-    {
-        get => _unidadOrganicaOrganoGestor;
-        set => SetPropertyValue(nameof(UnidadOrganicaOrganoGestor), ref _unidadOrganicaOrganoGestor, value);
-    }
-
-    [Size(50)]
-    [XafDisplayName("Unidad Tramitadora (FACe)")]
-    public string? UnidadOrganicaUnidadTramitadora
-    {
-        get => _unidadOrganicaUnidadTramitadora;
-        set => SetPropertyValue(nameof(UnidadOrganicaUnidadTramitadora), ref _unidadOrganicaUnidadTramitadora, value);
-    }
-
-    [Size(255)]
-    [ModelDefault("AllowEdit", "False")]
-    [XafDisplayName("Nombre Admin Sistema VeriFactu")]
-    public string? NombreAdministradorSistemaVeriFactu
-    {
-        get => _nombreAdministradorSistemaVeriFactu;
-        set => SetPropertyValue(nameof(NombreAdministradorSistemaVeriFactu), ref _nombreAdministradorSistemaVeriFactu,
-            value);
     }
 
     [RuleRange("InformacionEmpresa_PaddingNumero_Range", DefaultContexts.Save, 1, 10)]
@@ -734,15 +627,6 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     {
         get => _paddingCuentaContable == 0 ? 10 : _paddingCuentaContable;
         set => SetPropertyValue(nameof(PaddingCuentaContable), ref _paddingCuentaContable, value);
-    }
-
-    [Size(50)]
-    [ModelDefault("AllowEdit", "False")]
-    [XafDisplayName("NIF Admin Sistema VeriFactu")]
-    public string? NifAdministradorSistemaVeriFactu
-    {
-        get => _nifAdministradorSistemaVeriFactu;
-        set => SetPropertyValue(nameof(NifAdministradorSistemaVeriFactu), ref _nifAdministradorSistemaVeriFactu, value);
     }
 
     [Size(255)]

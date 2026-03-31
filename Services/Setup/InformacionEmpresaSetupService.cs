@@ -79,17 +79,6 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace, IServicePr
         
         if (string.IsNullOrEmpty(informacionEmpresa.NombreReporteTicket)) informacionEmpresa.NombreReporteTicket = "Ticket Factura Simplificada";
         
-        if (string.IsNullOrEmpty(informacionEmpresa.NombreArchivoConfigVeriFactu) && !string.IsNullOrEmpty(tenantName))
-        {
-            informacionEmpresa.NombreArchivoConfigVeriFactu = tenantName.Replace(".", "_") + ".cfg";
-        }
-
-        if (string.IsNullOrEmpty(informacionEmpresa.NombreSistemaVeriFactu)) informacionEmpresa.NombreSistemaVeriFactu = "VDATA ERP";
-        if (string.IsNullOrEmpty(informacionEmpresa.VersionSistemaVeriFactu)) informacionEmpresa.VersionSistemaVeriFactu = "1.0.0";
-        if (string.IsNullOrEmpty(informacionEmpresa.NombreAdministradorSistemaVeriFactu)) informacionEmpresa.NombreAdministradorSistemaVeriFactu = "Joan Pallàs Ribes";
-        if (string.IsNullOrEmpty(informacionEmpresa.NifAdministradorSistemaVeriFactu)) informacionEmpresa.NifAdministradorSistemaVeriFactu = "43725645T";
-        if (string.IsNullOrEmpty(informacionEmpresa.PrefijoUrlVeriFactu)) informacionEmpresa.PrefijoUrlVeriFactu = erp.Module.BusinessObjects.Base.Facturacion.VeriFactuEndPointPrefixes.Prod;
-        if (string.IsNullOrEmpty(informacionEmpresa.PrefijoUrlValidacionVeriFactu)) informacionEmpresa.PrefijoUrlValidacionVeriFactu = erp.Module.BusinessObjects.Base.Facturacion.VeriFactuEndPointPrefixes.ProdValidate;
         if (string.IsNullOrEmpty(informacionEmpresa.TextoDefectoVeriFactu)) informacionEmpresa.TextoDefectoVeriFactu = "Servicios de consultoría y asesoramiento técnico correspondientes al periodo....";
         
         if (string.IsNullOrEmpty(informacionEmpresa.PrefijoAsientosPorDefecto)) informacionEmpresa.PrefijoAsientosPorDefecto = "AS";
