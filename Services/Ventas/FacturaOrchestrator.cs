@@ -78,6 +78,14 @@ public class FacturaOrchestrator
             throw new UserFriendlyException($"No se puede enviar a VeriFactu:\n{validationResult.ErrorMessage}");
         }
 
+        // Si el importe es cero, no se envía a VeriFactu
+        if (factura.ImporteTotal == 0)
+        {
+            factura.StateMachine.CambiarA(EstadoFactura.VeriFactuNoNecesario);
+            factura.EstadoVeriFactu = EstadoVeriFactu.NoNecesario;
+            return new VeriFactuService.SendResult(true, "Factura con importe cero: no requiere envío a VeriFactu.");
+        }
+
         var result = await veriFactuService.SendFacturaAsync(objectSpace, factura);
 
         return result;
@@ -130,8 +138,9 @@ public class FacturaOrchestrator
             {
                 var infoEmpresa = InformacionEmpresaHelper.GetInformacionEmpresa(factura.Session);
                 var activarVeriFactu = infoEmpresa?.ActivarVeriFactu ?? false;
+                var importeCero = factura.ImporteTotal == 0;
 
-                if (activarVeriFactu)
+                if (activarVeriFactu && !importeCero)
                 {
                     if (factura.EstadoVeriFactu != EstadoVeriFactu.AceptadaVeriFactu &&
                         factura.EstadoVeriFactu != EstadoVeriFactu.EnviadaVeriFactu)
@@ -145,7 +154,7 @@ public class FacturaOrchestrator
                 }
                 else
                 {
-                    // Si no es necesario VeriFactu, cambiamos al nuevo estado de factura
+                    // Si no es necesario VeriFactu (desactivado o importe 0), cambiamos al nuevo estado de factura
                     factura.StateMachine.CambiarA(EstadoFactura.VeriFactuNoNecesario);
                     
                     // También marcamos el estado VeriFactu como no necesario para claridad visual

@@ -236,13 +236,18 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
     public void UpdateInvoiceFromResponse(IObjectSpace objectSpace, FacturaBase invoice, VeriFactuResponse veriFactuResponse,
         Invoice veriFactuFactura)
     {
-        invoice.EstadoVeriFactu = veriFactuResponse.Status;
         invoice.CodigoErrorEntradaFactura = veriFactuResponse.ErrorCode;
         
         // Respuesta técnica completa ya no se persiste en factura
 
-        if (veriFactuResponse.Status == EstadoVeriFactu.AceptadaVeriFactu || veriFactuResponse.Status == EstadoVeriFactu.Pendiente)
+        if (veriFactuResponse.Status == EstadoVeriFactu.AceptadaVeriFactu || 
+            veriFactuResponse.Status == EstadoVeriFactu.Pendiente ||
+            veriFactuResponse.Status == EstadoVeriFactu.EnviadaVeriFactu ||
+            veriFactuResponse.Status == EstadoVeriFactu.PendienteVeriFactu)
         {
+            // Después de éxito al enviar verifactu, el EstadoVerifactu debe ser EnviadaVeriFactu (Enviado)
+            invoice.EstadoVeriFactu = EstadoVeriFactu.EnviadaVeriFactu;
+
             if (invoice.EstadoFactura == EstadoFactura.Emitida)
             {
                 invoice.StateMachine.CambiarA(EstadoFactura.Enviada);
@@ -257,18 +262,6 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
                 qrMedia.MediaData = veriFactuResponse.QrData;
                 invoice.Qr = qrMedia;
             }
-        }
-        else if (veriFactuResponse.Status == EstadoVeriFactu.PendienteVeriFactu)
-        {
-            invoice.EstadoVeriFactu = EstadoVeriFactu.PendienteVeriFactu;
-            if (invoice.EstadoFactura == EstadoFactura.Emitida)
-            {
-                invoice.StateMachine.CambiarA(EstadoFactura.Enviada);
-            }
-        }
-        else if (veriFactuResponse.Status == EstadoVeriFactu.EnviadaVeriFactu)
-        {
-            invoice.EstadoVeriFactu = EstadoVeriFactu.EnviadaVeriFactu;
         }
         else
         {

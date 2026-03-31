@@ -67,15 +67,16 @@ public abstract class FacturaStateMachineBase(FacturaBase documento) : IFacturaS
         {
             var infoEmpresa = Helpers.Contactos.InformacionEmpresaHelper.GetInformacionEmpresa(Factura.Session);
             var activarVeriFactu = infoEmpresa?.ActivarVeriFactu ?? false;
+            var importeCero = Factura.ImporteTotal == 0;
 
-            if (activarVeriFactu)
+            if (activarVeriFactu && !importeCero)
             {
-                // Si VeriFactu está activo, debe pasar por Enviada
+                // Si VeriFactu está activo y el importe no es 0, debe pasar por Enviada
                 return new List<EstadoFactura> { EstadoFactura.Enviada, EstadoFactura.Contabilizada };
             }
             else
             {
-                // Si no está activo, puede saltar a VeriFactuNoNecesario o directamente a Contabilizada
+                // Si no está activo o el importe es 0, puede saltar a VeriFactuNoNecesario o directamente a Contabilizada
                 return new List<EstadoFactura> { EstadoFactura.VeriFactuNoNecesario, EstadoFactura.Contabilizada };
             }
         }
