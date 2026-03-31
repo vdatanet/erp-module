@@ -4,15 +4,21 @@ namespace erp.Module.BusinessObjects.Base.Facturacion;
 
 public enum EstadoVeriFactu
 {
-    Borrador,
-    Validado,
-    PendienteVeriFactu,
-    [XafDisplayName("Enviado")] EnviadaVeriFactu,
-    [XafDisplayName("Aceptado")] AceptadaVeriFactu,
-    RechazadaVeriFactu,
-    Impresa,
-    ErrorTecnico,
     [XafDisplayName("Pendiente")] Pendiente,
+    [XafDisplayName("Aceptado")] Correcto,
+    [XafDisplayName("Aceptado con errores")] AceptadoConErrores,
+    [XafDisplayName("Incorrecto")] Incorrecto,
+    [XafDisplayName("Duplicado")] Duplicado,
+    [XafDisplayName("Anulado")] Anulado,
+    [XafDisplayName("Factura inexistente")] FacturaInexistente,
+    [XafDisplayName("No registrado")] NoRegistrado,
+    [XafDisplayName("Error servidor AEAT")] ErrorServidorAEAT,
+    
+    // Estados técnicos o legados que podrían ser necesarios temporalmente o para mapeos internos
+    [XafDisplayName("Borrador")] Borrador,
+    [XafDisplayName("Enviado")] EnviadaVeriFactu,
+    [XafDisplayName("Rechazada")] RechazadaVeriFactu,
+    [XafDisplayName("Error Técnico")] ErrorTecnico,
     [XafDisplayName("No Necesario")] NoNecesario
 }
 

@@ -8,4 +8,5 @@ namespace erp.Module.Services.Facturacion;
 public interface IVeriFactuAdapter
 {
     Task<VeriFactuResponse> SendInvoiceAsync(Invoice veriFactuInvoice, FacturaBase invoice, InformacionEmpresa companyInfo);
+    Task<VeriFactuResponse> GetStatusAsync(string uuid, InformacionEmpresa companyInfo);
 }

@@ -320,7 +320,7 @@ public class FacturaOrchestrator(ILogger<FacturaOrchestrator>? logger = null)
 
                 if (activarVeriFactu && !importeCero)
                 {
-                    if (factura.EstadoVeriFactu != EstadoVeriFactu.AceptadaVeriFactu &&
+                    if (factura.EstadoVeriFactu != EstadoVeriFactu.Correcto && 
                         factura.EstadoVeriFactu != EstadoVeriFactu.EnviadaVeriFactu)
                     {
                         logger?.LogInformation("FacturaOrchestrator: Llamando a EnviarAVerifactuAsync para factura {Secuencia}", factura.Secuencia);
@@ -357,23 +357,12 @@ public class FacturaOrchestrator(ILogger<FacturaOrchestrator>? logger = null)
                 }
             }
 
-            // 4. Contabilizar si está Enviada/Aceptada/Pendiente o VeriFactu No Necesario
-            if (factura.EstadoFactura != EstadoFactura.Contabilizada &&
-                (factura.EstadoFactura == EstadoFactura.Enviada ||
-                 factura.EstadoFactura == EstadoFactura.VeriFactuNoNecesario ||
-                 factura.EstadoVeriFactu == EstadoVeriFactu.AceptadaVeriFactu ||
-                 factura.EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu ||
-                 factura.EstadoVeriFactu == EstadoVeriFactu.PendienteVeriFactu))
+            // 4. Detener el proceso después del envío a VeriFactu. No contabilizar automáticamente.
+            if (factura.EstadoFactura == EstadoFactura.Enviada || 
+                factura.EstadoFactura == EstadoFactura.VeriFactuNoNecesario)
             {
-                logger?.LogInformation("FacturaOrchestrator: Contabilizando factura {Secuencia}. Estado actual: {Estado}", 
-                    factura.Secuencia, factura.EstadoFactura);
-                Contabilizar(factura);
-            }
-
-            if (factura.EstadoFactura == EstadoFactura.Contabilizada)
-            {
-                logger?.LogInformation("FacturaOrchestrator: Factura {Secuencia} finalizada con éxito en estado Contabilizada", factura.Secuencia);
-                return new VeriFactuService.SendResult(true, "Factura procesada y contabilizada correctamente.");
+                logger?.LogInformation("FacturaOrchestrator: Factura {Secuencia} enviada/procesada con éxito. Se detiene el proceso antes de contabilizar.", factura.Secuencia);
+                return new VeriFactuService.SendResult(true, "Factura enviada correctamente.");
             }
 
             logger?.LogWarning("FacturaOrchestrator: El proceso para {Secuencia} se detuvo en estado {Estado}", factura.Secuencia, factura.EstadoFactura);

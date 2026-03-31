@@ -45,7 +45,7 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger, VerifactuClient 
 
                 var status = apiResponse.Estado == "Pendiente" 
                     ? EstadoVeriFactu.Pendiente 
-                    : EstadoVeriFactu.AceptadaVeriFactu;
+                    : EstadoVeriFactu.Correcto;
 
                 return new VeriFactuResponse
                 {
@@ -86,6 +86,78 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger, VerifactuClient 
                 RawResponse = ex.ToString()
             };
         }
+    }
+
+    public async Task<VeriFactuResponse> GetStatusAsync(string uuid, InformacionEmpresa companyInfo)
+    {
+        try
+        {
+            logger.LogInformation("VeriFactuAdapter: Consultando estado de UUID {Uuid}", uuid);
+
+            client.ApiKey = companyInfo.ApiKeyVeriFactu;
+
+            var apiResponse = await client.GetStatusAsync(uuid);
+
+            if (apiResponse != null)
+            {
+                logger.LogInformation("VeriFactuAdapter: Resultado de consulta UUID {Uuid}: {Estado}", uuid, apiResponse.Estado);
+
+                return new VeriFactuResponse
+                {
+                    Status = MapEstado(apiResponse.Estado),
+                    RawResponse = JsonConvert.SerializeObject(apiResponse),
+                    ValidationUrl = apiResponse.Url,
+                    HuellaFiscal = apiResponse.Huella,
+                    QrData = !string.IsNullOrEmpty(apiResponse.Qr) ? Convert.FromBase64String(apiResponse.Qr) : null,
+                    Uuid = apiResponse.Uuid
+                };
+            }
+
+            return new VeriFactuResponse
+            {
+                Status = EstadoVeriFactu.RechazadaVeriFactu,
+                ErrorMessage = "La API no devolvió una respuesta válida.",
+                RawResponse = "Respuesta vacía de GetStatusAsync"
+            };
+        }
+        catch (ApiException ex)
+        {
+            logger.LogError(ex, "Error de la API VeriFactu para UUID {Uuid}: {Response}", uuid, ex.Response);
+            return new VeriFactuResponse
+            {
+                Status = EstadoVeriFactu.RechazadaVeriFactu,
+                ErrorCode = ex.StatusCode.ToString(),
+                ErrorMessage = ex.Message,
+                RawResponse = ex.Response
+            };
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error técnico en VeriFactuAdapter para UUID {Uuid}", uuid);
+            return new VeriFactuResponse
+            {
+                Status = EstadoVeriFactu.ErrorTecnico,
+                ErrorMessage = ex.Message,
+                RawResponse = ex.ToString()
+            };
+        }
+    }
+
+    private EstadoVeriFactu MapEstado(string? estado)
+    {
+        return estado switch
+        {
+            "Pendiente" => EstadoVeriFactu.Pendiente,
+            "Correcto" => EstadoVeriFactu.Correcto,
+            "Aceptado con errores" => EstadoVeriFactu.AceptadoConErrores,
+            "Incorrecto" => EstadoVeriFactu.Incorrecto,
+            "Duplicado" => EstadoVeriFactu.Duplicado,
+            "Anulado" => EstadoVeriFactu.Anulado,
+            "Factura inexistente" => EstadoVeriFactu.FacturaInexistente,
+            "No registrado" => EstadoVeriFactu.NoRegistrado,
+            "Error servidor AEAT" => EstadoVeriFactu.ErrorServidorAEAT,
+            _ => EstadoVeriFactu.Correcto // Por defecto si es desconocido pero exitoso, o manejar según convenga
+        };
     }
 
     private Body2 MapToBody2(Invoice invoice, InformacionEmpresa companyInfo)

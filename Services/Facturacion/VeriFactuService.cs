@@ -57,7 +57,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             UpdateInvoiceFromResponse(objectSpace, invoice, response, veriFactuInvoice);
             objectSpace.CommitChanges();
 
-            if (response.Status == EstadoVeriFactu.AceptadaVeriFactu || 
+            if (response.Status == EstadoVeriFactu.Correcto || 
                 response.Status == EstadoVeriFactu.EnviadaVeriFactu || 
                 response.Status == EstadoVeriFactu.Pendiente)
             {
@@ -73,6 +73,35 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             logger.LogError(ex, "Error técnico al enviar factura {Secuencia}", invoice.Secuencia);
             invoice.EstadoVeriFactu = EstadoVeriFactu.ErrorTecnico;
             objectSpace.CommitChanges();
+            return new SendResult(false, $"Error técnico: {ex.Message}");
+        }
+    }
+
+    public async Task<SendResult> GetStatusAsync(IObjectSpace objectSpace, FacturaBase invoice)
+    {
+        if (string.IsNullOrEmpty(invoice.Uuid))
+        {
+            return new SendResult(false, "La factura no tiene UUID asignado.");
+        }
+
+        try
+        {
+            var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(((DevExpress.ExpressApp.Xpo.XPObjectSpace)objectSpace).Session);
+            if (companyInfo == null)
+            {
+                return new SendResult(false, "No se encontró la configuración de la empresa.");
+            }
+
+            var response = await veriFactuAdapter.GetStatusAsync(invoice.Uuid, companyInfo);
+
+            UpdateInvoiceFromResponse(objectSpace, invoice, response, null!);
+            objectSpace.CommitChanges();
+
+            return new SendResult(true, $"Estado actualizado: {invoice.EstadoVeriFactu}");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error al obtener estado de VeriFactu para {Secuencia}", invoice.Secuencia);
             return new SendResult(false, $"Error técnico: {ex.Message}");
         }
     }
@@ -254,13 +283,28 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         
         // Respuesta técnica completa ya no se persiste en factura
 
-        if (veriFactuResponse.Status == EstadoVeriFactu.AceptadaVeriFactu || 
+        if (veriFactuResponse.Status == EstadoVeriFactu.Correcto || 
             veriFactuResponse.Status == EstadoVeriFactu.Pendiente ||
             veriFactuResponse.Status == EstadoVeriFactu.EnviadaVeriFactu ||
-            veriFactuResponse.Status == EstadoVeriFactu.PendienteVeriFactu)
+            veriFactuResponse.Status == EstadoVeriFactu.AceptadoConErrores ||
+            veriFactuResponse.Status == EstadoVeriFactu.Incorrecto ||
+            veriFactuResponse.Status == EstadoVeriFactu.Duplicado ||
+            veriFactuResponse.Status == EstadoVeriFactu.Anulado ||
+            veriFactuResponse.Status == EstadoVeriFactu.FacturaInexistente ||
+            veriFactuResponse.Status == EstadoVeriFactu.NoRegistrado ||
+            veriFactuResponse.Status == EstadoVeriFactu.ErrorServidorAEAT)
         {
-            // Después de éxito al enviar verifactu, el EstadoVerifactu debe ser EnviadaVeriFactu (Enviado)
-            invoice.EstadoVeriFactu = EstadoVeriFactu.EnviadaVeriFactu;
+            // Después de éxito al enviar verifactu, o al recibir un estado válido, actualizamos el estado
+            // Si es un envío inicial exitoso (Correcto o EnviadaVeriFactu), lo dejamos en Pendiente para su posterior confirmación
+            if (veriFactuResponse.Status == EstadoVeriFactu.Correcto || 
+                veriFactuResponse.Status == EstadoVeriFactu.EnviadaVeriFactu)
+            {
+                invoice.EstadoVeriFactu = EstadoVeriFactu.Pendiente;
+            }
+            else
+            {
+                invoice.EstadoVeriFactu = veriFactuResponse.Status;
+            }
 
             if (invoice.EstadoFactura == EstadoFactura.Emitida)
             {

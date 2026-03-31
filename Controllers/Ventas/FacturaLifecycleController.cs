@@ -19,6 +19,7 @@ public class FacturaLifecycleController : ViewController
     private readonly SimpleAction _enviarVerifactuAction;
     private readonly SimpleAction _contabilizarAction;
     private readonly SimpleAction _procesarFlujoCompletoAction;
+    private readonly SimpleAction _actualizarEstadoVerifactuAction;
     private VeriFactuService? _veriFactuService;
     private FacturaOrchestrator? _facturaOrchestrator;
 
@@ -72,7 +73,7 @@ public class FacturaLifecycleController : ViewController
             Caption = "Contabilizar",
             ConfirmationMessage = "¿Desea generar el asiento contable para la factura seleccionada?",
             ImageName = "Accounting",
-            TargetObjectsCriteria = "EstadoFactura = 'Enviada' OR EstadoFactura = 'VeriFactuNoNecesario' OR (EstadoVeriFactu = 'AceptadaVeriFactu' OR EstadoVeriFactu = 'EnviadaVeriFactu' OR EstadoVeriFactu = 'PendienteVeriFactu')",
+            TargetObjectsCriteria = "EstadoFactura = 'Enviada' OR EstadoFactura = 'VeriFactuNoNecesario' OR (EstadoVeriFactu = 'Correcto' OR EstadoVeriFactu = 'EnviadaVeriFactu' OR EstadoVeriFactu = 'Pendiente')",
             SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
         _contabilizarAction.Execute += ContabilizarAction_Execute;
@@ -86,6 +87,15 @@ public class FacturaLifecycleController : ViewController
             SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
         _procesarFlujoCompletoAction.Execute += ProcesarFlujoCompletoAction_Execute;
+
+        _actualizarEstadoVerifactuAction = new SimpleAction(this, "Factura_ActualizarEstadoVerifactu", PredefinedCategory.Edit)
+        {
+            Caption = "Actualizar Estado VeriFactu",
+            ImageName = "Action_Refresh",
+            TargetObjectsCriteria = "Uuid IS NOT NULL AND (EstadoVeriFactu = 'EnviadaVeriFactu' OR EstadoVeriFactu = 'Pendiente' OR EstadoVeriFactu = 'Incorrecto' OR EstadoVeriFactu = 'ErrorServidorAEAT')",
+            SelectionDependencyType = SelectionDependencyType.RequireSingleObject
+        };
+        _actualizarEstadoVerifactuAction.Execute += ActualizarEstadoVerifactuAction_Execute;
     }
 
     protected override void OnActivated()
@@ -252,6 +262,25 @@ public class FacturaLifecycleController : ViewController
         MostrarMensaje(message, result.Success ? InformationType.Success : InformationType.Error);
 
         ObjectSpace.CommitChanges();
+        View.Refresh();
+    }
+
+    private async void ActualizarEstadoVerifactuAction_Execute(object sender, SimpleActionExecuteEventArgs e)
+    {
+        var factura = (FacturaBase)e.CurrentObject;
+        if (factura == null || _veriFactuService == null) return;
+
+        var result = await _veriFactuService.GetStatusAsync(ObjectSpace, factura);
+
+        if (result.Success)
+        {
+            MostrarMensaje(result.Message, InformationType.Success);
+        }
+        else
+        {
+            MostrarMensaje(result.Message, InformationType.Error);
+        }
+        
         View.Refresh();
     }
 

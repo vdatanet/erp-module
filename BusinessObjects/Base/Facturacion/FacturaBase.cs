@@ -24,7 +24,7 @@ namespace erp.Module.BusinessObjects.Base.Facturacion;
 [Appearance("BlockDeletionWhenSent", AppearanceItemType = "Action", TargetItems = "Delete",
     Criteria = "EstadoFactura != 'Borrador' AND EstadoFactura != 'Validada'", Context = "Any", Enabled = false)]
 [Appearance("BlockSendActionOnlyWhenEmitida", AppearanceItemType = "Action", TargetItems = "Factura_EnviarVerifactu",
-    Criteria = "EstadoFactura != 'Emitida' OR EstadoVeriFactu = 'AceptadaVeriFactu' OR EstadoVeriFactu = 'EnviadaVeriFactu' OR VeriFactuNoNecesario", Context = "Any", Enabled = false)]
+    Criteria = "EstadoFactura != 'Emitida' OR EstadoVeriFactu = 'Correcto' OR EstadoVeriFactu = 'EnviadaVeriFactu' OR VeriFactuNoNecesario", Context = "Any", Enabled = false)]
 public abstract class FacturaBase(Session session) : DocumentoVenta(session)
 {
 
@@ -249,7 +249,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     public bool Bloqueado => EstadoFactura == EstadoFactura.Contabilizada;
 
     [XafDisplayName("Sincronizado")]
-    public bool Sincronizado => EstadoVeriFactu == EstadoVeriFactu.AceptadaVeriFactu;
+    public bool Sincronizado => EstadoVeriFactu == EstadoVeriFactu.Correcto;
 
     public override void AfterConstruction()
     {
@@ -279,7 +279,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     public bool Contabilizada => EstadoFactura == EstadoFactura.Contabilizada;
     public bool EnviadaVeriFactu => EstadoFactura == EstadoFactura.Enviada || 
                                     EstadoFactura == EstadoFactura.VeriFactuNoNecesario || 
-                                    EstadoVeriFactu == EstadoVeriFactu.AceptadaVeriFactu || 
+                                    EstadoVeriFactu == EstadoVeriFactu.Correcto || 
                                     EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu ||
                                     EstadoVeriFactu == EstadoVeriFactu.NoNecesario;
     public bool Emitida => EstadoFactura >= EstadoFactura.Emitida;
@@ -305,13 +305,14 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     public bool PuedeEmitir => EstadoFactura == EstadoFactura.Validada;
     public bool PuedeRevertirABorrador => EstadoFactura == EstadoFactura.Validada;
     public bool PuedeEnviarVerifactu => EstadoFactura == EstadoFactura.Emitida && 
-                                        EstadoVeriFactu != EstadoVeriFactu.AceptadaVeriFactu && 
-                                        EstadoVeriFactu != EstadoVeriFactu.EnviadaVeriFactu;
+                                        EstadoVeriFactu != EstadoVeriFactu.Correcto && 
+                                        EstadoVeriFactu != EstadoVeriFactu.EnviadaVeriFactu &&
+                                        EstadoVeriFactu != EstadoVeriFactu.Pendiente;
     public bool PuedeContabilizar => (EstadoFactura == EstadoFactura.Enviada || 
                                       EstadoFactura == EstadoFactura.VeriFactuNoNecesario ||
-                                      EstadoVeriFactu == EstadoVeriFactu.AceptadaVeriFactu || 
+                                      EstadoVeriFactu == EstadoVeriFactu.Correcto || 
                                       EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu ||
-                                      EstadoVeriFactu == EstadoVeriFactu.PendienteVeriFactu) &&
+                                      EstadoVeriFactu == EstadoVeriFactu.Pendiente) &&
                                      EstadoFactura != EstadoFactura.Contabilizada;
 
     public virtual ValidationResult ValidarParaEmision()
