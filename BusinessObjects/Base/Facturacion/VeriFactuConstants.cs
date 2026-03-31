@@ -5,7 +5,7 @@ namespace erp.Module.BusinessObjects.Base.Facturacion;
 public enum EstadoVeriFactu
 {
     [XafDisplayName("Pendiente")] Pendiente,
-    [XafDisplayName("Aceptado")] Correcto,
+    [XafDisplayName("Correcto")] Correcto,
     [XafDisplayName("Aceptado con errores")] AceptadoConErrores,
     [XafDisplayName("Incorrecto")] Incorrecto,
     [XafDisplayName("Duplicado")] Duplicado,
