@@ -43,7 +43,6 @@
         <PackageReference Include="DevExpress.Persistent.BaseImpl.Xpo" Version="25.2.5" />
         <PackageReference Include="Azure.Identity" Version="1.19.0" />
         <PackageReference Include="IbanNet" Version="6.1.0" />
-        <PackageReference Include="Irene.Solutions.FACe" Version="1.0.5" />
         <PackageReference Include="MailKit" Version="4.15.1" />
         <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0" />
         <PackageReference Include="NIF.DNI.NIE.CIF.Validation" Version="1.0.0" />
