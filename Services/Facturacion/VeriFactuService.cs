@@ -243,9 +243,8 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         // Conservar respuesta técnica completa
         invoice.RespuestaAgenciaTributaria = veriFactuResponse.RawResponse;
 
-        if (veriFactuResponse.Status == EstadoVeriFactu.AceptadaVeriFactu)
+        if (veriFactuResponse.Status == EstadoVeriFactu.AceptadaVeriFactu || veriFactuResponse.Status == EstadoVeriFactu.Pendiente)
         {
-            invoice.EstadoVeriFactu = EstadoVeriFactu.AceptadaVeriFactu;
             if (invoice.EstadoFactura == EstadoFactura.Emitida)
             {
                 invoice.StateMachine.CambiarA(EstadoFactura.Enviada);
@@ -283,7 +282,12 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             if (!string.IsNullOrWhiteSpace(veriFactuResponse.RawResponse))
             {
                 var trimmedResponse = veriFactuResponse.RawResponse.Trim();
-                if (trimmedResponse.StartsWith('<'))
+                if (trimmedResponse.StartsWith('{'))
+                {
+                    // Es JSON, lo guardamos tal cual (ya viene serializado desde el adaptador)
+                    invoice.RespuestaAgenciaTributaria = trimmedResponse;
+                }
+                else if (trimmedResponse.StartsWith('<'))
                 {
                     try
                     {

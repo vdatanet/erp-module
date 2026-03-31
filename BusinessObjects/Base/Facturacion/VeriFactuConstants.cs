@@ -11,7 +11,8 @@ public enum EstadoVeriFactu
     AceptadaVeriFactu,
     RechazadaVeriFactu,
     Impresa,
-    ErrorTecnico
+    ErrorTecnico,
+    Pendiente
 }
 
 public static class VeriFactuConstants
