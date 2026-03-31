@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DevExpress.ExpressApp;
 using erp.Module.BusinessObjects.Base.Facturacion;
@@ -13,9 +16,19 @@ namespace erp.Module.Services.Ventas;
 
 public class FacturaOrchestrator
 {
+    public record BatchResult(int Total, int Success, string LastErrorMessage = "", List<string>? ErrorMessages = null)
+    {
+        public bool AllSuccessful => Total == Success;
+    }
+
     public void Validar(FacturaBase factura)
     {
         if (factura == null) return;
+
+        if (!factura.PuedeValidar)
+        {
+            throw new UserFriendlyException("La factura no está en estado borrador.");
+        }
 
         var validationResult = factura.ValidarParaEmision();
         if (!validationResult.IsValid)
@@ -26,11 +39,38 @@ public class FacturaOrchestrator
         factura.StateMachine.CambiarA(EstadoFactura.Validada);
     }
 
+    public BatchResult ValidarLote(IEnumerable<FacturaBase> facturas)
+    {
+        var list = facturas.ToList();
+        int total = 0;
+        int success = 0;
+        string lastError = "";
+
+        foreach (var factura in list)
+        {
+            if (factura.PuedeValidar)
+            {
+                total++;
+                try
+                {
+                    Validar(factura);
+                    success++;
+                }
+                catch (Exception ex)
+                {
+                    lastError = ex.Message;
+                }
+            }
+        }
+
+        return new BatchResult(total, success, lastError);
+    }
+
     public void Emitir(FacturaBase factura)
     {
         if (factura == null) return;
 
-        if (factura.EstadoFactura == EstadoFactura.Borrador)
+        if (!factura.PuedeEmitir)
         {
             throw new UserFriendlyException("La factura debe estar validada antes de emitirse.");
         }
@@ -62,14 +102,41 @@ public class FacturaOrchestrator
         factura.StateMachine.CambiarA(EstadoFactura.Emitida);
     }
 
+    public BatchResult EmitirLote(IEnumerable<FacturaBase> facturas)
+    {
+        var list = facturas.ToList();
+        int total = 0;
+        int success = 0;
+        string lastError = "";
+
+        foreach (var factura in list)
+        {
+            if (factura.PuedeEmitir)
+            {
+                total++;
+                try
+                {
+                    Emitir(factura);
+                    success++;
+                }
+                catch (Exception ex)
+                {
+                    lastError = ex.Message;
+                }
+            }
+        }
+
+        return new BatchResult(total, success, lastError);
+    }
+
     public async Task<VeriFactuService.SendResult> EnviarAVerifactuAsync(IObjectSpace objectSpace, FacturaBase factura, VeriFactuService veriFactuService)
     {
         if (factura == null) return new VeriFactuService.SendResult(false, "La factura es nula.");
         if (veriFactuService == null) return new VeriFactuService.SendResult(false, "El servicio VeriFactu no está disponible.");
 
-        if (factura.EstadoFactura == EstadoFactura.Borrador)
+        if (!factura.PuedeEnviarVerifactu)
         {
-            throw new UserFriendlyException("La factura debe estar validada antes de enviarse a VeriFactu.");
+            return new VeriFactuService.SendResult(false, "La factura no está en un estado elegible para envío a VeriFactu.");
         }
 
         var validationResult = factura.ValidarParaEmision();
@@ -91,9 +158,41 @@ public class FacturaOrchestrator
         return result;
     }
 
+    public async Task<BatchResult> EnviarAVerifactuLoteAsync(IObjectSpace objectSpace, IEnumerable<FacturaBase> facturas, VeriFactuService veriFactuService)
+    {
+        var list = facturas.ToList();
+        int total = 0;
+        int success = 0;
+        string lastError = "";
+
+        foreach (var factura in list)
+        {
+            if (factura.PuedeEnviarVerifactu)
+            {
+                total++;
+                var result = await EnviarAVerifactuAsync(objectSpace, factura, veriFactuService);
+                if (result.Success)
+                {
+                    success++;
+                }
+                else
+                {
+                    lastError = result.Message;
+                }
+            }
+        }
+
+        return new BatchResult(total, success, lastError);
+    }
+
     public void Contabilizar(FacturaBase factura)
     {
         if (factura == null) return;
+
+        if (!factura.PuedeContabilizar)
+        {
+            throw new UserFriendlyException("La factura no cumple los requisitos para ser contabilizada.");
+        }
 
         // Ejecutar la acción de contabilización existente
         ContabilidadService.ContabilizarFactura(factura);
@@ -102,16 +201,70 @@ public class FacturaOrchestrator
         factura.StateMachine.CambiarA(EstadoFactura.Contabilizada);
     }
 
+    public BatchResult ContabilizarLote(IEnumerable<FacturaBase> facturas)
+    {
+        var list = facturas.ToList();
+        int total = 0;
+        int success = 0;
+        var errorMessages = new List<string>();
+
+        foreach (var factura in list)
+        {
+            if (factura.PuedeContabilizar)
+            {
+                total++;
+                try
+                {
+                    Contabilizar(factura);
+                    success++;
+                }
+                catch (Exception ex)
+                {
+                    errorMessages.Add($"{factura.Secuencia}: {ex.Message}");
+                }
+            }
+        }
+
+        return new BatchResult(total, success, errorMessages.FirstOrDefault() ?? "", errorMessages);
+    }
+
     public void RevertirABorrador(FacturaBase factura)
     {
         if (factura == null) return;
 
-        if (factura.EstadoFactura != EstadoFactura.Validada)
+        if (!factura.PuedeRevertirABorrador)
         {
             throw new UserFriendlyException("Solo se pueden revertir a borrador las facturas validadas.");
         }
 
         factura.StateMachine.CambiarA(EstadoFactura.Borrador);
+    }
+
+    public BatchResult RevertirABorradorLote(IEnumerable<FacturaBase> facturas)
+    {
+        var list = facturas.ToList();
+        int total = 0;
+        int success = 0;
+        string lastError = "";
+
+        foreach (var factura in list)
+        {
+            if (factura.PuedeRevertirABorrador)
+            {
+                total++;
+                try
+                {
+                    RevertirABorrador(factura);
+                    success++;
+                }
+                catch (Exception ex)
+                {
+                    lastError = ex.Message;
+                }
+            }
+        }
+
+        return new BatchResult(total, success, lastError);
     }
 
     public async Task<VeriFactuService.SendResult> ProcesarHastaContabilizadaAsync(IObjectSpace objectSpace, FacturaBase factura, VeriFactuService veriFactuService)

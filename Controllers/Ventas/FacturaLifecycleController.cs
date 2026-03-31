@@ -160,33 +160,19 @@ public class FacturaLifecycleController : ViewController
         var selectedFacturas = View.SelectedObjects.Cast<FacturaBase>().ToList();
         
         _procesarFlujoCompletoAction.Active["EstadoValido"] = selectedFacturas.Any(f => f.EstadoFactura != EstadoFactura.Contabilizada);
-        _validarAction.Active["EstadoValido"] = selectedFacturas.Any(f => f.EstadoFactura == EstadoFactura.Borrador);
-        _revertirABorradorAction.Active["EstadoValido"] = selectedFacturas.Any(f => f.EstadoFactura == EstadoFactura.Validada);
-        _emitirAction.Active["EstadoValido"] = selectedFacturas.Any(f => f.EstadoFactura == EstadoFactura.Validada);
-        _enviarVerifactuAction.Active["EstadoValido"] = selectedFacturas.Any(f => f.EstadoFactura == EstadoFactura.Emitida && 
-                                                                           f.EstadoVeriFactu != EstadoVeriFactu.AceptadaVeriFactu && 
-                                                                           f.EstadoVeriFactu != EstadoVeriFactu.EnviadaVeriFactu);
-        
-        _contabilizarAction.Active["EstadoValido"] = selectedFacturas.Any(f => (f.EstadoFactura == EstadoFactura.Enviada || 
-                                                                              f.EstadoFactura == EstadoFactura.VeriFactuNoNecesario ||
-                                                                              f.EstadoVeriFactu == EstadoVeriFactu.AceptadaVeriFactu || 
-                                                                              f.EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu ||
-                                                                              f.EstadoVeriFactu == EstadoVeriFactu.PendienteVeriFactu) &&
-                                                                             f.EstadoFactura != EstadoFactura.Contabilizada);
+        _validarAction.Active["EstadoValido"] = selectedFacturas.Any(f => f.PuedeValidar);
+        _revertirABorradorAction.Active["EstadoValido"] = selectedFacturas.Any(f => f.PuedeRevertirABorrador);
+        _emitirAction.Active["EstadoValido"] = selectedFacturas.Any(f => f.PuedeEmitir);
+        _enviarVerifactuAction.Active["EstadoValido"] = selectedFacturas.Any(f => f.PuedeEnviarVerifactu);
+        _contabilizarAction.Active["EstadoValido"] = selectedFacturas.Any(f => f.PuedeContabilizar);
     }
 
     private void ValidarAction_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
+        if (_facturaOrchestrator == null) return;
         var selectedFacturas = e.SelectedObjects.Cast<FacturaBase>().ToList();
-        if (!selectedFacturas.Any()) return;
-
-        foreach (var factura in selectedFacturas)
-        {
-            if (factura.EstadoFactura == EstadoFactura.Borrador)
-            {
-                factura.Validar();
-            }
-        }
+        
+        _facturaOrchestrator.ValidarLote(selectedFacturas);
         
         ObjectSpace.CommitChanges();
         View.Refresh();
@@ -194,16 +180,10 @@ public class FacturaLifecycleController : ViewController
 
     private void EmitirAction_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
+        if (_facturaOrchestrator == null) return;
         var selectedFacturas = e.SelectedObjects.Cast<FacturaBase>().ToList();
-        if (!selectedFacturas.Any()) return;
-
-        foreach (var factura in selectedFacturas)
-        {
-            if (factura.EstadoFactura == EstadoFactura.Validada)
-            {
-                factura.Emitir();
-            }
-        }
+        
+        _facturaOrchestrator.EmitirLote(selectedFacturas);
         
         ObjectSpace.CommitChanges();
         View.Refresh();
@@ -211,16 +191,10 @@ public class FacturaLifecycleController : ViewController
 
     private void RevertirABorradorAction_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
+        if (_facturaOrchestrator == null) return;
         var selectedFacturas = e.SelectedObjects.Cast<FacturaBase>().ToList();
-        if (!selectedFacturas.Any()) return;
-
-        foreach (var factura in selectedFacturas)
-        {
-            if (factura.EstadoFactura == EstadoFactura.Validada)
-            {
-                factura.RevertirABorrador();
-            }
-        }
+        
+        _facturaOrchestrator.RevertirABorradorLote(selectedFacturas);
         
         ObjectSpace.CommitChanges();
         View.Refresh();
@@ -228,51 +202,18 @@ public class FacturaLifecycleController : ViewController
 
     private async void EnviarVerifactuAction_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
-        if (_veriFactuService == null) return;
+        if (_veriFactuService == null || _facturaOrchestrator == null) return;
 
         var selectedFacturas = e.SelectedObjects.Cast<FacturaBase>().ToList();
-        if (!selectedFacturas.Any()) return;
+        var result = await _facturaOrchestrator.EnviarAVerifactuLoteAsync(ObjectSpace, selectedFacturas, _veriFactuService);
 
-        var successCount = 0;
-        var totalCount = selectedFacturas.Count;
-        var lastErrorMessage = string.Empty;
-
-        foreach (var factura in selectedFacturas)
+        if (result.Total > 0)
         {
-            if (factura.EstadoFactura == EstadoFactura.Emitida && 
-                factura.EstadoVeriFactu != EstadoVeriFactu.AceptadaVeriFactu && 
-                factura.EstadoVeriFactu != EstadoVeriFactu.EnviadaVeriFactu)
-            {
-                var result = await factura.EnviarVerifactuAsync(ObjectSpace, _veriFactuService);
-                if (result.Success)
-                {
-                    successCount++;
-                }
-                else
-                {
-                    lastErrorMessage = result.Message;
-                }
-            }
-            else
-            {
-                totalCount--; // No era procesable por esta acción
-            }
-        }
+            var message = result.Total == 1 
+                ? (result.Success == 1 ? "Factura enviada a VeriFactu correctamente." : $"Error al enviar la factura: {result.LastErrorMessage}")
+                : $"Proceso de envío finalizado. {result.Success} de {result.Total} facturas enviadas correctamente.";
 
-        if (totalCount > 0)
-        {
-            var message = totalCount == 1 
-                ? (successCount == 1 ? "Factura enviada a VeriFactu correctamente." : $"Error al enviar la factura: {lastErrorMessage}")
-                : $"Proceso de envío finalizado. {successCount} de {totalCount} facturas enviadas correctamente.";
-
-            var options = new MessageOptions
-            {
-                Duration = 5000,
-                Message = message,
-                Type = successCount == totalCount ? InformationType.Success : (successCount > 0 ? InformationType.Warning : InformationType.Error),
-                Web = { Position = InformationPosition.Right }
-            };
-            Application.ShowViewStrategy.ShowMessage(options);
+            MostrarMensaje(message, result.Success == result.Total ? InformationType.Success : (result.Success > 0 ? InformationType.Warning : InformationType.Error));
         }
 
         ObjectSpace.CommitChanges();
@@ -281,59 +222,23 @@ public class FacturaLifecycleController : ViewController
 
     private void ContabilizarAction_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
+        if (_facturaOrchestrator == null) return;
         var selectedFacturas = e.SelectedObjects.Cast<FacturaBase>().ToList();
-        if (!selectedFacturas.Any()) return;
+        
+        var result = _facturaOrchestrator.ContabilizarLote(selectedFacturas);
 
-        var successCount = 0;
-        var totalCount = selectedFacturas.Count;
-        var errorMessages = new List<string>();
-
-        foreach (var factura in selectedFacturas)
+        if (result.Total > 0)
         {
-            bool puedeContabilizar = (factura.EstadoFactura == EstadoFactura.Enviada || 
-                                     factura.EstadoFactura == EstadoFactura.VeriFactuNoNecesario ||
-                                     factura.EstadoVeriFactu == EstadoVeriFactu.AceptadaVeriFactu || 
-                                     factura.EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu ||
-                                     factura.EstadoVeriFactu == EstadoVeriFactu.PendienteVeriFactu) &&
-                                    factura.EstadoFactura != EstadoFactura.Contabilizada;
+            var message = result.Total == 1 
+                ? (result.Success == 1 ? "Factura contabilizada correctamente." : $"Error al contabilizar: {result.LastErrorMessage}")
+                : $"Contabilización finalizada. {result.Success} de {result.Total} facturas contabilizadas correctamente.";
 
-            if (puedeContabilizar)
-            {
-                try
-                {
-                    factura.Contabilizar();
-                    successCount++;
-                }
-                catch (Exception ex)
-                {
-                    errorMessages.Add($"{factura.Secuencia}: {ex.Message}");
-                }
-            }
-            else
-            {
-                totalCount--;
-            }
-        }
-
-        if (totalCount > 0)
-        {
-            var message = totalCount == 1 
-                ? (successCount == 1 ? "Factura contabilizada correctamente." : $"Error al contabilizar: {errorMessages.FirstOrDefault()}")
-                : $"Contabilización finalizada. {successCount} de {totalCount} facturas contabilizadas correctamente.";
-
-            if (errorMessages.Any() && totalCount > 1)
+            if (result.ErrorMessages?.Any() == true && result.Total > 1)
             {
                 message += " Revise los errores individuales.";
             }
 
-            var options = new MessageOptions
-            {
-                Duration = 5000,
-                Message = message,
-                Type = successCount == totalCount ? InformationType.Success : (successCount > 0 ? InformationType.Warning : InformationType.Error),
-                Web = { Position = InformationPosition.Right }
-            };
-            Application.ShowViewStrategy.ShowMessage(options);
+            MostrarMensaje(message, result.Success == result.Total ? InformationType.Success : (result.Success > 0 ? InformationType.Warning : InformationType.Error));
         }
 
         ObjectSpace.CommitChanges();
@@ -368,16 +273,21 @@ public class FacturaLifecycleController : ViewController
             ? (successCount == 1 ? "Factura procesada correctamente." : $"Error al procesar la factura: {lastErrorMessage}")
             : $"Proceso finalizado. {successCount} de {totalCount} facturas procesadas correctamente.";
 
+        MostrarMensaje(message, successCount == totalCount ? InformationType.Success : (successCount > 0 ? InformationType.Warning : InformationType.Error));
+
+        ObjectSpace.CommitChanges();
+        View.Refresh();
+    }
+
+    private void MostrarMensaje(string message, InformationType type)
+    {
         var options = new MessageOptions
         {
             Duration = 5000,
             Message = message,
-            Type = successCount == totalCount ? InformationType.Success : (successCount > 0 ? InformationType.Warning : InformationType.Error),
+            Type = type,
             Web = { Position = InformationPosition.Right }
         };
         Application.ShowViewStrategy.ShowMessage(options);
-
-        ObjectSpace.CommitChanges();
-        View.Refresh();
     }
 }

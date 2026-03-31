@@ -300,6 +300,19 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
 
     public abstract bool EsValida();
 
+    public bool PuedeValidar => EstadoFactura == EstadoFactura.Borrador;
+    public bool PuedeEmitir => EstadoFactura == EstadoFactura.Validada;
+    public bool PuedeRevertirABorrador => EstadoFactura == EstadoFactura.Validada;
+    public bool PuedeEnviarVerifactu => EstadoFactura == EstadoFactura.Emitida && 
+                                        EstadoVeriFactu != EstadoVeriFactu.AceptadaVeriFactu && 
+                                        EstadoVeriFactu != EstadoVeriFactu.EnviadaVeriFactu;
+    public bool PuedeContabilizar => (EstadoFactura == EstadoFactura.Enviada || 
+                                      EstadoFactura == EstadoFactura.VeriFactuNoNecesario ||
+                                      EstadoVeriFactu == EstadoVeriFactu.AceptadaVeriFactu || 
+                                      EstadoVeriFactu == EstadoVeriFactu.EnviadaVeriFactu ||
+                                      EstadoVeriFactu == EstadoVeriFactu.PendienteVeriFactu) &&
+                                     EstadoFactura != EstadoFactura.Contabilizada;
+
     public virtual ValidationResult ValidarParaEmision()
     {
         var result = ValidationResult.Success();
