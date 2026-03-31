@@ -2,6 +2,7 @@ using DevExpress.ExpressApp;
 using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Base.Ventas;
+using erp.Module.Services.Facturacion;
 using System.Security.Cryptography.X509Certificates;
 using FACe.Xml.Facturae.Bies;
 
@@ -15,7 +16,7 @@ public class FacturaeService : IFacturaeService
         if (companyInfo == null) throw new UserFriendlyException("No se ha configurado la información de la empresa.");
 
         var f = MapToFacturae(invoice, companyInfo);
-        var manager = new FACe.Xml.Facturae.FacturaeManager(f);
+        var manager = new global::FACe.Xml.Facturae.FacturaeManager(f);
         return manager.GetUTF8XmlText();
     }
 
@@ -33,7 +34,7 @@ public class FacturaeService : IFacturaeService
         if (cert == null)
             throw new UserFriendlyException($"No se ha encontrado el certificado con serie {companyInfo.SerieCertificadoFacturae}");
 
-        var manager = new FACe.Xml.Facturae.FacturaeManager(f);
+        var manager = new global::FACe.Xml.Facturae.FacturaeManager(f);
         var xmlSigned = manager.GetXmlTextSigned(cert);
         return System.Text.Encoding.UTF8.GetBytes(xmlSigned);
     }
@@ -111,10 +112,6 @@ public class FacturaeService : IFacturaeService
                 });
             }
         }
-        
-        // Si no hay centros del receptor, se podrían añadir los del emisor si fuera necesario, 
-        // pero el código original parecía estar mezclando conceptos o añadiendo centros por defecto.
-        // El código original añadía company.UnidadOrganica... a BuyerParty, lo cual es correcto si el emisor sabe las del receptor.
         
         if (centres.Count == 0) // Si no hay centros específicos del domicilio, usamos los de la configuración de empresa como fallback
         {
