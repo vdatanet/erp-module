@@ -2,6 +2,7 @@ using System.Reflection;
 using DevExpress.ExpressApp.DC;
 using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Base.Ventas;
+using erp.Module.BusinessObjects.Tpv;
 using erp.Module.Helpers.Contactos;
 
 namespace erp.Module.Services.Ventas.StateMachines;
@@ -66,13 +67,26 @@ public abstract class FacturaStateMachineBase(FacturaBase documento) : IFacturaS
         if (EstadoActual == EstadoFactura.Emitida)
         {
             var infoEmpresa = Helpers.Contactos.InformacionEmpresaHelper.GetInformacionEmpresa(Factura.Session);
+            
+            // Prioridad: 1. TPV, 2. Empresa
             var activarVeriFactu = infoEmpresa?.ActivarVeriFactu ?? false;
+            var tpv = Factura.Tpv ?? Factura.SesionTpv?.Tpv;
+            if (Factura is FacturaSimplificada fs && tpv == null)
+            {
+                tpv = fs.VentaTpv?.SesionTpv?.Tpv;
+            }
+            
+            if (tpv != null)
+            {
+                activarVeriFactu = tpv.ActivarVeriFactu;
+            }
+            
             var importeCero = Factura.ImporteTotal == 0;
 
             if (activarVeriFactu && !importeCero)
             {
                 // Si VeriFactu está activo y el importe no es 0, debe pasar por Enviada
-                return new List<EstadoFactura> { EstadoFactura.Enviada, EstadoFactura.Contabilizada };
+                return new List<EstadoFactura> { EstadoFactura.Enviada, EstadoFactura.VeriFactuNoNecesario, EstadoFactura.Contabilizada };
             }
             else
             {

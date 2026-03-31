@@ -23,15 +23,23 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         ArgumentNullException.ThrowIfNull(objectSpace);
         ArgumentNullException.ThrowIfNull(invoice);
 
+        logger.LogInformation("VeriFactuService: Iniciando SendFacturaAsync para factura {Secuencia}", invoice.Secuencia);
+
         try
         {
             var companyInfo = objectSpace.FindObject<InformacionEmpresa>(null);
             if (companyInfo == null)
+            {
+                logger.LogWarning("VeriFactuService: No se encontró la configuración de la empresa.");
                 return new SendResult(false, "No se encontró la configuración de la empresa.");
+            }
 
             var validationResult = ValidateFiscalData(invoice, companyInfo);
             if (!validationResult.Success)
+            {
+                logger.LogWarning("VeriFactuService: Validación fiscal fallida para {Secuencia}: {Message}", invoice.Secuencia, validationResult.Message);
                 return validationResult;
+            }
 
             // Generar CorrelationId único para esta sesión de envío
             invoice.CorrelationId = Guid.NewGuid();
@@ -39,13 +47,19 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             var veriFactuInvoice = MapToVeriFactuInvoice(invoice, companyInfo);
             
             var startTime = InformacionEmpresaHelper.GetLocalTime(invoice.Session);
+            logger.LogInformation("VeriFactuService: Llamando a VeriFactuAdapter para factura {Secuencia}", invoice.Secuencia);
             var response = await veriFactuAdapter.SendInvoiceAsync(veriFactuInvoice, invoice, companyInfo);
             var duration = InformacionEmpresaHelper.GetLocalTime(invoice.Session) - startTime;
+
+            logger.LogInformation("VeriFactuService: Respuesta de VeriFactu para {Secuencia}: Status={Status}, ErrorCode={ErrorCode}", 
+                invoice.Secuencia, response.Status, response.ErrorCode);
 
             UpdateInvoiceFromResponse(objectSpace, invoice, response, veriFactuInvoice);
             objectSpace.CommitChanges();
 
-            if (response.Status == EstadoVeriFactu.AceptadaVeriFactu || response.Status == EstadoVeriFactu.Pendiente)
+            if (response.Status == EstadoVeriFactu.AceptadaVeriFactu || 
+                response.Status == EstadoVeriFactu.EnviadaVeriFactu || 
+                response.Status == EstadoVeriFactu.Pendiente)
             {
                 return new SendResult(true, "Factura enviada correctamente.");
             }

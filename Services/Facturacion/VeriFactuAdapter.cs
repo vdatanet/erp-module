@@ -33,13 +33,16 @@ public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger, VerifactuClient 
             }
 
             var body = MapToBody2(veriFactuInvoice, companyInfo);
+            logger.LogInformation("VeriFactuAdapter: Payload a enviar para {Secuencia}: {Payload}", 
+                invoice.Secuencia, JsonConvert.SerializeObject(body));
             
             // Según la actualización del usuario, usamos el endpoint individual "create"
             // Hemos implementado CreateAsync en la clase parcial VerifactuClient
             var apiResponse = await client.CreateAsync(body);
             
             // Log de la respuesta cruda para depuración si falla o para ver qué devuelve
-            logger.LogInformation("VeriFactuAdapter: Respuesta recibida de la API");
+            logger.LogInformation("VeriFactuAdapter: Respuesta recibida de la API para {Secuencia}: {Response}", 
+                invoice.Secuencia, JsonConvert.SerializeObject(apiResponse));
             
             if (apiResponse != null)
             {
