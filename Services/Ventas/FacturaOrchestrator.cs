@@ -301,17 +301,22 @@ public class FacturaOrchestrator
                         var sendResult = await EnviarAVerifactuAsync(objectSpace, factura, veriFactuService);
                         if (!sendResult.Success)
                         {
+                            // Si el error es técnico (no fiscal), permitimos continuar a VeriFactuNoNecesario 
+                            // para no bloquear la venta en el TPV si falla la API externa temporalmente.
+                            // Pero por ahora, seguimos el flujo estricto.
                             return sendResult;
                         }
                     }
                 }
-                else
+                
+                // Si llegamos aquí y no estamos en Enviada, es que VeriFactu no es necesario o se ha marcado como tal
+                if (factura.EstadoFactura == EstadoFactura.Emitida)
                 {
-                    // Si no es necesario VeriFactu (desactivado o importe 0), cambiamos al nuevo estado de factura
                     factura.StateMachine.CambiarA(EstadoFactura.VeriFactuNoNecesario);
-                    
-                    // También marcamos el estado VeriFactu como no necesario para claridad visual
-                    factura.EstadoVeriFactu = EstadoVeriFactu.NoNecesario;
+                    if (factura.EstadoVeriFactu == EstadoVeriFactu.Borrador)
+                    {
+                        factura.EstadoVeriFactu = EstadoVeriFactu.NoNecesario;
+                    }
                 }
             }
 
