@@ -25,65 +25,65 @@ public class FacturaLifecycleController : ViewController
     public FacturaLifecycleController()
     {
         TargetObjectType = typeof(FacturaBase);
-        TargetViewType = ViewType.Any;
+        TargetViewType = ViewType.DetailView;
 
         _validarAction = new SimpleAction(this, "Factura_Validar", PredefinedCategory.Edit)
         {
             Caption = "Validar",
-            ConfirmationMessage = "¿Desea validar las facturas seleccionadas?",
+            ConfirmationMessage = "¿Desea validar la factura seleccionada?",
             ImageName = "BO_Validation",
             TargetObjectsCriteria = "EstadoFactura = 'Borrador'",
-            SelectionDependencyType = SelectionDependencyType.RequireMultipleObjects
+            SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
         _validarAction.Execute += ValidarAction_Execute;
 
         _revertirABorradorAction = new SimpleAction(this, "Factura_RevertirABorrador", PredefinedCategory.Edit)
         {
             Caption = "Revertir a Borrador",
-            ConfirmationMessage = "¿Desea revertir las facturas seleccionadas a borrador?",
+            ConfirmationMessage = "¿Desea revertir la factura seleccionada a borrador?",
             ImageName = "Undo",
             TargetObjectsCriteria = "EstadoFactura = 'Validada'",
-            SelectionDependencyType = SelectionDependencyType.RequireMultipleObjects
+            SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
         _revertirABorradorAction.Execute += RevertirABorradorAction_Execute;
 
         _emitirAction = new SimpleAction(this, "Factura_Emitir", PredefinedCategory.Edit)
         {
             Caption = "Emitir",
-            ConfirmationMessage = "¿Desea emitir las facturas seleccionadas? (Se asignará número definitivo y fecha de emisión)",
+            ConfirmationMessage = "¿Desea emitir la factura seleccionada? (Se asignará número definitivo y fecha de emisión)",
             ImageName = "Redo",
             TargetObjectsCriteria = "EstadoFactura = 'Validada'",
-            SelectionDependencyType = SelectionDependencyType.RequireMultipleObjects
+            SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
         _emitirAction.Execute += EmitirAction_Execute;
 
         _enviarVerifactuAction = new SimpleAction(this, "Factura_EnviarVerifactu", PredefinedCategory.Edit)
         {
             Caption = "Enviar a VeriFactu",
-            ConfirmationMessage = "¿Desea enviar las facturas seleccionadas a VeriFactu?",
+            ConfirmationMessage = "¿Desea enviar la factura seleccionada a VeriFactu?",
             ImageName = "Actions_Send",
             TargetObjectsCriteria = "EstadoFactura = 'Emitida'",
-            SelectionDependencyType = SelectionDependencyType.RequireMultipleObjects
+            SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
         _enviarVerifactuAction.Execute += EnviarVerifactuAction_Execute;
 
         _contabilizarAction = new SimpleAction(this, "Factura_Contabilizar", PredefinedCategory.Edit)
         {
             Caption = "Contabilizar",
-            ConfirmationMessage = "¿Desea generar el asiento contable para las facturas seleccionadas?",
+            ConfirmationMessage = "¿Desea generar el asiento contable para la factura seleccionada?",
             ImageName = "Accounting",
             TargetObjectsCriteria = "EstadoFactura = 'Enviada' OR EstadoFactura = 'VeriFactuNoNecesario' OR (EstadoVeriFactu = 'AceptadaVeriFactu' OR EstadoVeriFactu = 'EnviadaVeriFactu' OR EstadoVeriFactu = 'PendienteVeriFactu')",
-            SelectionDependencyType = SelectionDependencyType.RequireMultipleObjects
+            SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
         _contabilizarAction.Execute += ContabilizarAction_Execute;
 
         _procesarFlujoCompletoAction = new SimpleAction(this, "Factura_ProcesarFlujoCompleto", PredefinedCategory.Edit)
         {
             Caption = "Procesar",
-            ConfirmationMessage = "¿Desea procesar las facturas seleccionadas hasta su contabilización final? (Validar -> Emitir -> VeriFactu -> Contabilizar)",
+            ConfirmationMessage = "¿Desea procesar la factura seleccionada hasta su contabilización final? (Validar -> Emitir -> VeriFactu -> Contabilizar)",
             ImageName = "Icon_PageNext",
             TargetObjectsCriteria = "EstadoFactura != 'Contabilizada'",
-            SelectionDependencyType = SelectionDependencyType.RequireMultipleObjects
+            SelectionDependencyType = SelectionDependencyType.RequireSingleObject
         };
         _procesarFlujoCompletoAction.Execute += ProcesarFlujoCompletoAction_Execute;
     }
@@ -157,22 +157,23 @@ public class FacturaLifecycleController : ViewController
 
     private void ActualizarVisibilidadAcciones()
     {
-        var selectedFacturas = View.SelectedObjects.Cast<FacturaBase>().ToList();
+        var factura = View.CurrentObject as FacturaBase;
         
-        _procesarFlujoCompletoAction.Active["EstadoValido"] = selectedFacturas.Any(f => f.EstadoFactura != EstadoFactura.Contabilizada);
-        _validarAction.Active["EstadoValido"] = selectedFacturas.Any(f => f.PuedeValidar);
-        _revertirABorradorAction.Active["EstadoValido"] = selectedFacturas.Any(f => f.PuedeRevertirABorrador);
-        _emitirAction.Active["EstadoValido"] = selectedFacturas.Any(f => f.PuedeEmitir);
-        _enviarVerifactuAction.Active["EstadoValido"] = selectedFacturas.Any(f => f.PuedeEnviarVerifactu);
-        _contabilizarAction.Active["EstadoValido"] = selectedFacturas.Any(f => f.PuedeContabilizar);
+        _procesarFlujoCompletoAction.Active["EstadoValido"] = factura != null && factura.EstadoFactura != EstadoFactura.Contabilizada;
+        _validarAction.Active["EstadoValido"] = factura?.PuedeValidar ?? false;
+        _revertirABorradorAction.Active["EstadoValido"] = factura?.PuedeRevertirABorrador ?? false;
+        _emitirAction.Active["EstadoValido"] = factura?.PuedeEmitir ?? false;
+        _enviarVerifactuAction.Active["EstadoValido"] = factura?.PuedeEnviarVerifactu ?? false;
+        _contabilizarAction.Active["EstadoValido"] = factura?.PuedeContabilizar ?? false;
     }
 
     private void ValidarAction_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
         if (_facturaOrchestrator == null) return;
-        var selectedFacturas = e.SelectedObjects.Cast<FacturaBase>().ToList();
+        var factura = e.CurrentObject as FacturaBase;
+        if (factura == null) return;
         
-        _facturaOrchestrator.ValidarLote(selectedFacturas);
+        _facturaOrchestrator.Validar(factura);
         
         ObjectSpace.CommitChanges();
         View.Refresh();
@@ -181,9 +182,10 @@ public class FacturaLifecycleController : ViewController
     private void EmitirAction_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
         if (_facturaOrchestrator == null) return;
-        var selectedFacturas = e.SelectedObjects.Cast<FacturaBase>().ToList();
+        var factura = e.CurrentObject as FacturaBase;
+        if (factura == null) return;
         
-        _facturaOrchestrator.EmitirLote(selectedFacturas);
+        _facturaOrchestrator.Emitir(factura);
         
         ObjectSpace.CommitChanges();
         View.Refresh();
@@ -192,9 +194,10 @@ public class FacturaLifecycleController : ViewController
     private void RevertirABorradorAction_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
         if (_facturaOrchestrator == null) return;
-        var selectedFacturas = e.SelectedObjects.Cast<FacturaBase>().ToList();
+        var factura = e.CurrentObject as FacturaBase;
+        if (factura == null) return;
         
-        _facturaOrchestrator.RevertirABorradorLote(selectedFacturas);
+        _facturaOrchestrator.RevertirABorrador(factura);
         
         ObjectSpace.CommitChanges();
         View.Refresh();
@@ -204,17 +207,13 @@ public class FacturaLifecycleController : ViewController
     {
         if (_veriFactuService == null || _facturaOrchestrator == null) return;
 
-        var selectedFacturas = e.SelectedObjects.Cast<FacturaBase>().ToList();
-        var result = await _facturaOrchestrator.EnviarAVerifactuLoteAsync(ObjectSpace, selectedFacturas, _veriFactuService);
+        var factura = e.CurrentObject as FacturaBase;
+        if (factura == null) return;
 
-        if (result.Total > 0)
-        {
-            var message = result.Total == 1 
-                ? (result.Success == 1 ? "Factura enviada a VeriFactu correctamente." : $"Error al enviar la factura: {result.LastErrorMessage}")
-                : $"Proceso de envío finalizado. {result.Success} de {result.Total} facturas enviadas correctamente.";
+        var result = await _facturaOrchestrator.EnviarAVerifactuAsync(ObjectSpace, factura, _veriFactuService);
 
-            MostrarMensaje(message, result.Success == result.Total ? InformationType.Success : (result.Success > 0 ? InformationType.Warning : InformationType.Error));
-        }
+        var message = result.Success ? "Factura enviada a VeriFactu correctamente." : $"Error al enviar la factura: {result.Message}";
+        MostrarMensaje(message, result.Success ? InformationType.Success : InformationType.Error);
 
         ObjectSpace.CommitChanges();
         View.Refresh();
@@ -223,22 +222,17 @@ public class FacturaLifecycleController : ViewController
     private void ContabilizarAction_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
         if (_facturaOrchestrator == null) return;
-        var selectedFacturas = e.SelectedObjects.Cast<FacturaBase>().ToList();
+        var factura = e.CurrentObject as FacturaBase;
+        if (factura == null) return;
         
-        var result = _facturaOrchestrator.ContabilizarLote(selectedFacturas);
-
-        if (result.Total > 0)
+        try 
         {
-            var message = result.Total == 1 
-                ? (result.Success == 1 ? "Factura contabilizada correctamente." : $"Error al contabilizar: {result.LastErrorMessage}")
-                : $"Contabilización finalizada. {result.Success} de {result.Total} facturas contabilizadas correctamente.";
-
-            if (result.ErrorMessages?.Any() == true && result.Total > 1)
-            {
-                message += " Revise los errores individuales.";
-            }
-
-            MostrarMensaje(message, result.Success == result.Total ? InformationType.Success : (result.Success > 0 ? InformationType.Warning : InformationType.Error));
+            _facturaOrchestrator.Contabilizar(factura);
+            MostrarMensaje("Factura contabilizada correctamente.", InformationType.Success);
+        }
+        catch (Exception ex)
+        {
+            MostrarMensaje($"Error al contabilizar: {ex.Message}", InformationType.Error);
         }
 
         ObjectSpace.CommitChanges();
@@ -249,31 +243,13 @@ public class FacturaLifecycleController : ViewController
     {
         if (_veriFactuService == null || _facturaOrchestrator == null) return;
 
-        var facturas = e.SelectedObjects.Cast<FacturaBase>().ToList();
-        if (!facturas.Any()) return;
+        var factura = e.CurrentObject as FacturaBase;
+        if (factura == null) return;
 
-        var successCount = 0;
-        var totalCount = facturas.Count;
-        var lastErrorMessage = string.Empty;
-
-        foreach (var factura in facturas)
-        {
-            var result = await _facturaOrchestrator.ProcesarHastaContabilizadaAsync(ObjectSpace, factura, _veriFactuService);
-            if (result.Success)
-            {
-                successCount++;
-            }
-            else
-            {
-                lastErrorMessage = result.Message;
-            }
-        }
-
-        var message = totalCount == 1 
-            ? (successCount == 1 ? "Factura procesada correctamente." : $"Error al procesar la factura: {lastErrorMessage}")
-            : $"Proceso finalizado. {successCount} de {totalCount} facturas procesadas correctamente.";
-
-        MostrarMensaje(message, successCount == totalCount ? InformationType.Success : (successCount > 0 ? InformationType.Warning : InformationType.Error));
+        var result = await _facturaOrchestrator.ProcesarHastaContabilizadaAsync(ObjectSpace, factura, _veriFactuService);
+        
+        var message = result.Success ? "Factura procesada correctamente." : $"Error al procesar la factura: {result.Message}";
+        MostrarMensaje(message, result.Success ? InformationType.Success : InformationType.Error);
 
         ObjectSpace.CommitChanges();
         View.Refresh();
