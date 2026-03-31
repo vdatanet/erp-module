@@ -40,7 +40,8 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
             return;
         }
 
-        // En el Host queremos crear el usuario 'admin' administrador (tanto en DEBUG como en RELEASE).
+#if DEBUG
+        // En DEBUG, siempre permite la siembra automática.
         if (isHost)
         {
             var securitySetup = new SecuritySetupService(objectSpace);
@@ -61,7 +62,7 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
                 }
             }
 
-            // Crear un tenant de ejemplo 'demo' en postgresql local (tanto en DEBUG como en RELEASE)
+            // Crear un tenant de ejemplo 'demo' en postgresql local.
             var tenantSetup = new TenantSetupService(objectSpace);
             tenantSetup.CreateTenant("demo", "erp_demo", "postgres", "db-local", "postgres", "");
             
@@ -70,17 +71,8 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
         }
 
         // Si hemos llegado hasta aquí y no somos el Host, estamos en un tenant.
-        // Permitir la siembra completa si estamos en DEBUG O si el tenant es 'demo' (incluso en RELEASE)
-        if (System.Diagnostics.Debugger.IsAttached || tenantName == "demo")
-        {
-            SeedTenant(objectSpace, tenantName);
-        }
-        else
-        {
-#if DEBUG
-            SeedTenant(objectSpace, tenantName);
+        SeedTenant(objectSpace, tenantName);
 #endif
-        }
     }
 
     private void SeedTenant(IObjectSpace objectSpace, string? tenantName)
