@@ -1,4 +1,4 @@
-using erp.Module.BusinessObjects.Configuraciones;
+using erp.Module.BusinessObjects;
 
 namespace erp.Module.Services.Facturacion;
 

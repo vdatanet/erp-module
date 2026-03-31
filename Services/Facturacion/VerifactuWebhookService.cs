@@ -7,6 +7,7 @@ using DevExpress.ExpressApp.MultiTenancy;
 using DevExpress.ExpressApp.Xpo;
 using DevExpress.Persistent.BaseImpl.MultiTenancy;
 using erp.Module.BusinessObjects.Base.Facturacion;
+using erp.Module.BusinessObjects;
 using erp.Module.BusinessObjects.Configuraciones;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,16 +51,16 @@ public class VerifactuWebhookService : IVerifactuWebhookService
         using var objectSpace = CreateHostObjectSpace();
 
         var criteria = tenantOid != null 
-            ? CriteriaOperator.FromLambda<VerifactuWebhookConfig>(c => c.TenantOid == tenantOid && c.Enabled)
-            : CriteriaOperator.FromLambda<VerifactuWebhookConfig>(c => c.Enabled);
+            ? CriteriaOperator.FromLambda<WebhookTenant>(c => c.Oid.ToString() == tenantOid && c.WebhookEnabled)
+            : CriteriaOperator.FromLambda<WebhookTenant>(c => c.WebhookEnabled);
 
-        var configs = objectSpace.GetObjects<VerifactuWebhookConfig>(criteria);
+        var configs = objectSpace.GetObjects<WebhookTenant>(criteria);
 
         foreach (var config in configs)
         {
-            if (string.IsNullOrEmpty(config.Secret)) continue;
+            if (string.IsNullOrEmpty(config.WebhookSecret)) continue;
 
-            if (ComputeHmac(payload, config.Secret) == signature)
+            if (ComputeHmac(payload, config.WebhookSecret) == signature)
             {
                 return true;
             }
@@ -91,12 +92,12 @@ public class VerifactuWebhookService : IVerifactuWebhookService
 
         // Identificar Tenant
         string? resolvedTenantOid = null;
-        var configs = objectSpace.GetObjects<VerifactuWebhookConfig>(CriteriaOperator.FromLambda<VerifactuWebhookConfig>(c => c.Enabled));
+        var configs = objectSpace.GetObjects<WebhookTenant>(CriteriaOperator.FromLambda<WebhookTenant>(c => c.WebhookEnabled));
         foreach (var config in configs)
         {
-            if (!string.IsNullOrEmpty(config.Secret) && ComputeHmac(payload, config.Secret) == signature)
+            if (!string.IsNullOrEmpty(config.WebhookSecret) && ComputeHmac(payload, config.WebhookSecret) == signature)
             {
-                resolvedTenantOid = config.TenantOid;
+                resolvedTenantOid = config.Oid.ToString();
                 break;
             }
         }
