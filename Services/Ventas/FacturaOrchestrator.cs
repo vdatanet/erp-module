@@ -338,4 +338,35 @@ public class FacturaOrchestrator
             return new VeriFactuService.SendResult(false, $"Error durante el proceso: {ex.Message}");
         }
     }
+
+    public async Task<BatchResult> ProcesarHastaContabilizadaLoteAsync(IObjectSpace objectSpace, IEnumerable<FacturaBase> facturas, VeriFactuService veriFactuService)
+    {
+        var list = facturas.ToList();
+        int total = 0;
+        int success = 0;
+        var errorMessages = new List<string>();
+
+        foreach (var factura in list)
+        {
+            total++;
+            try
+            {
+                var result = await ProcesarHastaContabilizadaAsync(objectSpace, factura, veriFactuService);
+                if (result.Success)
+                {
+                    success++;
+                }
+                else
+                {
+                    errorMessages.Add($"{factura.Secuencia}: {result.Message}");
+                }
+            }
+            catch (Exception ex)
+            {
+                errorMessages.Add($"{factura.Secuencia}: {ex.Message}");
+            }
+        }
+
+        return new BatchResult(total, success, errorMessages.FirstOrDefault() ?? "", errorMessages);
+    }
 }

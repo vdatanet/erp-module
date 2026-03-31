@@ -37,19 +37,33 @@ public class FacturaBatchController : ViewController
         _veriFactuService = Application.ServiceProvider.GetRequiredService<VeriFactuService>();
     }
 
-    private void ProcesarLoteAction_Execute(object sender, SimpleActionExecuteEventArgs e)
+    private async void ProcesarLoteAction_Execute(object sender, SimpleActionExecuteEventArgs e)
     {
-        // Acción sin implementar por ahora según requerimiento
-        // Aquí se llamaría a los métodos de lote de FacturaOrchestrator
-        
         var facturas = e.SelectedObjects.Cast<FacturaBase>().ToList();
         if (!facturas.Any()) return;
 
-        // Ejemplo de uso futuro:
-        // var result = _facturaOrchestrator.ValidarLote(facturas);
-        // MostrarMensaje($"Procesadas {result.Success} de {result.Total} facturas.", InformationType.Info);
+        if (_facturaOrchestrator == null || _veriFactuService == null)
+        {
+            MostrarMensaje("Servicios necesarios no inicializados.", InformationType.Error);
+            return;
+        }
+
+        var result = await _facturaOrchestrator.ProcesarHastaContabilizadaLoteAsync(ObjectSpace, facturas, _veriFactuService);
         
-        MostrarMensaje("Acción de procesamiento por lote ejecutada (lógica pendiente de implementación detallada).", InformationType.Info);
+        ObjectSpace.CommitChanges();
+
+        string mensaje = $"Procesadas {result.Success} de {result.Total} facturas.";
+        if (result.Success < result.Total)
+        {
+            mensaje += $" Último error: {result.LastErrorMessage}";
+            MostrarMensaje(mensaje, InformationType.Warning);
+        }
+        else
+        {
+            MostrarMensaje(mensaje, InformationType.Success);
+        }
+
+        View.ObjectSpace.Refresh();
     }
 
     private void MostrarMensaje(string message, InformationType type)
