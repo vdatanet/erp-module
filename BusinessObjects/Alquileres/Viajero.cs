@@ -7,7 +7,6 @@ using erp.Module.BusinessObjects.Auxiliares;
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Base.Facturacion;
-using VeriFactu.Xml.Factu;
 
 namespace erp.Module.BusinessObjects.Alquileres;
 

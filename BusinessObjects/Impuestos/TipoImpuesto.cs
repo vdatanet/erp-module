@@ -10,8 +10,6 @@ using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Productos;
 using erp.Module.BusinessObjects.Base.Facturacion;
-using VeriFactu.Xml.Factu;
-using VeriFactu.Xml.Factu.Alta;
 
 namespace erp.Module.BusinessObjects.Impuestos;
 

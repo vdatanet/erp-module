@@ -10,10 +10,7 @@ using erp.Module.Helpers.Comun;
 using erp.Module.Helpers.Contactos;
 using Microsoft.Extensions.Logging;
 using erp.Module.BusinessObjects.Base.Ventas;
-using VeriFactu.Business;
-using VeriFactu.Config;
-using VeriFactu.Xml.Factu;
-using VeriFactu.Xml.Factu.Alta;
+using erp.Module.Models.VeriFactu;
 
 namespace erp.Module.Services.Facturacion;
 
@@ -48,9 +45,9 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             UpdateInvoiceFromResponse(objectSpace, invoice, response, veriFactuInvoice);
             objectSpace.CommitChanges();
 
-            if (response.Status == VeriFactuConstants.Correcto || response.Status == VeriFactuConstants.PendienteVeriFactu)
+            if (response.Status == EstadoVeriFactu.AceptadaVeriFactu)
             {
-                return new SendResult(true, "Factura enviada o encolada correctamente.");
+                return new SendResult(true, "Factura enviada correctamente.");
             }
 
             return new SendResult(false, 
@@ -125,7 +122,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
     {
         var veriFactuFactura = new Invoice(invoice.Secuencia, invoice.Fecha, companyInfo.Nif)
         {
-            InvoiceType = invoice.TipoFactura,
+            InvoiceType = invoice.TipoFacturaAmigable,
             SellerName = companyInfo.Nombre,
             Text = invoice.Texto,
             TaxItems = []
@@ -149,7 +146,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
                 {
                     // Usamos dynamic o object temporal para evitar errores de compilación directos si el tipo es problemático
                     // pero el objetivo es asignar el valor del enum del negocio al enum de la librería
-                    if (Enum.TryParse<VeriFactu.Xml.Factu.IDType>(invoice.TipoIdentificacionCliente.ToString(), out var idType))
+                    if (Enum.TryParse<IDType>(invoice.TipoIdentificacionCliente.ToString(), out var idType))
                     {
                         veriFactuFactura.BuyerIDType = idType;
                     }
@@ -181,8 +178,8 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         {
             if (tax.TipoImpuesto == null) continue;
 
-            VeriFactu.Xml.Factu.Alta.CalificacionOperacion opType = default;
-            if (tax.TipoImpuesto.TipoOperacion != null && Enum.TryParse<VeriFactu.Xml.Factu.Alta.CalificacionOperacion>(tax.TipoImpuesto.TipoOperacion.ToString(), out var op))
+            CalificacionOperacion opType = default;
+            if (tax.TipoImpuesto.TipoOperacion != null && Enum.TryParse<CalificacionOperacion>(tax.TipoImpuesto.TipoOperacion.ToString(), out var op))
             {
                 opType = op;
             }
@@ -194,18 +191,18 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
                 TaxScheme = tax.TipoImpuesto.RegimenFiscal ?? default,
             };
 
-            if (tax.TipoImpuesto.Impuesto != null && Enum.TryParse<VeriFactu.Xml.Factu.Impuesto>(tax.TipoImpuesto.Impuesto.ToString(), out var imp))
+            if (tax.TipoImpuesto.Impuesto != null && Enum.TryParse<Impuesto>(tax.TipoImpuesto.Impuesto.ToString(), out var imp))
             {
                 taxItem.Tax = imp;
             }
 
-            if (tax.TipoImpuesto.CausaExencion != null && Enum.TryParse<VeriFactu.Xml.Factu.Alta.CausaExencion>(tax.TipoImpuesto.CausaExencion.ToString(), out var cau))
+            if (tax.TipoImpuesto.CausaExencion != null && Enum.TryParse<CausaExencion>(tax.TipoImpuesto.CausaExencion.ToString(), out var cau))
             {
                 taxItem.TaxException = cau;
             }
 
             // Cuando CalificacionOperacion sea “S2” TipoImpositivo y CuotaRepercutida deben ser 0
-            if (opType == VeriFactu.Xml.Factu.Alta.CalificacionOperacion.S2)
+            if (opType == CalificacionOperacion.S2)
             {
                 taxItem.TaxRate = 0;
                 taxItem.TaxAmount = 0;
@@ -230,13 +227,13 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
     public void UpdateInvoiceFromResponse(IObjectSpace objectSpace, FacturaBase invoice, VeriFactuResponse veriFactuResponse,
         Invoice veriFactuFactura)
     {
-        invoice.EstadoEntradaFactura = veriFactuResponse.Status;
+        invoice.EstadoVeriFactu = veriFactuResponse.Status;
         invoice.CodigoErrorEntradaFactura = veriFactuResponse.ErrorCode;
         
         // Conservar respuesta técnica completa
-        invoice.RespuestaAgenciaTributaria = veriFactuResponse.Response;
+        invoice.RespuestaAgenciaTributaria = veriFactuResponse.RawResponse;
 
-        if (veriFactuResponse.Status == VeriFactuConstants.Correcto)
+        if (veriFactuResponse.Status == EstadoVeriFactu.AceptadaVeriFactu)
         {
             invoice.EstadoVeriFactu = EstadoVeriFactu.AceptadaVeriFactu;
             if (invoice.EstadoFactura == EstadoFactura.Emitida)
@@ -254,7 +251,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
                 invoice.Qr = qrMedia;
             }
         }
-        else if (veriFactuResponse.Status == VeriFactuConstants.PendienteVeriFactu)
+        else if (veriFactuResponse.Status == EstadoVeriFactu.PendienteVeriFactu)
         {
             invoice.EstadoVeriFactu = EstadoVeriFactu.PendienteVeriFactu;
             if (invoice.EstadoFactura == EstadoFactura.Emitida)
@@ -262,7 +259,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
                 invoice.StateMachine.CambiarA(EstadoFactura.Enviada);
             }
         }
-        else if (veriFactuResponse.Status == VeriFactuConstants.Parcial)
+        else if (veriFactuResponse.Status == EstadoVeriFactu.EnviadaVeriFactu)
         {
             invoice.EstadoVeriFactu = EstadoVeriFactu.EnviadaVeriFactu;
         }
@@ -273,9 +270,9 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
 
         try
         {
-            if (!string.IsNullOrWhiteSpace(veriFactuResponse.Response))
+            if (!string.IsNullOrWhiteSpace(veriFactuResponse.RawResponse))
             {
-                var trimmedResponse = veriFactuResponse.Response.Trim();
+                var trimmedResponse = veriFactuResponse.RawResponse.Trim();
                 if (trimmedResponse.StartsWith('<'))
                 {
                     try
@@ -286,12 +283,12 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
                     catch (XmlException)
                     {
                         // No es XML válido, mantenemos el texto original
-                        invoice.RespuestaAgenciaTributaria = veriFactuResponse.Response;
+                        invoice.RespuestaAgenciaTributaria = veriFactuResponse.RawResponse;
                     }
                 }
                 else
                 {
-                    invoice.RespuestaAgenciaTributaria = veriFactuResponse.Response;
+                    invoice.RespuestaAgenciaTributaria = veriFactuResponse.RawResponse;
                 }
             }
 

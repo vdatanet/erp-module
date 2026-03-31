@@ -13,7 +13,6 @@ using erp.Module.Helpers.Contactos;
 using erp.Module.Services.Contabilidad;
 using erp.Module.Services.Ventas;
 using erp.Module.Services.Ventas.StateMachines;
-using VeriFactu.Xml.Factu.Alta;
 
 namespace erp.Module.BusinessObjects.Tpv;
 

@@ -16,7 +16,6 @@ using erp.Module.Helpers.Contactos;
 using erp.Module.Services.Facturacion;
 using erp.Module.Services.Ventas;
 using erp.Module.Services.Ventas.StateMachines;
-using VeriFactu.Xml.Factu.Alta;
 
 namespace erp.Module.BusinessObjects.Base.Facturacion;
 

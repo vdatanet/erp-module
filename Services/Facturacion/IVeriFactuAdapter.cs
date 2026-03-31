@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
-using VeriFactu.Business;
 using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Configuraciones;
+using erp.Module.Models.VeriFactu;
 
 namespace erp.Module.Services.Facturacion;
 
@@ -9,13 +9,3 @@ public interface IVeriFactuAdapter
 {
     Task<VeriFactuResponse> SendInvoiceAsync(Invoice veriFactuInvoice, FacturaBase invoice, InformacionEmpresa companyInfo);
 }
-
-public record VeriFactuResponse(
-    string Status, 
-    string? ErrorCode, 
-    string? Response, 
-    byte[]? Xml, 
-    string? CSV,
-    string? ValidationUrl,
-    byte[]? QrData,
-    string? BatchId = null);
