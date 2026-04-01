@@ -795,11 +795,147 @@
       <Items>
         <PropertyEditor Id="Miniatura" Removed="True" />
       </Items>
+      <Layout>
+        <LayoutGroup Id="Main" RelativeSize="100">
+          <LayoutGroup Id="SimpleEditors" RelativeSize="61.34453781512605">
+            <LayoutGroup Id="Producto" RelativeSize="100" ShowCaption="False">
+              <LayoutGroup Id="Producto_col1" RelativeSize="49.76830398517146" Caption="Producto_col1">
+                <LayoutItem Id="Codigo" RelativeSize="6.262230919765166" />
+                <LayoutItem Id="CodigoBarras" ViewItem="CodigoBarras" Index="1" RelativeSize="4.6966731898238745" IsNewNode="True" Removed="True" />
+                <LayoutItem Id="CuentaCompras" RelativeSize="8.571428571428571" Index="1" Removed="True" />
+                <LayoutItem Id="CuentaVentas" RelativeSize="8.571428571428571" Index="1" Removed="True" />
+                <LayoutItem Id="DisponibleEnCompras" RelativeSize="88.57142857142857" Index="1" Removed="True" />
+                <LayoutItem Id="DisponibleEnVentas" RelativeSize="8.571428571428571" Index="1" Removed="True" />
+                <LayoutItem Id="EstaActivo" RelativeSize="8.571428571428571" Index="1" Removed="True" />
+                <LayoutItem Id="MargenBrutoImporte" RelativeSize="8.571428571428571" Index="1" Removed="True" />
+                <LayoutItem Id="PrecioVentaConImpuestos" RelativeSize="8.571428571428571" Index="1" Removed="True" />
+                <LayoutItem Id="Nombre" ViewItem="Nombre" Index="2" RelativeSize="64.38356164383562" IsNewNode="True" />
+                <LayoutItem Id="UnidadFacturacion" ViewItem="UnidadFacturacion" Index="3" RelativeSize="4.6966731898238745" IsNewNode="True" />
+                <LayoutItem Id="Categoria" ViewItem="Categoria" Index="4" RelativeSize="4.6966731898238745" IsNewNode="True" Removed="True" />
+                <LayoutItem Id="CosteEstandar" ViewItem="CosteEstandar" Index="5" RelativeSize="4.6966731898238745" IsNewNode="True" Removed="True" />
+                <LayoutItem Id="PrecioVenta" ViewItem="PrecioVenta" Index="6" RelativeSize="4.6966731898238745" IsNewNode="True" Removed="True" />
+                <LayoutItem Id="MargenBrutoPorcentaje" ViewItem="MargenBrutoPorcentaje" Index="7" RelativeSize="5.870841487279844" IsNewNode="True" Removed="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="Producto_col2" RelativeSize="50.23169601482854" Caption="Producto_col2">
+                <LayoutItem Id="CuentaCompras" ViewItem="CuentaCompras" Index="0" RelativeSize="6.262230919765166" IsNewNode="True" />
+                <LayoutItem Id="DisponibleEnWeb" RelativeSize="12.5" Index="0" Removed="True" />
+                <LayoutItem Id="EsCompuesto" RelativeSize="50" Index="0" Removed="True" />
+                <LayoutItem Id="EsConsumible" RelativeSize="23.529411764705884" Index="0" Removed="True" />
+                <LayoutItem Id="EsServicio" RelativeSize="20" Index="0" Removed="True" />
+                <LayoutItem Id="GestionaStock" RelativeSize="13.793103448275861" Index="0" Removed="True" />
+                <LayoutItem Id="PermiteVentaSinStock" RelativeSize="15.384615384615385" Index="0" Removed="True" />
+                <LayoutItem Id="RequiereReservaStock" RelativeSize="17.391304347826086" Index="0" Removed="True" />
+                <LayoutItem Id="CuentaVentas" ViewItem="CuentaVentas" Index="1" RelativeSize="4.6966731898238745" IsNewNode="True" />
+                <LayoutItem Id="PlantillaAtributos" RelativeSize="27.272727272727273" Index="1" Removed="True" />
+                <LayoutItem Id="UnidadFacturacion" RelativeSize="21.428571428571427" Index="1" Removed="True" />
+                <LayoutGroup Id="ImpuestosCompras" ShowCaption="False" Caption="Impuestos Compras" Index="2" RelativeSize="33.65949119373777" IsNewNode="True">
+                  <LayoutItem Id="ImpuestosCompras" ViewItem="ImpuestosCompras" Index="0" RelativeSize="100" ShowCaption="True" IsNewNode="True" />
+                </LayoutGroup>
+                <LayoutGroup Id="ImpuestosVentas" ShowCaption="False" Caption="Impuestos Ventas" Index="3" RelativeSize="33.268101761252446" IsNewNode="True">
+                  <LayoutItem Id="ImpuestosVentas" ViewItem="ImpuestosVentas" Index="0" RelativeSize="100" ShowCaption="True" IsNewNode="True" />
+                </LayoutGroup>
+                <LayoutItem Id="Notas" ViewItem="Notas" Index="4" RelativeSize="22.113502935420744" IsNewNode="True" />
+                <LayoutItem Id="Foto" RelativeSize="5.882352941176471" Index="5" Removed="True" />
+                <LayoutItem Id="DisponibleEnTpv" RelativeSize="11.428571428571429" Removed="True" />
+                <LayoutItem Id="Miniatura" RelativeSize="17.073170731707318" Removed="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+          <TabbedGroup Id="Tabs" RelativeSize="38.65546218487395" Index="1">
+            <LayoutGroup Id="Disponibilidad" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="0" ImageName="Business_Target" RelativeSize="100" IsNewNode="True">
+              <LayoutGroup Id="col1" Index="0" ShowCaption="False" RelativeSize="49.952696310312206" Caption="col1" IsNewNode="True">
+                <LayoutItem Id="EstaActivo" ViewItem="EstaActivo" Index="0" RelativeSize="11.428571428571429" IsNewNode="True" />
+                <LayoutItem Id="EsServicio" ViewItem="EsServicio" Index="1" RelativeSize="8.571428571428571" IsNewNode="True" />
+                <LayoutItem Id="EsConsumible" ViewItem="EsConsumible" Index="2" RelativeSize="8.571428571428571" IsNewNode="True" />
+                <LayoutItem Id="EsCompuesto" ViewItem="EsCompuesto" Index="3" RelativeSize="8.571428571428571" IsNewNode="True" />
+                <LayoutItem Id="DisponibleEnCompras" ViewItem="DisponibleEnCompras" Index="4" RelativeSize="8.571428571428571" IsNewNode="True" />
+                <LayoutItem Id="DisponibleEnVentas" ViewItem="DisponibleEnVentas" Index="5" RelativeSize="8.571428571428571" IsNewNode="True" />
+                <LayoutItem Id="DisponibleEnTpv" ViewItem="DisponibleEnTpv" Index="6" RelativeSize="8.571428571428571" IsNewNode="True" />
+                <LayoutItem Id="DisponibleEnWeb" ViewItem="DisponibleEnWeb" Index="7" RelativeSize="8.571428571428571" IsNewNode="True" />
+                <LayoutItem Id="GestionaStock" ViewItem="GestionaStock" Index="8" RelativeSize="8.571428571428571" IsNewNode="True" />
+                <LayoutItem Id="PermiteVentaSinStock" ViewItem="PermiteVentaSinStock" Index="9" RelativeSize="8.571428571428571" IsNewNode="True" />
+                <LayoutItem Id="RequiereReservaStock" ViewItem="RequiereReservaStock" Index="10" RelativeSize="11.428571428571429" IsNewNode="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="col2" Index="1" ShowCaption="False" RelativeSize="50.047303689687794" IsNewNode="True" />
+            </LayoutGroup>
+            <LayoutGroup Id="Tareas" RelativeSize="100" Index="1">
+              <LayoutItem Id="Tareas" RelativeSize="100" />
+            </LayoutGroup>
+            <LayoutGroup Id="Foto" ShowCaption="True" CaptionLocation="Top" Direction="Vertical" Index="2" RelativeSize="100" Caption="Foto" ImageName="NoPicture" IsNewNode="True">
+              <LayoutItem Id="Foto" ViewItem="Foto" Index="0" RelativeSize="100" ShowCaption="False" IsNewNode="True" />
+            </LayoutGroup>
+            <LayoutGroup Id="Imagenes" RelativeSize="100" Index="3">
+              <LayoutItem Id="Imagenes" RelativeSize="100" />
+            </LayoutGroup>
+            <LayoutGroup Id="Documentos" RelativeSize="100" Index="4">
+              <LayoutItem Id="Documentos" RelativeSize="100" />
+            </LayoutGroup>
+            <LayoutGroup Id="PreciosPorCantidad" RelativeSize="100" Index="5">
+              <LayoutItem Id="PreciosPorCantidad" RelativeSize="100" />
+            </LayoutGroup>
+            <LayoutGroup Id="PreciosEspeciales" RelativeSize="100" Index="6">
+              <LayoutItem Id="PreciosEspeciales" RelativeSize="100" />
+            </LayoutGroup>
+            <LayoutGroup Id="StockActual" RelativeSize="100" Index="7">
+              <LayoutItem Id="StockActual" RelativeSize="100" />
+            </LayoutGroup>
+            <LayoutGroup Id="Componentes" RelativeSize="100" Index="8">
+              <LayoutItem Id="Componentes" RelativeSize="100" />
+            </LayoutGroup>
+            <LayoutGroup Id="DondeEsComponente" RelativeSize="100" Index="9">
+              <LayoutItem Id="DondeEsComponente" RelativeSize="100" />
+            </LayoutGroup>
+            <LayoutGroup Id="Atributos" RelativeSize="100" Index="10">
+              <LayoutItem Id="Atributos" RelativeSize="100" />
+            </LayoutGroup>
+            <LayoutGroup Id="ImpuestosCompras" RelativeSize="100" Removed="True">
+              <LayoutItem Id="ImpuestosCompras" RelativeSize="100" />
+            </LayoutGroup>
+            <LayoutGroup Id="ImpuestosVentas" RelativeSize="100" Removed="True">
+              <LayoutItem Id="ImpuestosVentas" RelativeSize="100" />
+            </LayoutGroup>
+          </TabbedGroup>
+          <LayoutGroup Id="SizeableEditors" Caption="SizeableEditors" RelativeSize="27.851140456182474" Removed="True">
+            <LayoutItem Id="Notas" Index="0" RelativeSize="100" Removed="True" />
+            <LayoutItem Id="Nombre" Removed="True" />
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
     </DetailView>
-    <ListView Id="Producto_ListView">
+    <ListView Id="Producto_ListView" FreezeColumnIndices="True" IsGroupPanelVisible="False" Caption="Productos">
       <Columns>
-        <ColumnInfo Id="Miniatura" Index="1" Width="100" IsNewNode="True" />
+        <ColumnInfo Id="Codigo" Index="-1" />
+        <ColumnInfo Id="CodigoBarras" Index="-1" />
+        <ColumnInfo Id="CuentaCompras" Index="-1" />
+        <ColumnInfo Id="CuentaVentas" Index="-1" />
+        <ColumnInfo Id="DisponibleEnCompras" Index="-1" />
+        <ColumnInfo Id="DisponibleEnTpv" Index="-1" />
+        <ColumnInfo Id="DisponibleEnVentas" Index="-1" />
+        <ColumnInfo Id="DisponibleEnWeb" Index="-1" />
+        <ColumnInfo Id="EsCompuesto" Index="-1" />
+        <ColumnInfo Id="EsConsumible" Index="-1" />
+        <ColumnInfo Id="EsServicio" Index="-1" />
         <ColumnInfo Id="Foto" Removed="True" />
+        <ColumnInfo Id="GestionaStock" Index="-1" />
+        <ColumnInfo Id="MargenBrutoImporte" Index="-1" />
+        <ColumnInfo Id="MargenBrutoPorcentaje" Index="-1" />
+        <ColumnInfo Id="Oid" Index="-1" />
+        <ColumnInfo Id="PermiteVentaSinStock" Index="-1" />
+        <ColumnInfo Id="PlantillaAtributos" Index="-1" />
+        <ColumnInfo Id="PrecioVentaConImpuestos" Index="-1" />
+        <ColumnInfo Id="RequiereReservaStock" Index="-1" />
+        <ColumnInfo Id="Miniatura" Index="0" Width="71" IsNewNode="True">
+          <Summary>
+            <ColumnSummaryItem Id="Recuento" SummaryType="Count" IsNewNode="True" />
+          </Summary>
+        </ColumnInfo>
+        <ColumnInfo Id="EstaActivo" Index="1" Width="54" />
+        <ColumnInfo Id="Nombre" Index="2" Width="77" />
+        <ColumnInfo Id="Categoria" Index="3" Width="71" />
+        <ColumnInfo Id="UnidadFacturacion" Index="4" Width="139" />
+        <ColumnInfo Id="CosteEstandar" Index="5" Width="98" />
+        <ColumnInfo Id="PrecioVenta" Index="6" Width="86" />
+        <ColumnInfo Id="Notas" Index="7" Width="51" />
       </Columns>
     </ListView>
     <DetailView Id="Provincia_DetailView" FreezeLayout="True">
