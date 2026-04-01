@@ -11,6 +11,8 @@ namespace erp.Module.Services.Facturacion;
 
 public class VeriFactuLibraryAdapter(ILogger<VeriFactuLibraryAdapter> logger) : IVeriFactuAdapter
 {
+    private static readonly SemaphoreSlim _semaphore = new(1, 1);
+
     public async Task<VeriFactuResponse> SendInvoiceAsync(erp.Module.Models.VeriFactu.Invoice veriFactuInvoice, FacturaBase invoice,
         InformacionEmpresa companyInfo)
     {
@@ -19,63 +21,71 @@ public class VeriFactuLibraryAdapter(ILogger<VeriFactuLibraryAdapter> logger) : 
 
         try
         {
-            // 1. Configurar Settings
-            
-            Settings.SetConfigFileName(companyInfo.ConfiguracionVeriFactuLibrary);
-            Settings.Save();
-
-
-            // 2. Mapear a VeriFactu.Xml.Factu.Alta.Invoice
-            
-            var libInvoice = new LibInvoice(veriFactuInvoice.Sequence, veriFactuInvoice.Date, veriFactuInvoice.SellerID)
+            await _semaphore.WaitAsync();
+            try
             {
-                InvoiceType = MapTipoFactura(veriFactuInvoice.InvoiceType),
-                SellerName = veriFactuInvoice.SellerName,
-                BuyerID = veriFactuInvoice.BuyerID,
-                BuyerName = veriFactuInvoice.BuyerName,
-                Text = veriFactuInvoice.Text,
-                TaxItems = []
-            };
-
-            foreach (var taxItem in veriFactuInvoice.TaxItems)
-            {
-                var lTaxItem = new LibTaxItem
-                {
-                    TaxRate = taxItem.TaxRate,
-                    TaxBase = taxItem.TaxBase,
-                    TaxAmount = taxItem.TaxAmount,
-                    // Intentamos asignar los enums mediante cast si son compatibles, o mapeo manual si fallan
-                };
+                // 1. Configurar Settings
                 
-                // Mapeo defensivo de enums para evitar errores de compilación si los namespaces no coinciden exactamente
-                try { lTaxItem.Tax = (VeriFactu.Xml.Factu.Impuesto)(int)taxItem.Tax; } catch {}
-                try { lTaxItem.TaxType = (VeriFactu.Xml.Factu.Alta.CalificacionOperacion)(int)taxItem.TaxType; } catch {}
-                try { lTaxItem.TaxScheme = (VeriFactu.Xml.Factu.Alta.ClaveRegimen)(int)taxItem.TaxScheme; } catch {}
-                if (taxItem.TaxException.HasValue)
+                Settings.SetConfigFileName(companyInfo.ConfiguracionVeriFactuLibrary);
+                Settings.Save();
+
+
+                // 2. Mapear a VeriFactu.Xml.Factu.Alta.Invoice
+                
+                var libInvoice = new LibInvoice(veriFactuInvoice.Sequence, veriFactuInvoice.Date, veriFactuInvoice.SellerID)
                 {
-                    try { lTaxItem.TaxException = (VeriFactu.Xml.Factu.Alta.CausaExencion)(int)taxItem.TaxException.Value; } catch {}
+                    InvoiceType = MapTipoFactura(veriFactuInvoice.InvoiceType),
+                    SellerName = veriFactuInvoice.SellerName,
+                    BuyerID = veriFactuInvoice.BuyerID,
+                    BuyerName = veriFactuInvoice.BuyerName,
+                    Text = veriFactuInvoice.Text,
+                    TaxItems = []
+                };
+
+                foreach (var taxItem in veriFactuInvoice.TaxItems)
+                {
+                    var lTaxItem = new LibTaxItem
+                    {
+                        TaxRate = taxItem.TaxRate,
+                        TaxBase = taxItem.TaxBase,
+                        TaxAmount = taxItem.TaxAmount,
+                        // Intentamos asignar los enums mediante cast si son compatibles, o mapeo manual si fallan
+                    };
+                    
+                    // Mapeo defensivo de enums para evitar errores de compilación si los namespaces no coinciden exactamente
+                    try { lTaxItem.Tax = (VeriFactu.Xml.Factu.Impuesto)(int)taxItem.Tax; } catch {}
+                    try { lTaxItem.TaxType = (VeriFactu.Xml.Factu.Alta.CalificacionOperacion)(int)taxItem.TaxType; } catch {}
+                    try { lTaxItem.TaxScheme = (VeriFactu.Xml.Factu.Alta.ClaveRegimen)(int)taxItem.TaxScheme; } catch {}
+                    if (taxItem.TaxException.HasValue)
+                    {
+                        try { lTaxItem.TaxException = (VeriFactu.Xml.Factu.Alta.CausaExencion)(int)taxItem.TaxException.Value; } catch {}
+                    }
+
+                    libInvoice.TaxItems.Add(lTaxItem);
                 }
 
-                libInvoice.TaxItems.Add(lTaxItem);
+                // 3. Enviar
+                var invoiceEntry = new InvoiceEntry(libInvoice);
+                invoiceEntry.Save();
+
+                // 4. Mapear respuesta
+                var response = new VeriFactuResponse
+                {
+                    Status = invoiceEntry.Status == "Correcto" ? EstadoVeriFactu.Correcto : EstadoVeriFactu.Incorrecto,
+                    ErrorMessage = invoiceEntry.Status != "Correcto"
+                        ? $"{invoiceEntry.ErrorCode}: {invoiceEntry.ErrorDescription}"
+                        : null,
+                    ErrorCode = invoiceEntry.ErrorCode,
+                    RawResponse = invoiceEntry.Response,
+                    Uuid = invoiceEntry.CSV
+                };
+
+                return response;
             }
-
-            // 3. Enviar
-            var invoiceEntry = new InvoiceEntry(libInvoice);
-            invoiceEntry.Save();
-
-            // 4. Mapear respuesta
-            var response = new VeriFactuResponse
+            finally
             {
-                Status = invoiceEntry.Status == "Correcto" ? EstadoVeriFactu.Correcto : EstadoVeriFactu.Incorrecto,
-                ErrorMessage = invoiceEntry.Status != "Correcto"
-                    ? $"{invoiceEntry.ErrorCode}: {invoiceEntry.ErrorDescription}"
-                    : null,
-                ErrorCode = invoiceEntry.ErrorCode,
-                RawResponse = invoiceEntry.Response,
-                Uuid = invoiceEntry.CSV
-            };
-
-            return response;
+                _semaphore.Release();
+            }
         }
         catch (Exception ex)
         {
