@@ -920,5 +920,49 @@
         <ColumnInfo Id="Nombre" Index="0" />
       </Columns>
     </ListView>
+    <DetailView Id="WebhookTenant_DetailView">
+      <Layout>
+        <LayoutGroup Id="Main" RelativeSize="100">
+          <LayoutGroup Id="SimpleEditors" RelativeSize="100">
+            <LayoutGroup Id="WebhookTenant" RelativeSize="100" Caption="Inquilino" ShowCaption="False">
+              <LayoutGroup Id="WebhookTenant_col1" RelativeSize="50" Caption="WebhookTenant_col1">
+                <LayoutItem Id="Name" ViewItem="Name" Index="0" RelativeSize="3.8461538461538463" IsNewNode="True" />
+                <LayoutItem Id="ConnectionString" ViewItem="ConnectionString" Index="1" RelativeSize="96.15384615384616" IsNewNode="True" />
+                <LayoutItem Id="WebhookEnabled" Index="2" RelativeSize="3.0303030303030303" Removed="True" />
+                <LayoutItem Id="WebhookEnvironment" Index="2" RelativeSize="3.0303030303030303" Removed="True" />
+                <LayoutItem Id="WebhookRotatedAt" Index="2" RelativeSize="4.040404040404041" Removed="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="WebhookTenant_col2" RelativeSize="50">
+                <LayoutItem Id="WebhookId" RelativeSize="3.8461538461538463" Index="0" />
+                <LayoutItem Id="ExternalSubscriptionId" RelativeSize="2.8846153846153846" Index="1" />
+                <LayoutItem Id="WebhookEnvironment" ViewItem="WebhookEnvironment" Index="2" RelativeSize="2.8846153846153846" IsNewNode="True" />
+                <LayoutItem Id="WebhookRotatedAt" ViewItem="WebhookRotatedAt" Index="3" RelativeSize="2.8846153846153846" IsNewNode="True" />
+                <LayoutItem Id="WebhookSecret" ViewItem="WebhookSecret" Index="4" RelativeSize="83.65384615384616" IsNewNode="True" />
+                <LayoutItem Id="WebhookEnabled" ViewItem="WebhookEnabled" Index="5" RelativeSize="3.8461538461538463" IsNewNode="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+            <LayoutGroup Id="Tenant" Caption="Name" RelativeSize="69.62785114045619" Removed="True">
+              <LayoutItem Id="Name" Removed="True" />
+            </LayoutGroup>
+          </LayoutGroup>
+          <LayoutGroup Id="SizeableEditors" RelativeSize="68.54741896758703" Caption="SizeableEditors" Removed="True">
+            <LayoutItem Id="ConnectionString" RelativeSize="50.14792899408284" Removed="True" />
+            <LayoutItem Id="WebhookSecret" RelativeSize="100" Removed="True" />
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="WebhookTenant_ListView" Caption="Inquilinos">
+      <Columns>
+        <ColumnInfo Id="ExternalSubscriptionId" Index="-1" Width="143" />
+        <ColumnInfo Id="WebhookEnabled" Index="-1" Width="116" />
+        <ColumnInfo Id="WebhookEnvironment" Index="-1" Width="142" />
+        <ColumnInfo Id="WebhookId" Index="-1" Width="84" />
+        <ColumnInfo Id="WebhookRotatedAt" Index="-1" Width="130" />
+        <ColumnInfo Id="Name" Width="65" />
+        <ColumnInfo Id="ConnectionString" Index="1" Width="116" />
+        <ColumnInfo Id="WebhookSecret" Index="2" Width="106" />
+      </Columns>
+    </ListView>
   </Views>
 </Application>
