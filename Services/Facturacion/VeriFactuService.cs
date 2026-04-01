@@ -327,15 +327,29 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             // Después de éxito al enviar verifactu, o al recibir un estado válido, actualizamos el estado
             // Para la API, si es un envío inicial (Correcto o EnviadaVeriFactu), lo dejamos en Pendiente para su posterior confirmación
             // Para la Librería Local, 'Correcto' es un estado final aceptado directamente por AEAT
-            if ((veriFactuResponse.Status == EstadoVeriFactu.Correcto || 
-                 veriFactuResponse.Status == EstadoVeriFactu.EnviadaVeriFactu) &&
-                 companyInfo.VeriFactuProvider == VeriFactuProvider.Api)
+            if (companyInfo.VeriFactuProvider == VeriFactuProvider.Api)
             {
-                invoice.EstadoVeriFactu = EstadoVeriFactu.Pendiente;
+                if (veriFactuResponse.Status == EstadoVeriFactu.Correcto || 
+                    veriFactuResponse.Status == EstadoVeriFactu.EnviadaVeriFactu)
+                {
+                    invoice.EstadoVeriFactu = EstadoVeriFactu.Pendiente;
+                }
+                else
+                {
+                    invoice.EstadoVeriFactu = veriFactuResponse.Status;
+                }
             }
-            else
+            else // Provider Library
             {
-                invoice.EstadoVeriFactu = veriFactuResponse.Status;
+                if (veriFactuResponse.Status == EstadoVeriFactu.Correcto || 
+                    veriFactuResponse.Status == EstadoVeriFactu.EnviadaVeriFactu)
+                {
+                    invoice.EstadoVeriFactu = EstadoVeriFactu.Correcto;
+                }
+                else
+                {
+                    invoice.EstadoVeriFactu = veriFactuResponse.Status;
+                }
             }
 
             if (invoice.EstadoFactura == EstadoFactura.Emitida)
