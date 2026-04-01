@@ -66,6 +66,9 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private Diario? _diarioRegularizacionPorDefecto;
     private string? _apiKeyVeriFactu;
     private VeriFactuProvider _veriFactuProvider;
+    private FileData? _certificadoVeriFactu;
+    private string? _passwordCertificadoVeriFactu;
+    private string? _configuracionVeriFactuLibrary;
     private PosicionFiscal? _posicionFiscalPorDefecto;
     private string? _prefijoAsientosPorDefecto;
     private string? _prefijoAlbaranesCompraPorDefecto;
@@ -619,6 +622,53 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     {
         get => _veriFactuProvider;
         set => SetPropertyValue(nameof(VeriFactuProvider), ref _veriFactuProvider, value);
+    }
+
+    [XafDisplayName("Certificado VeriFactu (PFX)")]
+    [ExpandObjectMembers(ExpandObjectMembers.Never)]
+    public FileData? CertificadoVeriFactu
+    {
+        get => _certificadoVeriFactu;
+        set => SetPropertyValue(nameof(CertificadoVeriFactu), ref _certificadoVeriFactu, value);
+    }
+
+    [Size(255)]
+    [XafDisplayName("Contraseña Certificado VeriFactu")]
+    [ModelDefault("IsPassword", "True")]
+    public string? PasswordCertificadoVeriFactu
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(_passwordCertificadoVeriFactu)) return null;
+            try
+            {
+                var base64EncodedBytes = Convert.FromBase64String(_passwordCertificadoVeriFactu);
+                return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+            }
+            catch
+            {
+                return _passwordCertificadoVeriFactu;
+            }
+        }
+        set
+        {
+            string? encryptedValue = null;
+            if (!string.IsNullOrEmpty(value))
+            {
+                var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(value);
+                encryptedValue = Convert.ToBase64String(plainTextBytes);
+            }
+            SetPropertyValue(nameof(PasswordCertificadoVeriFactu), ref _passwordCertificadoVeriFactu, encryptedValue);
+        }
+    }
+
+    [Size(255)]
+    [XafDisplayName("Archivo Configuración VeriFactu")]
+    [ReadOnly(true)]
+    public string? ConfiguracionVeriFactuLibrary
+    {
+        get => _configuracionVeriFactuLibrary;
+        set => SetPropertyValue(nameof(ConfiguracionVeriFactuLibrary), ref _configuracionVeriFactuLibrary, value);
     }
 
     [RuleRange("InformacionEmpresa_PaddingNumero_Range", DefaultContexts.Save, 1, 10)]

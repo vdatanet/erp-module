@@ -81,6 +81,15 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace, IServicePr
         
         if (string.IsNullOrEmpty(informacionEmpresa.TextoDefectoVeriFactu)) informacionEmpresa.TextoDefectoVeriFactu = "Servicios de consultoría y asesoramiento técnico correspondientes al periodo....";
         
+        if (!string.IsNullOrEmpty(tenantName))
+        {
+            informacionEmpresa.ConfiguracionVeriFactuLibrary = $"{tenantName.ToLower()}.xml";
+        }
+        else
+        {
+            informacionEmpresa.ConfiguracionVeriFactuLibrary = "host.xml";
+        }
+
         if (string.IsNullOrEmpty(informacionEmpresa.PrefijoAsientosPorDefecto)) informacionEmpresa.PrefijoAsientosPorDefecto = "AS";
         if (string.IsNullOrEmpty(informacionEmpresa.PrefijoOfertasCompraPorDefecto)) informacionEmpresa.PrefijoOfertasCompraPorDefecto = "CO";
         if (string.IsNullOrEmpty(informacionEmpresa.PrefijoPedidosCompraPorDefecto)) informacionEmpresa.PrefijoPedidosCompraPorDefecto = "CP";
