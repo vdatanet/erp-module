@@ -81,6 +81,8 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace, IServicePr
         
         if (string.IsNullOrEmpty(informacionEmpresa.TextoDefectoVeriFactu)) informacionEmpresa.TextoDefectoVeriFactu = "Servicios de consultoría y asesoramiento técnico correspondientes al periodo....";
         
+        informacionEmpresa.VeriFactuEntornoProduccion = false;
+        
         if (!string.IsNullOrEmpty(tenantName))
         {
             informacionEmpresa.ConfiguracionVeriFactuLibrary = $"{tenantName.ToLower()}.xml";

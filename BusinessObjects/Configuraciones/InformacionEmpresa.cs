@@ -69,6 +69,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private FileData? _certificadoVeriFactu;
     private string? _passwordCertificadoVeriFactu;
     private string? _configuracionVeriFactuLibrary;
+    private bool _veriFactuEntornoProduccion;
     private PosicionFiscal? _posicionFiscalPorDefecto;
     private string? _prefijoAsientosPorDefecto;
     private string? _prefijoAlbaranesCompraPorDefecto;
@@ -671,6 +672,13 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(ConfiguracionVeriFactuLibrary), ref _configuracionVeriFactuLibrary, value);
     }
 
+    [XafDisplayName("VeriFactu en Producción")]
+    public bool VeriFactuEntornoProduccion
+    {
+        get => _veriFactuEntornoProduccion;
+        set => SetPropertyValue(nameof(VeriFactuEntornoProduccion), ref _veriFactuEntornoProduccion, value);
+    }
+
     [RuleRange("InformacionEmpresa_PaddingNumero_Range", DefaultContexts.Save, 1, 10)]
     [XafDisplayName("Padding Número")]
     public int PaddingNumero
@@ -711,6 +719,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         PaddingCuentaContable = 10;
         ActivarVeriFactu = false;
         VeriFactuProvider = VeriFactuProvider.Api;
+        VeriFactuEntornoProduccion = false;
     }
 
     public DateTime GetLocalTime()
