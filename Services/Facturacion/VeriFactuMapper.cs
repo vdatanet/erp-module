@@ -28,7 +28,7 @@ public static class VeriFactuMapper
         };
 
         var mapped = (LibTipoFactura)mappedValue;
-        logger?.LogInformation("Mapeando TipoFactura: {Internal} -> {External}", type, mapped);
+        // logger?.LogInformation("Mapeando TipoFactura: {Internal} -> {External}", type, mapped);
         return mapped;
     }
 
@@ -42,7 +42,7 @@ public static class VeriFactuMapper
         };
 
         var mapped = (LibTipoRectificativa)mappedValue;
-        logger?.LogInformation("Mapeando TipoRectificativa: {Internal} -> {External}", type?.ToString() ?? "null", mapped);
+        // logger?.LogInformation("Mapeando TipoRectificativa: {Internal} -> {External}", type?.ToString() ?? "null", mapped);
         return mapped;
     }
 
@@ -57,7 +57,7 @@ public static class VeriFactuMapper
         };
 
         var mapped = (LibImpuesto)mappedValue;
-        logger?.LogInformation("Mapeando Impuesto: {Internal} -> {External}", tax, mapped);
+        // logger?.LogInformation("Mapeando Impuesto: {Internal} -> {External}", tax, mapped);
         return mapped;
     }
 
@@ -72,7 +72,7 @@ public static class VeriFactuMapper
         };
 
         var mapped = (LibCalificacionOperacion)mappedValue;
-        logger?.LogInformation("Mapeando Calificacion: {Internal} -> {External}", type, mapped);
+        // logger?.LogInformation("Mapeando Calificacion: {Internal} -> {External}", type, mapped);
         return mapped;
     }
 
@@ -96,7 +96,7 @@ public static class VeriFactuMapper
         };
 
         var mapped = (LibClaveRegimen)mappedValue;
-        logger?.LogInformation("Mapeando Regimen: {Internal} -> {External}", scheme, mapped);
+        // logger?.LogInformation("Mapeando Regimen: {Internal} -> {External}", scheme, mapped);
         return mapped;
     }
 
@@ -114,7 +114,7 @@ public static class VeriFactuMapper
         };
 
         var mapped = (LibCausaExencion)mappedValue;
-        logger?.LogInformation("Mapeando CausaExencion: {Internal} -> {External}", exception, mapped);
+        // logger?.LogInformation("Mapeando CausaExencion: {Internal} -> {External}", exception, mapped);
         return mapped;
     }
 }

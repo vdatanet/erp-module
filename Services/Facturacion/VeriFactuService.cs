@@ -299,8 +299,10 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
     public void UpdateInvoiceFromResponse(IObjectSpace objectSpace, FacturaBase invoice, VeriFactuResponse veriFactuResponse,
         Invoice veriFactuFactura, InformacionEmpresa companyInfo, bool onlyUpdateStatus = false)
     {
+        /*
         logger.LogInformation("VeriFactuService.UpdateInvoiceFromResponse: Invoice={Sequence}, Status={Status}, Provider={Provider}, OnlyUpdateStatus={OnlyUpdateStatus}",
             invoice.Secuencia, veriFactuResponse.Status, companyInfo.VeriFactuProvider, onlyUpdateStatus);
+        */
 
         if (onlyUpdateStatus)
         {
@@ -312,7 +314,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
                      veriFactuResponse.Status == EstadoVeriFactu.EnviadaVeriFactu ||
                      veriFactuResponse.Status == EstadoVeriFactu.Pendiente))
                 {
-                    logger.LogInformation("VeriFactuService.UpdateInvoiceFromResponse: Marcando factura {Sequence} como Correcto (Library Provider, OnlyUpdateStatus=true, Status={Status})", invoice.Secuencia, veriFactuResponse.Status);
+                    // logger.LogInformation("VeriFactuService.UpdateInvoiceFromResponse: Marcando factura {Sequence} como Correcto (Library Provider, OnlyUpdateStatus=true, Status={Status})", invoice.Secuencia, veriFactuResponse.Status);
                     invoice.EstadoVeriFactu = EstadoVeriFactu.Correcto;
                 }
                 else
@@ -360,7 +362,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
                     veriFactuResponse.Status == EstadoVeriFactu.EnviadaVeriFactu ||
                     veriFactuResponse.Status == EstadoVeriFactu.Pendiente)
                 {
-                    logger.LogInformation("VeriFactuService.UpdateInvoiceFromResponse: Forzando factura {Sequence} como Correcto (Library Provider, Status={Status})", invoice.Secuencia, veriFactuResponse.Status);
+                    // logger.LogInformation("VeriFactuService.UpdateInvoiceFromResponse: Forzando factura {Sequence} como Correcto (Library Provider, Status={Status})", invoice.Secuencia, veriFactuResponse.Status);
                     invoice.EstadoVeriFactu = EstadoVeriFactu.Correcto;
                 }
                 else

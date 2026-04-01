@@ -16,7 +16,7 @@ public class VeriFactuLibraryAdapter(ILogger<VeriFactuLibraryAdapter> logger) : 
     {
         return await ExecuteInContextAsync(async () =>
         {
-            logger.LogInformation("VeriFactuLibraryAdapter: Enviando factura {Sequence} mediante librería local", veriFactuInvoice.Sequence);
+            // logger.LogInformation("VeriFactuLibraryAdapter: Enviando factura {Sequence} mediante librería local", veriFactuInvoice.Sequence);
 
             var libInvoice = CreateLibraryInvoice(veriFactuInvoice);
             var invoiceEntry = new InvoiceEntry(libInvoice);
@@ -40,8 +40,8 @@ public class VeriFactuLibraryAdapter(ILogger<VeriFactuLibraryAdapter> logger) : 
                 logger.LogDebug(ex, "VeriFactuLibraryAdapter: No se pudo obtener RegistroAlta o sus datos (Url/QR) de la factura {Sequence}.", veriFactuInvoice.Sequence);
             }
             
-            logger.LogInformation("VeriFactuLibraryAdapter: Resultado para factura {Sequence}: Status={Status}, ErrorCode={ErrorCode}, ErrorDescription={ErrorDescription}",
-                veriFactuInvoice.Sequence, invoiceEntry.Status, invoiceEntry.ErrorCode, invoiceEntry.ErrorDescription);
+            // logger.LogInformation("VeriFactuLibraryAdapter: Resultado para factura {Sequence}: Status={Status}, ErrorCode={ErrorCode}, ErrorDescription={ErrorDescription}",
+            //    veriFactuInvoice.Sequence, invoiceEntry.Status, invoiceEntry.ErrorCode, invoiceEntry.ErrorDescription);
 
             return MapResponse(invoiceEntry, validationUrl, qrData);
         }, companyInfo, veriFactuInvoice.Sequence);
@@ -51,7 +51,7 @@ public class VeriFactuLibraryAdapter(ILogger<VeriFactuLibraryAdapter> logger) : 
     {
         return await ExecuteInContextAsync(async () =>
         {
-            logger.LogInformation("VeriFactuLibraryAdapter: Consultando estado para UUID {Uuid} (Simulado)", uuid);
+            // logger.LogInformation("VeriFactuLibraryAdapter: Consultando estado para UUID {Uuid} (Simulado)", uuid);
 
             return new VeriFactuResponse
             {
@@ -98,9 +98,6 @@ public class VeriFactuLibraryAdapter(ILogger<VeriFactuLibraryAdapter> logger) : 
 
     private LibTaxItem CreateLibraryTaxItem(erp.Module.Models.VeriFactu.TaxItem taxItem)
     {
-        logger.LogInformation("VeriFactuLibraryAdapter: Procesando TaxItem - Base: {Base}, Rate: {Rate}, Amount: {Amount}, Tax: {Tax}, Type: {Type}, Scheme: {Scheme}",
-            taxItem.TaxBase, taxItem.TaxRate, taxItem.TaxAmount, taxItem.Tax, taxItem.TaxType, taxItem.TaxScheme);
-
         var lTaxItem = new LibTaxItem
         {
             Tax = VeriFactuMapper.MapImpuesto(taxItem.Tax, logger),
@@ -135,8 +132,10 @@ public class VeriFactuLibraryAdapter(ILogger<VeriFactuLibraryAdapter> logger) : 
             status = EstadoVeriFactu.Incorrecto;
         }
         
+        /*
         logger.LogInformation("VeriFactuLibraryAdapter.MapResponse: InvoiceEntry.Status={LibStatus} -> EstadoVeriFactu={MappedStatus}, CSV={CSV}", 
             invoiceEntry.Status, status, invoiceEntry.CSV);
+        */
 
         var response = new VeriFactuResponse
         {
