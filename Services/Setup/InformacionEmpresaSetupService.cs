@@ -83,6 +83,11 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace, IServicePr
         
         informacionEmpresa.VeriFactuEntornoProduccion = false;
         
+        if (string.IsNullOrEmpty(informacionEmpresa.VeriFactuNombreRazon)) informacionEmpresa.VeriFactuNombreRazon = "Joan Pallàs Ribes";
+        if (string.IsNullOrEmpty(informacionEmpresa.VeriFactuNif)) informacionEmpresa.VeriFactuNif = "43725645T";
+        if (string.IsNullOrEmpty(informacionEmpresa.VeriFactuNombreSistemaInformatico)) informacionEmpresa.VeriFactuNombreSistemaInformatico = "VDATA ERP";
+        if (string.IsNullOrEmpty(informacionEmpresa.VeriFactuVersion)) informacionEmpresa.VeriFactuVersion = "1.0.0";
+        
         if (!string.IsNullOrEmpty(tenantName))
         {
             informacionEmpresa.ConfiguracionVeriFactuLibrary = $"{tenantName.ToLower()}.xml";

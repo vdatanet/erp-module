@@ -69,6 +69,10 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private FileData? _certificadoVeriFactu;
     private string? _passwordCertificadoVeriFactu;
     private string? _configuracionVeriFactuLibrary;
+    private string? _veriFactuNombreRazon;
+    private string? _veriFactuNif;
+    private string? _veriFactuNombreSistemaInformatico;
+    private string? _veriFactuVersion;
     private bool _veriFactuEntornoProduccion;
     private PosicionFiscal? _posicionFiscalPorDefecto;
     private string? _prefijoAsientosPorDefecto;
@@ -679,6 +683,38 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(VeriFactuEntornoProduccion), ref _veriFactuEntornoProduccion, value);
     }
 
+    [Size(255)]
+    [XafDisplayName("Nombre Razón VeriFactu")]
+    public string? VeriFactuNombreRazon
+    {
+        get => _veriFactuNombreRazon;
+        set => SetPropertyValue(nameof(VeriFactuNombreRazon), ref _veriFactuNombreRazon, value);
+    }
+
+    [Size(20)]
+    [XafDisplayName("NIF VeriFactu")]
+    public string? VeriFactuNif
+    {
+        get => _veriFactuNif;
+        set => SetPropertyValue(nameof(VeriFactuNif), ref _veriFactuNif, value);
+    }
+
+    [Size(255)]
+    [XafDisplayName("Nombre Sistema Informático VeriFactu")]
+    public string? VeriFactuNombreSistemaInformatico
+    {
+        get => _veriFactuNombreSistemaInformatico;
+        set => SetPropertyValue(nameof(VeriFactuNombreSistemaInformatico), ref _veriFactuNombreSistemaInformatico, value);
+    }
+
+    [Size(50)]
+    [XafDisplayName("Versión VeriFactu")]
+    public string? VeriFactuVersion
+    {
+        get => _veriFactuVersion;
+        set => SetPropertyValue(nameof(VeriFactuVersion), ref _veriFactuVersion, value);
+    }
+
     [RuleRange("InformacionEmpresa_PaddingNumero_Range", DefaultContexts.Save, 1, 10)]
     [XafDisplayName("Padding Número")]
     public int PaddingNumero
@@ -720,6 +756,10 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         ActivarVeriFactu = false;
         VeriFactuProvider = VeriFactuProvider.Api;
         VeriFactuEntornoProduccion = false;
+        VeriFactuNombreRazon = "Joan Pallàs Ribes";
+        VeriFactuNif = "43725645T";
+        VeriFactuNombreSistemaInformatico = "VDATA ERP";
+        VeriFactuVersion = "1.0.0";
     }
 
     public DateTime GetLocalTime()
