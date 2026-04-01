@@ -234,26 +234,42 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             if (tax.TipoImpuesto?.Impuesto == null) continue;
 
             CalificacionOperacion opType = default;
-            if (tax.TipoImpuesto.TipoOperacion != null && Enum.TryParse<CalificacionOperacion>(tax.TipoImpuesto.TipoOperacion.ToString(), out var op))
+            // Primero intentamos obtener la calificación de la instantánea del impuesto en la factura
+            if (tax.TipoOperacion != null && Enum.TryParse<CalificacionOperacion>(tax.TipoOperacion.ToString(), out var opSnapshot))
             {
-                opType = op;
+                opType = opSnapshot;
+            }
+            // Si no está en la factura, intentamos obtenerlo del maestro (fallback)
+            else if (tax.TipoImpuesto?.TipoOperacion != null && Enum.TryParse<CalificacionOperacion>(tax.TipoImpuesto.TipoOperacion.ToString(), out var opMaster))
+            {
+                opType = opMaster;
             }
 
             var taxItem = new TaxItem
             {
                 TaxBase = tax.BaseImponible,
                 TaxType = opType,
-                TaxScheme = tax.TipoImpuesto.RegimenFiscal ?? default,
+                TaxScheme = tax.RegimenFiscal ?? tax.TipoImpuesto?.RegimenFiscal ?? default,
             };
 
-            if (tax.TipoImpuesto.Impuesto != null && Enum.TryParse<Impuesto>(tax.TipoImpuesto.Impuesto.ToString(), out var imp))
+            var impSnapshot = tax.Impuesto;
+            if (impSnapshot != null && Enum.TryParse<Impuesto>(impSnapshot.ToString(), out var impS))
             {
-                taxItem.Tax = imp;
+                taxItem.Tax = impS;
+            }
+            else if (tax.TipoImpuesto?.Impuesto != null && Enum.TryParse<Impuesto>(tax.TipoImpuesto.Impuesto.ToString(), out var impM))
+            {
+                taxItem.Tax = impM;
             }
 
-            if (tax.TipoImpuesto.CausaExencion != null && opType == CalificacionOperacion.S2 && Enum.TryParse<CausaExencion>(tax.TipoImpuesto.CausaExencion.ToString(), out var cau))
+            var cauSnapshot = tax.CausaExencion;
+            if (cauSnapshot != null && opType == CalificacionOperacion.S2 && Enum.TryParse<CausaExencion>(cauSnapshot.ToString(), out var cauS))
             {
-                taxItem.TaxException = cau;
+                taxItem.TaxException = cauS;
+            }
+            else if (tax.TipoImpuesto?.CausaExencion != null && opType == CalificacionOperacion.S2 && Enum.TryParse<CausaExencion>(tax.TipoImpuesto.CausaExencion.ToString(), out var cauM))
+            {
+                taxItem.TaxException = cauM;
             }
 
             // Cuando CalificacionOperacion sea “S2” TipoImpositivo y CuotaRepercutida deben ser 0
