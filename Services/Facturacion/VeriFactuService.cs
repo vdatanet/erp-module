@@ -137,13 +137,16 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         foreach (var tax in invoice.Impuestos)
         {
             if (tax.TipoImpuesto == null)
-                return new SendResult(false, "Hay impuestos en las líneas sin configuración técnica.");
+                continue;
             
             if (tax.TipoImpuesto.Impuesto == null)
-                return new SendResult(false, $"El impuesto '{tax.TipoImpuesto.Nombre}' no tiene asignado el tipo VeriFactu.");
+                continue;
+            
+            // Si llegamos aquí, al menos un impuesto tiene configuración VeriFactu
+            return new SendResult(true, string.Empty);
         }
 
-        return new SendResult(true, string.Empty);
+        return new SendResult(false, "La factura no tiene ningún impuesto con tipo VeriFactu asignado.");
     }
 
     private void PrepareInvoice(IObjectSpace objectSpace, FacturaBase invoice)
@@ -228,7 +231,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
 
         foreach (var tax in invoice.Impuestos)
         {
-            if (tax.TipoImpuesto == null) continue;
+            if (tax.TipoImpuesto?.Impuesto == null) continue;
 
             CalificacionOperacion opType = default;
             if (tax.TipoImpuesto.TipoOperacion != null && Enum.TryParse<CalificacionOperacion>(tax.TipoImpuesto.TipoOperacion.ToString(), out var op))
