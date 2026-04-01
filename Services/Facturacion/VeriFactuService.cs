@@ -120,7 +120,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         if (invoice.Fecha > InformacionEmpresaHelper.GetLocalTime(invoice.Session))
              return new SendResult(false, "La fecha de la factura no puede ser posterior a la fecha actual.");
 
-        if (string.IsNullOrEmpty(companyInfo.ApiKeyVeriFactu))
+        if (companyInfo.VeriFactuProvider == VeriFactuProvider.Api && string.IsNullOrEmpty(companyInfo.ApiKeyVeriFactu))
         {
             return new SendResult(false, "La API Key de VeriFactu no está configurada en la empresa.");
         }

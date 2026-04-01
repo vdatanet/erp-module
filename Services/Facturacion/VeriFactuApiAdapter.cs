@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace erp.Module.Services.Facturacion;
 
-public class VeriFactuAdapter(ILogger<VeriFactuAdapter> logger, VerifactuClient client) : IVeriFactuAdapter
+public class VeriFactuApiAdapter(ILogger<VeriFactuApiAdapter> logger, VerifactuClient client) : IVeriFactuAdapter
 {
     public async Task<VeriFactuResponse> SendInvoiceAsync(Invoice veriFactuInvoice, FacturaBase invoice, InformacionEmpresa companyInfo)
     {

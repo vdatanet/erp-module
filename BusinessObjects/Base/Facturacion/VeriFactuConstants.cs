@@ -2,6 +2,12 @@ using DevExpress.ExpressApp.DC;
 
 namespace erp.Module.BusinessObjects.Base.Facturacion;
 
+public enum VeriFactuProvider
+{
+    [XafDisplayName("API Externa")] Api,
+    [XafDisplayName("Librería Local")] Library
+}
+
 public enum EstadoVeriFactu
 {
     [XafDisplayName("Pendiente")] Pendiente,

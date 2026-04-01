@@ -65,6 +65,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private Diario? _diarioCierrePorDefecto;
     private Diario? _diarioRegularizacionPorDefecto;
     private string? _apiKeyVeriFactu;
+    private VeriFactuProvider _veriFactuProvider;
     private PosicionFiscal? _posicionFiscalPorDefecto;
     private string? _prefijoAsientosPorDefecto;
     private string? _prefijoAlbaranesCompraPorDefecto;
@@ -613,6 +614,13 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(ActivarVeriFactu), ref _activarVeriFactu, value);
     }
 
+    [XafDisplayName("Proveedor VeriFactu")]
+    public VeriFactuProvider VeriFactuProvider
+    {
+        get => _veriFactuProvider;
+        set => SetPropertyValue(nameof(VeriFactuProvider), ref _veriFactuProvider, value);
+    }
+
     [RuleRange("InformacionEmpresa_PaddingNumero_Range", DefaultContexts.Save, 1, 10)]
     [XafDisplayName("Padding Número")]
     public int PaddingNumero
@@ -652,6 +660,7 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         PaddingNumero = 5;
         PaddingCuentaContable = 10;
         ActivarVeriFactu = false;
+        VeriFactuProvider = VeriFactuProvider.Api;
     }
 
     public DateTime GetLocalTime()
