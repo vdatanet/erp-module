@@ -87,7 +87,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private DateTime _fechaModificacion;
 
     // --- PAGO ---
-    private CondicionPago? _formaPago;
+    //private CondicionPago? _formaPago;
     private decimal _gastosEnvio;
 
     // --- IDENTIFICACIÓN ---
@@ -101,7 +101,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private decimal _importeRetencion;
     private decimal _importeTotal;
     private bool _impuestoIncluido;
-    private MetodoCobroVenta _metodoCobro;
+    //private MetodoCobroVenta _metodoCobro;
     private MetodoEntrega? _metodoEntrega;
     private string? _motivoAnulacion;
 
@@ -652,19 +652,19 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     [Browsable(false)] public TotalesDocumento Totales => _totalesCache ??= DocumentoVentaService.CalcularTotales(this);
 
-    [XafDisplayName("Forma de Pago")]
-    public CondicionPago? FormaPago
-    {
-        get => _formaPago;
-        set => SetPropertyValue(nameof(FormaPago), ref _formaPago, value);
-    }
+    //[XafDisplayName("Forma de Pago")]
+    //public CondicionPago? FormaPago
+    //{
+    //    get => _formaPago;
+    //    set => SetPropertyValue(nameof(FormaPago), ref _formaPago, value);
+    //}
 
-    [XafDisplayName("Método Cobro")]
-    public MetodoCobroVenta MetodoCobro
-    {
-        get => _metodoCobro;
-        set => SetPropertyValue(nameof(MetodoCobro), ref _metodoCobro, value);
-    }
+    //[XafDisplayName("Método Cobro")]
+    //public MetodoCobroVenta MetodoCobro
+    //{
+    //    get => _metodoCobro;
+    //    set => SetPropertyValue(nameof(MetodoCobro), ref _metodoCobro, value);
+    //}
 
     [Size(100)]
     [XafDisplayName("Referencia Pago")]
