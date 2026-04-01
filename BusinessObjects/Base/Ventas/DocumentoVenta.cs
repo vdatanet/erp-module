@@ -931,10 +931,21 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [XafDisplayName("Posición Fiscal")]
+    [ImmediatePostData]
     public PosicionFiscal? PosicionFiscal
     {
         get => _posicionFiscal;
-        set => SetPropertyValue(nameof(PosicionFiscal), ref _posicionFiscal, value);
+        set
+        {
+            var modified = SetPropertyValue(nameof(PosicionFiscal), ref _posicionFiscal, value);
+            if (modified && !IsLoading && !IsSaving)
+            {
+                foreach (var linea in Lineas)
+                {
+                    linea.AplicarPosicionFiscal();
+                }
+            }
+        }
     }
 
     [Size(20)]

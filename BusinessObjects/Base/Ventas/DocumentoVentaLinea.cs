@@ -323,11 +323,39 @@ public class DocumentoVentaLinea(Session session) : EntidadBase(session)
                 TiposImpuestoVenta.Add(tax);
         }
 
+        AplicarPosicionFiscal();
+
         if (Cantidad == 0m)
             Cantidad = 1m;
 
         RecalcularYNotificar();
         OnAsignarProductoFinished();
+    }
+
+    public void AplicarPosicionFiscal()
+    {
+        if (DocumentoVenta?.PosicionFiscal == null || TiposImpuestoVenta.Count == 0) return;
+
+        var impuestosActuales = TiposImpuestoVenta.ToList();
+        var mapeos = DocumentoVenta.PosicionFiscal.Mapeos;
+
+        if (mapeos.Count == 0) return;
+
+        foreach (var imp in impuestosActuales)
+        {
+            var mapeo = mapeos.FirstOrDefault(m => m.ImpuestoOrigen == imp);
+            if (mapeo != null)
+            {
+                TiposImpuestoVenta.Remove(imp);
+                foreach (var impDestino in mapeo.ImpuestosDestino)
+                {
+                    if (!TiposImpuestoVenta.Contains(impDestino))
+                    {
+                        TiposImpuestoVenta.Add(impDestino);
+                    }
+                }
+            }
+        }
     }
 
     private void TiposImpuestoVenta_CollectionChanged(object sender, XPCollectionChangedEventArgs e)
