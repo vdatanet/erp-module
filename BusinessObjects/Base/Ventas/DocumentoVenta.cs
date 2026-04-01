@@ -466,8 +466,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(Notas), ref _notas, value);
     }
 
-    [ModelDefault("DisplayFormat", "{0:n2}")]
-    [ModelDefault("EditMask", "n2")]
+    [ModelDefault("AllowEdit", "False")]
     [XafDisplayName("Base Imponible")]
     public decimal BaseImponible
     {
@@ -490,8 +489,6 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [ModelDefault("AllowEdit", "False")]
-    [ModelDefault("DisplayFormat", "{0:n2}")]
-    [ModelDefault("EditMask", "n2")]
     [XafDisplayName("Impuestos")]
     public decimal ImporteImpuestos
     {
@@ -500,8 +497,6 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     }
 
     [ModelDefault("AllowEdit", "False")]
-    [ModelDefault("DisplayFormat", "{0:n2}")]
-    [ModelDefault("EditMask", "n2")]
     [XafDisplayName("Total")]
     public decimal ImporteTotal
     {

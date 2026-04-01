@@ -287,7 +287,7 @@
     <DetailView Id="FacturaVenta_DetailView" FreezeLayout="True">
       <Layout IsNewNode="True" Removed="True">
         <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
-          <LayoutGroup Id="Cabecera" Index="0" ShowCaption="False" RelativeSize="16.826923076923077" Direction="Horizontal" IsNewNode="True">
+          <LayoutGroup Id="Cabecera" Index="0" ShowCaption="False" RelativeSize="16.80672268907563" Direction="Horizontal" IsNewNode="True">
             <LayoutGroup Id="col1" Index="0" ShowCaption="False" RelativeSize="48.93419833178869" Caption="col1" IsNewNode="True">
               <LayoutItem Id="Ejercicio" ViewItem="Ejercicio" Index="0" RelativeSize="22.857142857142858" IsNewNode="True" />
               <LayoutItem Id="Fecha" ViewItem="Fecha" Index="1" RelativeSize="17.142857142857142" IsNewNode="True" />
@@ -302,45 +302,52 @@
               <LayoutItem Id="Notas" ViewItem="Notas" Index="3" RelativeSize="42.857142857142854" IsNewNode="True" />
             </LayoutGroup>
           </LayoutGroup>
-          <TabbedGroup Id="Tabs" Index="1" RelativeSize="83.17307692307692" IsNewNode="True">
+          <TabbedGroup Id="Tabs" Index="1" RelativeSize="83.19327731092437" IsNewNode="True">
             <LayoutGroup Id="Cliente" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="0" ToolTipIconType="None" RelativeSize="100" ImageName="BO_Customer" IsNewNode="True">
               <LayoutGroup Id="col1" Index="0" ShowCaption="False" RelativeSize="49.952696310312206" Caption="col1" IsNewNode="True">
-                <LayoutItem Id="NombreCliente" ViewItem="NombreCliente" Index="0" RelativeSize="4.923076923076923" IsNewNode="True" />
-                <LayoutItem Id="TipoIdentificacionCliente" ViewItem="TipoIdentificacionCliente" Index="1" RelativeSize="3.6923076923076925" IsNewNode="True" />
-                <LayoutItem Id="DocumentoIdentificacionCliente" ViewItem="DocumentoIdentificacionCliente" Index="2" RelativeSize="3.6923076923076925" IsNewNode="True" />
-                <LayoutItem Id="DireccionCliente" ViewItem="DireccionCliente" Index="3" RelativeSize="3.6923076923076925" IsNewNode="True" />
-                <LayoutItem Id="CodigoPostalCliente" ViewItem="CodigoPostalCliente" Index="4" RelativeSize="3.6923076923076925" IsNewNode="True" />
-                <LayoutItem Id="PoblacionCliente" ViewItem="PoblacionCliente" Index="5" RelativeSize="3.6923076923076925" IsNewNode="True" />
-                <LayoutItem Id="ProvinciaCliente" ViewItem="ProvinciaCliente" Index="6" RelativeSize="3.6923076923076925" IsNewNode="True" />
-                <LayoutItem Id="PaisCliente" ViewItem="PaisCliente" Index="7" RelativeSize="3.6923076923076925" IsNewNode="True" />
-                <LayoutItem Id="TelefonoCliente" ViewItem="TelefonoCliente" Index="8" RelativeSize="3.6923076923076925" IsNewNode="True" />
-                <LayoutItem Id="EmailCliente" ViewItem="EmailCliente" Index="9" RelativeSize="65.53846153846153" IsNewNode="True" />
+                <LayoutItem Id="NombreCliente" ViewItem="NombreCliente" Index="0" RelativeSize="4.915514592933948" IsNewNode="True" />
+                <LayoutItem Id="TipoIdentificacionCliente" ViewItem="TipoIdentificacionCliente" Index="1" RelativeSize="3.686635944700461" IsNewNode="True" />
+                <LayoutItem Id="DocumentoIdentificacionCliente" ViewItem="DocumentoIdentificacionCliente" Index="2" RelativeSize="3.686635944700461" IsNewNode="True" />
+                <LayoutItem Id="DireccionCliente" ViewItem="DireccionCliente" Index="3" RelativeSize="3.686635944700461" IsNewNode="True" />
+                <LayoutItem Id="CodigoPostalCliente" ViewItem="CodigoPostalCliente" Index="4" RelativeSize="3.686635944700461" IsNewNode="True" />
+                <LayoutItem Id="PoblacionCliente" ViewItem="PoblacionCliente" Index="5" RelativeSize="3.686635944700461" IsNewNode="True" />
+                <LayoutItem Id="ProvinciaCliente" ViewItem="ProvinciaCliente" Index="6" RelativeSize="3.686635944700461" IsNewNode="True" />
+                <LayoutItem Id="PaisCliente" ViewItem="PaisCliente" Index="7" RelativeSize="3.686635944700461" IsNewNode="True" />
+                <LayoutItem Id="TelefonoCliente" ViewItem="TelefonoCliente" Index="8" RelativeSize="3.686635944700461" IsNewNode="True" />
+                <LayoutItem Id="EmailCliente" ViewItem="EmailCliente" Index="9" RelativeSize="65.59139784946237" IsNewNode="True" />
               </LayoutGroup>
               <LayoutGroup Id="col2" Index="1" ShowCaption="False" RelativeSize="50.047303689687794" IsNewNode="True" />
             </LayoutGroup>
-            <LayoutGroup Id="Item1" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="1" RelativeSize="100" IsNewNode="True">
+            <LayoutGroup Id="Otros" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="1" RelativeSize="100" Caption="Otra información" ImageName="Actions_Info" IsNewNode="True">
               <LayoutGroup Id="col1" Index="0" ShowCaption="False" RelativeSize="49.952696310312206" Caption="col1" IsNewNode="True">
-                <LayoutItem Id="CondicionPago" ViewItem="CondicionPago" Index="0" RelativeSize="4.923076923076923" IsNewNode="True" />
-                <LayoutItem Id="MedioPago" ViewItem="MedioPago" Index="1" RelativeSize="3.6923076923076925" IsNewNode="True" />
-                <LayoutItem Id="ReferenciaPago" ViewItem="ReferenciaPago" Index="2" RelativeSize="91.38461538461539" IsNewNode="True" />
+                <LayoutItem Id="EquipoVenta" ViewItem="EquipoVenta" Index="0" RelativeSize="4.915514592933948" IsNewNode="True" />
+                <LayoutItem Id="Vendedor" ViewItem="Vendedor" Index="1" RelativeSize="3.686635944700461" IsNewNode="True" />
+                <LayoutItem Id="Almacen" ViewItem="Almacen" Index="2" RelativeSize="3.686635944700461" IsNewNode="True" />
+                <LayoutItem Id="PosicionFiscal" ViewItem="PosicionFiscal" Index="3" RelativeSize="3.686635944700461" IsNewNode="True" />
+                <LayoutItem Id="DiarioVentas" ViewItem="DiarioVentas" Index="4" RelativeSize="3.686635944700461" IsNewNode="True" />
+                <LayoutItem Id="CondicionPago" ViewItem="CondicionPago" Index="5" RelativeSize="3.686635944700461" IsNewNode="True" />
+                <LayoutItem Id="MedioPago" ViewItem="MedioPago" Index="6" RelativeSize="3.686635944700461" IsNewNode="True" />
+                <LayoutItem Id="CuentaBanco" ViewItem="CuentaBanco" Index="7" RelativeSize="3.686635944700461" IsNewNode="True" />
+                <LayoutItem Id="ReferenciaPago" ViewItem="ReferenciaPago" Index="8" RelativeSize="3.686635944700461" IsNewNode="True" />
+                <LayoutItem Id="AsientoContable" ViewItem="AsientoContable" Index="9" RelativeSize="65.59139784946237" IsNewNode="True" />
               </LayoutGroup>
               <LayoutGroup Id="col2" Index="1" ShowCaption="False" RelativeSize="50.047303689687794" IsNewNode="True" />
             </LayoutGroup>
             <LayoutGroup Id="Verifactu" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="2" RelativeSize="100" ImageName="Actions_Send" IsNewNode="True">
               <LayoutGroup Id="col1" Index="0" ShowCaption="False" RelativeSize="49.952696310312206" Caption="col1" IsNewNode="True">
-                <LayoutItem Id="Uuid" ViewItem="Uuid" Index="0" RelativeSize="4.923076923076923" IsNewNode="True" />
-                <LayoutItem Id="HuellaFiscal" ViewItem="HuellaFiscal" Index="1" RelativeSize="3.6923076923076925" IsNewNode="True" />
-                <LayoutItem Id="UrlValidacion" ViewItem="UrlValidacion" Index="2" RelativeSize="3.6923076923076925" IsNewNode="True" />
-                <LayoutItem Id="Qr" ViewItem="Qr" Index="3" RelativeSize="3.6923076923076925" IsNewNode="True" />
-                <LayoutItem Id="Texto" ViewItem="Texto" Index="4" RelativeSize="84" IsNewNode="True" />
+                <LayoutItem Id="Uuid" ViewItem="Uuid" Index="0" RelativeSize="4.915514592933948" IsNewNode="True" />
+                <LayoutItem Id="HuellaFiscal" ViewItem="HuellaFiscal" Index="1" RelativeSize="3.686635944700461" IsNewNode="True" />
+                <LayoutItem Id="UrlValidacion" ViewItem="UrlValidacion" Index="2" RelativeSize="3.686635944700461" IsNewNode="True" />
+                <LayoutItem Id="Texto" ViewItem="Texto" Index="3" RelativeSize="82.79569892473118" IsNewNode="True" />
+                <LayoutItem Id="Qr" ViewItem="Qr" Index="4" RelativeSize="4.915514592933948" IsNewNode="True" />
               </LayoutGroup>
               <LayoutGroup Id="col2" Index="1" ShowCaption="False" RelativeSize="50.047303689687794" IsNewNode="True" />
             </LayoutGroup>
             <LayoutGroup Id="Estados" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="3" RelativeSize="100" ImageName="ChangeStatus" IsNewNode="True">
               <LayoutGroup Id="col1" Index="0" ShowCaption="False" RelativeSize="49.952696310312206" Caption="col1" IsNewNode="True">
-                <LayoutItem Id="EstadoFactura" ViewItem="EstadoFactura" Index="0" RelativeSize="4.923076923076923" IsNewNode="True" />
-                <LayoutItem Id="EstadoVeriFactu" ViewItem="EstadoVeriFactu" Index="1" RelativeSize="3.6923076923076925" IsNewNode="True" />
-                <LayoutItem Id="EstadoCobro" ViewItem="EstadoCobro" Index="2" RelativeSize="91.38461538461539" IsNewNode="True" />
+                <LayoutItem Id="EstadoFactura" ViewItem="EstadoFactura" Index="0" RelativeSize="4.915514592933948" IsNewNode="True" />
+                <LayoutItem Id="EstadoVeriFactu" ViewItem="EstadoVeriFactu" Index="1" RelativeSize="3.686635944700461" IsNewNode="True" />
+                <LayoutItem Id="EstadoCobro" ViewItem="EstadoCobro" Index="2" RelativeSize="91.39784946236558" IsNewNode="True" />
               </LayoutGroup>
               <LayoutGroup Id="col2" Index="1" ShowCaption="False" RelativeSize="50.047303689687794" IsNewNode="True" />
             </LayoutGroup>
@@ -372,6 +379,157 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
+    <ListView Id="FacturaVenta_ListView" FreezeColumnIndices="True" Caption="Facturas de Venta">
+      <Columns>
+        <ColumnInfo Id="ACuenta" Index="-1" />
+        <ColumnInfo Id="Almacen" Index="-1" />
+        <ColumnInfo Id="Anticipo" Index="-1" />
+        <ColumnInfo Id="Anulado" Index="-1" />
+        <ColumnInfo Id="AsientoContable" Index="-1" />
+        <ColumnInfo Id="BaseExenta" Index="-1" />
+        <ColumnInfo Id="BaseNoSujeta" Index="-1" />
+        <ColumnInfo Id="BaseSujeta" Index="-1" />
+        <ColumnInfo Id="Bloqueado" Index="-1" />
+        <ColumnInfo Id="Borrador" Index="-1" />
+        <ColumnInfo Id="Cambio" Index="-1" />
+        <ColumnInfo Id="CategoriaVenta" Index="-1" />
+        <ColumnInfo Id="Cliente" Index="-1" />
+        <ColumnInfo Id="Cobrada" Index="-1" />
+        <ColumnInfo Id="Cobrado" Index="-1" />
+        <ColumnInfo Id="CodigoErrorEntradaFactura" Index="-1" />
+        <ColumnInfo Id="CodigoExterno" Index="-1" />
+        <ColumnInfo Id="CodigoIsoPaisCliente" Index="-1" />
+        <ColumnInfo Id="CodigoPostalCliente" Index="-1" />
+        <ColumnInfo Id="Comercial" Index="-1" />
+        <ColumnInfo Id="CondicionPago" Index="-1" />
+        <ColumnInfo Id="Confirmado" Index="-1" />
+        <ColumnInfo Id="Contabilizada" Index="-1" />
+        <ColumnInfo Id="CorrelationId" Index="-1" />
+        <ColumnInfo Id="CuentaBanco" Index="-1" />
+        <ColumnInfo Id="CuentaCaja" Index="-1" />
+        <ColumnInfo Id="Descuento" Index="-1" />
+        <ColumnInfo Id="Devuelto" Index="-1" />
+        <ColumnInfo Id="DiarioVentas" Index="-1" />
+        <ColumnInfo Id="DireccionCliente" Index="-1" />
+        <ColumnInfo Id="DireccionEntrega" Index="-1" />
+        <ColumnInfo Id="DocumentoIdentificacionCliente" Index="-1" />
+        <ColumnInfo Id="DocumentoOrigen" Index="-1" />
+        <ColumnInfo Id="DocumentoRectificado" Index="-1" />
+        <ColumnInfo Id="DocumentoRelacionado" Index="-1" />
+        <ColumnInfo Id="Domicilio" Index="-1" />
+        <ColumnInfo Id="DomicilioDIR" Index="-1" />
+        <ColumnInfo Id="Ejercicio" Index="-1" />
+        <ColumnInfo Id="EjercicioContable" Index="-1" />
+        <ColumnInfo Id="EjercicioFiscal" Index="-1" />
+        <ColumnInfo Id="EmailCliente" Index="-1" />
+        <ColumnInfo Id="Emitida" Index="-1" />
+        <ColumnInfo Id="Emitido" Index="-1" />
+        <ColumnInfo Id="Entregado" Index="-1" />
+        <ColumnInfo Id="EnviadaVeriFactu" Index="-1" />
+        <ColumnInfo Id="EquipoVenta" Index="-1" />
+        <ColumnInfo Id="EsFactura" Index="-1" />
+        <ColumnInfo Id="EsFacturaSimplificada" Index="-1" />
+        <ColumnInfo Id="EsOferta" Index="-1" />
+        <ColumnInfo Id="EsPedido" Index="-1" />
+        <ColumnInfo Id="EsPresupuesto" Index="-1" />
+        <ColumnInfo Id="EsSubsanacion" Index="-1" />
+        <ColumnInfo Id="EstadoEntradaFactura" Index="-1" />
+        <ColumnInfo Id="EsTicket" Index="-1" />
+        <ColumnInfo Id="FechaCobro" Index="-1" />
+        <ColumnInfo Id="FechaCreacion" Index="-1" />
+        <ColumnInfo Id="FechaEntregaPrevista" Index="-1" />
+        <ColumnInfo Id="FechaEntregaReal" Index="-1" />
+        <ColumnInfo Id="FechaModificacion" Index="-1" />
+        <ColumnInfo Id="GastosEnvio" Index="-1" />
+        <ColumnInfo Id="Hora" Index="-1" />
+        <ColumnInfo Id="HuellaFiscal" Index="-1" />
+        <ColumnInfo Id="ImporteIva" Index="-1" />
+        <ColumnInfo Id="ImporteIvaRepercutido" Index="-1" />
+        <ColumnInfo Id="ImporteIvaSoportado" Index="-1" />
+        <ColumnInfo Id="ImportePagado" Index="-1" />
+        <ColumnInfo Id="ImportePendiente" Index="-1" />
+        <ColumnInfo Id="ImporteRetencion" Index="-1" />
+        <ColumnInfo Id="Impreso" Index="-1" />
+        <ColumnInfo Id="ImpuestoIncluido" Index="-1" />
+        <ColumnInfo Id="MedioPago" Index="-1" />
+        <ColumnInfo Id="MetodoEntrega" Index="-1" />
+        <ColumnInfo Id="MotivoAnulacion" Index="-1" />
+        <ColumnInfo Id="Notas" Index="-1" />
+        <ColumnInfo Id="NotasInternas" Index="-1" />
+        <ColumnInfo Id="Numero" Index="-1" />
+        <ColumnInfo Id="NumeroFiscal" Index="-1" />
+        <ColumnInfo Id="NumeroSeguimiento" Index="-1" />
+        <ColumnInfo Id="Observaciones" Index="-1" />
+        <ColumnInfo Id="Oid" Index="-1" />
+        <ColumnInfo Id="Origen" Index="-1" />
+        <ColumnInfo Id="OtrosGastos" Index="-1" />
+        <ColumnInfo Id="PaisCliente" Index="-1" />
+        <ColumnInfo Id="PoblacionCliente" Index="-1" />
+        <ColumnInfo Id="PorcentajeDescuento" Index="-1" />
+        <ColumnInfo Id="PorcentajeRecargo" Index="-1" />
+        <ColumnInfo Id="PosicionFiscal" Index="-1" />
+        <ColumnInfo Id="ProvinciaCliente" Index="-1" />
+        <ColumnInfo Id="PuedeContabilizar" Index="-1" />
+        <ColumnInfo Id="PuedeEmitir" Index="-1" />
+        <ColumnInfo Id="PuedeEnviarVerifactu" Index="-1" />
+        <ColumnInfo Id="PuedeRevertirABorrador" Index="-1" />
+        <ColumnInfo Id="PuedeValidar" Index="-1" />
+        <ColumnInfo Id="Qr" Index="-1" />
+        <ColumnInfo Id="RecargoEquivalencia" Index="-1" />
+        <ColumnInfo Id="RecibidoPor" Index="-1" />
+        <ColumnInfo Id="Redondeo" Index="-1" />
+        <ColumnInfo Id="ReferenciaExterna" Index="-1" />
+        <ColumnInfo Id="ReferenciaPago" Index="-1" />
+        <ColumnInfo Id="SerieFiscal" Index="-1" />
+        <ColumnInfo Id="SesionTpv" Index="-1" />
+        <ColumnInfo Id="Sincronizado" Index="-1" />
+        <ColumnInfo Id="StateMachine" Index="-1" />
+        <ColumnInfo Id="TelefonoCliente" Index="-1" />
+        <ColumnInfo Id="Texto" Index="-1" />
+        <ColumnInfo Id="TipoDocumento" Index="-1" />
+        <ColumnInfo Id="TipoFacturaAmigable" Index="-1" />
+        <ColumnInfo Id="TipoIdentificacionAmigable" Index="-1" />
+        <ColumnInfo Id="TipoIdentificacionCliente" Index="-1" />
+        <ColumnInfo Id="TipoRectificativaAmigable" Index="-1" />
+        <ColumnInfo Id="TotalBruto" Index="-1" />
+        <ColumnInfo Id="TotalNeto" Index="-1" />
+        <ColumnInfo Id="Tpv" Index="-1" />
+        <ColumnInfo Id="Transportista" Index="-1" />
+        <ColumnInfo Id="UrlValidacion" Index="-1" />
+        <ColumnInfo Id="Usuario" Index="-1" />
+        <ColumnInfo Id="UsuarioCreacion" Index="-1" />
+        <ColumnInfo Id="UsuarioModificacion" Index="-1" />
+        <ColumnInfo Id="Uuid" Index="-1" />
+        <ColumnInfo Id="Vendedor" Index="-1" />
+        <ColumnInfo Id="VeriFactuNoNecesario" Index="-1" />
+        <ColumnInfo Id="EstadoFactura" Index="0" Width="55">
+          <Summary>
+            <ColumnSummaryItem Id="Recuento" SummaryType="Count" IsNewNode="True" />
+          </Summary>
+        </ColumnInfo>
+        <ColumnInfo Id="EstadoVeriFactu" Index="1" Width="107" />
+        <ColumnInfo Id="EstadoCobro" Index="2" Width="91" />
+        <ColumnInfo Id="Fecha" Index="3" SortIndex="0" SortOrder="Descending" Width="67" />
+        <ColumnInfo Id="Serie" Index="4" Width="45" />
+        <ColumnInfo Id="Secuencia" Index="5" SortIndex="1" SortOrder="Descending" Width="73" />
+        <ColumnInfo Id="NombreCliente" Index="6" Width="104" />
+        <ColumnInfo Id="BaseImponible" Index="7" Width="101">
+          <Summary>
+            <ColumnSummaryItem Id="SumaBase" SummaryType="Sum" IsNewNode="True" />
+          </Summary>
+        </ColumnInfo>
+        <ColumnInfo Id="ImporteImpuestos" Index="8" Width="0">
+          <Summary>
+            <ColumnSummaryItem Id="SumaImpuestos" SummaryType="Sum" IsNewNode="True" />
+          </Summary>
+        </ColumnInfo>
+        <ColumnInfo Id="ImporteTotal" Index="9" Width="47">
+          <Summary>
+            <ColumnSummaryItem Id="SumaTotal" SummaryType="Sum" IsNewNode="True" />
+          </Summary>
+        </ColumnInfo>
+      </Columns>
+    </ListView>
     <DetailView Id="Imagen_DetailView" FreezeLayout="True">
       <Layout IsNewNode="True" Removed="True">
         <LayoutGroup Id="Main" Index="0" ShowCaption="False" RelativeSize="100" IsNewNode="True">
