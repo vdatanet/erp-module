@@ -17,6 +17,7 @@ public class Invoice
     public string SellerID { get; set; }
     public string? SellerName { get; set; }
     public TipoFacturaAmigable InvoiceType { get; set; }
+    public TipoRectificativaAmigable? CorrectionType { get; set; }
     public string? Text { get; set; }
     
     public string? BuyerID { get; set; }

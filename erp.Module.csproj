@@ -10,6 +10,9 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
+        <InternalsVisibleTo Include="erp.Module.Tests" />
+    </ItemGroup>
+    <ItemGroup>
         <None Remove="Model.DesignedDiffs.xafml" />
     </ItemGroup>
     <ItemGroup>

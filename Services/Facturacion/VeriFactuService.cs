@@ -178,6 +178,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         var veriFactuFactura = new Invoice(invoice.Secuencia, invoice.Fecha, companyInfo.Nif)
         {
             InvoiceType = invoice.TipoFacturaAmigable,
+            CorrectionType = invoice.TipoRectificativaAmigable,
             SellerName = companyInfo.Nombre,
             Text = invoice.Texto,
             TaxItems = []
@@ -233,7 +234,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         {
             if (tax.TipoImpuesto?.Impuesto == null) continue;
 
-            CalificacionOperacion opType = default;
+            CalificacionOperacion opType = CalificacionOperacion.S1;
             // Primero intentamos obtener la calificación de la instantánea del impuesto en la factura
             if (tax.TipoOperacion != null && Enum.TryParse<CalificacionOperacion>(tax.TipoOperacion.ToString(), out var opSnapshot))
             {
@@ -249,7 +250,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             {
                 TaxBase = tax.BaseImponible,
                 TaxType = opType,
-                TaxScheme = tax.RegimenFiscal ?? tax.TipoImpuesto?.RegimenFiscal ?? default,
+                TaxScheme = tax.RegimenFiscal ?? tax.TipoImpuesto?.RegimenFiscal ?? ClaveRegimen.General,
             };
 
             var impSnapshot = tax.Impuesto;
@@ -272,17 +273,8 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
                 taxItem.TaxException = cauM;
             }
 
-            // Cuando CalificacionOperacion sea “S2” TipoImpositivo y CuotaRepercutida deben ser 0
-            if (opType == CalificacionOperacion.S2)
-            {
-                taxItem.TaxRate = 0;
-                taxItem.TaxAmount = 0;
-            }
-            else
-            {
-                taxItem.TaxRate = tax.Tipo;
-                taxItem.TaxAmount = tax.ImporteImpuestos;
-            }
+            taxItem.TaxRate = tax.Tipo;
+            taxItem.TaxAmount = tax.ImporteImpuestos;
 
             veriFactuFactura.TaxItems.Add(taxItem);
         }
