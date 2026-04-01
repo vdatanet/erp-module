@@ -34,7 +34,7 @@ public sealed class VeriFactuConfigScope : IDisposable
         Settings.Current.CertificatePassword = companyInfo.PasswordCertificadoVeriFactu;
         Settings.Current.SistemaInformatico.NombreSistemaInformatico = companyInfo.VeriFactuNombreSistemaInformatico;
         Settings.Current.SistemaInformatico.NombreRazon = companyInfo.VeriFactuNombreRazon;
-        Settings.Current.SistemaInformatico.NIFRepresentante = companyInfo.VeriFactuNif;
+        Settings.Current.SistemaInformatico.NIF = companyInfo.VeriFactuNif;
         Settings.Current.SistemaInformatico.Version = companyInfo.VeriFactuVersion;
         Settings.Current.SistemaInformatico.NumeroInstalacion = Environment.MachineName;
         Settings.Save();

@@ -23,10 +23,27 @@ public class VeriFactuLibraryAdapter(ILogger<VeriFactuLibraryAdapter> logger) : 
             
             invoiceEntry.Save();
             
+            string? validationUrl = null;
+            byte[]? qrData = null;
+
+            try
+            {
+                dynamic registro = ((dynamic)libInvoice).GetRegistroAlta();
+                if (registro != null)
+                {
+                    validationUrl = registro.GetUrlValidate();
+                    qrData = registro.GetValidateQr();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogDebug(ex, "VeriFactuLibraryAdapter: No se pudo obtener RegistroAlta o sus datos (Url/QR) de la factura {Sequence}.", veriFactuInvoice.Sequence);
+            }
+            
             logger.LogInformation("VeriFactuLibraryAdapter: Resultado para factura {Sequence}: Status={Status}, ErrorCode={ErrorCode}, ErrorDescription={ErrorDescription}",
                 veriFactuInvoice.Sequence, invoiceEntry.Status, invoiceEntry.ErrorCode, invoiceEntry.ErrorDescription);
 
-            return MapResponse(invoiceEntry);
+            return MapResponse(invoiceEntry, validationUrl, qrData);
         }, companyInfo, veriFactuInvoice.Sequence);
     }
 
@@ -67,7 +84,7 @@ public class VeriFactuLibraryAdapter(ILogger<VeriFactuLibraryAdapter> logger) : 
             }
             catch (Exception ex)
             {
-                logger.LogWarning(ex, "VeriFactuLibraryAdapter: No se pudo asignar TipoRectificativa a la factura {Sequence}. Es posible que esta propiedad no esté disponible en la versión de la librería cargada.", veriFactuInvoice.Sequence);
+                logger.LogDebug(ex, "VeriFactuLibraryAdapter: No se pudo asignar TipoRectificativa a la factura {Sequence}. Es posible que esta propiedad no esté disponible en la versión de la librería cargada.", veriFactuInvoice.Sequence);
             }
         }
 
@@ -102,18 +119,63 @@ public class VeriFactuLibraryAdapter(ILogger<VeriFactuLibraryAdapter> logger) : 
         return lTaxItem;
     }
 
-    private VeriFactuResponse MapResponse(InvoiceEntry invoiceEntry)
+    private VeriFactuResponse MapResponse(InvoiceEntry invoiceEntry, string? validationUrl = null, byte[]? qrData = null)
     {
-        return new VeriFactuResponse
+        EstadoVeriFactu status;
+        if (invoiceEntry.Status == "Correcto" || invoiceEntry.Status == "Enviado")
         {
-            Status = invoiceEntry.Status == "Correcto" ? EstadoVeriFactu.Correcto : EstadoVeriFactu.Incorrecto,
-            ErrorMessage = invoiceEntry.Status != "Correcto"
+            status = EstadoVeriFactu.Correcto;
+        }
+        else if (invoiceEntry.Status == "Pendiente")
+        {
+            status = EstadoVeriFactu.Pendiente;
+        }
+        else
+        {
+            status = EstadoVeriFactu.Incorrecto;
+        }
+        
+        logger.LogInformation("VeriFactuLibraryAdapter.MapResponse: InvoiceEntry.Status={LibStatus} -> EstadoVeriFactu={MappedStatus}, CSV={CSV}", 
+            invoiceEntry.Status, status, invoiceEntry.CSV);
+
+        var response = new VeriFactuResponse
+        {
+            Status = status,
+            ErrorMessage = (status == EstadoVeriFactu.Incorrecto)
                 ? $"{invoiceEntry.ErrorCode}: {invoiceEntry.ErrorDescription}"
                 : null,
             ErrorCode = invoiceEntry.ErrorCode,
             RawResponse = invoiceEntry.Response,
-            Uuid = invoiceEntry.CSV
+            Uuid = invoiceEntry.CSV,
+            ValidationUrl = validationUrl,
+            QrData = qrData
         };
+
+        // Si no vinieron por parámetros, intentamos extraer QR y URL de validación si están disponibles en la librería
+        if (string.IsNullOrEmpty(response.ValidationUrl) || response.QrData == null)
+        {
+            try
+            {
+                dynamic entry = invoiceEntry;
+                if (string.IsNullOrEmpty(response.ValidationUrl))
+                {
+                    response.ValidationUrl = entry.ValidationUrl;
+                    if (string.IsNullOrEmpty(response.ValidationUrl)) response.ValidationUrl = entry.UrlValidacion;
+                }
+
+                if (response.QrData == null)
+                {
+                    response.QrData = entry.QrData;
+                    if (response.QrData == null) response.QrData = entry.QR;
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogDebug(ex, "VeriFactuLibraryAdapter: Las propiedades de QR o URL de validación no están disponibles dinámicamente en InvoiceEntry.");
+            }
+        }
+
+        return response;
     }
 
     private async Task<VeriFactuResponse> ExecuteInContextAsync(Func<Task<VeriFactuResponse>> action, InformacionEmpresa companyInfo, string identifier)

@@ -299,12 +299,26 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
     public void UpdateInvoiceFromResponse(IObjectSpace objectSpace, FacturaBase invoice, VeriFactuResponse veriFactuResponse,
         Invoice veriFactuFactura, InformacionEmpresa companyInfo, bool onlyUpdateStatus = false)
     {
+        logger.LogInformation("VeriFactuService.UpdateInvoiceFromResponse: Invoice={Sequence}, Status={Status}, Provider={Provider}, OnlyUpdateStatus={OnlyUpdateStatus}",
+            invoice.Secuencia, veriFactuResponse.Status, companyInfo.VeriFactuProvider, onlyUpdateStatus);
+
         if (onlyUpdateStatus)
         {
-            if (veriFactuResponse.Status != EstadoVeriFactu.Pendiente && 
-                veriFactuResponse.Status != default)
+            if (veriFactuResponse.Status != default)
             {
-                invoice.EstadoVeriFactu = veriFactuResponse.Status;
+                // Para la Librería Local, 'Correcto', 'EnviadaVeriFactu' o 'Pendiente' se consideran estados de éxito inmediatos
+                if (companyInfo.VeriFactuProvider == VeriFactuProvider.Library && 
+                    (veriFactuResponse.Status == EstadoVeriFactu.Correcto || 
+                     veriFactuResponse.Status == EstadoVeriFactu.EnviadaVeriFactu ||
+                     veriFactuResponse.Status == EstadoVeriFactu.Pendiente))
+                {
+                    logger.LogInformation("VeriFactuService.UpdateInvoiceFromResponse: Marcando factura {Sequence} como Correcto (Library Provider, OnlyUpdateStatus=true, Status={Status})", invoice.Secuencia, veriFactuResponse.Status);
+                    invoice.EstadoVeriFactu = EstadoVeriFactu.Correcto;
+                }
+                else
+                {
+                    invoice.EstadoVeriFactu = veriFactuResponse.Status;
+                }
             }
             return;
         }
@@ -326,7 +340,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
         {
             // Después de éxito al enviar verifactu, o al recibir un estado válido, actualizamos el estado
             // Para la API, si es un envío inicial (Correcto o EnviadaVeriFactu), lo dejamos en Pendiente para su posterior confirmación
-            // Para la Librería Local, 'Correcto' es un estado final aceptado directamente por AEAT
+            // Para la Librería Local, cualquier estado que no sea un error es 'Correcto' porque el envío es inmediato y aceptado por AEAT
             if (companyInfo.VeriFactuProvider == VeriFactuProvider.Api)
             {
                 if (veriFactuResponse.Status == EstadoVeriFactu.Correcto || 
@@ -341,9 +355,12 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             }
             else // Provider Library
             {
+                // Si la respuesta es de éxito, forzamos Correcto
                 if (veriFactuResponse.Status == EstadoVeriFactu.Correcto || 
-                    veriFactuResponse.Status == EstadoVeriFactu.EnviadaVeriFactu)
+                    veriFactuResponse.Status == EstadoVeriFactu.EnviadaVeriFactu ||
+                    veriFactuResponse.Status == EstadoVeriFactu.Pendiente)
                 {
+                    logger.LogInformation("VeriFactuService.UpdateInvoiceFromResponse: Forzando factura {Sequence} como Correcto (Library Provider, Status={Status})", invoice.Secuencia, veriFactuResponse.Status);
                     invoice.EstadoVeriFactu = EstadoVeriFactu.Correcto;
                 }
                 else
