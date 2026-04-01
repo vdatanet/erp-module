@@ -46,12 +46,14 @@ public class VeriFactuLibraryAdapter(ILogger<VeriFactuLibraryAdapter> logger) : 
 
     private LibInvoice CreateLibraryInvoice(erp.Module.Models.VeriFactu.Invoice veriFactuInvoice)
     {
+        var isSimplified = veriFactuInvoice.InvoiceType is TipoFacturaAmigable.F2 or TipoFacturaAmigable.R5;
+        
         var libInvoice = new LibInvoice(veriFactuInvoice.Sequence, veriFactuInvoice.Date, veriFactuInvoice.SellerID)
         {
             InvoiceType = VeriFactuMapper.MapTipoFactura(veriFactuInvoice.InvoiceType, logger),
             SellerName = veriFactuInvoice.SellerName,
-            BuyerID = veriFactuInvoice.BuyerID,
-            BuyerName = veriFactuInvoice.BuyerName,
+            BuyerID = isSimplified ? null : veriFactuInvoice.BuyerID,
+            BuyerName = isSimplified ? null : veriFactuInvoice.BuyerName,
             Text = veriFactuInvoice.Text,
             TaxItems = []
         };

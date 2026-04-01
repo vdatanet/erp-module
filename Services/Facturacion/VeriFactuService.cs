@@ -54,7 +54,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             logger.LogInformation("VeriFactuService: Respuesta de VeriFactu para {Secuencia}: Status={Status}, ErrorCode={ErrorCode}", 
                 invoice.Secuencia, response.Status, response.ErrorCode);
 
-            UpdateInvoiceFromResponse(objectSpace, invoice, response, veriFactuInvoice);
+            UpdateInvoiceFromResponse(objectSpace, invoice, response, veriFactuInvoice, companyInfo);
             objectSpace.CommitChanges();
 
             if (response.Status == EstadoVeriFactu.Correcto || 
@@ -94,7 +94,7 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
 
             var response = await veriFactuAdapter.GetStatusAsync(invoice.Uuid, companyInfo);
 
-            UpdateInvoiceFromResponse(objectSpace, invoice, response, null!, onlyUpdateStatus: true);
+            UpdateInvoiceFromResponse(objectSpace, invoice, response, null!, companyInfo, onlyUpdateStatus: true);
             objectSpace.CommitChanges();
 
             return new SendResult(true, $"Estado actualizado: {invoice.EstadoVeriFactu}");
@@ -136,14 +136,12 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
 
         foreach (var tax in invoice.Impuestos)
         {
-            if (tax.TipoImpuesto == null)
-                continue;
+            var impSnapshot = tax.Impuesto;
+            if (impSnapshot != null && Enum.TryParse<Impuesto>(impSnapshot.ToString(), out _))
+                return new SendResult(true, string.Empty);
             
-            if (tax.TipoImpuesto.Impuesto == null)
-                continue;
-            
-            // Si llegamos aquí, al menos un impuesto tiene configuración VeriFactu
-            return new SendResult(true, string.Empty);
+            if (tax.TipoImpuesto?.Impuesto != null && Enum.TryParse<Impuesto>(tax.TipoImpuesto.Impuesto.ToString(), out _))
+                return new SendResult(true, string.Empty);
         }
 
         return new SendResult(false, "La factura no tiene ningún impuesto con tipo VeriFactu asignado.");
@@ -232,7 +230,24 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
 
         foreach (var tax in invoice.Impuestos)
         {
-            if (tax.TipoImpuesto?.Impuesto == null) continue;
+            // Omitir los impuestos que no tienen tipo VeriFactu indicado (o que no tienen el maestro de impuesto configurado)
+            var impSnapshot = tax.Impuesto;
+            Impuesto? impFinal = null;
+            if (impSnapshot != null && Enum.TryParse<Impuesto>(impSnapshot.ToString(), out var impS))
+            {
+                impFinal = impS;
+            }
+            else if (tax.TipoImpuesto?.Impuesto != null && Enum.TryParse<Impuesto>(tax.TipoImpuesto.Impuesto.ToString(), out var impM))
+            {
+                impFinal = impM;
+            }
+
+            if (impFinal == null)
+            {
+                logger.LogInformation("VeriFactuService: Omitiendo impuesto para factura {Secuencia} por no tener tipo VeriFactu indicado (Base: {Base})", 
+                    invoice.Secuencia, tax.BaseImponible);
+                continue;
+            }
 
             CalificacionOperacion opType = CalificacionOperacion.S1;
             // Primero intentamos obtener la calificación de la instantánea del impuesto en la factura
@@ -251,17 +266,8 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
                 TaxBase = tax.BaseImponible,
                 TaxType = opType,
                 TaxScheme = tax.RegimenFiscal ?? tax.TipoImpuesto?.RegimenFiscal ?? ClaveRegimen.General,
+                Tax = impFinal.Value
             };
-
-            var impSnapshot = tax.Impuesto;
-            if (impSnapshot != null && Enum.TryParse<Impuesto>(impSnapshot.ToString(), out var impS))
-            {
-                taxItem.Tax = impS;
-            }
-            else if (tax.TipoImpuesto?.Impuesto != null && Enum.TryParse<Impuesto>(tax.TipoImpuesto.Impuesto.ToString(), out var impM))
-            {
-                taxItem.Tax = impM;
-            }
 
             var cauSnapshot = tax.CausaExencion;
             if (cauSnapshot != null && opType == CalificacionOperacion.S2 && Enum.TryParse<CausaExencion>(cauSnapshot.ToString(), out var cauS))
@@ -284,11 +290,14 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
 
     private static bool RequiresBuyerData(FacturaBase invoice)
     {
-        return invoice.TipoFactura.ToString() == "F1";
+        var invoiceType = invoice.TipoFactura.ToString();
+        // Las facturas simplificadas (F2) y rectificativas de simplificadas (R5) no suelen requerir datos del comprador en VeriFactu.
+        // Otros tipos como F1, R1, R2, R3, R4 son facturas completas o rectificativas de completas que sí requieren datos del comprador.
+        return invoiceType != "F2" && invoiceType != "R5";
     }
 
     public void UpdateInvoiceFromResponse(IObjectSpace objectSpace, FacturaBase invoice, VeriFactuResponse veriFactuResponse,
-        Invoice veriFactuFactura, bool onlyUpdateStatus = false)
+        Invoice veriFactuFactura, InformacionEmpresa companyInfo, bool onlyUpdateStatus = false)
     {
         if (onlyUpdateStatus)
         {
@@ -316,9 +325,11 @@ public class VeriFactuService(ILogger<VeriFactuService> logger, IVeriFactuAdapte
             veriFactuResponse.Status == EstadoVeriFactu.ErrorServidorAEAT)
         {
             // Después de éxito al enviar verifactu, o al recibir un estado válido, actualizamos el estado
-            // Si es un envío inicial exitoso (Correcto o EnviadaVeriFactu), lo dejamos en Pendiente para su posterior confirmación
-            if (veriFactuResponse.Status == EstadoVeriFactu.Correcto || 
-                veriFactuResponse.Status == EstadoVeriFactu.EnviadaVeriFactu)
+            // Para la API, si es un envío inicial (Correcto o EnviadaVeriFactu), lo dejamos en Pendiente para su posterior confirmación
+            // Para la Librería Local, 'Correcto' es un estado final aceptado directamente por AEAT
+            if ((veriFactuResponse.Status == EstadoVeriFactu.Correcto || 
+                 veriFactuResponse.Status == EstadoVeriFactu.EnviadaVeriFactu) &&
+                 companyInfo.VeriFactuProvider == VeriFactuProvider.Api)
             {
                 invoice.EstadoVeriFactu = EstadoVeriFactu.Pendiente;
             }
