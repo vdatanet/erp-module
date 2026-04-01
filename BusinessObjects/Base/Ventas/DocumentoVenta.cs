@@ -20,6 +20,7 @@ using erp.Module.BusinessObjects.Logistica;
 using erp.Module.BusinessObjects.Tesoreria;
 using erp.Module.BusinessObjects.Tpv;
 using erp.Module.BusinessObjects.Ventas;
+using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.Factories;
 using erp.Module.Helpers.Comun;
 using erp.Module.Helpers.Contactos;
@@ -120,6 +121,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private Pais? _paisCliente;
     private string? _codigoIsoPaisCliente;
     private string? _poblacionCliente;
+    private PosicionFiscal? _posicionFiscal;
 
     // --- IMPUESTOS Y CÁLCULOS ---
     private decimal _porcentajeDescuento;
@@ -928,6 +930,13 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(SerieFiscal), ref _serieFiscal, value);
     }
 
+    [XafDisplayName("Posición Fiscal")]
+    public PosicionFiscal? PosicionFiscal
+    {
+        get => _posicionFiscal;
+        set => SetPropertyValue(nameof(PosicionFiscal), ref _posicionFiscal, value);
+    }
+
     [Size(20)]
     [XafDisplayName("Número Fiscal")]
     public string? NumeroFiscal
@@ -1044,6 +1053,7 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
         CondicionPago = value.CondicionPago;
         MedioPago = value.MedioPago;
+        PosicionFiscal = value.PosicionFiscal;
 
         NombreCliente = value.Nombre;
         DocumentoIdentificacionCliente = value.Nif;
@@ -1147,6 +1157,8 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     {
         base.AfterConstruction();
         InitInformacionTemporal();
+        var companyInfo = InformacionEmpresaHelper.GetInformacionEmpresa(Session);
+        PosicionFiscal = companyInfo?.PosicionFiscalPorDefecto;
         Origen = OrigenDocumentoVenta.Manual;
         TipoIdentificacionAmigable = TipoIdentificacionAmigable.NIF_IVA;
         InitAuditoria();
