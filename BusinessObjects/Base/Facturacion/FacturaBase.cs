@@ -39,6 +39,7 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     private DomicilioDIR3? _domicilioDIR;
     private Asiento? _asientoContable;
     private MediaDataObject? _qr;
+    private string? _huellaFiscal;
     private Guid _correlationId;
     private string? _texto;
     private TipoFactura _tipoFactura;
@@ -193,6 +194,16 @@ public abstract class FacturaBase(Session session) : DocumentoVenta(session)
     {
         get => _correlationId;
         set => SetPropertyValue(nameof(CorrelationId), ref _correlationId, value);
+    }
+
+    [Size(255)]
+    [ModelDefault("AllowEdit", "False")]
+    [NonCloneable]
+    [XafDisplayName("Huella Fiscal")]
+    public string? HuellaFiscal
+    {
+        get => _huellaFiscal;
+        set => SetPropertyValue(nameof(HuellaFiscal), ref _huellaFiscal, value);
     }
 
     [Size(255)]

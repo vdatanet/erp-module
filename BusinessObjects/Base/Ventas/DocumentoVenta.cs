@@ -92,7 +92,6 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
 
     // --- IDENTIFICACIÓN ---
     private TimeSpan _hora;
-    private string? _huellaFiscal;
     private decimal _importeImpuestos;
     private decimal _importeIva;
     private decimal _importeIvaRepercutido;
@@ -126,7 +125,6 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     private decimal _porcentajeDescuento;
     private decimal _porcentajeRecargo;
     private string? _provinciaCliente;
-    private string? _qrVeriFactu;
     private decimal _recargoEquivalencia;
     private string? _recibidoPor;
     private decimal _redondeo;
@@ -936,24 +934,6 @@ public abstract class DocumentoVenta(Session session) : EntidadBase(session)
     {
         get => _numeroFiscal;
         set => SetPropertyValue(nameof(NumeroFiscal), ref _numeroFiscal, value);
-    }
-
-    [Size(255)]
-    [ModelDefault("AllowEdit", "False")]
-    [NonCloneable]
-    [XafDisplayName("Huella Fiscal")]
-    public string? HuellaFiscal
-    {
-        get => _huellaFiscal;
-        set => SetPropertyValue(nameof(HuellaFiscal), ref _huellaFiscal, value);
-    }
-
-    [Size(500)]
-    [XafDisplayName("QR VeriFactu")]
-    public string? QRVeriFactu
-    {
-        get => _qrVeriFactu;
-        set => SetPropertyValue(nameof(QRVeriFactu), ref _qrVeriFactu, value);
     }
 
     [XafDisplayName("Equipo de Venta")]
