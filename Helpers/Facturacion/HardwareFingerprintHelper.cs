@@ -6,12 +6,17 @@ namespace erp.Module.Helpers.Facturacion;
 
 public static class HardwareFingerprintHelper
 {
-    public static string GetFingerprint()
+    public static string GetFingerprint(string? additionalContext = null)
     {
         var sb = new StringBuilder();
         sb.Append(Environment.MachineName);
         sb.Append(Environment.ProcessorCount);
         sb.Append(RuntimeInformation.OSDescription);
+
+        if (!string.IsNullOrEmpty(additionalContext))
+        {
+            sb.Append(additionalContext);
+        }
         
         // En una implementación real más robusta, usaríamos WMI en Windows 
         // o información de hardware específica del sistema operativo.

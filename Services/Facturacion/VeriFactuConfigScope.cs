@@ -1,5 +1,6 @@
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.BusinessObjects.Facturacion;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using VeriFactu.Config;
 
@@ -12,12 +13,14 @@ public sealed class VeriFactuConfigScope : IDisposable
     private readonly ILogger? _logger;
     private readonly string? _tempCertificatePath;
     private readonly SemaphoreSlim _semaphore;
+    private readonly IHttpContextAccessor? _httpContextAccessor;
     private bool _disposed;
 
-    private VeriFactuConfigScope(InformacionEmpresa companyInfo, SemaphoreSlim semaphore, ILogger? logger)
+    private VeriFactuConfigScope(InformacionEmpresa companyInfo, SemaphoreSlim semaphore, ILogger? logger, IHttpContextAccessor? httpContextAccessor)
     {
         _logger = logger;
         _semaphore = semaphore;
+        _httpContextAccessor = httpContextAccessor;
 
         // 1. Configurar Settings para el tenant actual
         Settings.SetConfigFileName(companyInfo.ConfiguracionVeriFactuLibrary);
@@ -41,7 +44,8 @@ public sealed class VeriFactuConfigScope : IDisposable
         Settings.Current.SistemaInformatico.Version = companyInfo.VeriFactuVersion;
         
         // NumeroInstalacion persistente por puesto
-        var actualFingerprint = HardwareFingerprintHelper.GetFingerprint();
+        var clientContext = GetClientContext();
+        var actualFingerprint = HardwareFingerprintHelper.GetFingerprint(clientContext);
         string? numeroInstalacion = null;
 
         // Si es la huella del servidor (empresa), usamos el principal
@@ -78,12 +82,35 @@ public sealed class VeriFactuConfigScope : IDisposable
         Settings.Save();
     }
 
-    public static async Task<VeriFactuConfigScope> BeginAsync(InformacionEmpresa companyInfo, SemaphoreSlim semaphore, ILogger? logger = null)
+    private string? GetClientContext()
+    {
+        try
+        {
+            var context = _httpContextAccessor?.HttpContext;
+            if (context == null) return null;
+
+            // Intentar obtener la IP del cliente
+            var ip = context.Connection?.RemoteIpAddress?.ToString();
+            
+            // Intentar obtener el User-Agent para mayor distinción si hay NAT
+            var userAgent = context.Request?.Headers["User-Agent"].ToString();
+
+            if (string.IsNullOrEmpty(ip) && string.IsNullOrEmpty(userAgent)) return null;
+
+            return $"{ip}|{userAgent}";
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public static async Task<VeriFactuConfigScope> BeginAsync(InformacionEmpresa companyInfo, SemaphoreSlim semaphore, ILogger? logger = null, IHttpContextAccessor? httpContextAccessor = null)
     {
         await semaphore.WaitAsync();
         try
         {
-            return new VeriFactuConfigScope(companyInfo, semaphore, logger);
+            return new VeriFactuConfigScope(companyInfo, semaphore, logger, httpContextAccessor);
         }
         catch
         {

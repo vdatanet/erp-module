@@ -5,16 +5,21 @@ using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.Models.VeriFactu;
 using erp.Verifactu.Client;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
 namespace erp.Module.Services.Facturacion;
 
-public class VeriFactuApiAdapter(ILogger<VeriFactuApiAdapter> logger, VerifactuClient client) : IVeriFactuAdapter
+public class VeriFactuApiAdapter(ILogger<VeriFactuApiAdapter> logger, VerifactuClient client, IHttpContextAccessor? httpContextAccessor = null) : IVeriFactuAdapter
 {
+    private static readonly SemaphoreSlim _semaphore = new(1, 1);
+
     public async Task<VeriFactuResponse> SendInvoiceAsync(Invoice veriFactuInvoice, FacturaBase invoice, InformacionEmpresa companyInfo)
     {
         try
         {
+            using var scope = await VeriFactuConfigScope.BeginAsync(companyInfo, _semaphore, logger, httpContextAccessor);
+            
             logger.LogInformation("VeriFactuAdapter: Enviando factura {Secuencia} a la API", invoice.Secuencia);
 
             // Configurar API Key del cliente desde la configuración de la empresa
@@ -92,6 +97,8 @@ public class VeriFactuApiAdapter(ILogger<VeriFactuApiAdapter> logger, VerifactuC
     {
         try
         {
+            using var scope = await VeriFactuConfigScope.BeginAsync(companyInfo, _semaphore, logger, httpContextAccessor);
+
             logger.LogInformation("VeriFactuAdapter: Consultando estado de UUID {Uuid}", uuid);
 
             client.ApiKey = companyInfo.ApiKeyVeriFactu;

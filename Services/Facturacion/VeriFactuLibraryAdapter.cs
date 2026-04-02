@@ -1,6 +1,7 @@
 using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.BusinessObjects.Configuraciones;
 using erp.Module.Models.VeriFactu;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using VeriFactu.Business;
 using LibInvoice = VeriFactu.Business.Invoice;
@@ -8,7 +9,7 @@ using LibTaxItem = VeriFactu.Business.TaxItem;
 
 namespace erp.Module.Services.Facturacion;
 
-public class VeriFactuLibraryAdapter(ILogger<VeriFactuLibraryAdapter> logger) : IVeriFactuAdapter
+public class VeriFactuLibraryAdapter(ILogger<VeriFactuLibraryAdapter> logger, IHttpContextAccessor? httpContextAccessor = null) : IVeriFactuAdapter
 {
     private static readonly SemaphoreSlim _semaphore = new(1, 1);
 
@@ -181,7 +182,7 @@ public class VeriFactuLibraryAdapter(ILogger<VeriFactuLibraryAdapter> logger) : 
     {
         try
         {
-            using var scope = await VeriFactuConfigScope.BeginAsync(companyInfo, _semaphore, logger);
+            using var scope = await VeriFactuConfigScope.BeginAsync(companyInfo, _semaphore, logger, httpContextAccessor);
             return await action();
         }
         catch (Exception ex)
