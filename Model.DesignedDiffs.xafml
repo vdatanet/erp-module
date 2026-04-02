@@ -645,7 +645,7 @@
             </LayoutGroup>
             <LayoutGroup Id="VeriFactu" ShowCaption="True" CaptionLocation="Top" Direction="Horizontal" Index="4" Caption="VeriFactu" RelativeSize="100" ImageName="Actions_Send" IsNewNode="True">
               <LayoutGroup Id="col1" Index="0" ShowCaption="False" RelativeSize="49.952696310312206" IsNewNode="True">
-                <LayoutItem Id="TextoDefectoVeriFactu" ViewItem="TextoDefectoVeriFactu" Index="0" RelativeSize="65.21739130434783" IsNewNode="True" />
+                <LayoutItem Id="TextoDefectoVeriFactu" ViewItem="TextoDefectoVeriFactu" Index="0" RelativeSize="59.07928388746803" IsNewNode="True" />
                 <LayoutItem Id="VeriFactuProvider" ViewItem="VeriFactuProvider" Index="1" RelativeSize="3.0690537084398977" IsNewNode="True" />
                 <LayoutItem Id="ApiKeyVeriFactu" ViewItem="ApiKeyVeriFactu" Index="2" RelativeSize="3.0690537084398977" IsNewNode="True" />
                 <LayoutItem Id="ConfiguracionVeriFactuLibrary" ViewItem="ConfiguracionVeriFactuLibrary" Index="3" RelativeSize="3.0690537084398977" IsNewNode="True" />
@@ -655,8 +655,10 @@
                 <LayoutItem Id="VeriFactuNombreRazon" ViewItem="VeriFactuNombreRazon" Index="7" RelativeSize="3.0690537084398977" IsNewNode="True" />
                 <LayoutItem Id="VeriFactuNif" ViewItem="VeriFactuNif" Index="8" RelativeSize="3.0690537084398977" IsNewNode="True" />
                 <LayoutItem Id="VeriFactuVersion" ViewItem="VeriFactuVersion" Index="9" RelativeSize="3.0690537084398977" IsNewNode="True" />
-                <LayoutItem Id="ActivarVeriFactu" ViewItem="ActivarVeriFactu" Index="10" RelativeSize="3.0690537084398977" IsNewNode="True" />
-                <LayoutItem Id="VeriFactuEntornoProduccion" ViewItem="VeriFactuEntornoProduccion" Index="11" RelativeSize="4.092071611253197" IsNewNode="True" />
+                <LayoutItem Id="VeriFactuHardwareFingerprint" ViewItem="VeriFactuHardwareFingerprint" Index="10" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="VeriFactuNumeroInstalacion" ViewItem="VeriFactuNumeroInstalacion" Index="11" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="ActivarVeriFactu" ViewItem="ActivarVeriFactu" Index="12" RelativeSize="3.0690537084398977" IsNewNode="True" />
+                <LayoutItem Id="VeriFactuEntornoProduccion" ViewItem="VeriFactuEntornoProduccion" Index="13" RelativeSize="4.092071611253197" IsNewNode="True" />
               </LayoutGroup>
               <LayoutGroup Id="col2" Index="1" ShowCaption="False" RelativeSize="50.047303689687794" IsNewNode="True" />
             </LayoutGroup>
@@ -1224,28 +1226,6 @@
     <ListView Id="Tarea_LookupListView" Caption="s" FreezeColumnIndices="True">
       <Columns>
         <ColumnInfo Id="Nombre" Index="0" />
-      </Columns>
-    </ListView>
-    <DetailView Id="Tenant_DetailView">
-      <Layout>
-        <LayoutGroup Id="Main" RelativeSize="100">
-          <LayoutGroup Id="SimpleEditors" RelativeSize="100">
-            <LayoutGroup Id="Tenant" RelativeSize="100" Caption="Inquilino" ShowCaption="False">
-              <LayoutGroup Id="Tenant_col1" RelativeSize="50" Caption="Tenant_col1">
-                <LayoutItem Id="Name" ViewItem="Name" Index="0" RelativeSize="3.8461538461538463" IsNewNode="True" />
-                <LayoutItem Id="ConnectionString" ViewItem="ConnectionString" Index="1" RelativeSize="96.15384615384616" IsNewNode="True" />
-              </LayoutGroup>
-              <LayoutGroup Id="Tenant_col2" RelativeSize="50">
-              </LayoutGroup>
-            </LayoutGroup>
-          </LayoutGroup>
-        </LayoutGroup>
-      </Layout>
-    </DetailView>
-    <ListView Id="Tenant_ListView" Caption="Inquilinos">
-      <Columns>
-        <ColumnInfo Id="Name" Width="65" />
-        <ColumnInfo Id="ConnectionString" Index="1" Width="116" />
       </Columns>
     </ListView>
   </Views>
