@@ -88,6 +88,12 @@ public class InformacionEmpresaSetupService(IObjectSpace objectSpace, IServicePr
         if (string.IsNullOrEmpty(informacionEmpresa.VeriFactuNombreSistemaInformatico)) informacionEmpresa.VeriFactuNombreSistemaInformatico = "VDATA ERP";
         if (string.IsNullOrEmpty(informacionEmpresa.VeriFactuVersion)) informacionEmpresa.VeriFactuVersion = "1.0.0";
         
+        if (string.IsNullOrEmpty(informacionEmpresa.VeriFactuNumeroInstalacion))
+        {
+            informacionEmpresa.VeriFactuNumeroInstalacion = Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper();
+            informacionEmpresa.VeriFactuHardwareFingerprint = erp.Module.Helpers.Facturacion.HardwareFingerprintHelper.GetFingerprint();
+        }
+
         if (!string.IsNullOrEmpty(tenantName))
         {
             informacionEmpresa.ConfiguracionVeriFactuLibrary = $"{tenantName.ToLower()}.xml";

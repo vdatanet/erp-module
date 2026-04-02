@@ -49,6 +49,6 @@ public class VeriFactuNumeroInstalacionController : ObjectViewController<DetailV
 [DomainComponent]
 public class VeriFactuMotivoReinicioParam
 {
-    [Size(SizeAttribute.Unlimited)]
+    [FieldSize(FieldSizeAttribute.Unlimited)]
     public string? Motivo { get; set; }
 }
