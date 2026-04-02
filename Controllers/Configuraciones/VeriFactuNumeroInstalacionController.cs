@@ -7,10 +7,13 @@ using erp.Module.BusinessObjects.Configuraciones;
 
 namespace erp.Module.Controllers.Configuraciones;
 
-public class VeriFactuNumeroInstalacionController : ObjectViewController<DetailView, InformacionEmpresa>
+public class VeriFactuNumeroInstalacionController : ViewController
 {
     public VeriFactuNumeroInstalacionController()
     {
+        TargetObjectType = typeof(IPersistentVeriFactuNumeroInstalacion);
+        TargetViewType = ViewType.DetailView;
+
         var reiniciarAccion = new PopupWindowShowAction(this, "VeriFactuReiniciarNumeroInstalacion", PredefinedCategory.Edit)
         {
             Caption = "Reiniciar Nº Instalación VeriFactu",
@@ -36,14 +39,19 @@ public class VeriFactuNumeroInstalacionController : ObjectViewController<DetailV
         if (string.IsNullOrWhiteSpace(param.Motivo))
             throw new UserFriendlyException("El motivo es obligatorio.");
 
-        var empresa = ViewCurrentObject;
-        empresa.ReiniciarNumeroInstalacion(param.Motivo);
+        var target = (IPersistentVeriFactuNumeroInstalacion)e.CurrentObject;
+        target.ReiniciarNumeroInstalacion(param.Motivo);
         
         if (View.ObjectSpace.IsModified)
             View.ObjectSpace.CommitChanges();
             
         Application.ShowViewStrategy.ShowMessage("Número de instalación reiniciado correctamente.", InformationType.Success);
     }
+}
+
+public interface IPersistentVeriFactuNumeroInstalacion
+{
+    void ReiniciarNumeroInstalacion(string motivo);
 }
 
 [DomainComponent]

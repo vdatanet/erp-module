@@ -1,4 +1,5 @@
 using erp.Module.BusinessObjects.Configuraciones;
+using erp.Module.BusinessObjects.Facturacion;
 using Microsoft.Extensions.Logging;
 using VeriFactu.Config;
 
@@ -39,22 +40,38 @@ public sealed class VeriFactuConfigScope : IDisposable
         Settings.Current.SistemaInformatico.NIF = companyInfo.VeriFactuNif;
         Settings.Current.SistemaInformatico.Version = companyInfo.VeriFactuVersion;
         
-        // NumeroInstalacion persistente
-        var numeroInstalacion = companyInfo.VeriFactuNumeroInstalacion;
-        if (string.IsNullOrEmpty(numeroInstalacion))
-        {
-            numeroInstalacion = Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper();
-            companyInfo.VeriFactuNumeroInstalacion = numeroInstalacion;
-            companyInfo.VeriFactuHardwareFingerprint = HardwareFingerprintHelper.GetFingerprint();
-        }
-
-        // Validar huella de hardware (loguear si cambia)
+        // NumeroInstalacion persistente por puesto
         var actualFingerprint = HardwareFingerprintHelper.GetFingerprint();
-        if (companyInfo.VeriFactuHardwareFingerprint != actualFingerprint)
+        string? numeroInstalacion = null;
+
+        // Si es la huella del servidor (empresa), usamos el principal
+        if (companyInfo.VeriFactuHardwareFingerprint == actualFingerprint || string.IsNullOrEmpty(companyInfo.VeriFactuHardwareFingerprint))
         {
-            _logger?.LogWarning("Se ha detectado un cambio en la huella de hardware para VeriFactu. NumeroInstalacion: {NumeroInstalacion}", numeroInstalacion);
-            // Según la política, podríamos decidir si actualizarla automáticamente o no.
-            // Por ahora, solo logueamos para permitir que el administrador decida.
+            numeroInstalacion = companyInfo.VeriFactuNumeroInstalacion;
+            if (string.IsNullOrEmpty(numeroInstalacion))
+            {
+                numeroInstalacion = Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper();
+                companyInfo.VeriFactuNumeroInstalacion = numeroInstalacion;
+                companyInfo.VeriFactuHardwareFingerprint = actualFingerprint;
+            }
+        }
+        else
+        {
+            // Es un cliente distinto al servidor, buscamos su puesto
+            var puesto = companyInfo.VeriFactuPuestos.FirstOrDefault(p => p.HardwareFingerprint == actualFingerprint && p.Activo);
+            if (puesto == null)
+            {
+                // Crear nuevo puesto para este cliente
+                puesto = new VeriFactuPuesto(companyInfo.Session)
+                {
+                    Empresa = companyInfo,
+                    HardwareFingerprint = actualFingerprint,
+                    NumeroInstalacion = Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper(),
+                    NombrePuesto = Environment.MachineName
+                };
+                companyInfo.Session.Save(puesto);
+            }
+            numeroInstalacion = puesto.NumeroInstalacion;
         }
 
         Settings.Current.SistemaInformatico.NumeroInstalacion = numeroInstalacion;

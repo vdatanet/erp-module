@@ -17,6 +17,7 @@ public class VeriFactuLogReinicio(Session session) : BaseObject(session)
     private string? _motivo;
     private string? _numeroInstalacionAnterior;
     private string? _numeroInstalacionNuevo;
+    private VeriFactuPuesto? _puesto;
 
     [Association("Empresa-VeriFactuLogs")]
     [XafDisplayName("Empresa")]
@@ -24,6 +25,13 @@ public class VeriFactuLogReinicio(Session session) : BaseObject(session)
     {
         get => _empresa;
         set => SetPropertyValue(nameof(Empresa), ref _empresa, value);
+    }
+
+    [XafDisplayName("Puesto")]
+    public VeriFactuPuesto? Puesto
+    {
+        get => _puesto;
+        set => SetPropertyValue(nameof(Puesto), ref _puesto, value);
     }
 
     public DateTime Fecha

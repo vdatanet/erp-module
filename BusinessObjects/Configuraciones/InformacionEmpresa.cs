@@ -20,6 +20,7 @@ using erp.Module.Helpers.Facturacion;
 using erp.Module.Helpers.Contactos;
 using Microsoft.Extensions.DependencyInjection;
 using DevExpress.ExpressApp.Security;
+using erp.Module.Controllers.Configuraciones;
 
 namespace erp.Module.BusinessObjects.Configuraciones;
 
@@ -32,7 +33,7 @@ namespace erp.Module.BusinessObjects.Configuraciones;
     CustomMessageTemplate = "La información de la empresa ya existe.")]
 [RuleCriteria("NotDeleteInformacionEmpresa", DefaultContexts.Delete, "False",
     CustomMessageTemplate = "No se puede eliminar la información de la empresa.")]
-public class InformacionEmpresa(Session session) : EntidadBase(session)
+public class InformacionEmpresa(Session session) : EntidadBase(session), IPersistentVeriFactuNumeroInstalacion
 {
     private string? _nombre;
     private string? _nombreComercial;
@@ -743,6 +744,10 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     [Association("Empresa-VeriFactuLogs")]
     [XafDisplayName("Logs de Reinicio VeriFactu")]
     public XPCollection<VeriFactuLogReinicio> VeriFactuLogs => GetCollection<VeriFactuLogReinicio>(nameof(VeriFactuLogs));
+
+    [Association("Empresa-VeriFactuPuestos")]
+    [XafDisplayName("Puestos VeriFactu")]
+    public XPCollection<VeriFactuPuesto> VeriFactuPuestos => GetCollection<VeriFactuPuesto>(nameof(VeriFactuPuestos));
 
     public void ReiniciarNumeroInstalacion(string motivo)
     {
