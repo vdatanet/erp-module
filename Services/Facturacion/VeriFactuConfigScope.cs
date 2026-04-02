@@ -2,6 +2,8 @@ using erp.Module.BusinessObjects.Configuraciones;
 using Microsoft.Extensions.Logging;
 using VeriFactu.Config;
 
+using erp.Module.Helpers.Facturacion;
+
 namespace erp.Module.Services.Facturacion;
 
 public sealed class VeriFactuConfigScope : IDisposable
@@ -36,7 +38,26 @@ public sealed class VeriFactuConfigScope : IDisposable
         Settings.Current.SistemaInformatico.NombreRazon = companyInfo.VeriFactuNombreRazon;
         Settings.Current.SistemaInformatico.NIF = companyInfo.VeriFactuNif;
         Settings.Current.SistemaInformatico.Version = companyInfo.VeriFactuVersion;
-        Settings.Current.SistemaInformatico.NumeroInstalacion = Environment.MachineName;
+        
+        // NumeroInstalacion persistente
+        var numeroInstalacion = companyInfo.VeriFactuNumeroInstalacion;
+        if (string.IsNullOrEmpty(numeroInstalacion))
+        {
+            numeroInstalacion = Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper();
+            companyInfo.VeriFactuNumeroInstalacion = numeroInstalacion;
+            companyInfo.VeriFactuHardwareFingerprint = HardwareFingerprintHelper.GetFingerprint();
+        }
+
+        // Validar huella de hardware (loguear si cambia)
+        var actualFingerprint = HardwareFingerprintHelper.GetFingerprint();
+        if (companyInfo.VeriFactuHardwareFingerprint != actualFingerprint)
+        {
+            _logger?.LogWarning("Se ha detectado un cambio en la huella de hardware para VeriFactu. NumeroInstalacion: {NumeroInstalacion}", numeroInstalacion);
+            // Según la política, podríamos decidir si actualizarla automáticamente o no.
+            // Por ahora, solo logueamos para permitir que el administrador decida.
+        }
+
+        Settings.Current.SistemaInformatico.NumeroInstalacion = numeroInstalacion;
         Settings.Save();
     }
 

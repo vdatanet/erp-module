@@ -15,6 +15,11 @@ using erp.Module.BusinessObjects.Impuestos;
 using erp.Module.BusinessObjects.Inventario;
 using erp.Module.BusinessObjects.Base.Facturacion;
 using erp.Module.Helpers.Comun;
+using erp.Module.BusinessObjects.Facturacion;
+using erp.Module.Helpers.Facturacion;
+using erp.Module.Helpers.Contactos;
+using Microsoft.Extensions.DependencyInjection;
+using DevExpress.ExpressApp.Security;
 
 namespace erp.Module.BusinessObjects.Configuraciones;
 
@@ -73,6 +78,8 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
     private string? _veriFactuNif;
     private string? _veriFactuNombreSistemaInformatico;
     private string? _veriFactuVersion;
+    private string? _veriFactuNumeroInstalacion;
+    private string? _veriFactuHardwareFingerprint;
     private bool _veriFactuEntornoProduccion;
     private PosicionFiscal? _posicionFiscalPorDefecto;
     private string? _prefijoAsientosPorDefecto;
@@ -715,6 +722,62 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         set => SetPropertyValue(nameof(VeriFactuVersion), ref _veriFactuVersion, value);
     }
 
+    [Size(50)]
+    [XafDisplayName("Número Instalación VeriFactu")]
+    [ReadOnly(true)]
+    public string? VeriFactuNumeroInstalacion
+    {
+        get => _veriFactuNumeroInstalacion;
+        set => SetPropertyValue(nameof(VeriFactuNumeroInstalacion), ref _veriFactuNumeroInstalacion, value);
+    }
+
+    [Size(255)]
+    [XafDisplayName("Huella Hardware VeriFactu")]
+    [ReadOnly(true)]
+    public string? VeriFactuHardwareFingerprint
+    {
+        get => _veriFactuHardwareFingerprint;
+        set => SetPropertyValue(nameof(VeriFactuHardwareFingerprint), ref _veriFactuHardwareFingerprint, value);
+    }
+
+    [Association("Empresa-VeriFactuLogs")]
+    [XafDisplayName("Logs de Reinicio VeriFactu")]
+    public XPCollection<VeriFactuLogReinicio> VeriFactuLogs => GetCollection<VeriFactuLogReinicio>(nameof(VeriFactuLogs));
+
+    public void ReiniciarNumeroInstalacion(string motivo)
+    {
+        var anterior = VeriFactuNumeroInstalacion;
+        var nuevo = Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper();
+        
+        VeriFactuNumeroInstalacion = nuevo;
+        VeriFactuHardwareFingerprint = HardwareFingerprintHelper.GetFingerprint();
+
+        var log = new VeriFactuLogReinicio(Session)
+        {
+            Empresa = this,
+            Fecha = InformacionEmpresaHelper.GetLocalTime(Session),
+            Motivo = motivo,
+            NumeroInstalacionAnterior = anterior,
+            NumeroInstalacionNuevo = nuevo,
+            Usuario = GetCurrentUser()
+        };
+        
+        Session.Save(log);
+    }
+
+    private ApplicationUser? GetCurrentUser()
+    {
+        try
+        {
+            var security = Session.ServiceProvider?.GetService<ISecurityStrategyBase>();
+            return security?.UserId == null ? null : Session.GetObjectByKey<ApplicationUser>(security.UserId);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     [RuleRange("InformacionEmpresa_PaddingNumero_Range", DefaultContexts.Save, 1, 10)]
     [XafDisplayName("Padding Número")]
     public int PaddingNumero
@@ -760,6 +823,8 @@ public class InformacionEmpresa(Session session) : EntidadBase(session)
         VeriFactuNif = "43725645T";
         VeriFactuNombreSistemaInformatico = "VDATA ERP";
         VeriFactuVersion = "1.0.0";
+        VeriFactuNumeroInstalacion = Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper();
+        VeriFactuHardwareFingerprint = HardwareFingerprintHelper.GetFingerprint();
     }
 
     public DateTime GetLocalTime()
