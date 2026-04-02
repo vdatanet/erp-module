@@ -14,7 +14,7 @@ public class TenantSetupService(IObjectSpace objectSpace)
     {
         if (objectSpace is CompositeObjectSpace compositeOS)
         {
-            var result = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(WebhookTenant)));
+            var result = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(Tenant)));
             if (result != null) return result;
 
             // Fallback to the first persistent Object Space if no specific match is found for the type
@@ -25,12 +25,12 @@ public class TenantSetupService(IObjectSpace objectSpace)
         return objectSpace;
     }
 
-    public WebhookTenant CreateTenant(string tenantName, string databaseName, string provider, string server, string user, string password)
+    public Tenant CreateTenant(string tenantName, string databaseName, string provider, string server, string user, string password)
     {
-        var tenant = OS.FirstOrDefault<WebhookTenant>(t => t.Name == tenantName);
+        var tenant = OS.FirstOrDefault<Tenant>(t => t.Name == tenantName);
         if (tenant == null)
         {
-            tenant = OS.CreateObject<WebhookTenant>();
+            tenant = OS.CreateObject<Tenant>();
             tenant.Name = tenantName;
 
             var connectionString = provider.ToLower() switch

@@ -19,6 +19,7 @@ using DevExpress.ExpressApp.Xpo;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.ExpressApp.MultiTenancy;
 using Microsoft.Extensions.DependencyInjection;
+using DevExpress.Persistent.BaseImpl.MultiTenancy;
 using erp.Module.BusinessObjects;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.BusinessObjects.Ventas;
@@ -67,7 +68,7 @@ public sealed class erpModule : ModuleBase
         RequiredModuleTypes.Add(typeof(ValidationModule));
         RequiredModuleTypes.Add(typeof(ViewVariantsModule));
 
-        AdditionalExportedTypes.Add(typeof(WebhookTenant));
+        AdditionalExportedTypes.Add(typeof(Tenant));
     }
 
     public override IEnumerable<ModuleUpdater> GetModuleUpdaters(IObjectSpace objectSpace, Version versionFromDB)
