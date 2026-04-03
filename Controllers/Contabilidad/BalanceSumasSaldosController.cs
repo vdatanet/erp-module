@@ -7,11 +7,11 @@ using System.Linq;
 
 namespace erp.Module.Controllers.Contabilidad;
 
-public class BalanceSumasSaldosController : WindowController
+public class BalanceSumasSaldosController : ViewController
 {
     public BalanceSumasSaldosController()
     {
-        TargetWindowType = WindowType.Main;
+        TargetObjectType = typeof(BalanceSumasSaldosItem);
 
         var showBalanceAction = new PopupWindowShowAction(this, "ShowBalanceSumasSaldos", PredefinedCategory.View)
         {

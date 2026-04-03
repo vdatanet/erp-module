@@ -50,6 +50,49 @@ public static class ContabilidadService
         return balance;
     }
 
+    public static List<ExtractoCuentaItem> GetExtractoCuenta(IObjectSpace objectSpace, ExtractoCuentaParameters parameters)
+    {
+        if (parameters.CuentaContable == null) return new List<ExtractoCuentaItem>();
+
+        var criteria = CriteriaOperator.Parse("CuentaContable.Oid = ? AND Asiento.Estado = ?", 
+            parameters.CuentaContable.Oid, EstadoAsiento.Publicado);
+
+        if (parameters.FechaInicio.HasValue)
+        {
+            criteria = GroupOperator.And(criteria, CriteriaOperator.Parse("Asiento.Fecha >= ?", parameters.FechaInicio.Value));
+        }
+
+        if (parameters.FechaFin.HasValue)
+        {
+            criteria = GroupOperator.And(criteria, CriteriaOperator.Parse("Asiento.Fecha <= ?", parameters.FechaFin.Value));
+        }
+
+        var apuntes = objectSpace.GetObjects<Apunte>(criteria)
+            .OrderBy(a => a.Asiento?.Fecha)
+            .ThenBy(a => a.Asiento?.Numero)
+            .ThenBy(a => a.Oid)
+            .ToList();
+
+        decimal saldoAcumulado = 0;
+        var extracto = new List<ExtractoCuentaItem>();
+
+        foreach (var apunte in apuntes)
+        {
+            saldoAcumulado += apunte.Debe - apunte.Haber;
+            extracto.Add(new ExtractoCuentaItem
+            {
+                Fecha = apunte.Asiento?.Fecha ?? DateTime.MinValue,
+                Asiento = apunte.Asiento?.Codigo,
+                Concepto = apunte.Concepto,
+                Debe = apunte.Debe,
+                Haber = apunte.Haber,
+                Saldo = saldoAcumulado
+            });
+        }
+
+        return extracto;
+    }
+
     public static Asiento? ContabilizarFactura(FacturaBase factura)
     {
         if (factura == null) return null;
