@@ -14,7 +14,7 @@
     <Items>
       <Item Id="Contabilidad">
         <Items>
-          <Item Id="BalanceSumasSaldos_ListView" ViewId="BalanceSumasSaldosItem_ListView" IsNewNode="True" />
+          <Item Id="BalanceSumasSaldos_ListView" ViewId="BalanceSumasSaldosItem_ListView" IsNewNode="True" Caption="Balance de Sumas y Saldos" />
         </Items>
       </Item>
       <Item Id="Configuraciones">
@@ -33,6 +33,16 @@
     <SchemaModule Name="SystemModule" Version="25.2.5.0" IsNewNode="True" />
   </SchemaModules>
   <Views>
+    <ListView Id="BalanceSumasSaldosItem_ListView" ClassName="erp.Module.Models.Contabilidad.BalanceSumasSaldosItem" Caption="Balance de Sumas y Saldos" IsNewNode="True">
+      <Columns IsNewNode="True">
+        <ColumnInfo Id="Codigo" PropertyName="Codigo" Index="0" Width="100" IsNewNode="True" />
+        <ColumnInfo Id="Nombre" PropertyName="Nombre" Index="1" Width="250" IsNewNode="True" />
+        <ColumnInfo Id="SumaDebe" PropertyName="SumaDebe" Index="2" Width="100" DisplayFormat="{0:N2}" IsNewNode="True" />
+        <ColumnInfo Id="SumaHaber" PropertyName="SumaHaber" Index="3" Width="100" DisplayFormat="{0:N2}" IsNewNode="True" />
+        <ColumnInfo Id="SaldoDeudor" PropertyName="SaldoDeudor" Index="4" Width="100" DisplayFormat="{0:N2}" IsNewNode="True" />
+        <ColumnInfo Id="SaldoAcreedor" PropertyName="SaldoAcreedor" Index="5" Width="100" DisplayFormat="{0:N2}" IsNewNode="True" />
+      </Columns>
+    </ListView>
     <ListView Id="ApplicationUser_ListView" Caption="Users" />
     <DetailView Id="Categoria_DetailView">
       <Items>

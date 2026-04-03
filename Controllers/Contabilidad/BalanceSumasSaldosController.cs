@@ -3,6 +3,7 @@ using DevExpress.ExpressApp.Actions;
 using DevExpress.Persistent.Base;
 using erp.Module.Models.Contabilidad;
 using erp.Module.Services.Contabilidad;
+using System.Linq;
 
 namespace erp.Module.Controllers.Contabilidad;
 
@@ -18,9 +19,6 @@ public class BalanceSumasSaldosController : WindowController
             ImageName = "BO_List",
             ToolTip = "Muestra el balance de sumas y saldos"
         };
-        
-        // Agregar al grupo de Contabilidad en la navegación si es posible
-        // O simplemente dejarlo en View por ahora.
         
         showBalanceAction.CustomizePopupWindowParams += ShowBalanceAction_CustomizePopupWindowParams;
         showBalanceAction.Execute += ShowBalanceAction_Execute;
@@ -42,9 +40,31 @@ public class BalanceSumasSaldosController : WindowController
     {
         if (e.Shortcut.ViewId == "BalanceSumasSaldosItem_ListView" && !e.Handled)
         {
-            // Nota: En XAF, disparar un PopupWindowShowAction programáticamente desde CustomProcessShortcut 
-            // requiere precauciones. Por ahora, permitimos que la acción sea visible en la UI.
+            // Nota: Intentamos abrir la vista de parámetros antes de mostrar el balance
+            // Pero por simplicidad ahora, dejamos que XAF abra la ListView. 
+            // Podríamos forzar la carga de datos aquí si quisiéramos, pero mejor lo dejamos para la acción por ahora
+            // o para un evento de ObjectsGetting si escalamos esto.
         }
+    }
+
+    private void ShowBalanceResult(BalanceSumasSaldosParameters parameters)
+    {
+        var objectSpace = Application.CreateObjectSpace(typeof(BalanceSumasSaldosItem));
+        var items = ContabilidadService.GetBalanceSumasSaldos(objectSpace, parameters);
+        
+        var listViewId = "BalanceSumasSaldosItem_ListView";
+        var collectionSource = Application.CreateCollectionSource(objectSpace, typeof(BalanceSumasSaldosItem), listViewId);
+        
+        foreach (var item in items)
+        {
+            collectionSource.Add(item);
+        }
+
+        var listView = Application.CreateListView(listViewId, collectionSource, true);
+        
+        var svp = new ShowViewParameters(listView);
+        svp.TargetWindow = TargetWindow.Default;
+        Application.ShowViewStrategy.ShowView(svp, new ShowViewSource(null, null));
     }
 
     private void ShowBalanceAction_CustomizePopupWindowParams(object sender, CustomizePopupWindowParamsEventArgs e)
@@ -52,7 +72,6 @@ public class BalanceSumasSaldosController : WindowController
         var objectSpace = Application.CreateObjectSpace(typeof(BalanceSumasSaldosParameters));
         var parameters = new BalanceSumasSaldosParameters();
         
-        // Intentar preseleccionar el ejercicio actual
         var ejercicioActual = objectSpace.GetObjects<erp.Module.BusinessObjects.Contabilidad.Ejercicio>(
             DevExpress.Data.Filtering.CriteriaOperator.Parse("Anio = ?", DateTime.Today.Year)).FirstOrDefault();
         if (ejercicioActual != null)
@@ -70,20 +89,6 @@ public class BalanceSumasSaldosController : WindowController
     private void ShowBalanceAction_Execute(object sender, PopupWindowShowActionExecuteEventArgs e)
     {
         var parameters = (BalanceSumasSaldosParameters)e.PopupWindowViewCurrentObject;
-        var objectSpace = Application.CreateObjectSpace(typeof(BalanceSumasSaldosItem));
-        
-        var items = ContabilidadService.GetBalanceSumasSaldos(objectSpace, parameters);
-        
-        var listViewId = Application.FindListViewId(typeof(BalanceSumasSaldosItem));
-        var collectionSource = Application.CreateCollectionSource(objectSpace, typeof(BalanceSumasSaldosItem), listViewId);
-        
-        foreach (var item in items)
-        {
-            collectionSource.Add(item);
-        }
-
-        var listView = Application.CreateListView(listViewId, collectionSource, true);
-        e.ShowViewParameters.CreatedView = listView;
-        e.ShowViewParameters.TargetWindow = TargetWindow.Default;
+        ShowBalanceResult(parameters);
     }
 }
