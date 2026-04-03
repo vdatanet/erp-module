@@ -36,7 +36,7 @@ public class BalanceSumasSaldosController : WindowController
         base.OnDeactivated();
     }
 
-    private void Application_CustomProcessShortcut(object sender, CustomProcessShortcutEventArgs e)
+    private void Application_CustomProcessShortcut(object? sender, CustomProcessShortcutEventArgs e)
     {
         if (e.Shortcut.ViewId == "BalanceSumasSaldosItem_ListView" && !e.Handled)
         {
@@ -47,7 +47,7 @@ public class BalanceSumasSaldosController : WindowController
         }
     }
 
-    private void ShowBalanceResult(BalanceSumasSaldosParameters parameters)
+    private void ShowBalanceResult(BalanceSumasSaldosParameters parameters, ShowViewParameters svp)
     {
         var objectSpace = Application.CreateObjectSpace(typeof(BalanceSumasSaldosItem));
         var items = ContabilidadService.GetBalanceSumasSaldos(objectSpace, parameters);
@@ -62,9 +62,8 @@ public class BalanceSumasSaldosController : WindowController
 
         var listView = Application.CreateListView(listViewId, collectionSource, true);
         
-        var svp = new ShowViewParameters(listView);
+        svp.CreatedView = listView;
         svp.TargetWindow = TargetWindow.Default;
-        Application.ShowViewStrategy.ShowView(svp, new ShowViewSource(null, null));
     }
 
     private void ShowBalanceAction_CustomizePopupWindowParams(object sender, CustomizePopupWindowParamsEventArgs e)
@@ -88,7 +87,9 @@ public class BalanceSumasSaldosController : WindowController
 
     private void ShowBalanceAction_Execute(object sender, PopupWindowShowActionExecuteEventArgs e)
     {
-        var parameters = (BalanceSumasSaldosParameters)e.PopupWindowViewCurrentObject;
-        ShowBalanceResult(parameters);
+        if (e.PopupWindowViewCurrentObject is BalanceSumasSaldosParameters parameters)
+        {
+            ShowBalanceResult(parameters, e.ShowViewParameters);
+        }
     }
 }
