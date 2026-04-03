@@ -35,7 +35,7 @@
   <Views>
     <ListView Id="BalanceSumasSaldosItem_ListView" ClassName="erp.Module.Models.Contabilidad.BalanceSumasSaldosItem" Caption="Balance de Sumas y Saldos" IsNewNode="True">
       <Columns IsNewNode="True">
-        <ColumnInfo Id="Codigo" PropertyName="Codigo" Index="0" Width="100" IsNewNode="True" />
+        <ColumnInfo Id="CodigoDisplay" PropertyName="CodigoDisplay" Index="0" Width="100" IsNewNode="True" Caption="Código" />
         <ColumnInfo Id="Nombre" PropertyName="Nombre" Index="1" Width="250" IsNewNode="True" />
         <ColumnInfo Id="SumaDebe" PropertyName="SumaDebe" Index="2" Width="100" DisplayFormat="{0:N2}" IsNewNode="True" />
         <ColumnInfo Id="SumaHaber" PropertyName="SumaHaber" Index="3" Width="100" DisplayFormat="{0:N2}" IsNewNode="True" />

@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using DevExpress.ExpressApp.Data;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
@@ -9,8 +11,12 @@ namespace erp.Module.Models.Contabilidad;
 [XafDisplayName("Balance de Sumas y Saldos")]
 public class BalanceSumasSaldosItem
 {
-    [XafDisplayName("Código")]
+    [Key]
+    [Browsable(false)]
     public string? Codigo { get; set; }
+
+    [XafDisplayName("Código")]
+    public string? CodigoDisplay => Codigo;
 
     [XafDisplayName("Nombre")]
     public string? Nombre { get; set; }
@@ -36,6 +42,10 @@ public class BalanceSumasSaldosItem
 [XafDisplayName("Parámetros Balance de Sumas y Saldos")]
 public class BalanceSumasSaldosParameters
 {
+    [Key]
+    [Browsable(false)]
+    public Guid Oid { get; set; } = Guid.NewGuid();
+
     [XafDisplayName("Ejercicio")]
     public Ejercicio? Ejercicio { get; set; }
 
