@@ -28,6 +28,7 @@ using erp.Module.Services.Configuraciones;
 using erp.Module.Models.Configuraciones;
 using DevExpress.XtraReports.UI;
 using DevExpress.DataAccess.ObjectBinding;
+using erp.Module.Models.Contabilidad;
 using Updater = erp.Module.DatabaseUpdate.Updater;
 
 namespace erp.Module;
@@ -53,6 +54,8 @@ public sealed class erpModule : ModuleBase
         AdditionalExportedTypes.Add(typeof(Pais));
         AdditionalExportedTypes.Add(typeof(Provincia));
         AdditionalExportedTypes.Add(typeof(Poblacion));
+        AdditionalExportedTypes.Add(typeof(BalanceSumasSaldosItem));
+        AdditionalExportedTypes.Add(typeof(BalanceSumasSaldosParameters));
         RequiredModuleTypes.Add(typeof(SystemModule));
         RequiredModuleTypes.Add(typeof(SecurityModule));
         RequiredModuleTypes.Add(typeof(ChartModule));

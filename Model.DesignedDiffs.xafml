@@ -12,6 +12,11 @@
   </BOModel>
   <NavigationItems NavigationStyle="Accordion" StartupNavigationItem="">
     <Items>
+      <Item Id="Contabilidad">
+        <Items>
+          <Item Id="BalanceSumasSaldos_ListView" ViewId="BalanceSumasSaldosItem_ListView" IsNewNode="True" />
+        </Items>
+      </Item>
       <Item Id="Configuraciones">
         <Items>
           <Item Id="Ajuestes" Caption="Ajustes" ViewId="ModelDifference_ListView" IsNewNode="True" />

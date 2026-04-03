@@ -8,10 +8,48 @@ using erp.Module.BusinessObjects.Contabilidad;
 using erp.Module.BusinessObjects.Contactos;
 using erp.Module.Helpers.Contactos;
 
+using erp.Module.Models.Contabilidad;
+
 namespace erp.Module.Services.Contabilidad;
 
 public static class ContabilidadService
 {
+    public static List<BalanceSumasSaldosItem> GetBalanceSumasSaldos(IObjectSpace objectSpace, BalanceSumasSaldosParameters parameters)
+    {
+        var criteria = CriteriaOperator.Parse("Asiento.Estado = ?", EstadoAsiento.Publicado);
+
+        if (parameters.Ejercicio != null)
+        {
+            criteria = GroupOperator.And(criteria, CriteriaOperator.Parse("Asiento.Ejercicio.Oid = ?", parameters.Ejercicio.Oid));
+        }
+
+        if (parameters.FechaInicio.HasValue)
+        {
+            criteria = GroupOperator.And(criteria, CriteriaOperator.Parse("Asiento.Fecha >= ?", parameters.FechaInicio.Value));
+        }
+
+        if (parameters.FechaFin.HasValue)
+        {
+            criteria = GroupOperator.And(criteria, CriteriaOperator.Parse("Asiento.Fecha <= ?", parameters.FechaFin.Value));
+        }
+
+        var apuntes = objectSpace.GetObjects<Apunte>(criteria);
+
+        var balance = apuntes
+            .GroupBy(a => a.CuentaContable)
+            .Select(g => new BalanceSumasSaldosItem
+            {
+                Codigo = g.Key?.Codigo,
+                Nombre = g.Key?.Nombre,
+                SumaDebe = g.Sum(a => a.Debe),
+                SumaHaber = g.Sum(a => a.Haber)
+            })
+            .OrderBy(b => b.Codigo)
+            .ToList();
+
+        return balance;
+    }
+
     public static Asiento? ContabilizarFactura(FacturaBase factura)
     {
         if (factura == null) return null;
