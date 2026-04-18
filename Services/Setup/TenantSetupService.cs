@@ -54,7 +54,7 @@ public class TenantSetupService(IObjectSpace objectSpace)
 #if DEBUG
         if (currentTenantName == null)
         {
-            _ = CreateTenant("demo", "erp_demo", "Postgres", "db-local", "postgres", "");
+            _ = CreateTenant("demo", "erp_demo", "Postgres", "db-local", "joan", "");
             _ = CreateTenant("demo-mssql", "erp_demo_mssql", "MSSqlServer", ".\\SQLEXPRESS", "sa", "your_password");
             _ = CreateTenant("demo-mysql", "erp_demo_mysql", "MySql", "db-local", "devuser", "");
         }

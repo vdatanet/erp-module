@@ -64,7 +64,7 @@ public class DataSeedService(IServiceProvider serviceProvider) : IDataSeedServic
 
             // Crear un tenant de ejemplo 'demo' en postgresql local.
             var tenantSetup = new TenantSetupService(objectSpace);
-            tenantSetup.CreateTenant("demo", "erp_demo", "postgres", "db-local", "postgres", "");
+            tenantSetup.CreateTenant("demo", "erp_demo", "postgres", "db-local", "joan", "");
             
             objectSpace.CommitChanges();
             return;
