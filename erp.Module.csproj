@@ -62,6 +62,6 @@
       <Compile Remove="BusinessObjects\Configuraciones\InformacionEmpresa.UI.cs" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\erp.Verifactu.Client\erp.Verifactu.Client.csproj" />
+        <ProjectReference Include="erp.Verifactu.Client\erp.Verifactu.Client.csproj" />
     </ItemGroup>
 </Project>
