@@ -1,6 +1,4 @@
-﻿Project Description
-
-This project implements a platform-agnostic Module. UI-independent application
+﻿This project implements a platform-agnostic Module. UI-independent application
 elements can be implemented here (Business Objects, Controllers, etc.). The root project
 folder contains the Module.cs(vb) file with the class that inherits ModuleBase.
 This class allows you to view and customize Module components:
