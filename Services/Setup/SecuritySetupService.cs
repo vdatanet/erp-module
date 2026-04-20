@@ -39,9 +39,13 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     private IObjectSpace GetWorkingObjectSpace()
     {
-        if (objectSpace is CompositeObjectSpace compositeOS)
+        if (objectSpace is CompositeObjectSpace compositeOS && compositeOS.AdditionalObjectSpaces.Count > 0)
         {
-            return compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(PermissionPolicyRole))) ?? objectSpace;
+            var securityObjectSpace = compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(ApplicationRole)))
+                ?? compositeOS.AdditionalObjectSpaces.FirstOrDefault(os => os.IsKnownType(typeof(PermissionPolicyRole)));
+
+            if (securityObjectSpace != null)
+                return securityObjectSpace;
         }
 
         return objectSpace;
@@ -49,7 +53,21 @@ public class SecuritySetupService(IObjectSpace objectSpace)
 
     public void CreateRolesAndUsers(string? tenantName, bool onlyAdmin = true)
     {
-        if (!OS.IsKnownType(typeof(ApplicationRole))) return;
+        if (!OS.IsKnownType(typeof(ApplicationRole)))
+        {
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine($"[SecuritySetupService] ObjectSpace does not know ApplicationRole type. ObjectSpace type: {OS.GetType().Name}");
+            if (objectSpace is CompositeObjectSpace compositeOS)
+            {
+                System.Diagnostics.Debug.WriteLine($"[SecuritySetupService] CompositeObjectSpace has {compositeOS.AdditionalObjectSpaces.Count} additional object spaces:");
+                foreach (var os in compositeOS.AdditionalObjectSpaces)
+                {
+                    System.Diagnostics.Debug.WriteLine($"  - {os.GetType().Name}: Knows ApplicationRole={os.IsKnownType(typeof(ApplicationRole))}, Knows PermissionPolicyRole={os.IsKnownType(typeof(PermissionPolicyRole))}");
+                }
+            }
+#endif
+            return;
+        }
 
         var adminRole = CreateAdminRole();
 
