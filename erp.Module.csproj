@@ -60,6 +60,7 @@
     </ItemGroup>
     <ItemGroup>
       <Compile Remove="BusinessObjects\Configuraciones\InformacionEmpresa.UI.cs" />
+      <Compile Remove="erp.Verifactu.Client\**\*.cs" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="erp.Verifactu.Client\erp.Verifactu.Client.csproj" />
