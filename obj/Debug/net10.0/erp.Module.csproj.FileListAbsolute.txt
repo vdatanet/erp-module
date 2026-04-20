@@ -1,0 +1,16 @@
+/Users/joan/RiderProjects/erp/erp.Module/bin/Debug/net10.0/erp.Module.deps.json
+/Users/joan/RiderProjects/erp/erp.Module/bin/Debug/net10.0/erp.Module.dll
+/Users/joan/RiderProjects/erp/erp.Module/bin/Debug/net10.0/erp.Module.pdb
+/Users/joan/RiderProjects/erp/erp.Module/bin/Debug/net10.0/erp.Verifactu.Client.dll
+/Users/joan/RiderProjects/erp/erp.Module/bin/Debug/net10.0/erp.Verifactu.Client.pdb
+/Users/joan/RiderProjects/erp/erp.Module/obj/Debug/net10.0/erp.Module.csproj.AssemblyReference.cache
+/Users/joan/RiderProjects/erp/erp.Module/obj/Debug/net10.0/erp.Module.GeneratedMSBuildEditorConfig.editorconfig
+/Users/joan/RiderProjects/erp/erp.Module/obj/Debug/net10.0/erp.Module.AssemblyInfoInputs.cache
+/Users/joan/RiderProjects/erp/erp.Module/obj/Debug/net10.0/erp.Module.AssemblyInfo.cs
+/Users/joan/RiderProjects/erp/erp.Module/obj/Debug/net10.0/erp.Module.csproj.CoreCompileInputs.cache
+/Users/joan/RiderProjects/erp/erp.Module/obj/Debug/net10.0/erp.Module.sourcelink.json
+/Users/joan/RiderProjects/erp/erp.Module/obj/Debug/net10.0/erp.Module.csproj.Up2Date
+/Users/joan/RiderProjects/erp/erp.Module/obj/Debug/net10.0/erp.Module.dll
+/Users/joan/RiderProjects/erp/erp.Module/obj/Debug/net10.0/refint/erp.Module.dll
+/Users/joan/RiderProjects/erp/erp.Module/obj/Debug/net10.0/erp.Module.pdb
+/Users/joan/RiderProjects/erp/erp.Module/obj/Debug/net10.0/ref/erp.Module.dll
